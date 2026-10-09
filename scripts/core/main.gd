@@ -30,13 +30,25 @@ func _ready() -> void:
 
 	library = ModelLibrary.new()
 	library.begin(cfg)
-	_thread.start(_generate_city)
+	if cfg.use_threads:
+		_thread.start(_generate_city)
+	else:
+		_generate_without_thread()
 	if "--capture" in OS.get_cmdline_user_args():
 		add_child(load("res://tests/capture_runner.gd").new())
 
 
 func _generate_city() -> CityData:
 	return CityGenerator.new(cfg, _on_gen_progress).generate()
+
+
+## Single-threaded builds: let the loading screen draw first, then generate.
+func _generate_without_thread() -> void:
+	_overlay.set_progress(0.0, "Generating the city")
+	for i in 3:
+		await get_tree().process_frame
+	data = _generate_city()
+	_gen_progress = 1.0
 
 
 func _on_gen_progress(value: float, text: String) -> void:
@@ -59,7 +71,7 @@ func _update_loading() -> void:
 	var total := _gen_progress * 0.6 + _models_progress * 0.4
 	var text := _gen_text if _gen_progress < 1.0 else "Loading buildings"
 	_overlay.set_progress(total, text)
-	if _gen_progress >= 1.0 and not _thread.is_alive() and data == null:
+	if data == null and _thread.is_started() and not _thread.is_alive():
 		data = _thread.wait_to_finish()
 	if data != null and _models_progress >= 1.0:
 		_start_city()

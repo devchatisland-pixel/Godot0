@@ -27,6 +27,7 @@ var _mutex := Mutex.new()
 var _frame := 0
 var _empty := {}           # Vector2i -> true for chunks of open sea
 var _visible_keys: Array[Vector2i] = []
+var _inline_jobs_left := 0 # single-threaded builds: jobs allowed this frame
 var near_mode := false
 
 
@@ -47,6 +48,7 @@ func setup(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
 ## Called every frame with the ground polygon seen by the camera (cells).
 func update_view(view_poly: PackedVector2Array, zoom: float) -> void:
 	_frame += 1
+	_inline_jobs_left = 1
 	var was_near := near_mode
 	# Hysteresis avoids flickering when zooming around the threshold.
 	near_mode = zoom < _cfg.near_lod_size * (1.1 if was_near else 1.0)
@@ -117,14 +119,25 @@ func _state(key: Vector2i) -> ChunkState:
 func _request(st: ChunkState, far: bool) -> void:
 	if (far and st.far_pending) or (not far and st.near_pending):
 		return
+	if not _cfg.use_threads:
+		if _inline_jobs_left <= 0:
+			return
+		_inline_jobs_left -= 1
+		_set_pending(st, far)
+		_run_job(st.key, far)
+		return
 	if _jobs.size() >= _cfg.max_jobs:
 		return
+	_set_pending(st, far)
+	var task := WorkerThreadPool.add_task(_run_job.bind(st.key, far), false, "city chunk")
+	_jobs[task] = [st.key, far]
+
+
+func _set_pending(st: ChunkState, far: bool) -> void:
 	if far:
 		st.far_pending = true
 	else:
 		st.near_pending = true
-	var task := WorkerThreadPool.add_task(_run_job.bind(st.key, far), false, "city chunk")
-	_jobs[task] = [st.key, far]
 
 
 ## Worker thread: builds the instance lists of one chunk (no nodes, no RIDs).

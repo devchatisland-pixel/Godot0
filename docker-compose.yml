@@ -1,0 +1,24 @@
+# Local testing with Docker.
+#   docker compose up --build web      -> open http://localhost:8080
+#   docker compose run --build tests   -> results in ./docker-out
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: web
+      args:
+        GODOT_VERSION: "4.6.3"
+    ports:
+      - "8080:80"
+
+  tests:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: tests
+      args:
+        GODOT_VERSION: "4.6.3"
+    volumes:
+      - ./docker-out:/out
+    profiles: ["tests"]

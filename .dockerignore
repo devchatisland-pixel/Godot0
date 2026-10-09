@@ -1,0 +1,6 @@
+.git
+.godot
+build
+docker-out
+docs
+**/*.tmp

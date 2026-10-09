@@ -47,6 +47,8 @@ var camera_yaw_deg := 45.0
 # --- Rendering ------------------------------------------------------------------
 var shadows := false
 var is_mobile := false
+## False on single-threaded web builds: work then runs on the main thread.
+var use_threads := true
 
 
 static func create() -> CityConfig:
@@ -61,6 +63,10 @@ static func create() -> CityConfig:
 		c.max_jobs = 2
 		c.applies_per_frame = 1
 		c.max_variants = 10
+	c.use_threads = not (OS.has_feature("web") and not OS.has_feature("threads"))
+	if not c.use_threads:
+		c.map_size = mini(c.map_size, 512)
+		c.max_near_chunks = mini(c.max_near_chunks, 24)
 	if c.max_zoom <= 0.0:
 		c.max_zoom = float(c.map_size) * 0.75
 	return c

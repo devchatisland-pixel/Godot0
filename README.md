@@ -15,6 +15,43 @@ It runs on desktop and mobile (GL Compatibility renderer).
 | Navigate | drag with any mouse button, `WASD` / arrows | one finger drag, two-finger scroll |
 | Zoom | mouse wheel (zooms at the cursor), `Q` / `E`, `-` / `+` | pinch |
 
+## Test it with Docker
+
+Requirements: Docker Desktop (Windows / macOS) or Docker Engine (Linux).
+The images use **Godot 4.6.3**. Set `GODOT_VERSION` in `docker-compose.yml` to use another version.
+
+### Play it in your browser
+
+```
+docker compose up --build web
+```
+
+Then open **http://localhost:8080**. This is the fast multi-threaded build, rendered by your GPU through WebGL 2.
+
+* **From a phone or another PC on your network:** open `http://<your-pc-ip>:8080/lite/`. Browsers only allow the multi-threaded build on `localhost` or HTTPS, so `/lite/` is a single-threaded build. It is slower, but works everywhere.
+* **First build:** it downloads Godot (~60 MB) and its export templates (~1.25 GB). Docker caches both, so later builds only re-export the project (about 1 minute).
+* **After you change the code:** run the same command again.
+* **Stop:** `Ctrl+C`, or `docker compose down`.
+
+### Run the automated checks
+
+```
+docker compose run --build --rm tests
+```
+
+This runs the generation test, the chunk benchmark and a top-down map. It also takes 10 screenshots of key places (downtown, hospital, school, stadium, city hall, suburbs, industry) without needing a GPU.
+Everything is written to `./docker-out/` (`map.png`, `shot_0.png` ... `shot_9.png`). The screenshots use software rendering, so this step takes a few minutes.
+
+### Files
+
+```
+docker-compose.yml     services "web" (port 8080) and "tests"
+docker/Dockerfile      stages: godot -> project (import) -> tests | templates -> export -> web (nginx)
+docker/nginx.conf      adds the COOP/COEP headers needed by the threaded web build
+docker/run-tests.sh    what the tests container runs
+export_presets.cfg     "Web" (threads) and "Web Lite" (no threads) presets
+```
+
 ## What gets generated
 
 The city is generated from one seed (`CityConfig.seed`), so it is the same on every device.
