@@ -4,3 +4,6 @@
 *.translation
 /build/
 /docker-out/
+
+# Sketchfab Standard licence: keep the raw pack out of the repository
+FREEMODELS/_incoming/public_buildings_pack.glb

@@ -9,40 +9,59 @@ const Kind := CityTypes.Kind
 
 ## kind, lot size (building + its square / parking), how many, district anchor
 ## it should be close to, zones it may replace lots in.
+## The stadium, coliseum, city hall, art museum, main school and cemetery have
+## their own plots (DistrictPlanner.PLOTS) and are not listed here.
+## "near" is an anchor name, or a list of names (one building near each):
+## the main services stand once, bigger, near the civic center; small police
+## and fire stations, clinics and schools serve the other districts.
 const SPECS := [
-	{"kind": Kind.CITY_HALL, "size": Vector2i(4, 4), "count": 1, "near": "civic",
-		"zones": [Zone.COMMERCIAL]},
+	# Main public buildings, one of each.
+	{"kind": Kind.POLICE_HQ, "size": Vector2i(4, 4), "count": 1, "near": "civic",
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
+	{"kind": Kind.MAIN_HOSPITAL, "size": Vector2i(4, 5), "count": 1, "near": "shops",
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
 	{"kind": Kind.BANK, "size": Vector2i(3, 3), "count": 1, "near": "civic",
 		"zones": [Zone.COMMERCIAL]},
-	{"kind": Kind.POLICE, "size": Vector2i(2, 2), "count": 1, "near": "civic",
+	{"kind": Kind.FIRE_STATION, "size": Vector2i(3, 3), "count": 1, "near": "civic",
 		"zones": [Zone.COMMERCIAL, Zone.SUBURBAN]},
-	{"kind": Kind.FIRE_STATION, "size": Vector2i(2, 2), "count": 1, "near": "civic",
-		"zones": [Zone.COMMERCIAL, Zone.SUBURBAN]},
-	{"kind": Kind.HOSPITAL, "size": Vector2i(4, 4), "count": 1, "near": "shops",
+	{"kind": Kind.POST_OFFICE, "size": Vector2i(3, 2), "count": 1, "near": "post",
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.QUARTER]},
+	{"kind": Kind.MUSEUM, "size": Vector2i(4, 4), "count": 1, "near": "shops", "seed_base": 1,
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
-	{"kind": Kind.SCHOOL, "size": Vector2i(3, 3), "count": 1, "near": "suburb_ne",
+	{"kind": Kind.PHARMACY, "size": Vector2i(2, 2), "count": 1, "near": "shops",
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
+	{"kind": Kind.GAS_STATION, "size": Vector2i(3, 2), "count": 1, "near": "suburb_e",
+		"zones": [Zone.SUBURBAN, Zone.APARTMENT, Zone.COMMERCIAL]},
+	{"kind": Kind.CHURCH, "size": Vector2i(3, 4), "count": 1, "near": "church",
 		"zones": [Zone.SUBURBAN]},
-	{"kind": Kind.CHURCH, "size": Vector2i(2, 3), "count": 1, "near": "suburb_ne",
-		"zones": [Zone.SUBURBAN]},
-	{"kind": Kind.STADIUM, "size": Vector2i(5, 4), "count": 1, "near": "sports",
-		"zones": [Zone.APARTMENT, Zone.COMMERCIAL, Zone.SUBURBAN]},
+	{"kind": Kind.HOTEL, "size": Vector2i(3, 3), "near": ["hotels", "hotels_b"],
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.DOWNTOWN], "same_gap": 16.0, "variants": true},
 	{"kind": Kind.DRIVE_IN, "size": Vector2i(4, 3), "count": 1, "near": "sports",
 		"zones": [Zone.APARTMENT, Zone.COMMERCIAL, Zone.SUBURBAN, Zone.ENTERTAINMENT]},
 	{"kind": Kind.CASINO, "size": Vector2i(3, 3), "count": 2, "near": "vegas",
 		"zones": [Zone.ENTERTAINMENT]},
-	{"kind": Kind.FERRIS_WHEEL, "size": Vector2i(2, 2), "count": 1, "near": "vegas",
-		"zones": [Zone.ENTERTAINMENT]},
-	{"kind": Kind.CINEMA, "size": Vector2i(2, 3), "count": 1, "near": "vegas",
+	{"kind": Kind.FERRIS_WHEEL, "size": Vector2i(3, 3), "count": 1, "near": "beach_quarter",
+		"zones": [Zone.QUARTER]},
+	{"kind": Kind.CRANE, "size": Vector2i(2, 2), "count": 1, "near": "quarter",
+		"zones": [Zone.QUARTER]},
+	{"kind": Kind.CINEMA, "size": Vector2i(4, 3), "count": 1, "near": "vegas",
 		"zones": [Zone.ENTERTAINMENT, Zone.COMMERCIAL]},
 	{"kind": Kind.SHOPPING_CENTER, "size": Vector2i(4, 2), "count": 1, "near": "shops",
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
-	{"kind": Kind.UN_HQ, "size": Vector2i(3, 3), "count": 1, "near": "uptown",
+	{"kind": Kind.UN_HQ, "size": Vector2i(4, 4), "count": 1, "near": "uptown", "show_front": true,
 		"zones": [Zone.APARTMENT, Zone.DOWNTOWN, Zone.COMMERCIAL]},
-	{"kind": Kind.COLISEUM, "size": Vector2i(4, 4), "count": 1, "near": "vegas",
-		"zones": [Zone.ENTERTAINMENT]},
 	# Famous towers in the heart of downtown, each one once (variant = order).
-	{"kind": Kind.LANDMARK, "size": Vector2i(2, 2), "count": 7, "near": "downtown",
+	{"kind": Kind.LANDMARK, "size": Vector2i(3, 3), "count": 7, "near": "downtown",
 		"zones": [Zone.DOWNTOWN], "gap": 3.0, "same_gap": 4.0, "variants": true},
+	# Small services of the districts.
+	{"kind": Kind.POLICE, "size": Vector2i(2, 2), "near": ["vegas", "suburb_e", "quarter", "uptown"],
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN, Zone.ENTERTAINMENT, Zone.QUARTER]},
+	{"kind": Kind.FIRE_STATION, "size": Vector2i(2, 2), "near": ["shops", "suburb_ne", "suburb_s"],
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN]},
+	{"kind": Kind.HOSPITAL, "size": Vector2i(3, 3), "near": ["uptown", "sports", "suburb_e"],
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN], "same_gap": 20.0},
+	{"kind": Kind.SCHOOL, "size": Vector2i(3, 3), "near": ["suburb_s", "uptown", "sports"],
+		"zones": [Zone.SUBURBAN, Zone.APARTMENT]},
 ]
 ## Any two services keep at least this distance (no "service clusters").
 const ANY_SERVICE_GAP := 5.0
@@ -66,15 +85,44 @@ func _init(cfg: CityConfig, data: CityData, districts: DistrictPlanner, lots: Lo
 
 
 func build(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
+	_build_plots()
 	for spec in SPECS:
+		var near = spec["near"]
+		var anchors: Array = near if near is Array else []
+		var count: int = anchors.size() if near is Array else int(spec["count"])
+		if anchors.is_empty():
+			for i in count:
+				anchors.append(near)
 		var placed := 0
-		for b in _candidate_order(spec, blocks, zones):
-			if placed >= int(spec["count"]):
-				break
-			var seed := placed if spec.get("variants", false) else -1
-			if _try_place(spec, blocks[b], seed):
-				placed += 1
-		counts[spec["kind"]] = placed
+		for n in count:
+			var seed := int(spec.get("seed_base", 0)) + placed if spec.get("variants", false) \
+					or spec.has("seed_base") else -1
+			for b in _candidate_order(spec, anchors[n], blocks, zones):
+				if _try_place(spec, blocks[b], seed):
+					placed += 1
+					break
+		counts[spec["kind"]] = counts.get(spec["kind"], 0) + placed
+
+
+## Each big building fills its plot, facing a side seen by the camera.
+func _build_plots() -> void:
+	for p in _districts.plots:
+		var r: Rect2i = p[1]
+		if not is_free_land(r):
+			push_warning("[City] plot of kind %d is not on dry land" % p[0])
+			continue
+		var facing := LotPlanner.road_facing(_data, r, CityTypes.hash2(r.position.x, r.position.y), true)
+		claim(r, p[0], facing if facing >= 0 else 2, Zone.CIVIC, 0)
+		counts[p[0]] = 1
+
+
+## Removes the lot under one cell (the road to the bridge goes through it).
+func clear_cell(x: int, y: int) -> void:
+	var i := _data.idx(x, y)
+	var old := _lots.owner[i]
+	if old >= 0:
+		_removed[old] = true
+		_lots.owner[i] = -1
 
 
 ## Removes the lots replaced by services; call once everything is placed.
@@ -83,9 +131,10 @@ func finish() -> void:
 
 
 ## Blocks able to hold the service, closest to its district anchor first.
-func _candidate_order(spec: Dictionary, blocks: Array[Rect2i], zones: PackedByteArray) -> Array:
+func _candidate_order(spec: Dictionary, near: String, blocks: Array[Rect2i],
+		zones: PackedByteArray) -> Array:
 	var size: Vector2i = spec["size"]
-	var anchor: Vector2 = _districts.anchors[spec["near"]]
+	var anchor: Vector2 = _districts.anchors[near]
 	var scored := []
 	for i in blocks.size():
 		var r := blocks[i]
@@ -121,6 +170,8 @@ func _try_place(spec: Dictionary, block: Rect2i, seed: int) -> bool:
 		var facing := LotPlanner.road_facing(_data, r, CityTypes.hash2(p.x, p.y), true)
 		if facing < 0:
 			continue
+		if spec.get("show_front", false) and (facing == 0 or facing == 3):
+			facing = 2 # front (and signs) towards the camera
 		claim(r, spec["kind"], facing, Zone.CIVIC, seed)
 		return true
 	return false

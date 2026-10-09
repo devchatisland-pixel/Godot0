@@ -43,12 +43,21 @@ func build(cfg: CityConfig, data: CityData) -> void:
 	_material.set_shader_parameter("deep_color", DEEP_SEA)
 
 	_material.set_shader_parameter("map_size", size)
+	if data.fog != null:
+		var fog := data.fog
+		var n := FogIslandShaper.SIZE
+		_material.set_shader_parameter("fog_elevation_tex", ImageTexture.create_from_image(
+				Image.create_from_data(n, n, false, Image.FORMAT_L8, fog.elevation)))
+		_material.set_shader_parameter("fog_zone_tex", ImageTexture.create_from_image(
+				Image.create_from_data(n, n, false, Image.FORMAT_RGBA8, fog.colors)))
+		_material.set_shader_parameter("fog_origin", fog.origin)
+		_material.set_shader_parameter("fog_size", float(n))
 
 	# One plane for island and sea; it reaches far beyond the map so the ocean
 	# looks endless at any zoom.
 	var ground := MeshInstance3D.new()
 	var plane := PlaneMesh.new()
-	plane.size = Vector2(size * 12.0, size * 12.0)
+	plane.size = Vector2(size * 14.0, size * 14.0)
 	ground.mesh = plane
 	ground.material_override = _material
 	ground.position = Vector3(size * 0.5, 0.0, size * 0.5)

@@ -1,0 +1,9 @@
+{
+	"file": "un_tower.glb",
+	"models": [
+		{
+			"cat": "UN_TOWER",
+			"node": "un_tower"
+		}
+	]
+}

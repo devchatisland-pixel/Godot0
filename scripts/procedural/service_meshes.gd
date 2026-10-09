@@ -2,8 +2,9 @@ class_name ServiceMeshes
 extends RefCounted
 ## Public buildings missing from the kits, modelled in the same low-poly style.
 ## Every mesh is centred on its lot, sits on y = 0 and faces +Z (its street).
-## Sizes are in cells: hospital 3x3, school 3x3, fire station 2x2, police 2x2,
-## church 2x3. The bank is in CivicMeshes.
+## They are the small services of the districts (clinic, school, police and
+## fire stations) and the church; the building placer scales them to their lot.
+## The bank is in CivicMeshes.
 
 const WHITE := Color("f1eff6")
 const LAVENDER := Color("c9c6d6")
@@ -45,17 +46,24 @@ static func hospital() -> ArrayMesh:
 	# Red stripe + entrance canopy.
 	k.box(Vector3(-1.31, 0.5, 0.44), Vector3(2.62, 0.06, 0.02), RED)
 	k.box(Vector3(-0.35, 0.28, 0.45), Vector3(0.7, 0.05, 0.3), RED)
-	# Red cross on the tower front.
-	k.box(Vector3(-0.07, 1.45, 0.05), Vector3(0.14, 0.42, 0.02), RED)
-	k.box(Vector3(-0.21, 1.59, 0.05), Vector3(0.42, 0.14, 0.02), RED)
 	# Helipad: dark pad, white ring and the H.
 	var pad := Vector3(0, 2.0, -0.55)
 	k.cylinder(pad, 0.5, 0.5, 0.03, 16, ASPHALT)
 	k.disc(pad + Vector3(0, 0.032, 0), Vector2(0.42, 0.42), 16, LINE)
 	k.disc(pad + Vector3(0, 0.034, 0), Vector2(0.37, 0.37), 16, WHITE)
+	# The red H and the red cross on the front are neon: bright red at night.
+	k.neon(true)
 	k.box(pad + Vector3(-0.17, 0.035, -0.17), Vector3(0.07, 0.005, 0.34), RED)
 	k.box(pad + Vector3(0.10, 0.035, -0.17), Vector3(0.07, 0.005, 0.34), RED)
 	k.box(pad + Vector3(-0.10, 0.035, -0.035), Vector3(0.2, 0.005, 0.07), RED)
+	k.box(Vector3(-0.07, 1.45, 0.05), Vector3(0.14, 0.42, 0.025), RED)
+	k.box(Vector3(-0.21, 1.59, 0.05), Vector3(0.42, 0.14, 0.025), RED)
+	k.neon(false)
+	k.glow(true)
+	for i in 8:
+		var a := TAU * i / 8.0
+		k.block(pad + Vector3(cos(a) * 0.45, 0.03, sin(a) * 0.45), Vector3(0.04, 0.03, 0.04), Color.WHITE)
+	k.glow(false)
 	# Rooftop machines on the wing.
 	k.block(Vector3(0.95, 0.55, -0.9), Vector3(0.35, 0.18, 0.3), LAVENDER)
 	k.block(Vector3(-1.0, 0.55, 0.2), Vector3(0.3, 0.15, 0.3), LAVENDER)

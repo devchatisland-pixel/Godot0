@@ -6,7 +6,8 @@ extends SceneTree
 ##   FREEMODELS/curated/<out>.glb          the buildings
 ##   FREEMODELS/curated/<out>.models.json  node name -> category
 ## Run (needs a renderer to read textures):
-##   godot --rendering-driver opengl3 --script res://tools/curate_models.gd
+##   godot --rendering-driver opengl3 --script res://tools/curate_models.gd [-- <out> ...]
+## With pack names ("out") after "--", only those packs are rebuilt.
 
 const SPEC := "res://tools/curate_spec.json"
 const OUT_DIR := "res://FREEMODELS/curated"
@@ -15,6 +16,8 @@ var _tex_max := 512
 var _default_tex_max := 512
 ## Optional colour forced on every material of a pack (untextured white models).
 var _albedo := Color(0, 0, 0, 0)
+## Keep the emission map (night lights painted in the texture).
+var _keep_emission := false
 var _tex_cache := {}
 var _mat_cache := {}
 
@@ -24,8 +27,10 @@ func _init() -> void:
 	var spec: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(SPEC))
 	_default_tex_max = int(spec.get("texture_max", 512))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT_DIR))
+	var only := OS.get_cmdline_user_args()
 	for pack in spec["packs"]:
-		await _curate(pack)
+		if only.is_empty() or only.has(pack["out"]):
+			await _curate(pack)
 	quit()
 
 
@@ -43,6 +48,7 @@ func _curate(pack: Dictionary) -> void:
 	_tex_max = int(pack.get("texture_max", _default_tex_max))
 	pack["_scale"] = _pack_scale(src, pack)
 	_albedo = Color(pack["albedo"]) if pack.has("albedo") else Color(0, 0, 0, 0)
+	_keep_emission = pack.get("keep_emission", false)
 	var items: Array = pack["items"] if pack.has("items") else _auto_items(src, pack)
 	var out := Node3D.new()
 	out.name = pack["out"]
@@ -89,10 +95,14 @@ func _build_item(src: Node, out: Node3D, item: Dictionary, pack: Dictionary) -> 
 	var s := float(pack["_scale"]) * float(item.get("scale_mul", 1.0))
 	if pack.has("footprint"):
 		s = float(pack["footprint"]) / maxf(box.size.x, box.size.z)
+	if item.has("height"):
+		s = float(item["height"]) / box.size.y
 	if pack.has("max_height") and box.size.y * s > float(pack["max_height"]):
 		s = float(pack["max_height"]) / box.size.y
 	var base := Vector3(box.get_center().x, box.position.y, box.get_center().z)
-	holder.transform = Transform3D(Basis.from_scale(Vector3(s, s, s)), -base * s)
+	# "yaw" turns the building so that its front looks towards +Z.
+	var rot := Basis(Vector3.UP, deg_to_rad(float(item.get("yaw", 0.0))))
+	holder.transform = Transform3D(rot * Basis.from_scale(Vector3(s, s, s)), rot * (-base * s))
 	for mi in _meshes(holder):
 		_slim_materials(mi)
 	return holder
@@ -174,6 +184,10 @@ func _slim(mat: BaseMaterial3D) -> StandardMaterial3D:
 	m.albedo_color = _albedo if _albedo.a > 0.0 else mat.albedo_color
 	m.albedo_texture = _small(mat.albedo_texture)
 	m.vertex_color_use_as_albedo = mat.vertex_color_use_as_albedo
+	if _keep_emission and mat.emission_enabled:
+		m.emission_enabled = true
+		m.emission = mat.emission
+		m.emission_texture = _small(mat.emission_texture)
 	m.transparency = mat.transparency
 	m.cull_mode = mat.cull_mode
 	m.roughness = 0.9

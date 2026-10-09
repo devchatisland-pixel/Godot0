@@ -67,6 +67,18 @@ enum Kind {
 	UN_HQ,            # United Nations headquarters
 	COLISEUM,
 	PRISON,           # cellhouse of the prison island
+	HOTEL,            # grand hotels of the city centre (variant = seed)
+	MUSEUM,
+	POST_OFFICE,
+	CEMETERY,
+	BUNKER,           # military bunker in the desert
+	AIRBASE,          # military landing strip with hangar and jets
+	PHARMACY,
+	GAS_STATION,
+	CRANE,            # construction crane in the colourful quarter
+	POLICE_HQ,        # main police station (small ones are POLICE)
+	MAIN_HOSPITAL,    # main hospital (small clinics are HOSPITAL)
+	MAIN_SCHOOL,      # main school with its sports ground (small ones are SCHOOL)
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -75,7 +87,9 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.CASINO, Kind.FERRIS_WHEEL, Kind.DRIVE_IN, Kind.LIGHTHOUSE,
 	Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
 	Kind.LANDMARK, Kind.SHOPPING_CENTER, Kind.CINEMA, Kind.OUTPOST,
-	Kind.UN_HQ, Kind.COLISEUM, Kind.PRISON,
+	Kind.UN_HQ, Kind.COLISEUM, Kind.PRISON, Kind.HOTEL, Kind.MUSEUM,
+	Kind.POST_OFFICE, Kind.CEMETERY, Kind.BUNKER, Kind.AIRBASE, Kind.PHARMACY,
+	Kind.GAS_STATION, Kind.CRANE, Kind.POLICE_HQ, Kind.MAIN_HOSPITAL, Kind.MAIN_SCHOOL,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

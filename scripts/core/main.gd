@@ -86,6 +86,8 @@ func _start_city() -> void:
 	EntertainmentMeshes.build_all(library)
 	NatureMeshes.build_all(library)
 	CivicMeshes.build_all(library)
+	PublicMeshes.build_all(library)
+	MilitaryMeshes.build_all(library)
 	NightWindows.apply(library)
 	var ground := GroundLayer.new()
 	ground.name = "Ground"
@@ -99,15 +101,22 @@ func _start_city() -> void:
 	add_child(streamer)
 	streamer.setup(cfg, data, library)
 
-	# Start with the whole island in view.
+	var fog_island := FogIsland.new()
+	fog_island.name = "FogIsland"
+	add_child(fog_island)
+	fog_island.build(cfg, data, library)
+
+	# Start with the whole island in view; the fog island can be reached too.
 	var c := Vector2(data.size, data.size) * 0.5
 	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y), data.size * 0.62)
+	camera.set_bounds(Rect2(0, 0, data.size + FogIslandShaper.SIZE, data.size))
 	_overlay.finish(data.city_name)
 
 	day_night = DayNight.new()
 	day_night.name = "DayNight"
 	add_child(day_night)
 	day_night.setup(_sun, _env, cfg.day_cycle_seconds, 0.05)
+	day_night.fog_island = fog_island
 	_phase = Phase.RUNNING
 
 

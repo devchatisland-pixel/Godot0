@@ -34,7 +34,7 @@ const ISLETS := [
 	{"at": Vector2(0.05, 1.2), "radius": 0.034},
 	{"at": Vector2(0.82, 0.84), "radius": 0.028},
 	{"at": Vector2(-0.55, 1.05), "radius": 0.023},
-	{"at": Vector2(-0.9, -0.92), "radius": 0.042, "prison": true},
+	{"at": Vector2(-0.92, -0.95), "radius": 0.054, "prison": true},
 ]
 
 ## Centre and radius (cells) of the prison island; radius 0 = none.

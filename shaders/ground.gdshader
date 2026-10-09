@@ -13,6 +13,11 @@ uniform vec3 sand_color : source_color = vec3(0.91, 0.83, 0.60);
 uniform vec3 wet_sand_color : source_color = vec3(0.80, 0.74, 0.55);
 uniform vec3 rock_color : source_color = vec3(0.60, 0.47, 0.33);
 uniform float map_size = 640.0;
+// The island hidden in the fog, east of the map (FogIslandShaper).
+uniform sampler2D fog_elevation_tex : filter_linear, repeat_disable;
+uniform sampler2D fog_zone_tex : source_color, filter_nearest, repeat_disable;
+uniform vec2 fog_origin = vec2(-100000.0);
+uniform float fog_size = 128.0;
 
 varying vec2 map_uv;
 
@@ -24,6 +29,11 @@ void fragment() {
 	vec2 uv = clamp(map_uv, vec2(0.0), vec2(1.0));
 	float e = texture(elevation_tex, uv).r - 128.0 / 255.0;
 	vec4 zone = texture(zone_tex, uv);
+	vec2 fog_uv = (map_uv * map_size - fog_origin) / fog_size;
+	if (map_uv.x > 1.0 && fog_uv.x >= 0.0 && fog_uv.y >= 0.0 && fog_uv.x <= 1.0 && fog_uv.y <= 1.0) {
+		e = texture(fog_elevation_tex, fog_uv).r - 128.0 / 255.0;
+		zone = texture(fog_zone_tex, fog_uv);
+	}
 	vec3 land = zone.rgb;
 	vec3 col;
 	if (e < 0.0) {

@@ -18,6 +18,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("bank", bank())
 	lib.add_named("un_hq", un_headquarters())
 	lib.add_named("prison", prison())
+	lib.add_named("un_signs", un_signs())
 
 
 # --- Bank (3x3): stone base with columns, glass tower, big "$" facing the street ---
@@ -76,6 +77,16 @@ static func un_headquarters() -> ArrayMesh:
 	k.glow(true)
 	k.block(Vector3(0, 4.63, -0.84), Vector3(0.12, 0.05, 0.12), Color.WHITE)
 	k.glow(false)
+	return k.commit()
+
+
+## Emblem and name of the U.N. for the front of the U.N. tower model: a unit
+## panel centred on x, bottom at y = 0, facing +Z (placed and scaled by the
+## building placer).
+static func un_signs() -> ArrayMesh:
+	var k := MeshKit.new()
+	k.front_sign(0.0, 0.32, 0.0, 0.62, "un_emblem")
+	k.front_sign(0.0, 0.0, 0.0, 1.0, "sign_un")
 	return k.commit()
 
 

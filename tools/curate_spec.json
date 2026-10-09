@@ -254,7 +254,7 @@
             "PizzaTables",
             "PizzaBoard"
           ],
-          "cat": "BIZ_SHOP"
+          "cat": "BIZ_PIZZA"
         },
         {
           "id": "burger",
@@ -431,6 +431,122 @@
             "node-0_0"
           ],
           "cat": "COLISEUM"
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/public_buildings_pack.glb",
+      "out": "public_main",
+      "comment": "The main public buildings, one of each. Fronts point to +X in the pack.",
+      "scale_ref": {
+        "node": "PublicBuilding_Police",
+        "footprint": 1.85
+      },
+      "items": [
+        {
+          "id": "police_hq",
+          "nodes": [
+            "PublicBuilding_Police"
+          ],
+          "cat": "POLICE_MAIN",
+          "yaw": -90
+        },
+        {
+          "id": "city_hall",
+          "nodes": [
+            "PublicBuilding_CityHall"
+          ],
+          "cat": "CITY_HALL_MAIN",
+          "yaw": -90
+        },
+        {
+          "id": "hospital",
+          "nodes": [
+            "PublicBuilding_Hospital"
+          ],
+          "cat": "HOSPITAL_MAIN",
+          "yaw": -90
+        },
+        {
+          "id": "school",
+          "nodes": [
+            "PublicBuilding_School"
+          ],
+          "cat": "SCHOOL_MAIN",
+          "yaw": -90
+        },
+        {
+          "id": "pharmacy",
+          "nodes": [
+            "PublicBuilding_Pharmacy"
+          ],
+          "cat": "PHARMACY"
+        },
+        {
+          "id": "gas_station",
+          "nodes": [
+            "PublicBuilding_GasStation"
+          ],
+          "cat": "GAS_STATION",
+          "yaw": -90
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/building_3.glb",
+      "out": "un_tower",
+      "footprint": 1.9,
+      "items": [
+        {
+          "id": "un_tower",
+          "nodes": [
+            "Box001"
+          ],
+          "cat": "UN_TOWER"
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/building_crane.glb",
+      "out": "crane",
+      "items": [
+        {
+          "id": "crane",
+          "nodes": [
+            "grua"
+          ],
+          "cat": "CRANE",
+          "height": 7.0
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/golden_gate_bridge.glb",
+      "out": "golden_gate",
+      "items": [
+        {
+          "id": "golden_gate",
+          "nodes": [
+            "Cube.001"
+          ],
+          "cat": "BRIDGE",
+          "height": 6.0
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/night_city_skyline.glb",
+      "out": "night_skyline",
+      "keep_emission": true,
+      "texture_max": 1024,
+      "footprint": 26.0,
+      "items": [
+        {
+          "id": "night_skyline",
+          "nodes": [
+            "Cube.001"
+          ],
+          "cat": "SKYLINE"
         }
       ]
     }

@@ -6,16 +6,26 @@ const Kind := CityTypes.Kind
 const SHOTS := [
 	{"zoom": 80.0, "at": "center"},
 	{"zoom": 80.0, "at": "center", "night": true},
-	{"zoom": 18.0, "at": Kind.BANK},
+	{"zoom": 120.0, "at": "both"},
+	{"zoom": 70.0, "at": "fog"},
+	{"zoom": 70.0, "at": "fog", "night": true},
+	{"zoom": 30.0, "at": "bridge"},
+	{"zoom": 34.0, "at": Kind.AIRBASE},
+	{"zoom": 16.0, "at": Kind.CEMETERY},
+	{"zoom": 18.0, "at": Kind.MUSEUM},
+	{"zoom": 14.0, "at": Kind.HOTEL},
+	{"zoom": 16.0, "at": Kind.MAIN_HOSPITAL, "night": true},
+	{"zoom": 22.0, "at": Kind.STADIUM, "night": true},
+	{"zoom": 14.0, "at": Kind.DRIVE_IN, "night": true},
 	{"zoom": 22.0, "at": Kind.UN_HQ},
-	{"zoom": 12.0, "at": Kind.HOSPITAL},
-	{"zoom": 16.0, "at": Kind.PRISON},
-	{"zoom": 22.0, "at": Kind.COLISEUM},
-	{"zoom": 22.0, "at": Kind.COLISEUM, "night": true},
-	{"zoom": 14.0, "at": Kind.POLICE},
-	{"zoom": 20.0, "at": Kind.STADIUM},
-	{"zoom": 30.0, "at": Kind.LANDMARK, "night": true},
+	{"zoom": 20.0, "at": Kind.POLICE_HQ},
+	{"zoom": 22.0, "at": Kind.CITY_HALL},
+	{"zoom": 20.0, "at": Kind.MAIN_SCHOOL},
+	{"zoom": 22.0, "at": Kind.FERRIS_WHEEL},
+	{"zoom": 30.0, "at": Kind.LANDMARK},
 	{"zoom": 16.0, "at": Kind.CASINO},
+	{"zoom": 22.0, "at": Kind.COLISEUM},
+	{"zoom": 14.0, "at": Kind.BUNKER},
 ]
 
 var _dir := "user://"
@@ -38,7 +48,7 @@ func _run() -> void:
 	var base := cam.target
 	for s in SHOTS.size():
 		var shot: Dictionary = SHOTS[s]
-		cam.target = base if shot["at"] is String else _find(data, shot["at"], base)
+		cam.target = _place(data, shot["at"], base)
 		cam.zoom = shot["zoom"]
 		cam.set("_zoom_goal", shot["zoom"])
 		var frames := 0
@@ -55,6 +65,20 @@ func _run() -> void:
 		get_viewport().get_texture().get_image().save_png(path)
 		print("[Capture] ", path, " at ", shot["at"], " chunks ", main.streamer.loaded_counts())
 	get_tree().quit()
+
+
+func _place(data: CityData, at, base: Vector3) -> Vector3:
+	match at:
+		"center":
+			return base
+		"both":
+			return Vector3(data.size, 0, data.size * 0.5)
+		"fog":
+			var c := data.fog.center()
+			return Vector3(c.x, 0, c.y)
+		"bridge":
+			return Vector3(data.bridge.x + 10, 0, data.bridge.y)
+	return _find(data, at, base)
 
 
 ## Centre of the building of `kind` closest to `near` (at a little distance for houses).

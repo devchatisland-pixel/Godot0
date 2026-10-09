@@ -25,6 +25,8 @@ var _cycle := 240.0
 var _time := 0.0
 ## 0 = full day, 1 = full night (read by tests and UI if needed).
 var night := 0.0
+## The fog over the hidden island darkens with the night.
+var fog_island: FogIsland
 
 
 func setup(sun: DirectionalLight3D, env: Environment, cycle_seconds: float, start_phase: float) -> void:
@@ -59,6 +61,8 @@ func _apply(phase: float) -> void:
 	_env.background_color = _sky_day.lerp(SKY_NIGHT, night)
 	for entry in SignAtlas.night_materials():
 		(entry[0] as BaseMaterial3D).emission_energy_multiplier = lerpf(entry[1], entry[2], night)
+	if fog_island != null:
+		fog_island.set_night(night)
 
 
 static func night_amount(phase: float) -> float:

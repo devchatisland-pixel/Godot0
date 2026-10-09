@@ -1,6 +1,7 @@
 class_name LandmarkMeshes
 extends RefCounted
-## Unique landmarks (city hall, stadium), park fountain and the generic meshes
+## Stadium (fallback) and its floodlights, park fountain and lake, the lit
+## helipad of the main hospital and the generic meshes
 ## used for the far level of detail and as fallback when a kit is missing.
 
 const STONE := Color("e6dcc6")
@@ -17,41 +18,14 @@ const WATER := Color("5fb7e0")
 
 
 static func build_all(lib: ModelLibrary) -> void:
-	lib.add_named("city_hall", city_hall())
 	lib.add_named("stadium", stadium())
 	lib.add_named("fountain", fountain())
 	lib.add_named("pond", pond())
 	lib.add_named("box", unit_box())
 	lib.add_named("lamp_bulb", lamp_bulb())
 	lib.add_named("tree", fallback_tree())
-
-
-# --- City hall: stairs, colonnade, pediment and a dome ------------------------------------
-static func city_hall() -> ArrayMesh:
-	var k := MeshKit.new()
-	# Plaza and stairs.
-	k.box(Vector3(-1.45, 0, -1.45), Vector3(2.9, 0.03, 2.9), Color("d8d3c4"))
-	for i in 3:
-		k.box(Vector3(-0.8 + i * 0.05, 0.03 + i * 0.05, 0.7 - i * 0.08), Vector3(1.6 - i * 0.1, 0.05, 0.35), STONE)
-	var body := Vector3(-1.2, 0.03, -1.1)
-	var body_size := Vector3(2.4, 0.9, 1.65)
-	k.box(body, body_size, STONE, ROOF)
-	k.windows(body, body_size, 2, 7, WINDOW)
-	# Colonnade and pediment.
-	for i in 6:
-		k.block(Vector3(-0.62 + i * 0.25, 0.18, 0.72), Vector3(0.08, 0.7, 0.08), WHITE)
-	k.box(Vector3(-0.75, 0.88, 0.55), Vector3(1.5, 0.08, 0.3), WHITE)
-	k.gable(Vector3(-0.75, 0.96, 0.55), Vector3(1.5, 0.25, 0.3), WHITE, STONE)
-	# Drum and stepped dome.
-	var top := Vector3(0, 0.93, -0.3)
-	k.cylinder(top, 0.5, 0.5, 0.35, 16, WHITE)
-	for i in 4:
-		var r := 0.48 * cos(i * 0.38)
-		var r2 := 0.48 * cos((i + 1) * 0.38)
-		k.cylinder(top + Vector3(0, 0.35 + i * 0.12, 0), r, r2, 0.12, 16, DOME)
-	k.block(top + Vector3(0, 0.83, 0), Vector3(0.03, 0.3, 0.03), WHITE)
-	k.box(top + Vector3(0.015, 1.0, 0), Vector3(0.2, 0.12, 0.01), Color("d9474f"))
-	return k.commit()
+	lib.add_named("stadium_lights", stadium_lights())
+	lib.add_named("helipad_h", helipad_h())
 
 
 # --- Stadium: oval stands, pitch and floodlights (5x4 cells) --------------------------------
@@ -120,6 +94,39 @@ static func lamp_bulb() -> ArrayMesh:
 	var k := MeshKit.new()
 	k.glow(true)
 	k.block(Vector3(0, -0.035, 0), Vector3(0.07, 0.035, 0.07), Color.WHITE)
+	k.glow(false)
+	return k.commit()
+
+
+## Four floodlight masts at the corners of a 1x1 square (scaled to the plot).
+static func stadium_lights() -> ArrayMesh:
+	var k := MeshKit.new()
+	for x in [-0.47, 0.47]:
+		for z in [-0.47, 0.47]:
+			k.block(Vector3(x, 0, z), Vector3(0.012, 1.0, 0.012), CONCRETE)
+			k.block(Vector3(x, 1.0, z), Vector3(0.05, 0.05, 0.03), Color("5a5d6e"))
+	k.glow(true)
+	for x in [-0.47, 0.47]:
+		for z in [-0.47, 0.47]:
+			k.block(Vector3(x - signf(x) * 0.012, 1.005, z - signf(z) * 0.012), Vector3(0.045, 0.04, 0.035), Color.WHITE)
+	k.glow(false)
+	return k.commit()
+
+
+## Red neon H in a ring of lights, laid on the roof of the main hospital.
+static func helipad_h() -> ArrayMesh:
+	var k := MeshKit.new()
+	var red := Color("ff2a3a")
+	k.disc(Vector3(0, 0.0, 0), Vector2(0.5, 0.5), 20, Color("f4f2f8"))
+	k.neon(true)
+	k.box(Vector3(-0.22, 0.005, -0.25), Vector3(0.1, 0.01, 0.5), red)
+	k.box(Vector3(0.12, 0.005, -0.25), Vector3(0.1, 0.01, 0.5), red)
+	k.box(Vector3(-0.12, 0.005, -0.05), Vector3(0.24, 0.01, 0.1), red)
+	k.neon(false)
+	k.glow(true)
+	for i in 10:
+		var a := TAU * i / 10.0
+		k.block(Vector3(cos(a) * 0.47, 0.0, sin(a) * 0.47), Vector3(0.05, 0.03, 0.05), Color.WHITE)
 	k.glow(false)
 	return k.commit()
 

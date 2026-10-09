@@ -24,19 +24,40 @@ const FAR_COLORS := {
 	Kind.LANDMARK: Color("c9c2b0"), Kind.SHOPPING_CENTER: Color("5aa9d6"),
 	Kind.CINEMA: Color("e98b8b"), Kind.OUTPOST: Color("a9876a"), Kind.QUARTER_BLDG: Color("efe6e3"),
 	Kind.UN_HQ: Color("4f8fb8"), Kind.COLISEUM: Color("d8c7a0"), Kind.PRISON: Color("d7d2c4"),
+	Kind.HOTEL: Color("e9dcc8"), Kind.MUSEUM: Color("e6dcc6"), Kind.POST_OFFICE: Color("b5654a"),
+	Kind.CEMETERY: Color("74b85a"), Kind.BUNKER: Color("d9b06a"), Kind.AIRBASE: Color("6b6e78"),
+	Kind.PHARMACY: Color("f1eff6"), Kind.GAS_STATION: Color("f1eff6"), Kind.CRANE: Color("c0392b"),
+	Kind.POLICE_HQ: Color("3f6fd0"), Kind.MAIN_HOSPITAL: Color("f4f2f8"), Kind.MAIN_SCHOOL: Color("e07a5f"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
+## Main buildings fall back on the small ones when their pack is missing.
 const NAMED := {
 	Kind.HOSPITAL: ["hospital"], Kind.SCHOOL: ["school"], Kind.FIRE_STATION: ["fire_station"],
-	Kind.POLICE: ["police"], Kind.CITY_HALL: ["city_hall"], Kind.STADIUM: ["stadium"],
+	Kind.POLICE: ["police"], Kind.CITY_HALL: ["museum_history"], Kind.STADIUM: ["stadium"],
+	Kind.POLICE_HQ: ["police"], Kind.MAIN_HOSPITAL: ["hospital"], Kind.MAIN_SCHOOL: ["school"],
+	Kind.MUSEUM: ["museum_art", "museum_history"], Kind.HOTEL: ["hotel_a", "hotel_b"],
+	Kind.POST_OFFICE: ["post_office"], Kind.CEMETERY: ["cemetery"], Kind.BUNKER: ["bunker"],
+	Kind.AIRBASE: ["airbase"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
-	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c", "club_d"],
+	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
 	Kind.LIGHTHOUSE: ["lighthouse"], Kind.TELECOM_TOWER: ["telecom_tower"],
 	Kind.SAT_DISH: ["sat_dish"], Kind.MESA: ["mesa"], Kind.POND: ["pond"],
 	Kind.UN_HQ: ["un_hq"], Kind.PRISON: ["prison"],
 }
+## Kinds whose variant is the seed itself (museums, hotels: one of each).
+const SEED_VARIANTS: Array[int] = [Kind.MUSEUM, Kind.HOTEL]
+## Small props that keep their modelled size instead of filling the lot.
+const FIXED_SIZE: Array[int] = [
+	Kind.LIGHTHOUSE, Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
+	Kind.FOUNTAIN, Kind.NIGHTCLUB, Kind.CRANE,
+]
+## Big buildings from the packs grow to fill their (big) lot, up to this scale.
+const MAX_FILL := 3.0
+## Famous New York towers: wider lots and this height at least (stretched a bit).
+const LANDMARK_SCALE := 2.1
+const LANDMARK_HEIGHT := 11.0
 
 
 ## Adds the models of building `i` to `batch` (near LOD) or a box (far LOD).
@@ -71,8 +92,12 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	var candidates := ModelPools.candidates(data, lib, i, kind)
 	if candidates.is_empty() and NAMED.has(kind):
 		var names: Array = NAMED[kind]
-		var nid := lib.named_id(names[(seed >> 3) % names.size()])
-		return {"id": nid, "xform": _fit(lib, nid, r, facing, 1.0, 1.0, 0.0, true)}
+		var v := absi(seed) if SEED_VARIANTS.has(kind) else (seed >> 3)
+		var nid := lib.named_id(names[v % names.size()])
+		var fill := 1.0
+		if not FIXED_SIZE.has(kind):
+			fill = clampf(_named_room(lib, nid, r, facing), 0.5, MAX_FILL)
+		return {"id": nid, "xform": _fit(lib, nid, r, facing, fill, 1.0, 0.0, true)}
 	if candidates.is_empty():
 		var bid := lib.named_id("box")
 		var h := 0.6 + density * 3.0
@@ -86,15 +111,29 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	match kind:
 		Kind.SKYSCRAPER:
 			# Taller towards the heart of downtown, leaving room between towers.
-			# Photo towers are not stretched (their windows would distort).
-			scale = clampf(room * 0.85, 0.8, 1.1)
-			if not ModelPools.is_photo_tower(lib, id):
+			# Photo towers (New York glass towers) only get a little taller.
+			scale = clampf(room * 0.85, 0.8, 1.25)
+			if ModelPools.is_photo_tower(lib, id):
+				stretch = 1.15 + density * 0.2
+			else:
 				stretch = 0.85 + density * 0.55 + float(seed & 7) * 0.03
 		Kind.OFFICE:
 			scale = clampf(room, 0.8, 1.15)
+		Kind.LANDMARK:
+			# Empire State, Chrysler...: much higher than the Kenney towers.
+			scale = minf(room, LANDMARK_SCALE)
+			var h := lib.bounds[id].size.y * scale
+			stretch = clampf(LANDMARK_HEIGHT / h, 1.0, 1.5)
+		Kind.CRANE:
+			scale = 1.0
 		_:
-			scale = minf(room, 1.0)
+			scale = minf(room, MAX_FILL if CityTypes.is_service(kind) else 1.0)
+	if ModelPools.is_new_york(lib, id):
+		# The New York street buildings stand taller than the Kenney kit.
+		stretch = 1.5
 	var push := 0.25 if kind == Kind.HOUSE else 0.85
+	if CityTypes.is_service(kind):
+		push = 0.0
 	return {"id": id, "xform": _fit(lib, id, r, facing, scale, stretch, push, false)}
 
 
@@ -133,6 +172,15 @@ static func _room(lib: ModelLibrary, id: int, r: Rect2i, facing: int) -> float:
 	return minf(r.size.x * 0.94 / fp.x, r.size.y * 0.94 / fp.y)
 
 
+## Room of a procedural mesh, turned the way `_fit` turns it (square_fit).
+static func _named_room(lib: ModelLibrary, id: int, r: Rect2i, facing: int) -> float:
+	var s := lib.bounds[id].size
+	var fp := Vector2(s.z, s.x) if facing % 2 == 1 else Vector2(s.x, s.z)
+	if r.size.x != r.size.y and (facing % 2 == 1) == (r.size.x > r.size.y):
+		fp = Vector2(fp.y, fp.x)
+	return minf(r.size.x * 0.96 / fp.x, r.size.y * 0.96 / fp.y)
+
+
 ## Transform placing model `id` centred in the lot, facing its street and
 ## pushed towards it by `push` (0 = centred, 1 = touching the sidewalk).
 static func _fit(lib: ModelLibrary, id: int, r: Rect2i, facing: int, scale: float,
@@ -157,6 +205,10 @@ static func _fit(lib: ModelLibrary, id: int, r: Rect2i, facing: int, scale: floa
 
 
 # --- Extras --------------------------------------------------------------------------------
+## Helipad of the main hospital model: offset (x, z) from the roof centre and
+## size, as fractions of the model width / depth.
+const HELIPAD := Vector3(0.0, 0.0, 0.3)
+
 static func _place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 		pick: Dictionary, batch: InstanceBatch) -> void:
 	var r := data.building_rect(i)
@@ -166,7 +218,28 @@ static func _place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	var lot_center := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
 	var to_back := Vector3(o.x * r.size.x, 0, o.y * r.size.y) * 0.5
 	var side := Vector3(-o.y, 0, o.x) * (0.6 if seed & 1 else -0.6)
+	var xform: Transform3D = pick["xform"]
+	var pid: int = pick["id"]
+	var box: AABB = lib.bounds[pid]
 	match kind:
+		Kind.STADIUM:
+			# Floodlight masts at the corners of the plot (seen at night).
+			var lights := lib.named_id("stadium_lights")
+			var h := box.size.y * xform.basis.get_scale().y * 1.6
+			batch.add(lights, Transform3D(Basis.from_scale(Vector3(r.size.x, h, r.size.y)), lot_center))
+		Kind.UN_HQ:
+			if ModelPools.is_pack_model(lib, pid, Cat.UN_TOWER):
+				# Emblem and name high on the front of the tower.
+				var front := Vector3(box.get_center().x, box.size.y * 0.66, box.end.z + 0.01)
+				var w := box.size.x * 0.55
+				batch.add(lib.named_id("un_signs"), xform * Transform3D(Basis.from_scale(Vector3(w, w, w)), front))
+		Kind.MAIN_HOSPITAL:
+			if ModelPools.is_pack_model(lib, pid, Cat.HOSPITAL_MAIN):
+				# Lit red H over the helipad of the roof.
+				var pad := Vector3(box.get_center().x + box.size.x * HELIPAD.x, box.end.y + 0.01,
+						box.get_center().z + box.size.z * HELIPAD.y)
+				var w := box.size.x * HELIPAD.z
+				batch.add(lib.named_id("helipad_h"), xform * Transform3D(Basis.from_scale(Vector3(w, 1, w)), pad))
 		Kind.HOUSE:
 			if lib.has_cat(Cat.TREE):
 				var trees := lib.ids(Cat.TREE)

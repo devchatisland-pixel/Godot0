@@ -45,6 +45,10 @@ func generate() -> CityData:
 	LandmarkPlanner.new(data, districts, island, services, lots).build()
 	services.finish()
 
+	_report(0.95, "Hiding an island in the fog")
+	data.fog = FogIslandShaper.new(_cfg, data)
+	data.fog.shape(data.bridge.y)
+
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	_print_stats(data, roads.blocks.size(), services.counts, Time.get_ticks_msec() - t0)

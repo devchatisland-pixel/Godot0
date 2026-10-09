@@ -1,0 +1,29 @@
+{
+	"file": "public_main.glb",
+	"models": [
+		{
+			"cat": "POLICE_MAIN",
+			"node": "police_hq"
+		},
+		{
+			"cat": "CITY_HALL_MAIN",
+			"node": "city_hall"
+		},
+		{
+			"cat": "HOSPITAL_MAIN",
+			"node": "hospital"
+		},
+		{
+			"cat": "SCHOOL_MAIN",
+			"node": "school"
+		},
+		{
+			"cat": "PHARMACY",
+			"node": "pharmacy"
+		},
+		{
+			"cat": "GAS_STATION",
+			"node": "gas_station"
+		}
+	]
+}

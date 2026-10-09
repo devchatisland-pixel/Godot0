@@ -30,6 +30,26 @@ const ANCHORS := [
 const PARK_AREA := Rect2(-0.24, -0.38, 0.42, 0.38)
 const DESERT_AREA := Rect2(0.26, -1.6, 1.6, 1.2)
 
+## Big public buildings get a whole plot with a ring road, like the park:
+## centre in island units, size in cells (interior, roads not included).
+const PLOTS := [
+	{"kind": CityTypes.Kind.STADIUM, "at": Vector2(-0.45, 0.58), "size": Vector2i(8, 7)},
+	{"kind": CityTypes.Kind.COLISEUM, "at": Vector2(-0.6, 0.12), "size": Vector2i(7, 7)},
+	{"kind": CityTypes.Kind.CITY_HALL, "at": Vector2(0.14, 0.24), "size": Vector2i(6, 6)},
+	{"kind": CityTypes.Kind.MUSEUM, "at": Vector2(0.34, -0.2), "size": Vector2i(7, 5)},
+	{"kind": CityTypes.Kind.MAIN_SCHOOL, "at": Vector2(0.62, 0.08), "size": Vector2i(6, 5)},
+	{"kind": CityTypes.Kind.CEMETERY, "at": Vector2(0.48, 0.52), "size": Vector2i(6, 5)},
+]
+
+## Places some services should be close to, besides the district anchors.
+const HINTS := {
+	"church": Vector2(0.5, -0.02),       # east suburbs, away from the desert
+	"beach_quarter": Vector2(-0.05, 1.0), # colourful quarter by the south beach
+	"hotels": Vector2(-0.3, 0.05),       # shopping streets, not Las Vegas
+	"hotels_b": Vector2(0.3, 0.4),       # avenue south of the civic center
+	"post": Vector2(0.0, 0.3),           # next to the civic center
+}
+
 ## Block interior limits (short side, long side) per zone.
 const BLOCK_LIMITS := {
 	Zone.DOWNTOWN: Vector2i(4, 8),
@@ -52,6 +72,8 @@ var anchors := {}
 ## Interiors (cells) of the park and of the desert.
 var park := Rect2i()
 var desert := Rect2i()
+## [kind, Rect2i] of every big-building plot.
+var plots: Array = []
 
 
 func _init(cfg: CityConfig, data: CityData, island: IslandShaper) -> void:
@@ -67,6 +89,12 @@ func _init(cfg: CityConfig, data: CityData, island: IslandShaper) -> void:
 func plan() -> void:
 	for a in ANCHORS:
 		anchors[a["name"]] = to_cells(a["at"])
+	for h in HINTS:
+		anchors[h] = to_cells(HINTS[h])
+	for p in PLOTS:
+		var size: Vector2i = p["size"]
+		var c := Vector2i(to_cells(p["at"]).round())
+		plots.append([p["kind"], Rect2i(c - size / 2, size)])
 	park = _rect_cells(PARK_AREA)
 	desert = _rect_cells(DESERT_AREA).intersection(Rect2i(0, 0, _data.size, _data.size))
 	_data.centers = [_center]
@@ -85,7 +113,10 @@ func _rect_cells(r: Rect2) -> Rect2i:
 
 ## Areas the road planner keeps free of streets.
 func exclusions() -> Array[Rect2i]:
-	return [park, desert]
+	var out: Array[Rect2i] = [park, desert]
+	for p in plots:
+		out.append(p[1])
+	return out
 
 
 # --- Districts -------------------------------------------------------------------------
@@ -144,6 +175,8 @@ func paint_zones(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 						z = Zone.PARK
 					elif desert.has_point(Vector2i(x, y)):
 						z = Zone.DESERT
+					elif _in_plot(x, y):
+						z = Zone.CIVIC
 			_data.zone[i] = z
 	for b in blocks.size():
 		var r := blocks[b]
@@ -152,3 +185,10 @@ func paint_zones(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 				var i := y * size + x
 				if _data.terrain[i] == CityTypes.Terrain.LAND and _data.road[i] == 0:
 					_data.zone[i] = zones[b]
+
+
+func _in_plot(x: int, y: int) -> bool:
+	for p in plots:
+		if (p[1] as Rect2i).has_point(Vector2i(x, y)):
+			return true
+	return false

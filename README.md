@@ -6,15 +6,16 @@ It runs on desktop, mobile and in the browser (GL Compatibility renderer).
 
 ![Chat City](docs/overview.jpg)
 ![Chat City at night](docs/night.jpg)
-![Las Vegas at night](docs/vegas_night.jpg)
+![The fog island and its title](docs/fog_island.jpg)
+![The fog island at night](docs/fog_night.jpg)
+![The Golden Gate bridge into the fog](docs/golden_gate.jpg)
+![The desert airbase and bunker](docs/desert.jpg)
+![The cemetery](docs/cemetery.jpg)
 ![Bank](docs/bank.jpg)
-![United Nations](docs/un.jpg)
 ![Prison island](docs/alcatraz.jpg)
 ![Downtown and its landmarks](docs/downtown.jpg)
 ![The colourful quarter](docs/quarter.jpg)
-![Little Las Vegas and the cinema](docs/vegas.jpg)
 ![Shops and the shopping center](docs/shops.jpg)
-![Desert, telecom station and outpost](docs/desert.jpg)
 ![Central park](docs/park.jpg)
 
 ## Controls
@@ -68,31 +69,48 @@ On screen north-west is up.
 
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
-| top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron) |
-| top-left (west coast) | **Little Las Vegas** | 2 casino palaces with golden domes, neon clubs, a ferris wheel, a cinema, cartoon diners |
+| top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
+| top-left (west coast) | **Little Las Vegas** | 2 casino palaces with golden domes, neon clubs (XXX, BAR, CLUB), the cinema and a big coliseum |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
-| right | **Desert** | a telecom tower, 3 satellite dishes, a mesa, an outpost (barns, ranch houses, trailers, water tank), cacti |
-| below the park | **Civic center** | city hall, bank, police, fire station, hospital (one of each) |
-| left of the park | **Shopping streets** | the shopping center, New York street buildings, cartoon shops |
-| right / bottom | **Residential** | houses with gardens; the school and the church |
-| bottom (south coast) | **Colourful quarter** | white and red low-rise town, a few towers |
-| left | **Sports corner** | the stadium and the drive-in cinema |
+| right | **Desert** | a military airbase (runway, hangar, control tower, jets), a bunker, a telecom tower with 3 dishes, a mesa, a lone ranch, cacti |
+| below the park | **Civic center** | the main city hall, police headquarters, bank, fire station, post office |
+| left of the park | **Shopping streets** | the main hospital, the shopping center, the pharmacy, the history museum, a grand hotel, New York street buildings, cartoon shops (very few pizzerias) |
+| right of the park | **Art museum** | a wide temple-front museum with a glass pyramid |
+| right / bottom | **Residential** | houses with gardens, the main school with its sports ground, the church, the cemetery, the gas station, the second grand hotel |
+| bottom (south coast) | **Colourful quarter** | white and red low-rise town, a ferris wheel by the beach, a construction crane |
+| left | **Sports corner** | the big stadium and the drive-in cinema |
+| everywhere | **Small services** | each district has its own little police station, fire station, clinic or school |
 | coast | **Beaches and rocky shores** | 2 lighthouses and 3 palm islets |
 | top-left, at sea | **Prison island** | a rocky Alcatraz-like island facing downtown: cellhouse, water tower, guard towers, lighthouse |
-| above the park | **United Nations** | glass slab with the emblem, assembly hall and flags |
+| above the park | **United Nations** | a tall tower with the U.N. emblem and name |
+| east, across the Golden Gate | **The fog island** | a second island of the same size, hidden in a thick bank of fog and smoke: only some towers, palms and city lights show through. "ZONE UNLOCKED ON SEASON 2, COMING SOON" |
 
 How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same city on every device):
 
 1. **`island_shaper.gd`**: an elliptical island with a little noise, sandy and rocky shores, and the islets.
-2. **`district_planner.gd`**: the district layout (anchors and the park and desert areas, in island units).
-3. **`road_planner.gd`**: recursive splitting (BSP) into blocks. The borders of the park and the desert are cut first, so they become ring roads. The first splits are avenues with street lights.
+2. **`district_planner.gd`**: the district layout (anchors, hints and the park, desert and big-building plots, in island units).
+3. **`road_planner.gd`**: recursive splitting (BSP) into blocks. The borders of the park, the desert and the plots of the big buildings (stadium, coliseum, city hall, art museum, main school, cemetery) are cut first, so they become ring roads. The first splits are avenues with street lights.
 4. **`lot_planner.gd`**: blocks cut into lots, every building facing its street.
-5. **`service_planner.gd`**: every public building once (casinos twice), in the block closest to its district, never two in the same spot. The 7 landmark towers are each placed once downtown.
-6. **`landmark_planner.gd`**: the park lake and paths, the desert station, mesa and outpost, the lighthouses.
+5. **`service_planner.gd`**: the big buildings fill their plots; every main public building once, in the block closest to its district, never two in the same spot; then the small services of each district. The 7 landmark towers are each placed once downtown.
+6. **`landmark_planner.gd`**: the park lake and paths, the airbase, bunker, station, mesa and ranch of the desert, the prison island, the road to the bridge, the lighthouses.
+7. **`fog_island_shaper.gd`**: the island in the fog (ground colours, buildings and palms only, no streets).
 
 Which family of models a building uses (Kenney, photo towers, New York, cartoon shops, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
 
-To move a district or change its size, edit `ANCHORS`, `PARK_AREA` or `DESERT_AREA` in `district_planner.gd`.
+To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `DESERT_AREA`, `PLOTS` or `HINTS` in `district_planner.gd`.
+
+### The fog island
+
+East of Chat City, the Golden Gate bridge leaves the east coast and disappears into the fog (`scripts/world/fog_island.gd`).
+The island itself lies next to the city map and costs very little: it is not streamed, it has no streets and it is drawn with a few MultiMeshes.
+The fog is made of pictures, not 3D volumes:
+
+* four sheets of drifting cloud texture at different heights (`shaders/fog_layer.gdshader`), whose holes open and close over the buildings;
+* about 50 big painted billows and two smoke plumes on camera-facing quads (`shaders/fog_puff.gdshader`);
+* the "SEASON 2" title, always on top.
+
+The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
+At night the fog turns dark blue-grey and the night skyline model shows its city lights through it.
 
 ## Day and night
 
@@ -101,11 +119,13 @@ At night:
 
 * Kenney windows glow. An emission mask is built from their colour palette, so only the glass lights up.
 * The windows of the procedural buildings glow too.
+* The buildings of the curated packs (New York, photo towers, stadium, coliseum, main public buildings...) are softly lit, like floodlit facades.
+* The stadium has floodlight masts, the drive-in shows its film and lights its lot, the airbase lights its runway.
+* The red H and cross of the hospitals are neon, so they stay bright red.
 * Street lamps get bulbs.
 * Signs shine, and the neon stays bright.
 
 No real lights are added, so night costs the same as day, on phones too.
-The New York and photo towers have no window mask, so they simply get dark.
 
 ## Signs
 
@@ -113,9 +133,9 @@ All signs are on one 1024×1024 texture, `textures/signs.png`:
 
 * the U.N. emblem and the "UNITED NATIONS" name
 * the gold "$" coin and the "BANK" plate
-* neon "XXX", "CASINO", "HOTEL", "BAR" and "CLUB"
-* four playing cards
-* the "PENITENTIARY" plate
+* neon "XXX", "CASINO", "BAR" and "CLUB"
+* the "GRAND HOTEL", "POST OFFICE", "MUSEUM" and "PENITENTIARY" plates
+* the film shown at the drive-in
 
 `tools/make_sign_atlas.py` draws it with the free DejaVu fonts; the emblem source is `tools/sign_sources/un_emblem.png`.
 Signs are flat panels placed with `MeshKit.panel()`, which always faces the reader, so text is never mirrored.
@@ -172,9 +192,16 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `quarter` | 100 low-poly buildings | QUARTER_LOW / MID / TALL | the colourful quarter (87 buildings) |
 | `business` | low-poly business pack | BIZ_SHOP, CINEMA, MALL | diners and shops, the cinema, the shopping center |
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
-| `police` | low-poly police station | POLICE | the police station |
+| `police` | low-poly police station | POLICE | (kept; the same model as the main police station) |
 | `stadium` | low-poly stadium (+ its pitch) | STADIUM | the stadium |
 | `coliseum` | coliseum (tinted stone colour) | COLISEUM | the coliseum in Las Vegas |
+| `public_main` | low-poly public buildings pack | POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, PHARMACY, GAS_STATION | the main public buildings, one of each, drawn big |
+| `un_tower` | building 3 | UN_TOWER | the United Nations tower |
+| `crane` | building crane | CRANE | one crane in the colourful quarter |
+| `golden_gate` | Golden Gate bridge | BRIDGE | the bridge to the fog island |
+| `night_skyline` | low-poly night city skyline (keeps its light map) | SKYLINE | the hidden city of the fog island |
+
+Pizzerias of the business pack are their own category (BIZ_PIZZA) and stay rare.
 
 Not used:
 
@@ -182,10 +209,21 @@ Not used:
 * **Duplicate**: the school (the procedural school is used).
 * **Licence not confirmed**: Half-Life 2 buildings.
 
+### Credits of the latest models
+
+* "Golden Gate Bridge" by JuanG3D, CC BY 4.0
+* "building 3" by geniusrahman155, CC BY 4.0
+* "Low Poly Night City Building Skyline" by 99.Miles, CC BY 4.0
+* "Building Crane (low poly)" by jmarco2000, CC BY 4.0
+* "Low poly public buildings pack" by assetfactory, Sketchfab Standard licence. It may be used in the game, but the raw file must not be shared on its own, so `FREEMODELS/_incoming/public_buildings_pack.glb` is kept out of git. Only the curated copy the game needs is committed.
+
+All from sketchfab.com. CC BY 4.0 needs this credit wherever the game is shown.
+
 **Rebuild after changing the spec** (needs a display, or `xvfb-run` on Linux):
 
 ```
-godot --rendering-driver opengl3 --script res://tools/curate_models.gd
+godot --rendering-driver opengl3 --script res://tools/curate_models.gd                # all packs
+godot --rendering-driver opengl3 --script res://tools/curate_models.gd -- crane       # one pack
 godot --rendering-driver opengl3 --script res://tools/model_sheet.gd -- FREEMODELS/curated/quarter.glb sheet.png
 ```
 
@@ -196,25 +234,28 @@ The second command renders a numbered contact sheet of a pack, to choose what to
 ```
 project.godot
 scenes/main.tscn                  root scene (only the Main script)
-shaders/ground.gdshader           island + sea colouring
+shaders/ground.gdshader           island + sea colouring (and the fog island ground)
+shaders/fog_layer.gdshader        drifting fog sheets
+shaders/fog_puff.gdshader         fog billows on camera-facing quads
 scripts/
   core/       main.gd (bootstrap, loading), city_config.gd (all settings), city_types.gd (enums, helpers)
   data/       city_data.gd        packed city layers + buildings + chunk index
   generation/ city_generator.gd   pipeline: island_shaper, district_planner, road_planner,
-                                  lot_planner, service_planner, landmark_planner
+                                  lot_planner, service_planner, landmark_planner, fog_island_shaper
   assets/     model_catalog.gd (scan + classify + curated lists), model_library.gd (load, merge, mesh ids),
               night_windows.gd (window glow of the Kenney kits)
   procedural/ mesh_kit.gd (low-poly builder), sign_atlas.gd (signs + night materials),
               service_meshes.gd, civic_meshes.gd (bank, U.N., prison), landmark_meshes.gd,
-              entertainment_meshes.gd (Las Vegas), nature_meshes.gd (desert, coast)
+              entertainment_meshes.gd (Las Vegas), nature_meshes.gd (desert, coast),
+              public_meshes.gd (museums, post office, cemetery, hotels), military_meshes.gd (bunker, airbase)
   world/      chunk_streamer.gd (LOD + streaming), building_placer.gd, model_pools.gd, day_night.gd,
-              ground_placer.gd, instance_batch.gd, ground_layer.gd
+              ground_placer.gd, instance_batch.gd, ground_layer.gd, fog_island.gd
   camera/     iso_camera.gd (ortho iso camera), camera_input.gd (mouse/touch/keys)
   ui/         loading_overlay.gd
 tests/        headless checks and the screenshot runner
 tools/        curate_models.gd + curate_spec.json (model packs), model_sheet.gd (contact sheets),
-              make_sign_atlas.py (signs texture)
-textures/     signs.png
+              make_sign_atlas.py (signs texture), make_fog_textures.py (fog and title)
+textures/     signs.png, fog_noise.png, fog_puffs.png, season2.png
 ```
 
 ## Tuning

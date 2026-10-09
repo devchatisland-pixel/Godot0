@@ -1,0 +1,9 @@
+{
+	"file": "crane.glb",
+	"models": [
+		{
+			"cat": "CRANE",
+			"node": "crane"
+		}
+	]
+}

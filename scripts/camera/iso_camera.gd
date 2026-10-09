@@ -33,6 +33,12 @@ func setup(cfg: CityConfig, map_size: int, start: Vector3, start_zoom: float) ->
 	_apply()
 
 
+## Area (x, z) the view centre may move in.
+func set_bounds(bounds: Rect2) -> void:
+	_bounds = bounds
+	_apply()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if _input != null and _input.handle(event):
 		get_viewport().set_input_as_handled()

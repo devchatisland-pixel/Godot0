@@ -14,16 +14,15 @@ FONT_SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
 REGIONS = {
     "un_emblem": (0, 0, 256, 256),
     "dollar": (256, 0, 256, 256),
-    "card_ace_spades": (512 + 48, 16, 160, 224),
-    "card_king_hearts": (768 + 48, 16, 160, 224),
+    "sign_post": (512, 0, 512, 128),
+    "sign_museum": (512, 128, 512, 128),
     "neon_xxx": (0, 256, 512, 256),
     "neon_casino": (512, 256, 512, 256),
-    "neon_hotel": (0, 512, 512, 128),
+    "sign_hotel": (0, 512, 512, 128),
     "neon_bar": (0, 640, 512, 128),
     "sign_bank": (512, 512, 512, 128),
     "sign_prison": (512, 640, 512, 128),
-    "card_queen_diamonds": (48, 768 + 16, 160, 224),
-    "card_jack_clubs": (256 + 48, 768 + 16, 160, 224),
+    "movie": (0, 768, 512, 256),
     "neon_club": (512, 768, 512, 128),
     "sign_un": (512, 896, 512, 128),
 }
@@ -70,21 +69,30 @@ def plate(img, name, text, bg, fg, size, serif=False):
     img.paste(board, (x, y))
 
 
-def card(img, name, rank, suit, red):
-    x, y, w, h = REGIONS[name]
-    c = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+def movie(img):
+    """The film on the drive-in screen: a sunset over the sea with palm trees."""
+    x, y, w, h = REGIONS["movie"]
+    c = Image.new("RGBA", (w, h), (0, 0, 0, 255))
     d = ImageDraw.Draw(c)
-    d.rounded_rectangle((0, 0, w - 1, h - 1), radius=16, fill=(250, 248, 240, 255), outline=(40, 40, 40, 255), width=4)
-    ink = (210, 30, 45, 255) if red else (25, 25, 30, 255)
-    d.text((12, 6), rank, font=font(40), fill=ink)
-    d.text((14, 48), suit, font=font(34), fill=ink)
-    centered_text(d, (0, 20, w, h - 20), suit, font(110), ink)
-    rot = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    rd = ImageDraw.Draw(rot)
-    rd.text((12, 6), rank, font=font(40), fill=ink)
-    rd.text((14, 48), suit, font=font(34), fill=ink)
-    c.alpha_composite(rot.rotate(180))
-    img.paste(c, (x, y), c)
+    horizon = int(h * 0.62)
+    top, low = (70, 30, 110), (255, 140, 60)
+    for j in range(horizon):
+        t = j / horizon
+        d.line((0, j, w, j), fill=tuple(int(a + (b - a) * t) for a, b in zip(top, low)) + (255,))
+    d.ellipse((w * 0.5 - 60, horizon - 70, w * 0.5 + 60, horizon + 50), fill=(255, 220, 120, 255))
+    for j in range(horizon, h):
+        t = (j - horizon) / (h - horizon)
+        d.line((0, j, w, j), fill=(int(120 - 80 * t), int(60 - 30 * t), int(110 - 40 * t), 255))
+    for k in range(6):
+        yy = horizon + 8 + k * 14
+        d.line((w * 0.5 - 70 + k * 6, yy, w * 0.5 + 70 - k * 6, yy), fill=(255, 200, 110, 255), width=3)
+    dark = (20, 10, 30, 255)
+    for px, lean in ((70, 18), (440, -14)):
+        d.line((px, h, px + lean, h - 150), fill=dark, width=9)
+        for a in range(-2, 3):
+            d.line((px + lean, h - 150, px + lean + a * 30, h - 150 + abs(a) * 14 + 6), fill=dark, width=7)
+    d.rectangle((0, 0, w - 1, h - 1), outline=(240, 240, 240, 255), width=6)
+    img.paste(c, (x, y))
 
 
 def un_emblem(img, path):
@@ -112,13 +120,12 @@ def main():
     img = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     un_emblem(img, "tools/sign_sources/un_emblem.png")
     dollar(img)
-    card(img, "card_ace_spades", "A", "♠", False)
-    card(img, "card_king_hearts", "K", "♥", True)
-    card(img, "card_queen_diamonds", "Q", "♦", True)
-    card(img, "card_jack_clubs", "J", "♣", False)
+    movie(img)
     neon(img, "neon_xxx", "XXX", (255, 60, 200), 170)
     neon(img, "neon_casino", "CASINO", (255, 200, 40), 110)
-    neon(img, "neon_hotel", "HOTEL", (60, 230, 255), 80)
+    plate(img, "sign_hotel", "GRAND HOTEL", (110, 20, 40, 255), (240, 195, 70, 255), 50, serif=True)
+    plate(img, "sign_post", "POST OFFICE", (30, 70, 160, 255), (255, 255, 255, 255), 62)
+    plate(img, "sign_museum", "MUSEUM", (225, 215, 190, 255), (60, 50, 40, 255), 84, serif=True)
     neon(img, "neon_bar", "BAR", (90, 255, 120), 84)
     neon(img, "neon_club", "CLUB", (255, 90, 90), 84)
     plate(img, "sign_bank", "BANK", (20, 40, 70, 255), (240, 195, 70, 255), 84, serif=True)

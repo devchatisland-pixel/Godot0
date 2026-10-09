@@ -34,6 +34,10 @@ var chunk_buildings: Array[PackedInt32Array] = []
 var centers: Array[Vector2] = []
 var center_weights: PackedFloat32Array = PackedFloat32Array()
 var city_name := "Chat City"
+## Cell (x, row) where the Golden Gate bridge leaves the east coast; x < 0 = none.
+var bridge := Vector2i(-1, -1)
+## The island hidden in the fog, east of the map (FogIslandShaper).
+var fog: FogIslandShaper
 
 
 func _init(p_size: int, p_chunk: int) -> void:

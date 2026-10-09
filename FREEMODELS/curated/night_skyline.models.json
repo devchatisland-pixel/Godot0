@@ -1,0 +1,9 @@
+{
+	"file": "night_skyline.glb",
+	"models": [
+		{
+			"cat": "SKYLINE",
+			"node": "night_skyline"
+		}
+	]
+}

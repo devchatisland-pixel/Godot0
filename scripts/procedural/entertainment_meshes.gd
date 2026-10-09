@@ -21,15 +21,14 @@ const STEEL := Color("c9c6d6")
 
 static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("casino", casino())
-	lib.add_named("club_a", club(PINK, "neon_xxx", 0.8, ""))
-	lib.add_named("club_b", club(GREEN, "neon_bar", 1.2, "card_ace_spades"))
-	lib.add_named("club_c", club(CYAN, "neon_club", 1.0, "card_king_hearts"))
-	lib.add_named("club_d", club(YELLOW, "neon_hotel", 1.8, "card_queen_diamonds"))
+	lib.add_named("club_a", club(PINK, "neon_xxx", 0.8))
+	lib.add_named("club_b", club(GREEN, "neon_bar", 1.2))
+	lib.add_named("club_c", club(CYAN, "neon_club", 1.0))
 	lib.add_named("ferris_wheel", ferris_wheel())
 	lib.add_named("drive_in", drive_in())
 
 
-# --- Casino palace (3x3): purple tiers, golden dome, giant playing cards -------------
+# --- Casino palace (3x3): purple tiers, golden dome, neon sign ---------------------
 static func casino() -> ArrayMesh:
 	var k := MeshKit.new()
 	var base := Vector3(-1.35, 0, -1.2)
@@ -54,15 +53,8 @@ static func casino() -> ArrayMesh:
 	_outline(k, base, base_size, PINK)
 	_outline(k, top, top_size, CYAN)
 	k.neon(false)
-	# "CASINO" over the entrance and two giant playing cards leaning on the front.
+	# "CASINO" over the entrance.
 	k.front_sign(0.0, 0.62, 0.62, 1.3, "neon_casino")
-	var cards := ["card_ace_spades", "card_king_hearts"]
-	for i in 2:
-		var side := -1.0 if i == 0 else 1.0
-		k.xform = Transform3D(Basis(Vector3.UP, -side * 0.25), Vector3(side * 0.95, 0.62, 1.03))
-		k.box(Vector3(-0.3, -0.02, -0.03), Vector3(0.6, 0.86, 0.03), GOLD)
-		k.panel(Vector3(-0.28, 0.0, 0.002), Vector3(0.56, 0, 0), Vector3(0, 0.78, 0), cards[i])
-	k.xform = Transform3D.IDENTITY
 	return k.commit()
 
 
@@ -76,8 +68,8 @@ static func _outline(k: MeshKit, min_c: Vector3, size: Vector3, color: Color) ->
 	k.box(Vector3(min_c.x + size.x, y, min_c.z), Vector3(t, t, size.z), color)
 
 
-# --- Neon club (2x2): neon sign over the door, sometimes a playing card on the roof ----------
-static func club(tube: Color, sign_region: String, height: float, roof_card: String) -> ArrayMesh:
+# --- Neon club (2x2): neon sign over the door ------------------------------------------------
+static func club(tube: Color, sign_region: String, height: float) -> ArrayMesh:
 	var k := MeshKit.new()
 	var body := Vector3(-0.8, 0, -0.8)
 	var body_size := Vector3(1.6, height, 1.4)
@@ -89,13 +81,6 @@ static func club(tube: Color, sign_region: String, height: float, roof_card: Str
 	k.box(Vector3(-0.8, 0.0, 0.6), Vector3(1.6, 0.04, 0.03), tube)
 	k.neon(false)
 	k.front_sign(0.0, 0.34, 0.62, 1.2, sign_region)
-	if roof_card != "":
-		# Billboard frame on the roof holding a giant card, facing the street.
-		var y := height
-		k.block(Vector3(-0.3, y, 0.1), Vector3(0.05, 0.25, 0.05), Color("2b2b33"))
-		k.block(Vector3(0.3, y, 0.1), Vector3(0.05, 0.25, 0.05), Color("2b2b33"))
-		k.box(Vector3(-0.34, y + 0.18, 0.06), Vector3(0.68, 0.98, 0.03), Color("2b2b33"))
-		k.panel(Vector3(-0.32, y + 0.2, 0.095), Vector3(0.64, 0, 0), Vector3(0, 0.9, 0), roof_card)
 	return k.commit()
 
 
@@ -135,20 +120,21 @@ static func ferris_wheel() -> ArrayMesh:
 	return k.commit()
 
 
-# --- Drive-in cinema (4x3): big screen, parking rows of cars facing it ---------------------------
+# --- Drive-in cinema (4x3): big screen showing a film, cars facing it, lamp posts ----------------
 static func drive_in() -> ArrayMesh:
 	var k := MeshKit.new()
 	k.box(Vector3(-1.95, 0, -1.45), Vector3(3.9, 0.02, 2.9), ASPHALT)
-	# Screen on two legs at the back.
+	# Screen on two legs at the back; the film glows at night like a sign.
 	for x in [-1.0, 1.0]:
 		k.box(Vector3(x - 0.05, 0, -1.35), Vector3(0.1, 0.5, 0.1), STEEL)
 	k.box(Vector3(-1.45, 0.45, -1.4), Vector3(2.9, 1.2, 0.08), WHITE)
+	k.panel(Vector3(-1.35, 0.52, -1.315), Vector3(2.7, 0, 0), Vector3(0, 1.06, 0), "movie")
 	k.neon(true)
-	k.box(Vector3(-1.35, 0.55, -1.315), Vector3(2.7, 1.0, 0.01), Color("2c3e66"))
-	k.box(Vector3(-1.0, 0.75, -1.3), Vector3(2.0, 0.55, 0.01), Color("6fa8dc"))
 	k.box(Vector3(1.5, 0.02, 1.2), Vector3(0.4, 0.35, 0.06), YELLOW)
 	k.neon(false)
-	# Rows of cars, all turned towards the screen.
+	# Projection booth and its beam light.
+	k.box(Vector3(-0.25, 0.02, 1.0), Vector3(0.5, 0.3, 0.35), Color("e8e4d8"), Color("8f86a6"))
+	# Rows of cars, all turned towards the screen, with their parking lights.
 	var car_colors := [Color("d9474f"), Color("4569b8"), Color("f1eff6"), Color("e8b33a"), Color("5c9d4c")]
 	for row in 3:
 		for i in 7:
@@ -159,4 +145,14 @@ static func drive_in() -> ArrayMesh:
 			var p := Vector3(-1.5 + i * 0.5, 0.02, -0.4 + row * 0.6)
 			k.block(p, Vector3(0.2, 0.08, 0.34), c)
 			k.block(p + Vector3(0, 0.08, 0.03), Vector3(0.16, 0.06, 0.16), c.darkened(0.25))
+	# Lamp posts around the lot, a string of bulbs over the entrance.
+	for p in [Vector3(-1.85, 0, -1.3), Vector3(1.85, 0, -1.3), Vector3(-1.85, 0, 1.3), Vector3(1.85, 0, 1.3)]:
+		k.block(p, Vector3(0.04, 0.6, 0.04), STEEL)
+	k.glow(true)
+	for p in [Vector3(-1.85, 0, -1.3), Vector3(1.85, 0, -1.3), Vector3(-1.85, 0, 1.3), Vector3(1.85, 0, 1.3)]:
+		k.block(p + Vector3(0, 0.6, 0), Vector3(0.1, 0.06, 0.1), Color.WHITE)
+	for i in 9:
+		k.block(Vector3(-1.9 + i * 0.475, 0.45, 1.42), Vector3(0.06, 0.06, 0.06), Color.WHITE)
+	k.block(Vector3(0, 0.25, 0.98), Vector3(0.12, 0.08, 0.04), Color.WHITE)
+	k.glow(false)
 	return k.commit()

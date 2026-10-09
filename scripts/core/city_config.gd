@@ -62,7 +62,7 @@ static func create() -> CityConfig:
 		c.max_variants = 10
 	c.use_threads = not (OS.has_feature("web") and not OS.has_feature("threads"))
 	if c.max_zoom <= 0.0:
-		c.max_zoom = float(c.map_size) * 0.8
+		c.max_zoom = float(c.map_size) * 1.1
 	return c
 
 
