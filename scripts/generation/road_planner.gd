@@ -19,6 +19,11 @@ var _reserved: Array[Rect2i] = []
 
 ## Interior rectangles of all city blocks (cells between roads).
 var blocks: Array[Rect2i] = []
+## Extension mode (new districts around the finished city): roads are only
+## drawn on cells flagged 1 in this mask, and blocks use the given limits
+## instead of the district anchors.
+var free_mask := PackedByteArray()
+var limits_override := Vector2i.ZERO
 
 
 func _init(cfg: CityConfig, data: CityData, island: IslandShaper,
@@ -52,7 +57,7 @@ func _split(r: Rect2i, depth: int) -> void:
 		cut = forced.x
 	else:
 		var c := Vector2(r.get_center())
-		var lim := _districts.block_limits(c.x, c.y)
+		var lim := limits_override if limits_override.x > 0 else _districts.block_limits(c.x, c.y)
 		if maxi(r.size.x, r.size.y) > lim.y:
 			vertical = r.size.x >= r.size.y
 		elif mini(r.size.x, r.size.y) > lim.x:
@@ -120,7 +125,7 @@ func _is_reserved(p: Vector2i) -> bool:
 	for e in _reserved:
 		if e.has_point(p):
 			return true
-	return false
+	return not free_mask.is_empty() and free_mask[_data.idx(p.x, p.y)] == 0
 
 
 func _set_road(p: Vector2i, value: int) -> void:
@@ -131,14 +136,36 @@ func _set_road(p: Vector2i, value: int) -> void:
 		_data.road[i] = value
 
 
+## Extension mode: splits `area` into blocks and draws its roads (the first
+## splits are avenues, deeper ones streets). Dead ends are trimmed inside `area` only.
+func build_region(area: Rect2i, limits: Vector2i, start_depth: int = 1) -> void:
+	_reserved = []
+	limits_override = limits
+	var before := blocks.size()
+	_split(area, start_depth)
+	_trim_dead_ends(area)
+	var fresh := blocks.slice(before).filter(func(r: Rect2i) -> bool: return _has_land(r))
+	blocks = blocks.slice(0, before)
+	blocks.append_array(fresh)
+
+
 # --- Clean up ----------------------------------------------------------------------------
-## Removes isolated cells and stubs of 1-2 cells that lead nowhere.
-func _trim_dead_ends() -> void:
+## Removes isolated cells and stubs of 1-2 cells that lead nowhere (inside `area`).
+func _trim_dead_ends(area: Rect2i = Rect2i()) -> void:
 	var size := _data.size
+	var x0 := 0
+	var y0 := 0
+	var x1 := size
+	var y1 := size
+	if area.size.x > 0:
+		x0 = maxi(area.position.x, 0)
+		y0 = maxi(area.position.y, 0)
+		x1 = mini(area.end.x, size)
+		y1 = mini(area.end.y, size)
 	for pass_i in 2:
 		var removed := 0
-		for y in size:
-			for x in size:
+		for y in range(y0, y1):
+			for x in range(x0, x1):
 				var i := y * size + x
 				if _data.road[i] == 0:
 					continue

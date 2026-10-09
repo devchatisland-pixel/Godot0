@@ -19,10 +19,15 @@ const PACK_GLOW := {
 	ModelCat.NY_MIDRISE: 0.45, ModelCat.PANEL: 0.4, ModelCat.QUARTER_LOW: 0.35,
 	ModelCat.QUARTER_MID: 0.35, ModelCat.QUARTER_TALL: 0.35, ModelCat.BIZ_SHOP: 0.45,
 	ModelCat.BIZ_PIZZA: 0.45, ModelCat.CINEMA: 0.6, ModelCat.MALL: 0.5, ModelCat.POLICE: 0.5,
-	ModelCat.STADIUM: 0.75, ModelCat.COLISEUM: 0.7, ModelCat.OUTPOST: 0.25,
+	ModelCat.STADIUM: 0.75, ModelCat.OUTPOST: 0.25,
 	ModelCat.POLICE_MAIN: 0.55, ModelCat.CITY_HALL_MAIN: 0.6, ModelCat.HOSPITAL_MAIN: 0.6,
 	ModelCat.SCHOOL_MAIN: 0.45, ModelCat.PHARMACY: 0.55, ModelCat.GAS_STATION: 0.7,
 	ModelCat.UN_TOWER: 0.55, ModelCat.CRANE: 0.35, ModelCat.BRIDGE: 0.6,
+	ModelCat.MEGA_MALL: 0.7, ModelCat.BANK_PACK: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
+	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.MUSEUM_PACK: 0.6,
+	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
+	ModelCat.RUIN: 0.3, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
+	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
 }
 
 

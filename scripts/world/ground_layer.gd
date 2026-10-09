@@ -24,6 +24,8 @@ const ZONE_COLORS := {
 	CityTypes.Zone.ISLET: Color("86c867"),
 	CityTypes.Zone.QUARTER: Color("e2dacb"),
 	CityTypes.Zone.PRISON: Color("a9a59b"),
+	CityTypes.Zone.POOR: Color("bdb7ab"),
+	CityTypes.Zone.FARM: Color("a6b45c"),
 }
 
 ## Sea colour, also used as background so the ocean looks endless.

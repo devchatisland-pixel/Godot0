@@ -1,0 +1,61 @@
+{
+	"file": "street.glb",
+	"models": [
+		{
+			"cat": "SHOP2",
+			"node": "shop_coffee"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "shop_amber"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "shop_garage"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "shop_zinc"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "shop_row"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "shop_hut"
+		},
+		{
+			"cat": "STALL",
+			"node": "stall0"
+		},
+		{
+			"cat": "STALL",
+			"node": "stall1"
+		},
+		{
+			"cat": "STALL",
+			"node": "stall2"
+		},
+		{
+			"cat": "STALL",
+			"node": "stall3"
+		},
+		{
+			"cat": "STALL",
+			"node": "stall4"
+		},
+		{
+			"cat": "STALL",
+			"node": "stall5"
+		},
+		{
+			"cat": "STALL",
+			"node": "stall6"
+		},
+		{
+			"cat": "STALL",
+			"node": "stall7"
+		}
+	]
+}

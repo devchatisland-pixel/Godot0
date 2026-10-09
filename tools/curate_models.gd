@@ -19,6 +19,8 @@ var _albedo := Color(0, 0, 0, 0)
 ## Keep the emission map (night lights painted in the texture).
 var _keep_emission := false
 var _tex_cache := {}
+## Items given as a world rectangle: id -> Node3D holding the cut meshes.
+var _regions := {}
 var _mat_cache := {}
 
 
@@ -53,6 +55,7 @@ func _curate(pack: Dictionary) -> void:
 	var out := Node3D.new()
 	out.name = pack["out"]
 	get_root().add_child(out)
+	_regions = _split_regions(src, items)
 	var manifest := []
 	for item in items:
 		var node := _build_item(src, out, item, pack)
@@ -75,7 +78,10 @@ func _curate(pack: Dictionary) -> void:
 ## Moves the item's nodes under a new top-level node, normalised in size and place.
 func _build_item(src: Node, out: Node3D, item: Dictionary, pack: Dictionary) -> Node3D:
 	var parts: Array[Node3D] = []
-	for n in item["nodes"]:
+	if item.has("region"):
+		if _regions.has(item["id"]):
+			parts.append(_regions[item["id"]])
+	for n in item.get("nodes", []):
 		var found := src.find_child(String(n).validate_node_name(), true, false) as Node3D
 		if found == null:
 			push_warning("missing node %s in %s" % [n, pack["src"]])
@@ -87,8 +93,9 @@ func _build_item(src: Node, out: Node3D, item: Dictionary, pack: Dictionary) -> 
 	holder.name = item["id"]
 	out.add_child(holder)
 	for p in parts:
-		var xf := p.global_transform
-		p.get_parent().remove_child(p)
+		var xf := p.global_transform if p.is_inside_tree() else p.transform
+		if p.get_parent() != null:
+			p.get_parent().remove_child(p)
 		holder.add_child(p)
 		p.transform = xf
 	var box := _aabb(holder)
@@ -106,6 +113,81 @@ func _build_item(src: Node, out: Node3D, item: Dictionary, pack: Dictionary) -> 
 	for mi in _meshes(holder):
 		_slim_materials(mi)
 	return holder
+
+
+## Packs that store one object per material for the whole town: cuts the
+## triangles into the items that carry a "region" ([x0, z0, x1, z1] in world
+## space, optional "ymax"), by the centre of each triangle. One pass over
+## the triangles whatever the number of buildings.
+func _split_regions(src: Node, items: Array) -> Dictionary:
+	var wanted: Array = items.filter(func(i): return i.has("region"))
+	var out := {}
+	if wanted.is_empty():
+		return out
+	# id -> {material -> surface arrays being filled}
+	var buckets := {}
+	for it in wanted:
+		buckets[it["id"]] = {}
+	for mi in _meshes(src):
+		var xf := mi.global_transform
+		var nb := xf.basis.inverse().transposed()
+		for s in mi.mesh.get_surface_count():
+			var arr := mi.mesh.surface_get_arrays(s)
+			var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var norms = arr[Mesh.ARRAY_NORMAL]
+			var uvs = arr[Mesh.ARRAY_TEX_UV]
+			var cols = arr[Mesh.ARRAY_COLOR]
+			var idx = arr[Mesh.ARRAY_INDEX]
+			var tri_count: int = (idx.size() if idx != null else verts.size()) / 3
+			var mat := mi.get_active_material(s)
+			var world := PackedVector3Array()
+			world.resize(verts.size())
+			for v in verts.size():
+				world[v] = xf * verts[v]
+			for t in tri_count:
+				var a: int = idx[t * 3] if idx != null else t * 3
+				var b: int = idx[t * 3 + 1] if idx != null else t * 3 + 1
+				var c: int = idx[t * 3 + 2] if idx != null else t * 3 + 2
+				var ctr := (world[a] + world[b] + world[c]) / 3.0
+				for it in wanted:
+					var r: Array = it["region"]
+					if ctr.x < r[0] or ctr.x > r[2] or ctr.z < r[1] or ctr.z > r[3]:
+						continue
+					if it.has("ymax") and ctr.y > float(it["ymax"]):
+						continue
+					var per: Dictionary = buckets[it["id"]]
+					if not per.has(mat):
+						per[mat] = {"v": PackedVector3Array(), "n": PackedVector3Array(),
+								"u": PackedVector2Array(), "c": PackedColorArray()}
+					var d: Dictionary = per[mat]
+					for k in [a, b, c]:
+						d["v"].append(world[k])
+						d["n"].append((nb * norms[k]).normalized() if norms != null else Vector3.UP)
+						d["u"].append(uvs[k] if uvs != null else Vector2.ZERO)
+						if cols != null:
+							d["c"].append(cols[k])
+					break
+	for it in wanted:
+		var holder := Node3D.new()
+		holder.name = String(it["id"]) + "_cut"
+		for mat in buckets[it["id"]]:
+			var d: Dictionary = buckets[it["id"]][mat]
+			var arrays := []
+			arrays.resize(Mesh.ARRAY_MAX)
+			arrays[Mesh.ARRAY_VERTEX] = d["v"]
+			arrays[Mesh.ARRAY_NORMAL] = d["n"]
+			arrays[Mesh.ARRAY_TEX_UV] = d["u"]
+			if (d["c"] as PackedColorArray).size() == (d["v"] as PackedVector3Array).size():
+				arrays[Mesh.ARRAY_COLOR] = d["c"]
+			var mesh := ArrayMesh.new()
+			mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+			mesh.surface_set_material(0, mat)
+			var node := MeshInstance3D.new()
+			node.mesh = mesh
+			holder.add_child(node)
+		out[it["id"]] = holder
+		get_root().add_child(holder)
+	return out
 
 
 ## Picks the complete buildings of a pack automatically (skips wall slabs,

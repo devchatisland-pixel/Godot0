@@ -1,0 +1,37 @@
+{
+	"file": "euro.glb",
+	"models": [
+		{
+			"cat": "MUSEUM_PACK",
+			"node": "museum_a"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "townhouse_a"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "townhouse_b"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "townhouse_c"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "blue_house"
+		},
+		{
+			"cat": "WAREHOUSE",
+			"node": "garage"
+		},
+		{
+			"cat": "FACTORY",
+			"node": "brick_works"
+		},
+		{
+			"cat": "FIELD",
+			"node": "field"
+		}
+	]
+}

@@ -1,0 +1,61 @@
+{
+	"file": "france.glb",
+	"models": [
+		{
+			"cat": "MANSION",
+			"node": "mansion_a"
+		},
+		{
+			"cat": "MANSION",
+			"node": "mansion_b"
+		},
+		{
+			"cat": "PRISON_BLOCK",
+			"node": "block_a"
+		},
+		{
+			"cat": "PRISON_BLOCK",
+			"node": "block_b"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "red0"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "red1"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "red2"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "red3"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "red4"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "red5"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "red6"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "blue0"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "blue1"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "blue2"
+		}
+	]
+}

@@ -33,12 +33,14 @@ const DESERT_AREA := Rect2(0.26, -1.6, 1.6, 1.2)
 ## Big public buildings get a whole plot with a ring road, like the park:
 ## centre in island units, size in cells (interior, roads not included).
 const PLOTS := [
-	{"kind": CityTypes.Kind.STADIUM, "at": Vector2(-0.45, 0.58), "size": Vector2i(8, 7)},
-	{"kind": CityTypes.Kind.COLISEUM, "at": Vector2(-0.6, 0.12), "size": Vector2i(7, 7)},
-	{"kind": CityTypes.Kind.CITY_HALL, "at": Vector2(0.14, 0.24), "size": Vector2i(6, 6)},
-	{"kind": CityTypes.Kind.MUSEUM, "at": Vector2(0.34, -0.2), "size": Vector2i(7, 5)},
-	{"kind": CityTypes.Kind.MAIN_SCHOOL, "at": Vector2(0.62, 0.08), "size": Vector2i(6, 5)},
-	{"kind": CityTypes.Kind.CEMETERY, "at": Vector2(0.48, 0.52), "size": Vector2i(6, 5)},
+	{"kind": CityTypes.Kind.STADIUM, "at": Vector2(-0.45, 0.58), "size": Vector2i(11, 9)},
+	{"kind": CityTypes.Kind.MEGA_MALL, "at": Vector2(-0.6, 0.12), "size": Vector2i(15, 7)},
+	{"kind": CityTypes.Kind.POLICE_HQ, "at": Vector2(-0.1, 0.32), "size": Vector2i(6, 6)},
+	{"kind": CityTypes.Kind.CITY_HALL, "at": Vector2(0.14, 0.24), "size": Vector2i(8, 8)},
+	{"kind": CityTypes.Kind.MUSEUM, "at": Vector2(0.34, -0.2), "size": Vector2i(8, 6)},
+	{"kind": CityTypes.Kind.MAIN_SCHOOL, "at": Vector2(0.62, 0.08), "size": Vector2i(9, 7)},
+	{"kind": CityTypes.Kind.CEMETERY, "at": Vector2(0.48, 0.52), "size": Vector2i(8, 6)},
+	{"kind": CityTypes.Kind.FERRIS_WHEEL, "at": Vector2(-0.05, 0.84), "size": Vector2i(6, 6)},
 ]
 
 ## Places some services should be close to, besides the district anchors.
@@ -83,7 +85,7 @@ func _init(cfg: CityConfig, data: CityData, island: IslandShaper) -> void:
 	_noise.seed = cfg.seed + 501
 	_noise.frequency = 8.0 / float(data.size)
 	_center = Vector2(data.size, data.size) * 0.5
-	_radius = _center * cfg.island_radius
+	_radius = Vector2(cfg.core_size, cfg.core_size) * 0.5 * cfg.island_radius
 
 
 func plan() -> void:

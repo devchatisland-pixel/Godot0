@@ -88,6 +88,7 @@ func _start_city() -> void:
 	CivicMeshes.build_all(library)
 	PublicMeshes.build_all(library)
 	MilitaryMeshes.build_all(library)
+	FarmMeshes.build_all(library)
 	NightWindows.apply(library)
 	var ground := GroundLayer.new()
 	ground.name = "Ground"
@@ -108,7 +109,7 @@ func _start_city() -> void:
 
 	# Start with the whole island in view; the fog island can be reached too.
 	var c := Vector2(data.size, data.size) * 0.5
-	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y), data.size * 0.62)
+	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y), data.size * 0.55)
 	camera.set_bounds(Rect2(0, 0, data.size + FogIslandShaper.SIZE, data.size))
 	_overlay.finish(data.city_name)
 

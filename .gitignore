@@ -7,3 +7,16 @@
 
 # Sketchfab Standard licence: keep the raw pack out of the repository
 FREEMODELS/_incoming/public_buildings_pack.glb
+
+# Raw model packs of the latest waves are not committed (heavy, and two have the
+# Sketchfab Standard licence). Only the curated copies in FREEMODELS/curated are.
+# To rebuild them put the files back in FREEMODELS/_incoming and run tools/curate_models.gd.
+FREEMODELS/_incoming/accommodations.glb
+FREEMODELS/_incoming/industrial_building.glb
+FREEMODELS/_incoming/russian_building.glb
+FREEMODELS/_incoming/buildings_pack_1.glb
+FREEMODELS/_incoming/cartocity.glb
+FREEMODELS/_incoming/city_street_pack.glb
+FREEMODELS/_incoming/somewhat_lowpoly.glb
+FREEMODELS/_incoming/pack_15_buildings.glb
+FREEMODELS/_incoming/free_buildings.glb

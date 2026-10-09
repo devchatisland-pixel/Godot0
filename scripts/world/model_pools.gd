@@ -6,7 +6,10 @@ extends RefCounted
 ##   commercial Kenney mid-rise, New York street buildings, cartoon shops
 ##   Las Vegas  neon clubs, cartoon diners and cafes
 ##   apartments Kenney blocks, New York brick buildings, a panel block
-##   quarter    the white and red low-poly town
+##   quarter    the white and red low-poly town, with French houses and villas mixed in
+##   suburbs    Kenney houses, colourful cartoon houses, French red and blue houses
+##   poor       grey panel blocks and slabs, garages; one big Russian block
+##   industrial Kenney factories, the big brick works and the concrete factory
 ## Every choice comes from the building seed: deterministic and thread safe.
 
 const Kind := CityTypes.Kind
@@ -18,6 +21,10 @@ const OFFICE_MIN_HEIGHT := 1.6
 
 ## Share of the cartoon shops that are pizzerias.
 const PIZZA_SHARE := 0.01
+
+## Share of lots drawn from the extra house and town packs (HOUSE2, TOWN2), per zone.
+const HOUSE2_SHARE := {Zone.SUBURBAN: 0.5, Zone.APARTMENT: 0.4, Zone.QUARTER: 0.45}
+const SHOP2_SHARE := {Zone.SUBURBAN: 0.45, Zone.APARTMENT: 0.35, Zone.COMMERCIAL: 0.2, Zone.POOR: 0.6}
 
 ## Share of shops drawn from the cartoon business pack, per zone.
 const BIZ_SHOP_SHARE := {
@@ -36,9 +43,13 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			var photo := 0.25 + 0.5 * float(data.b_height[i])
 			return _pick(lib, Cat.TOWER_PHOTO, roll < photo, lib.ids(Cat.SKYSCRAPER))
 		Kind.OFFICE:
+			if roll > 0.88 and zone == Zone.COMMERCIAL and lib.has_cat(Cat.HOTEL_SMALL):
+				return lib.ids(Cat.HOTEL_SMALL) # little hotels among the offices
 			var ny := _union(lib, [Cat.NY_STREET, Cat.NY_MIDRISE])
 			return ny if roll < 0.3 and not ny.is_empty() else _kenney_commercial(lib, kind)
 		Kind.SHOP:
+			if roll > 0.5 and lib.has_cat(Cat.SHOP2) and float((seed >> 22) & 255) / 256.0 < SHOP2_SHARE.get(zone, 0.0):
+				return lib.ids(Cat.SHOP2)
 			var share: float = BIZ_SHOP_SHARE.get(zone, 0.0)
 			if roll < share and lib.has_cat(Cat.BIZ_SHOP):
 				# Pizzerias stay rare: about one cartoon shop in a hundred.
@@ -51,11 +62,35 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.APARTMENT:
 			if roll < 0.12 and lib.has_cat(Cat.PANEL):
 				return lib.ids(Cat.PANEL)
+			if roll > 0.7 and lib.has_cat(Cat.TOWN2):
+				return lib.ids(Cat.TOWN2)
 			return _pick(lib, Cat.NY_MIDRISE, roll < 0.35, _kenney_commercial(lib, kind))
 		Kind.HOUSE:
+			if lib.has_cat(Cat.HOUSE2) and roll < HOUSE2_SHARE.get(zone, 0.3):
+				return lib.ids(Cat.HOUSE2)
 			return lib.ids(Cat.HOUSE)
 		Kind.INDUSTRIAL:
-			return lib.ids(Cat.INDUSTRIAL)
+			return _industrial(lib, roll, r)
+		Kind.POOR_BLDG:
+			return _poor(lib, roll, r)
+		Kind.RUSSIAN:
+			return lib.ids(Cat.RUSSIAN)
+		Kind.PRISON_WING:
+			return _variant(lib, _prison_cat(lib, seed), seed)
+		Kind.STALL:
+			return _variant(lib, Cat.STALL, seed)
+		Kind.HOTEL:
+			return _variant(lib, Cat.HOTEL_PACK, seed)
+		Kind.BANK:
+			return lib.ids(Cat.BANK_PACK)
+		Kind.CHURCH:
+			return lib.ids(Cat.CHURCH_PACK)
+		Kind.MUSEUM:
+			return _variant(lib, Cat.MUSEUM_PACK, seed)
+		Kind.MEGA_MALL:
+			return lib.ids(Cat.MEGA_MALL)
+		Kind.GAS_STATION:
+			return lib.ids(Cat.GAS_STATION) if roll < 0.5 or not lib.has_cat(Cat.GAS_PACK) else lib.ids(Cat.GAS_PACK)
 		Kind.QUARTER_BLDG:
 			return _quarter(lib, r, roll)
 		Kind.LANDMARK:
@@ -85,13 +120,18 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.CRANE)
 		Kind.STADIUM:
 			return lib.ids(Cat.STADIUM)
-		Kind.COLISEUM:
-			return lib.ids(Cat.COLISEUM)
 	return PackedInt32Array()
 
 
 ## Low houses on small lots, mid-rise on big ones, a few towers here and there.
 static func _quarter(lib: ModelLibrary, r: Rect2i, roll: float) -> PackedInt32Array:
+	# French villas, red and blue, and colourful town houses break the white and red.
+	if roll > 0.62 and lib.has_cat(Cat.HOUSE2) and r.get_area() <= 6:
+		return lib.ids(Cat.HOUSE2)
+	if roll > 0.78 and lib.has_cat(Cat.TOWN2):
+		return lib.ids(Cat.TOWN2)
+	if roll > 0.94 and lib.has_cat(Cat.HOTEL_SMALL):
+		return lib.ids(Cat.HOTEL_SMALL)
 	var cat := Cat.QUARTER_LOW
 	if roll < 0.1:
 		cat = Cat.QUARTER_TALL
@@ -101,6 +141,38 @@ static func _quarter(lib: ModelLibrary, r: Rect2i, roll: float) -> PackedInt32Ar
 		if lib.has_cat(c):
 			return lib.ids(c)
 	return lib.ids(Cat.HOUSE)
+
+
+## Factories: the Kenney kit, the big concrete factory, the brick works, garages.
+static func _industrial(lib: ModelLibrary, roll: float, r: Rect2i) -> PackedInt32Array:
+	if r.get_area() >= 12 and roll < 0.5 and lib.has_cat(Cat.FACTORY):
+		return lib.ids(Cat.FACTORY)
+	if roll > 0.93 and lib.has_cat(Cat.WAREHOUSE):
+		return lib.ids(Cat.WAREHOUSE)
+	if roll > 0.8 and r.get_area() >= 6 and lib.has_cat(Cat.RUIN):
+		return lib.ids(Cat.RUIN)
+	return lib.ids(Cat.INDUSTRIAL)
+
+
+## Panel towers and slabs, garages and corner shops of the poor district.
+static func _poor(lib: ModelLibrary, roll: float, r: Rect2i) -> PackedInt32Array:
+	if r.get_area() >= 8 and roll < 0.25 and lib.has_cat(Cat.POOR_SLAB):
+		return lib.ids(Cat.POOR_SLAB)
+	if roll > 0.92 and lib.has_cat(Cat.WAREHOUSE):
+		return lib.ids(Cat.WAREHOUSE)
+	if lib.has_cat(Cat.POOR_BLOCK):
+		return lib.ids(Cat.POOR_BLOCK)
+	return lib.ids(Cat.PANEL)
+
+
+## Stone blocks, villas or the workshop of the prison island, by seed.
+static func _prison_cat(lib: ModelLibrary, seed: int) -> int:
+	var cats := [Cat.PRISON_BLOCK, Cat.MANSION, Cat.PRISON_BLOCK, Cat.RUIN]
+	for k in cats.size():
+		var c: int = cats[(absi(seed) + k) % cats.size()]
+		if lib.has_cat(c):
+			return c
+	return Cat.PRISON_BLOCK
 
 
 static func _kenney_commercial(lib: ModelLibrary, kind: int) -> PackedInt32Array:

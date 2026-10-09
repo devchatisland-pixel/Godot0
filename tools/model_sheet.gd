@@ -39,10 +39,11 @@ func _init() -> void:
 		holder.add_child(g)
 		var base := Vector3(box.get_center().x, box.position.y, box.get_center().z)
 		g.global_transform = Transform3D(Basis.from_scale(Vector3(s, s, s)), pos - base * s) * old
+		print("[Sheet] #%d %s  %.1f x %.1f x %.1f" % [start + k, g.name, box.size.x, box.size.y, box.size.z])
 		var label := Label3D.new()
-		label.text = str(start + k)
+		label.text = "%d %s" % [start + k, String(g.name).substr(0, 14)]
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		label.pixel_size = 0.012
+		label.pixel_size = 0.009
 		label.no_depth_test = true
 		label.modulate = Color.YELLOW
 		label.outline_size = 12

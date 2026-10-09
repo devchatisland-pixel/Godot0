@@ -23,11 +23,14 @@ const FAR_COLORS := {
 	Kind.SAT_DISH: Color("f4f2f8"), Kind.MESA: Color("c98a4b"), Kind.POND: Color("5fb7e0"),
 	Kind.LANDMARK: Color("c9c2b0"), Kind.SHOPPING_CENTER: Color("5aa9d6"),
 	Kind.CINEMA: Color("e98b8b"), Kind.OUTPOST: Color("a9876a"), Kind.QUARTER_BLDG: Color("efe6e3"),
-	Kind.UN_HQ: Color("4f8fb8"), Kind.COLISEUM: Color("d8c7a0"), Kind.PRISON: Color("d7d2c4"),
+	Kind.UN_HQ: Color("4f8fb8"), Kind.MEGA_MALL: Color("2f4f9a"), Kind.PRISON: Color("d7d2c4"),
 	Kind.HOTEL: Color("e9dcc8"), Kind.MUSEUM: Color("e6dcc6"), Kind.POST_OFFICE: Color("b5654a"),
 	Kind.CEMETERY: Color("74b85a"), Kind.BUNKER: Color("d9b06a"), Kind.AIRBASE: Color("6b6e78"),
 	Kind.PHARMACY: Color("f1eff6"), Kind.GAS_STATION: Color("f1eff6"), Kind.CRANE: Color("c0392b"),
 	Kind.POLICE_HQ: Color("3f6fd0"), Kind.MAIN_HOSPITAL: Color("f4f2f8"), Kind.MAIN_SCHOOL: Color("e07a5f"),
+	Kind.MOUNTAIN: Color("8f8a82"), Kind.FIELD: Color("b9b04a"), Kind.POOR_BLDG: Color("a7a49e"),
+	Kind.RUSSIAN: Color("9a8f86"), Kind.PRISON_WING: Color("b59a78"), Kind.OIL_PUMP: Color("3a3a40"),
+	Kind.STALL: Color("f2a65a"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -39,6 +42,10 @@ const NAMED := {
 	Kind.MUSEUM: ["museum_art", "museum_history"], Kind.HOTEL: ["hotel_a", "hotel_b"],
 	Kind.POST_OFFICE: ["post_office"], Kind.CEMETERY: ["cemetery"], Kind.BUNKER: ["bunker"],
 	Kind.AIRBASE: ["airbase"],
+	Kind.FIELD: ["field_wheat", "field_corn", "field_plowed", "field_green"],
+	Kind.MOUNTAIN: ["mountain_a", "mountain_b", "mountain_c"], Kind.OIL_PUMP: ["oil_pump"],
+	Kind.PRISON_WING: ["box"], Kind.MEGA_MALL: ["box"],
+	Kind.POOR_BLDG: ["box"], Kind.RUSSIAN: ["box"], Kind.STALL: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -51,10 +58,21 @@ const SEED_VARIANTS: Array[int] = [Kind.MUSEUM, Kind.HOTEL]
 ## Small props that keep their modelled size instead of filling the lot.
 const FIXED_SIZE: Array[int] = [
 	Kind.LIGHTHOUSE, Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
-	Kind.FOUNTAIN, Kind.NIGHTCLUB, Kind.CRANE,
+	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL,
 ]
+## Las Vegas buildings by the short side of their lot: small bars and chapels,
+## clubs, then neon towers and resorts that fill bigger lots.
+const VEGAS_BY_SIZE := {
+	1: ["club_bar", "chapel", "club_bar"],
+	2: ["club_a", "club_b", "club_c", "club_bar", "club_tower"],
+	3: ["club_tower", "club_tower_b", "resort", "club_tower"],
+}
+## Cartoon shops (burger, pizza, diner) are drawn up to this much bigger so they stay visible.
+const SHOP_BOOST := 1.7
 ## Big buildings from the packs grow to fill their (big) lot, up to this scale.
 const MAX_FILL := 3.0
+## The mall may grow a little more than other public buildings.
+const MALL_FILL := 3.4
 ## Famous New York towers: wider lots and this height at least (stretched a bit).
 const LANDMARK_SCALE := 2.1
 const LANDMARK_HEIGHT := 11.0
@@ -90,8 +108,13 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	var seed: int = data.b_seed[i]
 	var density: float = data.b_height[i]
 	var candidates := ModelPools.candidates(data, lib, i, kind)
+	if kind == Kind.FIELD and candidates.is_empty():
+		var fid := lib.named_id(NAMED[kind][absi(seed >> 2) % 4])
+		return {"id": fid, "xform": _fit_field(lib, fid, r)}
 	if candidates.is_empty() and NAMED.has(kind):
 		var names: Array = NAMED[kind]
+		if kind == Kind.NIGHTCLUB:
+			names = VEGAS_BY_SIZE[clampi(mini(r.size.x, r.size.y), 1, 3)]
 		var v := absi(seed) if SEED_VARIANTS.has(kind) else (seed >> 3)
 		var nid := lib.named_id(names[v % names.size()])
 		var fill := 1.0
@@ -104,6 +127,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 		var t := Transform3D(Basis.from_scale(Vector3(r.size.x * 0.8, h, r.size.y * 0.8)),
 				Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5))
 		return {"id": bid, "xform": t}
+	if kind == Kind.FIELD:
+		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r)}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
 	var scale := 1.0
 	var stretch := 1.0
@@ -126,6 +151,13 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 			stretch = clampf(LANDMARK_HEIGHT / h, 1.0, 1.5)
 		Kind.CRANE:
 			scale = 1.0
+		Kind.STALL:
+			scale = 2.4
+		Kind.MEGA_MALL:
+			scale = minf(room, MALL_FILL)
+		Kind.SHOP:
+			var biz := lib.ids(Cat.BIZ_SHOP).has(id) or lib.ids(Cat.BIZ_PIZZA).has(id)
+			scale = minf(room, SHOP_BOOST if biz else 1.0)
 		_:
 			scale = minf(room, MAX_FILL if CityTypes.is_service(kind) else 1.0)
 	if ModelPools.is_new_york(lib, id):
@@ -170,6 +202,19 @@ static func _footprint(lib: ModelLibrary, id: int, facing: int) -> Vector2:
 static func _room(lib: ModelLibrary, id: int, r: Rect2i, facing: int) -> float:
 	var fp := _footprint(lib, id, facing)
 	return minf(r.size.x * 0.94 / fp.x, r.size.y * 0.94 / fp.y)
+
+
+## A crop field stretched over its whole lot, long side along the long side of the lot.
+static func _fit_field(lib: ModelLibrary, id: int, r: Rect2i) -> Transform3D:
+	var b := lib.bounds[id]
+	var turn := (r.size.x > r.size.y) != (b.size.x > b.size.z)
+	var fx := b.size.z if turn else b.size.x
+	var fz := b.size.x if turn else b.size.z
+	var basis := Basis(Vector3.UP, PI * 0.5 if turn else 0.0) * Basis.from_scale(
+			Vector3(float(r.size.x) * 0.96 / maxf(fx, 0.01), 1.0, float(r.size.y) * 0.96 / maxf(fz, 0.01)))
+	var center := Vector3(b.get_center().x, 0, b.get_center().z)
+	var lot := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
+	return Transform3D(basis, lot - basis * center)
 
 
 ## Room of a procedural mesh, turned the way `_fit` turns it (square_fit).
@@ -259,11 +304,7 @@ static func _place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, 
 	var r := data.building_rect(i)
 	var seed: int = data.b_seed[i]
 	if kind == Kind.INDUSTRIAL_YARD:
-		var props := lib.ids(Cat.INDUSTRIAL_PROP)
-		if props.is_empty():
-			return
-		var p := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
-		batch.add(props[seed % props.size()], Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), p))
+		_place_yard(lib, r, seed, batch)
 		return
 	var trees := lib.ids(Cat.TREE)
 	if trees.is_empty():
@@ -274,6 +315,38 @@ static func _place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, 
 		var p := Vector3(r.position.x + 0.3 + float(h & 255) / 255.0 * (r.size.x - 0.6), 0,
 				r.position.y + 0.3 + float((h >> 8) & 255) / 255.0 * (r.size.y - 0.6))
 		batch.add(trees[h % trees.size()], _tree_xform(p, h))
+
+
+## Industrial yard: stacked containers, oil barrels or a truck (cartoon pack), else the Kenney props.
+static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: InstanceBatch) -> void:
+	var c := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
+	var turn := Basis(Vector3.UP, (seed & 1) * PI * 0.5)
+	match seed % 3:
+		0:
+			var boxes := lib.ids(Cat.CONTAINER)
+			if not boxes.is_empty():
+				for i in 3:
+					var p := c + turn * Vector3(0.0, 0.0, (i - 1) * 0.55)
+					var s := Basis.from_scale(Vector3(1.5, 1.5, 1.5))
+					batch.add(boxes[(seed >> 3) % boxes.size()], Transform3D(turn * s, p))
+					if i == 1:
+						batch.add(boxes[(seed >> 5) % boxes.size()], Transform3D(turn * s, p + Vector3(0, 0.62, 0)))
+				return
+		1:
+			var barrels := lib.ids(Cat.BARREL)
+			if not barrels.is_empty():
+				for i in 5:
+					var p := c + Vector3(float(i % 3) - 1.0, 0.0, float(i / 3) - 0.5) * 0.4
+					batch.add(barrels[(seed >> (3 + i)) % barrels.size()], Transform3D(Basis.from_scale(Vector3(1.8, 1.8, 1.8)), p))
+				return
+		_:
+			var trucks := lib.ids(Cat.TRUCK)
+			if not trucks.is_empty():
+				batch.add(trucks[0], Transform3D(turn * Basis.from_scale(Vector3(1.3, 1.3, 1.3)), c))
+				return
+	var props := lib.ids(Cat.INDUSTRIAL_PROP)
+	if not props.is_empty():
+		batch.add(props[seed % props.size()], Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c))
 
 
 static func _tree_xform(p: Vector3, seed: int) -> Transform3D:

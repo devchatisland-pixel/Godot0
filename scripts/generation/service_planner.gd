@@ -9,15 +9,13 @@ const Kind := CityTypes.Kind
 
 ## kind, lot size (building + its square / parking), how many, district anchor
 ## it should be close to, zones it may replace lots in.
-## The stadium, coliseum, city hall, art museum, main school and cemetery have
+## The stadium, mall, city hall, art museum, main school, cemetery and ferris wheel have
 ## their own plots (DistrictPlanner.PLOTS) and are not listed here.
 ## "near" is an anchor name, or a list of names (one building near each):
 ## the main services stand once, bigger, near the civic center; small police
 ## and fire stations, clinics and schools serve the other districts.
 const SPECS := [
 	# Main public buildings, one of each.
-	{"kind": Kind.POLICE_HQ, "size": Vector2i(4, 4), "count": 1, "near": "civic",
-		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
 	{"kind": Kind.MAIN_HOSPITAL, "size": Vector2i(4, 5), "count": 1, "near": "shops",
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
 	{"kind": Kind.BANK, "size": Vector2i(3, 3), "count": 1, "near": "civic",
@@ -40,8 +38,6 @@ const SPECS := [
 		"zones": [Zone.APARTMENT, Zone.COMMERCIAL, Zone.SUBURBAN, Zone.ENTERTAINMENT]},
 	{"kind": Kind.CASINO, "size": Vector2i(3, 3), "count": 2, "near": "vegas",
 		"zones": [Zone.ENTERTAINMENT]},
-	{"kind": Kind.FERRIS_WHEEL, "size": Vector2i(3, 3), "count": 1, "near": "beach_quarter",
-		"zones": [Zone.QUARTER]},
 	{"kind": Kind.CRANE, "size": Vector2i(2, 2), "count": 1, "near": "quarter",
 		"zones": [Zone.QUARTER]},
 	{"kind": Kind.CINEMA, "size": Vector2i(4, 3), "count": 1, "near": "vegas",
@@ -86,7 +82,12 @@ func _init(cfg: CityConfig, data: CityData, districts: DistrictPlanner, lots: Lo
 
 func build(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 	_build_plots()
-	for spec in SPECS:
+	build_specs(SPECS, blocks, zones)
+
+
+## Places each spec (see SPECS) in the best blocks; also used for the new districts.
+func build_specs(specs: Array, blocks: Array[Rect2i], zones: PackedByteArray) -> void:
+	for spec in specs:
 		var near = spec["near"]
 		var anchors: Array = near if near is Array else []
 		var count: int = anchors.size() if near is Array else int(spec["count"])

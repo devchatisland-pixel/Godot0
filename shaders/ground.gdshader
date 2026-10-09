@@ -30,7 +30,7 @@ void fragment() {
 	float e = texture(elevation_tex, uv).r - 128.0 / 255.0;
 	vec4 zone = texture(zone_tex, uv);
 	vec2 fog_uv = (map_uv * map_size - fog_origin) / fog_size;
-	if (map_uv.x > 1.0 && fog_uv.x >= 0.0 && fog_uv.y >= 0.0 && fog_uv.x <= 1.0 && fog_uv.y <= 1.0) {
+	if (fog_uv.x >= 0.0 && fog_uv.y >= 0.0 && fog_uv.x <= 1.0 && fog_uv.y <= 1.0) {
 		e = texture(fog_elevation_tex, fog_uv).r - 128.0 / 255.0;
 		zone = texture(fog_zone_tex, fog_uv);
 	}

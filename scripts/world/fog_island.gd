@@ -132,6 +132,33 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	mi.transform = Transform3D(basis, Vector3((x0 + x1) * 0.5, 0.0, z) - basis * center)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
+	_build_checkpoint(lib, x0 + 0.5, z)
+
+
+## Two police cars and road barriers block the bridge on the city side.
+func _build_checkpoint(lib: ModelLibrary, x: float, z: float) -> void:
+	var groups := {}
+	var cars := lib.ids(Cat.POLICE_CAR)
+	var barriers := lib.ids(Cat.BARRIER)
+	var cones := lib.ids(Cat.CONE)
+	if not cars.is_empty():
+		var s := 4.2
+		# Two cars side by side across the bridge, nose to the city, lights towards the camera.
+		_add(groups, cars[0], Transform3D(Basis(Vector3.UP, PI * 0.5 + 0.12).scaled(Vector3(s, s, s)),
+				Vector3(x, 0.0, z - 0.55)))
+		_add(groups, cars[0], Transform3D(Basis(Vector3.UP, PI * 0.5 - 0.1).scaled(Vector3(s, s, s)),
+				Vector3(x + 0.1, 0.0, z + 0.55)))
+	if not barriers.is_empty():
+		for i in 4:
+			var t := Transform3D(Basis(Vector3.UP, PI * 0.5).scaled(Vector3(2.6, 2.6, 2.6)),
+					Vector3(x + 1.2, 0.0, z - 1.1 + i * 0.75))
+			_add(groups, barriers[i % barriers.size()], t)
+	if not cones.is_empty():
+		for i in 5:
+			_add(groups, cones[0], Transform3D(Basis().scaled(Vector3(3.6, 3.6, 3.6)),
+					Vector3(x + 1.9, 0.0, z - 1.2 + i * 0.6)))
+	for id in groups:
+		_multimesh(lib.meshes[id], groups[id])
 
 
 # --- Fog ------------------------------------------------------------------------------------------

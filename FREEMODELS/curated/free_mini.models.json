@@ -1,0 +1,53 @@
+{
+	"file": "free_mini.glb",
+	"models": [
+		{
+			"cat": "TOWN2",
+			"node": "m1"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "m2"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "m3"
+		},
+		{
+			"cat": "HOTEL_SMALL",
+			"node": "m4"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "m5"
+		},
+		{
+			"cat": "HOTEL_SMALL",
+			"node": "m6"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "m7"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "m8"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "m9"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "m10"
+		},
+		{
+			"cat": "GAS_PACK",
+			"node": "m11"
+		},
+		{
+			"cat": "CHURCH_PACK",
+			"node": "m12"
+		}
+	]
+}

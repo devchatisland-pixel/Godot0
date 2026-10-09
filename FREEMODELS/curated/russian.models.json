@@ -1,0 +1,9 @@
+{
+	"file": "russian.glb",
+	"models": [
+		{
+			"cat": "RUSSIAN",
+			"node": "ghetto"
+		}
+	]
+}

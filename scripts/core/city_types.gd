@@ -22,6 +22,8 @@ enum Zone {
 	ISLET,       # small palm islands off the coast
 	QUARTER,     # colourful low-rise town quarter
 	PRISON,      # the Alcatraz-like prison island
+	POOR,        # run-down district of panel blocks, next to the west desert
+	FARM,        # fields and farms of the countryside
 }
 
 # --- Road grid values ---------------------------------------------------------
@@ -65,7 +67,7 @@ enum Kind {
 	OUTPOST,          # desert shacks, barns and trailers (variant = seed)
 	QUARTER_BLDG,     # building of the colourful quarter
 	UN_HQ,            # United Nations headquarters
-	COLISEUM,
+	MEGA_MALL,        # the very big supermarket mall
 	PRISON,           # cellhouse of the prison island
 	HOTEL,            # grand hotels of the city centre (variant = seed)
 	MUSEUM,
@@ -79,6 +81,13 @@ enum Kind {
 	POLICE_HQ,        # main police station (small ones are POLICE)
 	MAIN_HOSPITAL,    # main hospital (small clinics are HOSPITAL)
 	MAIN_SCHOOL,      # main school with its sports ground (small ones are SCHOOL)
+	MOUNTAIN,         # rocky peak of the northern mountains
+	FIELD,            # crop field (variant = seed)
+	POOR_BLDG,        # panel block or slab of the poor district
+	RUSSIAN,          # the one big urban ghetto block
+	PRISON_WING,      # stone block, warden's house or workshop of the prison island
+	OIL_PUMP,         # pumpjack of the west desert
+	STALL,            # ice cream and food stall on the beach
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -87,9 +96,10 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.CASINO, Kind.FERRIS_WHEEL, Kind.DRIVE_IN, Kind.LIGHTHOUSE,
 	Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
 	Kind.LANDMARK, Kind.SHOPPING_CENTER, Kind.CINEMA, Kind.OUTPOST,
-	Kind.UN_HQ, Kind.COLISEUM, Kind.PRISON, Kind.HOTEL, Kind.MUSEUM,
+	Kind.UN_HQ, Kind.MEGA_MALL, Kind.PRISON, Kind.HOTEL, Kind.MUSEUM,
 	Kind.POST_OFFICE, Kind.CEMETERY, Kind.BUNKER, Kind.AIRBASE, Kind.PHARMACY,
 	Kind.GAS_STATION, Kind.CRANE, Kind.POLICE_HQ, Kind.MAIN_HOSPITAL, Kind.MAIN_SCHOOL,
+	Kind.MOUNTAIN, Kind.FIELD, Kind.RUSSIAN, Kind.PRISON_WING, Kind.OIL_PUMP, Kind.STALL,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

@@ -13,8 +13,9 @@ const LOT_SIZES := {
 	Zone.APARTMENT: Vector2i(2, 2),
 	Zone.SUBURBAN: Vector2i(2, 2),
 	Zone.INDUSTRIAL: Vector2i(2, 3),
-	Zone.ENTERTAINMENT: Vector2i(2, 3),
+	Zone.ENTERTAINMENT: Vector2i(1, 4),
 	Zone.QUARTER: Vector2i(2, 3),
+	Zone.POOR: Vector2i(2, 3),
 }
 
 var _cfg: CityConfig
@@ -86,7 +87,7 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 	if facing < 0: # no road access: courtyard
 		match zone:
 			Zone.INDUSTRIAL: return Kind.INDUSTRIAL_YARD
-			Zone.SUBURBAN, Zone.APARTMENT, Zone.QUARTER: return Kind.GARDEN
+			Zone.SUBURBAN, Zone.APARTMENT, Zone.QUARTER, Zone.POOR: return Kind.GARDEN
 			_: return Kind.PLAZA if h < 0.6 else Kind.GARDEN
 	match zone:
 		Zone.DOWNTOWN:
@@ -99,10 +100,10 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 		Zone.COMMERCIAL:
 			return Kind.OFFICE if area >= 4 and h < 0.45 else Kind.SHOP
 		Zone.ENTERTAINMENT:
-			# Neon clubs and small casinos, a few hotels and shops in between.
-			if mini(lot.size.x, lot.size.y) >= 2 and h < 0.6:
+			# Neon clubs of every size (bars to resorts), offices and shops in between.
+			if h < (0.7 if mini(lot.size.x, lot.size.y) <= 1 else 0.55):
 				return Kind.NIGHTCLUB
-			return Kind.OFFICE if area >= 4 else Kind.SHOP
+			return Kind.OFFICE if area >= 4 and h < 0.85 else Kind.SHOP
 		Zone.APARTMENT:
 			if area < 4:
 				return Kind.SHOP
@@ -117,6 +118,8 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 			return Kind.INDUSTRIAL if area >= 4 else Kind.INDUSTRIAL_YARD
 		Zone.QUARTER:
 			return Kind.QUARTER_BLDG
+		Zone.POOR:
+			return Kind.POOR_BLDG if area >= 3 and h < 0.8 else Kind.SHOP
 	return Kind.GARDEN
 
 
@@ -138,7 +141,7 @@ func _all_land(r: Rect2i) -> bool:
 			if not _data.in_bounds(x, y):
 				return false
 			var i := _data.idx(x, y)
-			if _data.terrain[i] != CityTypes.Terrain.LAND or _data.road[i] != 0:
+			if _data.terrain[i] != CityTypes.Terrain.LAND or _data.road[i] != 0 or owner[i] != -1:
 				return false
 	return true
 

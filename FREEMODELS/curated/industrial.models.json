@@ -1,0 +1,13 @@
+{
+	"file": "industrial.glb",
+	"models": [
+		{
+			"cat": "FACTORY",
+			"node": "factory"
+		},
+		{
+			"cat": "RUIN",
+			"node": "ruin"
+		}
+	]
+}

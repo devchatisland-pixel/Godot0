@@ -22,6 +22,10 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("cactus", cactus())
 	lib.add_named("lighthouse", lighthouse())
 	lib.add_named("palm", palm())
+	lib.add_named("mountain_a", mountain(0))
+	lib.add_named("mountain_b", mountain(1))
+	lib.add_named("mountain_c", mountain(2))
+	lib.add_named("oil_pump", oil_pump())
 
 
 # --- Telecom tower (2x2): red and white lattice with a beacon ---------------------------
@@ -128,4 +132,71 @@ static func palm() -> ArrayMesh:
 		k.box(Vector3(0, -0.01, -0.05), Vector3(0.36, 0.02, 0.1), PALM.darkened(0.15 * (i % 2)))
 	k.xform = Transform3D.IDENTITY
 	k.cylinder(p - Vector3(0, 0.03, 0), 0.05, 0.03, 0.06, 6, Color("6b4a2a"))
+	return k.commit()
+
+
+# --- Mountains (6x6): faceted rocky peaks with pine forests on the slopes and snow caps ---------
+const ROCK_GREY := Color("8f8a82")
+const ROCK_DARK := Color("6e6a64")
+const SNOW := Color("f4f6fa")
+const PINE := Color("2f6b3a")
+const PINE_LIGHT := Color("3f8a45")
+
+## The peaks are drawn this much bigger than listed, so the range towers over the forest.
+const PEAK_SCALE := 1.35
+## Peaks: [x, z, base radius, height] per variant.
+const PEAKS := [
+	[[0.0, 0.0, 2.3, 5.2], [1.6, -1.0, 1.5, 3.4], [-1.7, 1.2, 1.4, 2.8]],
+	[[-1.4, 0.0, 1.9, 3.6], [0.6, 0.0, 2.1, 4.6], [2.0, 0.8, 1.2, 2.2]],
+	[[0.0, 0.2, 2.6, 6.2], [-1.8, -1.2, 1.3, 2.6], [1.3, 1.6, 1.2, 2.4]],
+]
+
+
+static func mountain(variant: int) -> ArrayMesh:
+	var k := MeshKit.new()
+	for p in PEAKS[variant]:
+		var base := Vector3(p[0], 0.0, p[1]) * PEAK_SCALE
+		var r: float = float(p[2]) * PEAK_SCALE
+		var h: float = float(p[3]) * PEAK_SCALE
+		# Three stacked cones with few sides: grey rock, darker band, snow on the tip.
+		k.cylinder(base, r, r * 0.62, h * 0.38, 7, ROCK_DARK, ROCK_GREY)
+		k.cylinder(base + Vector3(0, h * 0.38, 0), r * 0.62, r * 0.3, h * 0.34, 7, ROCK_GREY, ROCK_DARK)
+		var tip := h * 0.72
+		k.cylinder(base + Vector3(0, tip, 0), r * 0.3, 0.0, h - tip, 7, SNOW if h > 3.0 else ROCK_GREY)
+		# Pine ring around the foot.
+		for i in 9:
+			var a: float = TAU * (float(i) + 0.4) / 9.0 + float(p[0])
+			var q := base + Vector3(cos(a), 0, sin(a)) * (r * 0.92)
+			_pine(k, q, (0.55 + 0.25 * float(i % 3)) * 1.2)
+	return k.commit()
+
+
+static func _pine(k: MeshKit, at: Vector3, s: float) -> void:
+	k.cylinder(at, 0.05 * s, 0.05 * s, 0.18 * s, 5, TRUNK)
+	k.cylinder(at + Vector3(0, 0.12 * s, 0), 0.26 * s, 0.0, 0.6 * s, 6, PINE)
+	k.cylinder(at + Vector3(0, 0.38 * s, 0), 0.2 * s, 0.0, 0.5 * s, 6, PINE_LIGHT)
+
+
+# --- Pumpjack (2x2): base, walking beam with horse head, counterweight, tank -------------------
+static func oil_pump() -> ArrayMesh:
+	var k := MeshKit.new()
+	var steel := Color("3a3a40")
+	var rust := Color("b5532e")
+	k.box(Vector3(-0.7, 0, -0.5), Vector3(1.4, 0.04, 1.0), CONCRETE)
+	# Samson post (A frame) and the walking beam on top.
+	for z in [-0.12, 0.12]:
+		k.xform = Transform3D(Basis(Vector3.BACK, 0.4), Vector3(-0.15, 0.04, z))
+		k.box(Vector3(-0.025, 0, -0.02), Vector3(0.05, 0.62, 0.04), steel)
+		k.xform = Transform3D(Basis(Vector3.BACK, -0.4), Vector3(-0.15, 0.04, z))
+		k.box(Vector3(-0.025, 0, -0.02), Vector3(0.05, 0.62, 0.04), steel)
+	k.xform = Transform3D(Basis(Vector3.BACK, 0.08), Vector3(-0.15, 0.62, 0))
+	k.box(Vector3(-0.55, -0.04, -0.06), Vector3(1.1, 0.08, 0.12), rust)
+	k.cylinder(Vector3(0.52, -0.34, 0), 0.2, 0.2, 0.06, 10, steel)
+	k.box(Vector3(0.5, -0.3, -0.04), Vector3(0.04, 0.34, 0.08), steel)
+	k.block(Vector3(-0.55, -0.16, 0), Vector3(0.16, 0.2, 0.16), steel)
+	k.xform = Transform3D.IDENTITY
+	# Counterweight and well head, storage tank.
+	k.cylinder(Vector3(-0.62, 0.04, 0), 0.14, 0.14, 0.2, 10, steel)
+	k.block(Vector3(0.45, 0.04, 0), Vector3(0.1, 0.25, 0.1), steel)
+	k.cylinder(Vector3(0.45, 0.04, 0.38), 0.18, 0.18, 0.3, 10, Color("d8d3c4"), Color("8f8b80"))
 	return k.commit()

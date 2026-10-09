@@ -1,0 +1,45 @@
+{
+	"file": "accommodations.glb",
+	"models": [
+		{
+			"cat": "HOTEL_PACK",
+			"node": "hotel_star"
+		},
+		{
+			"cat": "HOTEL_PACK",
+			"node": "hotel_big"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "villa3"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "villa4"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "villa5"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "villa6"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "villa7"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "flat8"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "flat9"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "flat10"
+		}
+	]
+}

@@ -134,7 +134,7 @@ static func cemetery() -> ArrayMesh:
 		k.box(Vector3(x, 0.02, d - 0.12), Vector3(0.08, 0.35, 0.12), wall)
 	# Central path to the chapel.
 	k.box(Vector3(-0.25, 0.022, -1.2), Vector3(0.5, 0.005, d + 1.15), Color("cfc4a8"))
-	# Rows of graves: headstones and crosses.
+	# Rows of graves: tall headstones, crosses and angels on pedestals, easy to see from far.
 	var grey := [Color("bdbab2"), Color("9e9b94"), Color("d8d5ce")]
 	for row in 6:
 		for col in 12:
@@ -145,24 +145,28 @@ static func cemetery() -> ArrayMesh:
 			var h := CityTypes.hash2(row, col, 909)
 			var c: Color = grey[h % 3]
 			if h % 4 == 0:
-				k.block(Vector3(x, 0.02, z), Vector3(0.04, 0.24, 0.04), c)
-				k.block(Vector3(x, 0.15, z), Vector3(0.14, 0.04, 0.04), c)
+				k.block(Vector3(x, 0.02, z), Vector3(0.07, 0.5, 0.07), c)
+				k.block(Vector3(x, 0.3, z), Vector3(0.3, 0.07, 0.07), c)
+			elif h % 7 == 0:
+				k.block(Vector3(x, 0.02, z), Vector3(0.2, 0.18, 0.2), c)
+				k.block(Vector3(x, 0.2, z), Vector3(0.1, 0.34, 0.08), Color("e6e3dc"))
 			else:
-				k.block(Vector3(x, 0.02, z), Vector3(0.16, 0.14 + float(h & 3) * 0.03, 0.05), c)
-			k.box(Vector3(x - 0.08, 0.021, z + 0.04), Vector3(0.16, 0.004, 0.24), Color("5f9a4a"))
-	# Cypress trees along the walls.
+				k.block(Vector3(x, 0.02, z), Vector3(0.24, 0.3 + float(h & 3) * 0.06, 0.08), c)
+			k.box(Vector3(x - 0.12, 0.021, z + 0.06), Vector3(0.24, 0.004, 0.3), Color("5f9a4a"))
+	# Tall cypress trees along the walls.
 	for i in 8:
 		var x := -w + 0.3 + i * (w * 2 - 0.6) / 7.0
-		k.cylinder(Vector3(x, 0.02, -d + 0.3), 0.12, 0.0, 0.9, 6, Color("2f6b3a"))
-	# Small chapel at the back with a lit lantern.
-	k.box(Vector3(-0.45, 0.02, -2.1), Vector3(0.9, 0.55, 0.7), Color("cfc9bb"), ROOF)
-	k.gable(Vector3(-0.5, 0.57, -2.1), Vector3(1.0, 0.35, 0.7), DARK, Color("cfc9bb"))
-	k.block(Vector3(0, 0.92, -1.75), Vector3(0.04, 0.25, 0.04), GOLD)
-	k.box(Vector3(-0.08, 1.05, -1.765), Vector3(0.16, 0.03, 0.03), GOLD)
+		k.cylinder(Vector3(x, 0.02, -d + 0.3), 0.17, 0.0, 1.5, 6, Color("2f6b3a"))
+		k.cylinder(Vector3(x, 0.02, d - 0.4), 0.15, 0.0, 1.3, 6, Color("37783f"))
+	# Chapel (a big one) at the back with lit windows and a golden cross.
+	k.box(Vector3(-0.65, 0.02, -2.15), Vector3(1.3, 0.9, 0.95), Color("cfc9bb"), ROOF)
+	k.gable(Vector3(-0.72, 0.92, -2.15), Vector3(1.44, 0.5, 0.95), DARK, Color("cfc9bb"))
+	k.block(Vector3(0, 1.38, -1.7), Vector3(0.06, 0.45, 0.06), GOLD)
+	k.box(Vector3(-0.15, 1.65, -1.73), Vector3(0.3, 0.06, 0.06), GOLD)
 	k.glow(true)
-	k.box(Vector3(-0.1, 0.15, -1.395), Vector3(0.2, 0.3, 0.01), Color("ffd28a"))
+	k.box(Vector3(-0.14, 0.2, -1.195), Vector3(0.28, 0.5, 0.01), Color("ffd28a"))
 	for z in [-0.6, 0.6, 1.6]:
-		k.block(Vector3(0.35, 0.02, z), Vector3(0.04, 0.3, 0.04), WHITE)
+		k.block(Vector3(0.35, 0.02, z), Vector3(0.05, 0.4, 0.05), WHITE)
 	k.glow(false)
 	return k.commit()
 

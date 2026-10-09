@@ -27,15 +27,10 @@ func elevation_at(x: int, y: int) -> float:
 
 
 # --- Elevation -------------------------------------------------------------------
-## Small islands: palm islets off the south coast and the rocky prison island
-## off the north-west coast, facing downtown
+## Small islands of the core city (none: the extension adds the palm islets
+## and the prison island, see ExtensionIsland).
 ## (position in island units: 1 = radius; radius as a fraction of the map).
-const ISLETS := [
-	{"at": Vector2(0.05, 1.2), "radius": 0.034},
-	{"at": Vector2(0.82, 0.84), "radius": 0.028},
-	{"at": Vector2(-0.55, 1.05), "radius": 0.023},
-	{"at": Vector2(-0.92, -0.95), "radius": 0.054, "prison": true},
-]
+const ISLETS := []
 
 ## Centre and radius (cells) of the prison island; radius 0 = none.
 var prison_center := Vector2.ZERO
@@ -53,7 +48,7 @@ func _build_elevation() -> void:
 
 	height.resize(size * size)
 	var half := float(size) * 0.5
-	var radius := Vector2(half, half) * _cfg.island_radius
+	var radius := Vector2(half, half) * _cfg.island_radius # size == core_size here
 	var islets := []
 	for it in ISLETS:
 		var at: Vector2 = it["at"]

@@ -24,6 +24,11 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("club_a", club(PINK, "neon_xxx", 0.8))
 	lib.add_named("club_b", club(GREEN, "neon_bar", 1.2))
 	lib.add_named("club_c", club(CYAN, "neon_club", 1.0))
+	lib.add_named("club_tower", club_tower(MAGENTA, CYAN, "neon_club"))
+	lib.add_named("club_tower_b", club_tower(Color("ff9a2f"), PINK, "neon_xxx"))
+	lib.add_named("club_bar", small_bar())
+	lib.add_named("chapel", chapel())
+	lib.add_named("resort", resort())
 	lib.add_named("ferris_wheel", ferris_wheel())
 	lib.add_named("drive_in", drive_in())
 
@@ -81,6 +86,86 @@ static func club(tube: Color, sign_region: String, height: float) -> ArrayMesh:
 	k.box(Vector3(-0.8, 0.0, 0.6), Vector3(1.6, 0.04, 0.03), tube)
 	k.neon(false)
 	k.front_sign(0.0, 0.34, 0.62, 1.2, sign_region)
+	return k.commit()
+
+
+# --- Neon tower (2x2): slim tall club with glowing strips and a sign on the roof ---------------
+static func club_tower(tube: Color, strip: Color, sign_region: String) -> ArrayMesh:
+	var k := MeshKit.new()
+	var body := Vector3(-0.5, 0, -0.5)
+	var size := Vector3(1.0, 2.6, 1.0)
+	k.box(body, size, NIGHT, Color("15101e"))
+	k.windows(body, size, 9, 3, Color("6b4f8f"), 1)
+	k.neon(true)
+	for x in [-0.5, 0.5]:
+		k.box(Vector3(x - 0.02, 0.0, 0.5), Vector3(0.04, size.y, 0.03), strip)
+		k.box(Vector3(x - 0.02, 0.0, -0.53), Vector3(0.04, size.y, 0.03), strip)
+	_outline(k, body, size, tube)
+	k.box(Vector3(-0.5, 0.0, 0.5), Vector3(1.0, 0.04, 0.03), tube)
+	k.neon(false)
+	k.front_sign(0.0, 0.2, 0.52, 0.9, sign_region)
+	# Rooftop sign on two posts, facing the street.
+	k.block(Vector3(-0.3, size.y, 0.0), Vector3(0.05, 0.3, 0.05), Color("2b2b33"))
+	k.block(Vector3(0.3, size.y, 0.0), Vector3(0.05, 0.3, 0.05), Color("2b2b33"))
+	k.front_sign(0.0, size.y + 0.18, 0.04, 0.9, sign_region)
+	return k.commit()
+
+
+# --- Small bar (1x1): low box with a striped awning and a neon BAR sign -------------------------
+static func small_bar() -> ArrayMesh:
+	var k := MeshKit.new()
+	var body := Vector3(-0.4, 0, -0.38)
+	var size := Vector3(0.8, 0.5, 0.7)
+	k.box(body, size, Color("3a2d52"), Color("231b30"))
+	k.windows(body, size, 1, 3, Color("ffb25c"))
+	k.box(Vector3(-0.45, 0.28, 0.32), Vector3(0.9, 0.04, 0.26), PINK)
+	k.neon(true)
+	_outline(k, body, size, GREEN)
+	k.neon(false)
+	k.front_sign(0.0, 0.32, 0.325, 0.6, "neon_bar")
+	return k.commit()
+
+
+# --- Wedding chapel (1x2): little white chapel with a pink neon steeple --------------------------
+static func chapel() -> ArrayMesh:
+	var k := MeshKit.new()
+	k.box(Vector3(-0.42, 0, -0.8), Vector3(0.84, 0.4, 1.3), WHITE, Color("cfc9d8"))
+	k.gable(Vector3(-0.46, 0.4, -0.84), Vector3(0.92, 0.3, 1.4), Color("c0508a"), WHITE)
+	k.box(Vector3(-0.12, 0, 0.5), Vector3(0.24, 0.9, 0.24), WHITE)
+	k.cylinder(Vector3(0, 0.9, 0.62), 0.2, 0.0, 0.4, 4, Color("c0508a"))
+	k.neon(true)
+	k.block(Vector3(0, 1.28, 0.62), Vector3(0.03, 0.2, 0.03), PINK)
+	k.box(Vector3(-0.07, 1.4, 0.605), Vector3(0.14, 0.03, 0.03), PINK)
+	_outline(k, Vector3(-0.42, 0, -0.8), Vector3(0.84, 0.4, 1.3), PINK)
+	k.neon(false)
+	for z in [-0.5, -0.1]:
+		k.box(Vector3(0.425, 0.12, z), Vector3(0.01, 0.2, 0.14), Color("ffb25c"))
+		k.box(Vector3(-0.435, 0.12, z), Vector3(0.01, 0.2, 0.14), Color("ffb25c"))
+	return k.commit()
+
+
+# --- Resort casino (4x4): marquee podium with two stepped towers and a giant sign --------------
+static func resort() -> ArrayMesh:
+	var k := MeshKit.new()
+	var podium := Vector3(-1.7, 0, -1.4)
+	var podium_size := Vector3(3.4, 0.5, 2.9)
+	k.box(podium, podium_size, PURPLE, NIGHT)
+	k.windows(podium, podium_size, 1, 10, Color("ffd36b"))
+	for x in [-1.25, 0.35]:
+		var t := Vector3(x, 0.5, -1.15)
+		k.box(t, Vector3(0.9, 1.9, 1.1), MAGENTA, NIGHT)
+		k.windows(t, Vector3(0.9, 1.9, 1.1), 7, 3, Color("ffe14f"))
+		k.box(t + Vector3(0.1, 1.9, 0.1), Vector3(0.7, 0.5, 0.9), PURPLE, NIGHT)
+		k.cylinder(t + Vector3(0.45, 2.4, 0.55), 0.25, 0.0, 0.5, 8, GOLD)
+	k.cylinder(Vector3(0, 0.5, 0.3), 0.7, 0.55, 0.3, 14, GOLD)
+	k.cylinder(Vector3(0, 0.8, 0.3), 0.5, 0.0, 0.5, 14, GOLD)
+	k.box(Vector3(-0.9, 0.3, 1.4), Vector3(1.8, 0.05, 0.4), GOLD)
+	k.neon(true)
+	_outline(k, podium, podium_size, PINK)
+	_outline(k, Vector3(-1.25, 0.5, -1.15), Vector3(0.9, 1.9, 1.1), CYAN)
+	_outline(k, Vector3(0.35, 0.5, -1.15), Vector3(0.9, 1.9, 1.1), CYAN)
+	k.neon(false)
+	k.front_sign(0.0, 0.52, 1.52, 1.6, "neon_xxx")
 	return k.commit()
 
 

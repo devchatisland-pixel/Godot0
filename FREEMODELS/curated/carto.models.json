@@ -1,0 +1,173 @@
+{
+	"file": "carto.glb",
+	"models": [
+		{
+			"cat": "MEGA_MALL",
+			"node": "supermarket"
+		},
+		{
+			"cat": "BANK_PACK",
+			"node": "bank"
+		},
+		{
+			"cat": "TRAIN_STATION",
+			"node": "train_station"
+		},
+		{
+			"cat": "GYM",
+			"node": "gym"
+		},
+		{
+			"cat": "POLICE_CAR",
+			"node": "police_car"
+		},
+		{
+			"cat": "BARRIER",
+			"node": "barrier_a"
+		},
+		{
+			"cat": "BARRIER",
+			"node": "barrier_b"
+		},
+		{
+			"cat": "BARRIER",
+			"node": "jersey"
+		},
+		{
+			"cat": "BARRIER",
+			"node": "stop_barrier"
+		},
+		{
+			"cat": "CONE",
+			"node": "cone"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "bakery"
+		},
+		{
+			"cat": "SHOP2",
+			"node": "restaurant"
+		},
+		{
+			"cat": "TRUCK",
+			"node": "truck"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "house0"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "house1"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "house2"
+		},
+		{
+			"cat": "HOUSE2",
+			"node": "house3"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town0"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town1"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town2"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town3"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town4"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town5"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town6"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town7"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town8"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town9"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town10"
+		},
+		{
+			"cat": "TOWN2",
+			"node": "town11"
+		},
+		{
+			"cat": "HOTEL_SMALL",
+			"node": "hotel0"
+		},
+		{
+			"cat": "HOTEL_SMALL",
+			"node": "hotel1"
+		},
+		{
+			"cat": "HOTEL_SMALL",
+			"node": "hotel2"
+		},
+		{
+			"cat": "HOTEL_SMALL",
+			"node": "hotel3"
+		},
+		{
+			"cat": "HOTEL_SMALL",
+			"node": "hotel4"
+		},
+		{
+			"cat": "CONTAINER",
+			"node": "container0"
+		},
+		{
+			"cat": "CONTAINER",
+			"node": "container1"
+		},
+		{
+			"cat": "CONTAINER",
+			"node": "container2"
+		},
+		{
+			"cat": "CONTAINER",
+			"node": "container3"
+		},
+		{
+			"cat": "BARREL",
+			"node": "barrel0"
+		},
+		{
+			"cat": "BARREL",
+			"node": "barrel1"
+		},
+		{
+			"cat": "BARREL",
+			"node": "barrel2"
+		},
+		{
+			"cat": "BARREL",
+			"node": "barrel3"
+		}
+	]
+}

@@ -62,7 +62,6 @@ static func un_headquarters() -> ArrayMesh:
 	k.windows(slab, slab_size, 16, 8, Color("a8d0e6"))
 	# The emblem and the name on the front of the slab.
 	k.front_sign(0.0, 3.0, -0.505, 1.1, "un_emblem")
-	k.front_sign(0.0, 2.55, -0.505, 1.5, "sign_un")
 	# General Assembly: low building with a curved roof in front.
 	var hall := Vector3(-1.2, 0.03, -0.25)
 	k.box(hall, Vector3(1.5, 0.5, 0.8), WHITE, Color("c9c6d6"))
@@ -80,13 +79,12 @@ static func un_headquarters() -> ArrayMesh:
 	return k.commit()
 
 
-## Emblem and name of the U.N. for the front of the U.N. tower model: a unit
+## The U.N. emblem (no text) for the front of the U.N. tower model: a unit
 ## panel centred on x, bottom at y = 0, facing +Z (placed and scaled by the
 ## building placer).
 static func un_signs() -> ArrayMesh:
 	var k := MeshKit.new()
-	k.front_sign(0.0, 0.32, 0.0, 0.62, "un_emblem")
-	k.front_sign(0.0, 0.0, 0.0, 1.0, "sign_un")
+	k.front_sign(0.0, 0.0, 0.0, 1.0, "un_emblem")
 	return k.commit()
 
 
@@ -100,7 +98,6 @@ static func prison() -> ArrayMesh:
 	k.box(cell, cell_size, Color("d7d2c4"), Color("8f8b80"))
 	k.windows(cell, cell_size, 3, 12, Color("3a3a40"))
 	k.box(Vector3(-1.55, 0.78, -0.95), Vector3(3.1, 0.06, 1.3), Color("c4bfb1"))
-	k.front_sign(0.0, 0.55, 0.32, 1.4, "sign_prison")
 	# Administration wing and the recreation yard walls.
 	k.box(Vector3(0.9, 0.03, 0.4), Vector3(0.8, 0.45, 0.6), Color("cfc9bb"), Color("8f8b80"))
 	k.box(Vector3(-1.9, 0.03, 0.4), Vector3(1.6, 0.25, 0.06), CONCRETE)

@@ -40,7 +40,7 @@ var _noise := FastNoiseLite.new()
 
 func _init(cfg: CityConfig, data: CityData) -> void:
 	_cfg = cfg
-	origin = Vector2(data.size, 0)
+	origin = Vector2(data.size - 32, 32)
 	_noise.seed = cfg.seed + 9001
 	_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
 	_noise.fractal_type = FastNoiseLite.FRACTAL_FBM
@@ -53,7 +53,7 @@ func shape(bridge_row: int) -> void:
 	_paint()
 	_place_buildings()
 	_place_trees()
-	if bridge_row >= 0:
+	if bridge_row >= 0 and bridge_row < SIZE:
 		for x in SIZE:
 			if _height[bridge_row * SIZE + x] > 0.0:
 				bridge_land_x = origin.x + x

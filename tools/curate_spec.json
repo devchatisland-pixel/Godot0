@@ -420,21 +420,6 @@
       ]
     },
     {
-      "src": "res://FREEMODELS/_incoming/coliseum_from_poly_by_google.glb",
-      "out": "coliseum",
-      "footprint": 3.8,
-      "albedo": "d8c7a0",
-      "items": [
-        {
-          "id": "coliseum",
-          "nodes": [
-            "node-0_0"
-          ],
-          "cat": "COLISEUM"
-        }
-      ]
-    },
-    {
       "src": "res://FREEMODELS/_incoming/public_buildings_pack.glb",
       "out": "public_main",
       "comment": "The main public buildings, one of each. Fronts point to +X in the pack.",
@@ -549,6 +534,947 @@
           "cat": "SKYLINE"
         }
       ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/free_buildings.glb",
+      "out": "free_mini",
+      "scale": 0.3,
+      "items": [
+        {
+          "id": "m1",
+          "region": [
+            -6.2,
+            -24.0,
+            -0.2,
+            -17.8
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "m2",
+          "region": [
+            1.7,
+            -24.0,
+            7.7,
+            -17.8
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "m3",
+          "region": [
+            10.5,
+            -24.0,
+            16.6,
+            -17.8
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "m4",
+          "region": [
+            -6.8,
+            -14.0,
+            -0.2,
+            -8.8
+          ],
+          "cat": "HOTEL_SMALL"
+        },
+        {
+          "id": "m5",
+          "region": [
+            1.7,
+            -14.0,
+            7.6,
+            -8.8
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "m6",
+          "region": [
+            10.1,
+            -14.0,
+            16.0,
+            -8.8
+          ],
+          "cat": "HOTEL_SMALL"
+        },
+        {
+          "id": "m7",
+          "region": [
+            -6.0,
+            -7.0,
+            -1.9,
+            -2.4
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "m8",
+          "region": [
+            -0.3,
+            -7.0,
+            4.9,
+            -2.4
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "m9",
+          "region": [
+            7.1,
+            -7.0,
+            11.0,
+            -2.4
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "m10",
+          "region": [
+            -6.2,
+            -1.0,
+            -0.8,
+            4.8
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "m11",
+          "region": [
+            1.2,
+            -1.0,
+            6.0,
+            6.2
+          ],
+          "cat": "GAS_PACK"
+        },
+        {
+          "id": "m12",
+          "region": [
+            8.4,
+            -1.0,
+            12.6,
+            6.2
+          ],
+          "cat": "CHURCH_PACK"
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/cartocity.glb",
+      "out": "carto",
+      "scale": 0.16,
+      "items": [
+        {
+          "id": "supermarket",
+          "nodes": [
+            "Cube_018"
+          ],
+          "cat": "MEGA_MALL"
+        },
+        {
+          "id": "bank",
+          "nodes": [
+            "Cube_015"
+          ],
+          "cat": "BANK_PACK"
+        },
+        {
+          "id": "police_car",
+          "nodes": [
+            "Cube_039"
+          ],
+          "cat": "POLICE_CAR"
+        },
+        {
+          "id": "barrier_a",
+          "nodes": [
+            "kw_barriers_stand_white__1_"
+          ],
+          "cat": "BARRIER"
+        },
+        {
+          "id": "barrier_b",
+          "nodes": [
+            "kw_barriers_stand_white__1__001"
+          ],
+          "cat": "BARRIER"
+        },
+        {
+          "id": "jersey",
+          "nodes": [
+            "Cube_047"
+          ],
+          "cat": "BARRIER"
+        },
+        {
+          "id": "stop_barrier",
+          "nodes": [
+            "Cube_046"
+          ],
+          "cat": "BARRIER"
+        },
+        {
+          "id": "cone",
+          "nodes": [
+            "Cylinder_001"
+          ],
+          "cat": "CONE"
+        },
+        {
+          "id": "bakery",
+          "nodes": [
+            "Cube_012"
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "restaurant",
+          "nodes": [
+            "Cube_017"
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "truck",
+          "nodes": [
+            "Cube_036"
+          ],
+          "cat": "TRUCK"
+        },
+        {
+          "id": "house0",
+          "nodes": [
+            "Cube_001"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "house1",
+          "nodes": [
+            "Cube_002"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "house2",
+          "nodes": [
+            "Cube_003"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "house3",
+          "nodes": [
+            "Cube_005"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "town0",
+          "nodes": [
+            "Cube_004"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town1",
+          "nodes": [
+            "Cube_006"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town2",
+          "nodes": [
+            "Cube_007"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town3",
+          "nodes": [
+            "Cube_008"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town4",
+          "nodes": [
+            "Cube_009"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town5",
+          "nodes": [
+            "Cube_023"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town6",
+          "nodes": [
+            "Cube_025"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town7",
+          "nodes": [
+            "Cube_026"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town8",
+          "nodes": [
+            "Cube_028"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town9",
+          "nodes": [
+            "Cube_029"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town10",
+          "nodes": [
+            "Cube_027"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "town11",
+          "nodes": [
+            "Cube_030"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "hotel0",
+          "nodes": [
+            "Cube_011"
+          ],
+          "cat": "HOTEL_SMALL"
+        },
+        {
+          "id": "hotel1",
+          "nodes": [
+            "Cube_014"
+          ],
+          "cat": "HOTEL_SMALL"
+        },
+        {
+          "id": "hotel2",
+          "nodes": [
+            "Cube_016"
+          ],
+          "cat": "HOTEL_SMALL"
+        },
+        {
+          "id": "hotel3",
+          "nodes": [
+            "Cube_024"
+          ],
+          "cat": "HOTEL_SMALL"
+        },
+        {
+          "id": "hotel4",
+          "nodes": [
+            "Cube_031"
+          ],
+          "cat": "HOTEL_SMALL"
+        },
+        {
+          "id": "container0",
+          "nodes": [
+            "Cube_042"
+          ],
+          "cat": "CONTAINER"
+        },
+        {
+          "id": "container1",
+          "nodes": [
+            "Cube_043"
+          ],
+          "cat": "CONTAINER"
+        },
+        {
+          "id": "container2",
+          "nodes": [
+            "Cube_044"
+          ],
+          "cat": "CONTAINER"
+        },
+        {
+          "id": "container3",
+          "nodes": [
+            "Cube_045"
+          ],
+          "cat": "CONTAINER"
+        },
+        {
+          "id": "barrel0",
+          "nodes": [
+            "Cylinder_002"
+          ],
+          "cat": "BARREL"
+        },
+        {
+          "id": "barrel1",
+          "nodes": [
+            "Cylinder_004"
+          ],
+          "cat": "BARREL"
+        },
+        {
+          "id": "barrel2",
+          "nodes": [
+            "Cylinder_003"
+          ],
+          "cat": "BARREL"
+        },
+        {
+          "id": "barrel3",
+          "nodes": [
+            "Cylinder_005"
+          ],
+          "cat": "BARREL"
+        }
+      ],
+      "texture_max": 256
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/pack_15_buildings.glb",
+      "out": "france",
+      "scale": 0.05,
+      "items": [
+        {
+          "id": "mansion_a",
+          "region": [
+            -38.5,
+            -66,
+            -2.5,
+            -42
+          ],
+          "cat": "MANSION",
+          "ymin": 0.25
+        },
+        {
+          "id": "mansion_b",
+          "region": [
+            1.5,
+            -66,
+            41.5,
+            -42
+          ],
+          "cat": "MANSION",
+          "ymin": 0.25
+        },
+        {
+          "id": "block_a",
+          "region": [
+            35,
+            -41,
+            60,
+            -22
+          ],
+          "cat": "PRISON_BLOCK",
+          "ymin": 0.25
+        },
+        {
+          "id": "block_b",
+          "region": [
+            35,
+            -20.5,
+            60,
+            2.5
+          ],
+          "cat": "PRISON_BLOCK",
+          "ymin": 0.25
+        },
+        {
+          "id": "red0",
+          "region": [
+            -41,
+            -40.5,
+            0.8,
+            -17.5
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "red1",
+          "region": [
+            1.0,
+            -40.5,
+            34,
+            -17.5
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "red2",
+          "region": [
+            -37,
+            -17,
+            -10,
+            4.5
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "red3",
+          "region": [
+            -10,
+            -17,
+            16.2,
+            3
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "red4",
+          "region": [
+            16.5,
+            -17,
+            34,
+            9
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "red5",
+          "region": [
+            -7.5,
+            3.5,
+            13.5,
+            20
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "red6",
+          "region": [
+            14.5,
+            10,
+            34,
+            41.5
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "blue0",
+          "region": [
+            -31,
+            6.5,
+            -8.5,
+            25.5
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "blue1",
+          "region": [
+            -5.5,
+            20.5,
+            13.5,
+            36
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        },
+        {
+          "id": "blue2",
+          "region": [
+            -28,
+            26.5,
+            -6,
+            43
+          ],
+          "cat": "HOUSE2",
+          "ymin": 0.25
+        }
+      ],
+      "texture_max": 256
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/city_street_pack.glb",
+      "out": "street",
+      "scale": 0.2,
+      "items": [
+        {
+          "id": "shop_coffee",
+          "nodes": [
+            "Block -Coffee Shack_10"
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "shop_amber",
+          "nodes": [
+            "Block - White + Amber_11"
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "shop_garage",
+          "nodes": [
+            "Block - Garage_13"
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "shop_zinc",
+          "nodes": [
+            "Block - Zinc Building_14"
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "shop_row",
+          "nodes": [
+            "Block - Red brick + Beige Brick + Zinc Block + Self Con_15"
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "shop_hut",
+          "nodes": [
+            "Block - Self Con_16"
+          ],
+          "cat": "SHOP2"
+        },
+        {
+          "id": "stall0",
+          "nodes": [
+            "Truck - Ice Cream_0"
+          ],
+          "cat": "STALL"
+        },
+        {
+          "id": "stall1",
+          "nodes": [
+            "Stall - Potato Pancakes_1"
+          ],
+          "cat": "STALL"
+        },
+        {
+          "id": "stall2",
+          "nodes": [
+            "Stall - Ice Cream Old Bathing Station_2"
+          ],
+          "cat": "STALL"
+        },
+        {
+          "id": "stall3",
+          "nodes": [
+            "Stall - Ice Cream Kellys_3"
+          ],
+          "cat": "STALL"
+        },
+        {
+          "id": "stall4",
+          "nodes": [
+            "Stall - El Palast_4"
+          ],
+          "cat": "STALL"
+        },
+        {
+          "id": "stall5",
+          "nodes": [
+            "Stall  - Ice Cream Funland_5"
+          ],
+          "cat": "STALL"
+        },
+        {
+          "id": "stall6",
+          "nodes": [
+            "Truck - Food Truck_8"
+          ],
+          "cat": "STALL"
+        },
+        {
+          "id": "stall7",
+          "nodes": [
+            "Caravan - Ice Cream - Red_9"
+          ],
+          "cat": "STALL"
+        }
+      ],
+      "texture_max": 384
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/accommodations.glb",
+      "out": "accommodations",
+      "scale": 0.4,
+      "items": [
+        {
+          "id": "hotel_star",
+          "nodes": [
+            "PublicBuilding_1"
+          ],
+          "cat": "HOTEL_PACK"
+        },
+        {
+          "id": "hotel_big",
+          "nodes": [
+            "PublicBuilding_2"
+          ],
+          "cat": "HOTEL_PACK"
+        },
+        {
+          "id": "villa3",
+          "nodes": [
+            "PublicBuilding_3"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "villa4",
+          "nodes": [
+            "PublicBuilding_4"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "villa5",
+          "nodes": [
+            "PublicBuilding_5"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "villa6",
+          "nodes": [
+            "PublicBuilding_6"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "villa7",
+          "nodes": [
+            "PublicBuilding_7"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "flat8",
+          "nodes": [
+            "PublicBuilding_8"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "flat9",
+          "nodes": [
+            "PublicBuilding_9"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "flat10",
+          "nodes": [
+            "PublicBuilding_10"
+          ],
+          "cat": "TOWN2"
+        }
+      ],
+      "texture_max": 256
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/somewhat_lowpoly.glb",
+      "out": "euro",
+      "scale": 0.03,
+      "items": [
+        {
+          "id": "museum_a",
+          "nodes": [
+            "Object_3"
+          ],
+          "cat": "MUSEUM_PACK"
+        },
+        {
+          "id": "townhouse_a",
+          "nodes": [
+            "Object_5"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "townhouse_b",
+          "nodes": [
+            "Object_6"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "townhouse_c",
+          "nodes": [
+            "Object_7"
+          ],
+          "cat": "TOWN2"
+        },
+        {
+          "id": "blue_house",
+          "nodes": [
+            "Object_8"
+          ],
+          "cat": "HOUSE2"
+        },
+        {
+          "id": "garage",
+          "nodes": [
+            "Object_9"
+          ],
+          "cat": "WAREHOUSE"
+        },
+        {
+          "id": "brick_works",
+          "nodes": [
+            "Object_10"
+          ],
+          "cat": "FACTORY",
+          "scale_mul": 0.4
+        },
+        {
+          "id": "field",
+          "nodes": [
+            "Object_2"
+          ],
+          "cat": "FIELD",
+          "scale_mul": 0.55
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/buildings_pack_1.glb",
+      "out": "poor",
+      "scale": 1.2,
+      "items": [
+        {
+          "id": "slab",
+          "region": [
+            -6.3,
+            -3.3,
+            -2.2,
+            -0.7
+          ],
+          "cat": "POOR_SLAB"
+        },
+        {
+          "id": "panel0",
+          "region": [
+            -2.2,
+            -2.4,
+            -0.65,
+            -0.7
+          ],
+          "cat": "POOR_BLOCK"
+        },
+        {
+          "id": "panel1",
+          "region": [
+            -0.65,
+            -2.4,
+            0.75,
+            -0.7
+          ],
+          "cat": "POOR_BLOCK"
+        },
+        {
+          "id": "panel2",
+          "region": [
+            0.75,
+            -2.4,
+            2.1,
+            -0.7
+          ],
+          "cat": "POOR_BLOCK"
+        },
+        {
+          "id": "panel3",
+          "region": [
+            2.1,
+            -2.4,
+            3.45,
+            -0.7
+          ],
+          "cat": "POOR_BLOCK"
+        },
+        {
+          "id": "panel4",
+          "region": [
+            3.45,
+            -2.4,
+            4.75,
+            -0.7
+          ],
+          "cat": "POOR_BLOCK"
+        },
+        {
+          "id": "panel5",
+          "region": [
+            4.75,
+            -2.4,
+            6.2,
+            -0.7
+          ],
+          "cat": "POOR_BLOCK"
+        }
+      ],
+      "texture_max": 384
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/russian_building.glb",
+      "out": "russian",
+      "footprint": 3.6,
+      "items": [
+        {
+          "id": "ghetto",
+          "nodes": [
+            "Cube"
+          ],
+          "cat": "RUSSIAN"
+        }
+      ],
+      "texture_max": 1024
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/industrial_building.glb",
+      "out": "industrial",
+      "footprint": 6.0,
+      "items": [
+        {
+          "id": "factory",
+          "nodes": [
+            "IndusrtyBuilding1"
+          ],
+          "cat": "FACTORY"
+        },
+        {
+          "id": "ruin",
+          "nodes": [
+            "IndustryBuilding1D"
+          ],
+          "cat": "RUIN"
+        }
+      ],
+      "texture_max": 384
     }
   ]
 }
