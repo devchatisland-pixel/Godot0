@@ -1,0 +1,394 @@
+{
+  "comment": "Which buildings of FREEMODELS/_incoming are kept, at which scale and in which category. Run tools/curate_models.gd to rebuild FREEMODELS/curated.",
+  "texture_max": 512,
+  "packs": [
+    {
+      "src": "res://FREEMODELS/_incoming/new_york_buildings.glb",
+      "out": "ny_buildings",
+      "scale": 1.15,
+      "items": [
+        {
+          "id": "empire_state",
+          "nodes": [
+            "emp_state._final_14"
+          ],
+          "cat": "LANDMARK"
+        },
+        {
+          "id": "chrysler",
+          "nodes": [
+            "christler_17"
+          ],
+          "cat": "LANDMARK"
+        },
+        {
+          "id": "one_wtc",
+          "nodes": [
+            "tower_one_16"
+          ],
+          "cat": "LANDMARK"
+        },
+        {
+          "id": "woolworth",
+          "nodes": [
+            "woolworth_18"
+          ],
+          "cat": "LANDMARK"
+        },
+        {
+          "id": "ny_times",
+          "nodes": [
+            "new_york_times_19"
+          ],
+          "cat": "LANDMARK"
+        },
+        {
+          "id": "metlife",
+          "nodes": [
+            "metlife_15"
+          ],
+          "cat": "LANDMARK"
+        },
+        {
+          "id": "flatiron",
+          "nodes": [
+            "flatiron_20"
+          ],
+          "cat": "LANDMARK"
+        },
+        {
+          "id": "ny_glass_1",
+          "nodes": [
+            "g1_8"
+          ],
+          "cat": "TOWER_PHOTO"
+        },
+        {
+          "id": "ny_glass_2",
+          "nodes": [
+            "g2_9"
+          ],
+          "cat": "TOWER_PHOTO"
+        },
+        {
+          "id": "ny_glass_3",
+          "nodes": [
+            "g3_10"
+          ],
+          "cat": "TOWER_PHOTO"
+        },
+        {
+          "id": "ny_glass_4",
+          "nodes": [
+            "g4_11"
+          ],
+          "cat": "TOWER_PHOTO"
+        },
+        {
+          "id": "ny_glass_5",
+          "nodes": [
+            "g5_12"
+          ],
+          "cat": "TOWER_PHOTO"
+        },
+        {
+          "id": "ny_glass_6",
+          "nodes": [
+            "g6_13"
+          ],
+          "cat": "TOWER_PHOTO"
+        },
+        {
+          "id": "ny_brick_1",
+          "nodes": [
+            "b1_0"
+          ],
+          "cat": "NY_MIDRISE"
+        },
+        {
+          "id": "ny_brick_2",
+          "nodes": [
+            "b2_1"
+          ],
+          "cat": "NY_MIDRISE"
+        },
+        {
+          "id": "ny_brick_3",
+          "nodes": [
+            "b3_2"
+          ],
+          "cat": "NY_MIDRISE"
+        },
+        {
+          "id": "ny_brick_4",
+          "nodes": [
+            "b4_3"
+          ],
+          "cat": "NY_MIDRISE"
+        },
+        {
+          "id": "ny_brick_5",
+          "nodes": [
+            "b5_4"
+          ],
+          "cat": "NY_MIDRISE"
+        },
+        {
+          "id": "ny_brick_6",
+          "nodes": [
+            "b6_5"
+          ],
+          "cat": "NY_MIDRISE"
+        }
+      ],
+      "texture_max": 256
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/buildings.glb",
+      "out": "ny_street",
+      "footprint": 1.6,
+      "auto": {
+        "cat": "NY_STREET",
+        "max": 10
+      },
+      "texture_max": 256
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/city_pack_7.glb",
+      "out": "towers_a",
+      "footprint": 1.3,
+      "max_height": 6.0,
+      "auto": {
+        "cat": "TOWER_PHOTO",
+        "max": 10,
+        "min_ratio": 1.8,
+        "min_depth_ratio": 0.4,
+        "min_tris": 40
+      },
+      "exclude": [
+        "towers_a_38"
+      ],
+      "texture_max": 256
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/city_pack_8.glb",
+      "out": "towers_b",
+      "footprint": 1.3,
+      "max_height": 6.0,
+      "auto": {
+        "cat": "TOWER_PHOTO",
+        "max": 10,
+        "min_ratio": 1.8,
+        "min_depth_ratio": 0.4,
+        "min_tris": 40
+      },
+      "exclude": [
+        "towers_b_36",
+        "towers_b_63"
+      ],
+      "texture_max": 256
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/detailed_12_storey_panel_apartment_building.glb",
+      "out": "panel_block",
+      "footprint": 1.95,
+      "items": [
+        {
+          "id": "panel_block",
+          "nodes": [
+            "12stbuilding1_LOD1"
+          ],
+          "cat": "PANEL"
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/100_lowpoly_buildings__buildings_pack.glb",
+      "out": "quarter",
+      "max_height": 5.5,
+      "max_footprint": 2.8,
+      "auto": {
+        "cat_by_height": [
+          [
+            1.05,
+            "QUARTER_LOW"
+          ],
+          [
+            2.3,
+            "QUARTER_MID"
+          ],
+          [
+            99.0,
+            "QUARTER_TALL"
+          ]
+        ],
+        "max": 100
+      },
+      "scale_ref": {
+        "node": "Building 18",
+        "footprint": 0.81
+      }
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/low_poly_business_buildings_pack.glb",
+      "out": "business",
+      "items": [
+        {
+          "id": "restaurant",
+          "nodes": [
+            "RestaurantBuilding"
+          ],
+          "cat": "BIZ_SHOP"
+        },
+        {
+          "id": "shop",
+          "nodes": [
+            "ShopBuilding"
+          ],
+          "cat": "BIZ_SHOP"
+        },
+        {
+          "id": "pizzeria",
+          "nodes": [
+            "PizzaBuilding",
+            "PizzaTables",
+            "PizzaBoard"
+          ],
+          "cat": "BIZ_SHOP"
+        },
+        {
+          "id": "burger",
+          "nodes": [
+            "BurgerBuilding"
+          ],
+          "cat": "BIZ_SHOP"
+        },
+        {
+          "id": "cinema",
+          "nodes": [
+            "Cinema"
+          ],
+          "cat": "CINEMA"
+        },
+        {
+          "id": "shopping_center",
+          "nodes": [
+            "ShoppingCenterBuilding"
+          ],
+          "cat": "MALL",
+          "scale_mul": 0.733
+        }
+      ],
+      "scale_ref": {
+        "node": "ShopBuilding",
+        "footprint": 1.1
+      }
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/lowpoly_buildings.glb",
+      "out": "outpost",
+      "items": [
+        {
+          "id": "barn_a",
+          "nodes": [
+            "barn01",
+            "barn01_add"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "barn_b",
+          "nodes": [
+            "barn03"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "ranch_a",
+          "nodes": [
+            "house01",
+            "house01_roof",
+            "house01_add"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "ranch_b",
+          "nodes": [
+            "house02"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "ranch_c",
+          "nodes": [
+            "house03",
+            "house03_roof",
+            "house03_add"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "barrack_a",
+          "nodes": [
+            "barrack01"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "barrack_b",
+          "nodes": [
+            "barrack04"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "container",
+          "nodes": [
+            "container02"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "trailer_a",
+          "nodes": [
+            "trailer01"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "trailer_b",
+          "nodes": [
+            "trailer02"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "water_tank",
+          "nodes": [
+            "watertank01"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "truck",
+          "nodes": [
+            "truck01"
+          ],
+          "cat": "OUTPOST"
+        },
+        {
+          "id": "generator",
+          "nodes": [
+            "generator01"
+          ],
+          "cat": "OUTPOST"
+        }
+      ],
+      "scale_ref": {
+        "node": "house01",
+        "footprint": 1.5
+      }
+    }
+  ]
+}

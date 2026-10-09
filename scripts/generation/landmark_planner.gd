@@ -1,8 +1,8 @@
 class_name LandmarkPlanner
 extends RefCounted
 ## Landmarks that are not in a city block: the lake and paths of the central
-## park, the telecom station and the mesa of the desert, and two lighthouses
-## on the coast.
+## park, the telecom station, mesa and outpost of the desert, and two
+## lighthouses on the coast.
 
 const Zone := CityTypes.Zone
 const Kind := CityTypes.Kind
@@ -76,6 +76,24 @@ func _build_desert() -> void:
 	var mesa := _find_spot(c + Vector2i(6, -5), Vector2i(6, 4), Zone.DESERT)
 	if mesa.size.x > 0:
 		_services.claim(mesa, Kind.MESA, 2)
+	_build_outpost(c + Vector2i(-2, 7))
+
+
+## A small settlement of barns, ranch houses, trailers and a water tank.
+func _build_outpost(center: Vector2i) -> void:
+	var spots := [Vector2i(0, 0), Vector2i(3, -1), Vector2i(-3, 1), Vector2i(1, 3),
+			Vector2i(-2, -3), Vector2i(4, 2), Vector2i(-4, -1), Vector2i(2, -4)]
+	for i in spots.size():
+		var r := _find_spot(center + spots[i], Vector2i(2, 2), Zone.DESERT, 3)
+		if r.size.x > 0:
+			# Facing the settlement centre, like houses around a yard.
+			var d := center - r.position
+			var facing := 2
+			if absi(d.x) > absi(d.y):
+				facing = 1 if d.x > 0 else 3
+			elif d.y != 0:
+				facing = 2 if d.y > 0 else 0
+			_services.claim(r, Kind.OUTPOST, facing, -1, i)
 
 
 # --- Lighthouses ---------------------------------------------------------------------------

@@ -1,0 +1,81 @@
+{
+	"file": "ny_buildings.glb",
+	"models": [
+		{
+			"cat": "LANDMARK",
+			"node": "empire_state"
+		},
+		{
+			"cat": "LANDMARK",
+			"node": "chrysler"
+		},
+		{
+			"cat": "LANDMARK",
+			"node": "one_wtc"
+		},
+		{
+			"cat": "LANDMARK",
+			"node": "woolworth"
+		},
+		{
+			"cat": "LANDMARK",
+			"node": "ny_times"
+		},
+		{
+			"cat": "LANDMARK",
+			"node": "metlife"
+		},
+		{
+			"cat": "LANDMARK",
+			"node": "flatiron"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "ny_glass_1"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "ny_glass_2"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "ny_glass_3"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "ny_glass_4"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "ny_glass_5"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "ny_glass_6"
+		},
+		{
+			"cat": "NY_MIDRISE",
+			"node": "ny_brick_1"
+		},
+		{
+			"cat": "NY_MIDRISE",
+			"node": "ny_brick_2"
+		},
+		{
+			"cat": "NY_MIDRISE",
+			"node": "ny_brick_3"
+		},
+		{
+			"cat": "NY_MIDRISE",
+			"node": "ny_brick_4"
+		},
+		{
+			"cat": "NY_MIDRISE",
+			"node": "ny_brick_5"
+		},
+		{
+			"cat": "NY_MIDRISE",
+			"node": "ny_brick_6"
+		}
+	]
+}

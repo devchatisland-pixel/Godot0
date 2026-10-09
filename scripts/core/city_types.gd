@@ -20,6 +20,7 @@ enum Zone {
 	DESERT,
 	ENTERTAINMENT, # the little Las Vegas
 	ISLET,       # small palm islands off the coast
+	QUARTER,     # colourful low-rise town quarter
 }
 
 # --- Road grid values ---------------------------------------------------------
@@ -57,6 +58,11 @@ enum Kind {
 	SAT_DISH,
 	MESA,
 	POND,             # central park lake with its fountain
+	LANDMARK,         # famous towers downtown (variant = seed)
+	SHOPPING_CENTER,
+	CINEMA,
+	OUTPOST,          # desert shacks, barns and trailers (variant = seed)
+	QUARTER_BLDG,     # building of the colourful quarter
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -64,6 +70,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.CITY_HALL, Kind.STADIUM, Kind.FOUNTAIN, Kind.BANK, Kind.CHURCH,
 	Kind.CASINO, Kind.FERRIS_WHEEL, Kind.DRIVE_IN, Kind.LIGHTHOUSE,
 	Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
+	Kind.LANDMARK, Kind.SHOPPING_CENTER, Kind.CINEMA, Kind.OUTPOST,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

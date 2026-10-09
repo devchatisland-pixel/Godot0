@@ -1,0 +1,353 @@
+{
+	"file": "quarter.glb",
+	"models": [
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_01_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_02_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_03_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_04_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_05_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_06_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_07_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_08_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_09_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_10_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_11_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_12_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_13_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_14_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_15_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_16_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_17_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_19_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_20_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_21_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_22_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_23_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_24_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_25_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_26_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_27_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_28_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_31_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_32_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_33_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_34_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_35_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_36_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_37_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_38_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_39_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_40_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_42_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_43_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_45_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_46_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_47_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_48_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_49_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_50_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_51_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_52_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_53_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_54_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_55_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_56_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_57_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_58_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_59_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_60_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_61_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_62_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_63_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_65_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_66_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_67_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_68_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_69_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_70_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_71_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_72_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_74_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_78_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_79_b"
+		},
+		{
+			"cat": "QUARTER_TALL",
+			"node": "quarter_80_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_81_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_82_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_83_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_85_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_86_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_87_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_88_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_89_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_91_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_92_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_93_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_95_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_96_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_97_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_98_b"
+		},
+		{
+			"cat": "QUARTER_MID",
+			"node": "quarter_99_b"
+		},
+		{
+			"cat": "QUARTER_LOW",
+			"node": "quarter_100_b"
+		}
+	]
+}

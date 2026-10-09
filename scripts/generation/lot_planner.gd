@@ -14,6 +14,7 @@ const LOT_SIZES := {
 	Zone.SUBURBAN: Vector2i(2, 2),
 	Zone.INDUSTRIAL: Vector2i(2, 3),
 	Zone.ENTERTAINMENT: Vector2i(2, 3),
+	Zone.QUARTER: Vector2i(2, 3),
 }
 
 var _cfg: CityConfig
@@ -85,7 +86,7 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 	if facing < 0: # no road access: courtyard
 		match zone:
 			Zone.INDUSTRIAL: return Kind.INDUSTRIAL_YARD
-			Zone.SUBURBAN, Zone.APARTMENT: return Kind.GARDEN
+			Zone.SUBURBAN, Zone.APARTMENT, Zone.QUARTER: return Kind.GARDEN
 			_: return Kind.PLAZA if h < 0.6 else Kind.GARDEN
 	match zone:
 		Zone.DOWNTOWN:
@@ -114,6 +115,8 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 			return Kind.HOUSE
 		Zone.INDUSTRIAL:
 			return Kind.INDUSTRIAL if area >= 4 else Kind.INDUSTRIAL_YARD
+		Zone.QUARTER:
+			return Kind.QUARTER_BLDG
 	return Kind.GARDEN
 
 

@@ -5,7 +5,8 @@ extends RefCounted
 ## city always reads like a designed map:
 ##   a single skyscraper downtown, a little Las Vegas on the west coast,
 ##   a big central park, a desert in the north-east, a civic center,
-##   residential neighbourhoods in the south and east and a sports corner.
+##   residential neighbourhoods in the south and east, a colourful town
+##   quarter by the south coast and a sports corner.
 ## On screen north-west is up, so downtown sits at the top, the desert on the
 ## right and the suburbs at the bottom.
 
@@ -22,7 +23,8 @@ const ANCHORS := [
 	{"name": "sports", "zone": Zone.APARTMENT, "at": Vector2(-0.45, 0.55), "weight": 0.9},
 	{"name": "suburb_ne", "zone": Zone.SUBURBAN, "at": Vector2(0.55, -0.22), "weight": 1.0},
 	{"name": "suburb_e", "zone": Zone.SUBURBAN, "at": Vector2(0.7, 0.3), "weight": 1.1},
-	{"name": "suburb_s", "zone": Zone.SUBURBAN, "at": Vector2(0.22, 0.68), "weight": 1.1},
+	{"name": "suburb_s", "zone": Zone.SUBURBAN, "at": Vector2(0.4, 0.68), "weight": 1.0},
+	{"name": "quarter", "zone": Zone.QUARTER, "at": Vector2(-0.02, 0.72), "weight": 0.8},
 ]
 ## Areas without streets inside, surrounded by roads (island units).
 const PARK_AREA := Rect2(-0.24, -0.38, 0.42, 0.38)
@@ -35,6 +37,7 @@ const BLOCK_LIMITS := {
 	Zone.ENTERTAINMENT: Vector2i(4, 8),
 	Zone.APARTMENT: Vector2i(4, 10),
 	Zone.SUBURBAN: Vector2i(4, 12),
+	Zone.QUARTER: Vector2i(4, 9),
 }
 
 var _cfg: CityConfig

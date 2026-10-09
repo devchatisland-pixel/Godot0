@@ -1,0 +1,45 @@
+{
+	"file": "ny_street.glb",
+	"models": [
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_01_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_02_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_03_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_04_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_05_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_06_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_07_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_08_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_09_b"
+		},
+		{
+			"cat": "NY_STREET",
+			"node": "ny_street_10_b"
+		}
+	]
+}

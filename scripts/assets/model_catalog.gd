@@ -1,14 +1,22 @@
 class_name ModelCatalog
 extends RefCounted
-## Finds model files under the models folder and sorts them into categories
-## by file name. Only files of the needed categories are kept, so unused kit
-## pieces (signs, fences, cones...) are never loaded into memory.
+## Finds model files under the models folder and sorts them into categories:
+##   - kit models (one model per file) by file name,
+##   - curated packs (many buildings in one file) by their "*.models.json" list,
+##     written by tools/curate_models.gd.
+## Only the needed categories are kept, so unused pieces never reach memory.
+## Folders starting with "_" or "." (raw incoming packs) are skipped.
 
 enum Cat {
 	SKYSCRAPER, COMMERCIAL, HOUSE, INDUSTRIAL, INDUSTRIAL_PROP, TREE,
 	ROAD_STRAIGHT, ROAD_CROSS, ROAD_T, ROAD_BEND, ROAD_END,
 	BRIDGE_PILLAR, STREET_LIGHT,
+	# Curated packs
+	TOWER_PHOTO, LANDMARK, NY_STREET, NY_MIDRISE, PANEL,
+	QUARTER_LOW, QUARTER_MID, QUARTER_TALL, BIZ_SHOP, CINEMA, MALL, OUTPOST,
 }
+
+const MANIFEST_SUFFIX := ".models.json"
 
 ## Native connection mask of each Kenney road tile (measured from the meshes:
 ## straight runs along X, the T-junction is closed on its north side, etc.).
@@ -22,19 +30,42 @@ const ROAD_TILES := {
 
 const MODEL_EXTENSIONS := ["glb", "gltf"]
 
-## Each entry: {path, cat, mask}
+## Each entry: {path, cat, mask} and, for a building inside a pack, {node}.
 var entries: Array[Dictionary] = []
 
 
 func scan(root: String) -> void:
 	entries.clear()
 	var files: Array[String] = []
-	_collect(root, files)
+	var manifests: Array[String] = []
+	_collect(root, files, manifests)
 	files.sort()
+	manifests.sort()
+	var packed := {}
+	for m in manifests:
+		for e in _read_manifest(m):
+			entries.append(e)
+			packed[e["path"]] = true
 	for path in files:
+		if packed.has(path):
+			continue
 		var info := classify(path)
 		if not info.is_empty():
 			entries.append(info)
+
+
+## Entries of a curated pack list: {"file": "x.glb", "models": [{"node", "cat"}]}.
+func _read_manifest(path: String) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var data = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if not data is Dictionary:
+		push_warning("[Models] bad list " + path)
+		return out
+	var glb: String = path.get_base_dir().path_join(data.get("file", ""))
+	for m in data.get("models", []):
+		if Cat.has(m.get("cat", "")):
+			out.append({"path": glb, "node": m["node"], "cat": Cat[m["cat"]], "mask": 0})
+	return out
 
 
 ## Returns {path, cat, mask} or {} when the file is not useful.
@@ -73,7 +104,7 @@ static func classify(path: String) -> Dictionary:
 
 ## Recursive listing that also works in exported builds, where the source
 ## files are replaced by "*.import" / "*.remap" entries.
-func _collect(dir_path: String, out: Array[String]) -> void:
+func _collect(dir_path: String, out: Array[String], manifests: Array[String]) -> void:
 	var dir := DirAccess.open(dir_path)
 	if dir == null:
 		return
@@ -82,8 +113,10 @@ func _collect(dir_path: String, out: Array[String]) -> void:
 	while file != "":
 		var full := dir_path.path_join(file)
 		if dir.current_is_dir():
-			if not file.begins_with("."):
-				_collect(full, out)
+			if not file.begins_with(".") and not file.begins_with("_"):
+				_collect(full, out, manifests)
+		elif file.ends_with(MANIFEST_SUFFIX):
+			manifests.append(full)
 		else:
 			var clean := full.trim_suffix(".import").trim_suffix(".remap")
 			if clean.get_extension().to_lower() in MODEL_EXTENSIONS and not out.has(clean):

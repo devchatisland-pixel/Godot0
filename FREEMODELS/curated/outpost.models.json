@@ -1,0 +1,57 @@
+{
+	"file": "outpost.glb",
+	"models": [
+		{
+			"cat": "OUTPOST",
+			"node": "barn_a"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "barn_b"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "ranch_a"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "ranch_b"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "ranch_c"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "barrack_a"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "barrack_b"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "container"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "trailer_a"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "trailer_b"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "water_tank"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "truck"
+		},
+		{
+			"cat": "OUTPOST",
+			"node": "generator"
+		}
+	]
+}

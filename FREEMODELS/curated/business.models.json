@@ -1,0 +1,29 @@
+{
+	"file": "business.glb",
+	"models": [
+		{
+			"cat": "BIZ_SHOP",
+			"node": "restaurant"
+		},
+		{
+			"cat": "BIZ_SHOP",
+			"node": "shop"
+		},
+		{
+			"cat": "BIZ_SHOP",
+			"node": "pizzeria"
+		},
+		{
+			"cat": "BIZ_SHOP",
+			"node": "burger"
+		},
+		{
+			"cat": "CINEMA",
+			"node": "cinema"
+		},
+		{
+			"cat": "MALL",
+			"node": "shopping_center"
+		}
+	]
+}

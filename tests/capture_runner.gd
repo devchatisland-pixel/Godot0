@@ -5,16 +5,15 @@ extends Node
 const Kind := CityTypes.Kind
 const SHOTS := [
 	{"zoom": 80.0, "at": "center"},
-	{"zoom": 60.0, "at": "center"},
+	{"zoom": 26.0, "at": Kind.LANDMARK},
+	{"zoom": 20.0, "at": Kind.QUARTER_BLDG},
+	{"zoom": 20.0, "at": Kind.SHOPPING_CENTER},
+	{"zoom": 18.0, "at": Kind.CINEMA},
+	{"zoom": 20.0, "at": Kind.OUTPOST},
 	{"zoom": 22.0, "at": Kind.CASINO},
-	{"zoom": 22.0, "at": Kind.TELECOM_TOWER},
-	{"zoom": 24.0, "at": Kind.POND},
 	{"zoom": 20.0, "at": Kind.CITY_HALL},
-	{"zoom": 22.0, "at": Kind.STADIUM},
-	{"zoom": 22.0, "at": Kind.SCHOOL},
-	{"zoom": 26.0, "at": Kind.SKYSCRAPER},
-	{"zoom": 16.0, "at": Kind.LIGHTHOUSE},
 	{"zoom": 22.0, "at": Kind.HOUSE},
+	{"zoom": 45.0, "at": Kind.POND},
 ]
 
 var _dir := "user://"

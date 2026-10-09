@@ -1,0 +1,37 @@
+{
+	"file": "towers_a.glb",
+	"models": [
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "towers_a_11_b"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "towers_a_17_b"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "towers_a_26_b"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "towers_a_33_b"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "towers_a_46_b"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "towers_a_51_b"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "towers_a_75_b"
+		},
+		{
+			"cat": "TOWER_PHOTO",
+			"node": "towers_a_83_b"
+		}
+	]
+}

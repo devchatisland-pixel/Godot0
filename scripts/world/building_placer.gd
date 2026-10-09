@@ -8,9 +8,6 @@ extends RefCounted
 const Kind := CityTypes.Kind
 const Cat := ModelCatalog.Cat
 
-## Kenney commercial models taller than this are offices, lower ones shops.
-const OFFICE_MIN_HEIGHT := 1.6
-
 const FAR_COLORS := {
 	Kind.SKYSCRAPER: Color("aebfdc"), Kind.OFFICE: Color("cfd2e2"),
 	Kind.SHOP: Color("e2dde6"), Kind.APARTMENT: Color("d9d7e4"),
@@ -24,6 +21,8 @@ const FAR_COLORS := {
 	Kind.FERRIS_WHEEL: Color("f4f2f8"), Kind.DRIVE_IN: Color("4c4f5e"),
 	Kind.LIGHTHOUSE: Color("d23b2f"), Kind.TELECOM_TOWER: Color("d23b2f"),
 	Kind.SAT_DISH: Color("f4f2f8"), Kind.MESA: Color("c98a4b"), Kind.POND: Color("5fb7e0"),
+	Kind.LANDMARK: Color("c9c2b0"), Kind.SHOPPING_CENTER: Color("5aa9d6"),
+	Kind.CINEMA: Color("e98b8b"), Kind.OUTPOST: Color("a9876a"), Kind.QUARTER_BLDG: Color("efe6e3"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -71,7 +70,7 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 		var names: Array = NAMED[kind]
 		var nid := lib.named_id(names[(seed >> 3) % names.size()])
 		return {"id": nid, "xform": _fit(lib, nid, r, facing, 1.0, 1.0, 0.0, true)}
-	var candidates := _candidates(lib, kind)
+	var candidates := ModelPools.candidates(data, lib, i, kind)
 	if candidates.is_empty():
 		var bid := lib.named_id("box")
 		var h := 0.6 + density * 3.0
@@ -85,34 +84,16 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	match kind:
 		Kind.SKYSCRAPER:
 			# Taller towards the heart of downtown, leaving room between towers.
+			# Photo towers are not stretched (their windows would distort).
 			scale = clampf(room * 0.85, 0.8, 1.1)
-			stretch = 0.85 + density * 0.55 + float(seed & 7) * 0.03
+			if not ModelPools.is_photo_tower(lib, id):
+				stretch = 0.85 + density * 0.55 + float(seed & 7) * 0.03
 		Kind.OFFICE:
 			scale = clampf(room, 0.8, 1.15)
 		_:
 			scale = minf(room, 1.0)
 	var push := 0.25 if kind == Kind.HOUSE else 0.85
 	return {"id": id, "xform": _fit(lib, id, r, facing, scale, stretch, push, false)}
-
-
-static func _candidates(lib: ModelLibrary, kind: int) -> PackedInt32Array:
-	match kind:
-		Kind.SKYSCRAPER:
-			return lib.ids(Cat.SKYSCRAPER)
-		Kind.OFFICE, Kind.SHOP, Kind.APARTMENT:
-			var out := PackedInt32Array()
-			for id in lib.ids(Cat.COMMERCIAL):
-				var h := lib.bounds[id].size.y
-				var tall := h >= OFFICE_MIN_HEIGHT
-				if (kind == Kind.SHOP and not tall) or (kind == Kind.OFFICE and tall) \
-						or (kind == Kind.APARTMENT and h > 1.2 and h < 2.4):
-					out.append(id)
-			return out if not out.is_empty() else lib.ids(Cat.COMMERCIAL)
-		Kind.HOUSE:
-			return lib.ids(Cat.HOUSE)
-		Kind.INDUSTRIAL:
-			return lib.ids(Cat.INDUSTRIAL)
-	return PackedInt32Array()
 
 
 ## Prefers models that fill the lot well; falls back to the smallest one.

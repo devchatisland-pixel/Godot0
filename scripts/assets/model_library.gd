@@ -19,12 +19,17 @@ var named := {}
 
 var _pending: Array[Dictionary] = []
 var _total := 0
+# Curated pack currently open (packs hold many buildings, opened once each).
+var _pack_path := ""
+var _pack_root: Node
 
 
 func begin(cfg: CityConfig) -> void:
 	var catalog := ModelCatalog.new()
 	catalog.scan(cfg.models_root)
 	_pending = _limit_variants(catalog.entries, cfg.max_variants)
+	# Group buildings of the same pack so every pack file is opened only once.
+	_pending.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["path"] < b["path"])
 	_total = maxi(1, _pending.size())
 	print("[Models] %d model files selected in %s" % [_pending.size(), cfg.models_root])
 
@@ -35,15 +40,17 @@ func load_next(count: int) -> float:
 		if _pending.is_empty():
 			break
 		var e: Dictionary = _pending.pop_front()
-		var mesh := _load_mesh(e["path"])
+		var mesh := _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
 		if mesh == null:
-			push_warning("[Models] could not load " + e["path"])
+			push_warning("[Models] could not load %s %s" % [e["path"], e.get("node", "")])
 			continue
 		var id := add_mesh(mesh, e["mask"])
 		var cat: int = e["cat"]
 		if not by_cat.has(cat):
 			by_cat[cat] = PackedInt32Array()
 		by_cat[cat].append(id)
+	if _pending.is_empty():
+		_close_pack()
 	return 1.0 - float(_pending.size()) / float(_total)
 
 
@@ -96,18 +103,45 @@ func _load_mesh(path: String) -> Mesh:
 	var res: Resource = null
 	if ResourceLoader.exists(path):
 		res = ResourceLoader.load(path)
-	var root: Node = null
-	if res is PackedScene:
-		root = (res as PackedScene).instantiate()
-	elif res is Mesh:
+	if res is Mesh:
 		return res
-	else:
-		root = _load_gltf_raw(path)
+	var root := _open_scene(path, res)
 	if root == null:
 		return null
-	var mesh := _merge_meshes(root)
+	var mesh := _merge_meshes(root, root)
 	root.free()
 	return mesh
+
+
+## One building of a curated pack: the top-level node `node_name`.
+func _load_pack_mesh(path: String, node_name: String) -> Mesh:
+	if path != _pack_path:
+		_close_pack()
+		_pack_path = path
+		var res: Resource = ResourceLoader.load(path) if ResourceLoader.exists(path) else null
+		_pack_root = _open_scene(path, res)
+	if _pack_root == null:
+		return null
+	# A pack holding a single building is imported with that building as root.
+	if _pack_root.name == node_name:
+		return _merge_meshes(_pack_root, _pack_root)
+	var node := _pack_root.find_child(node_name, false, false)
+	if node == null:
+		return null
+	return _merge_meshes(node, _pack_root)
+
+
+func _close_pack() -> void:
+	if _pack_root != null:
+		_pack_root.free()
+	_pack_root = null
+	_pack_path = ""
+
+
+func _open_scene(path: String, res: Resource) -> Node:
+	if res is PackedScene:
+		return (res as PackedScene).instantiate()
+	return _load_gltf_raw(path)
 
 
 ## Fallback for model files that were not imported by the editor.
@@ -119,18 +153,18 @@ func _load_gltf_raw(path: String) -> Node:
 	return doc.generate_scene(state)
 
 
-## Collapses all MeshInstance3D nodes of a model into one mesh (one surface per
-## original surface, vertices baked into model space).
-func _merge_meshes(root: Node) -> Mesh:
+## Collapses all MeshInstance3D nodes under `node` into one mesh (one surface
+## per original surface, vertices baked into the space of `space`).
+func _merge_meshes(node: Node, space: Node) -> Mesh:
 	var instances: Array[MeshInstance3D] = []
-	_find_meshes(root, instances)
+	_find_meshes(node, instances)
 	if instances.is_empty():
 		return null
-	if instances.size() == 1 and _model_transform(instances[0], root) == Transform3D.IDENTITY:
+	if instances.size() == 1 and _model_transform(instances[0], space) == Transform3D.IDENTITY:
 		return instances[0].mesh
 	var out := ArrayMesh.new()
 	for mi in instances:
-		var xform := _model_transform(mi, root)
+		var xform := _model_transform(mi, space)
 		for s in mi.mesh.get_surface_count():
 			var st := SurfaceTool.new()
 			st.append_from(mi.mesh, s, xform)
