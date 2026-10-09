@@ -682,13 +682,6 @@
           "cat": "BANK_PACK"
         },
         {
-          "id": "police_car",
-          "nodes": [
-            "Cube_039"
-          ],
-          "cat": "POLICE_CAR"
-        },
-        {
           "id": "barrier_a",
           "nodes": [
             "kw_barriers_stand_white__1_"
@@ -699,20 +692,6 @@
           "id": "barrier_b",
           "nodes": [
             "kw_barriers_stand_white__1__001"
-          ],
-          "cat": "BARRIER"
-        },
-        {
-          "id": "jersey",
-          "nodes": [
-            "Cube_047"
-          ],
-          "cat": "BARRIER"
-        },
-        {
-          "id": "stop_barrier",
-          "nodes": [
-            "Cube_046"
           ],
           "cat": "BARRIER"
         },

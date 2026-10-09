@@ -30,7 +30,7 @@ const FAR_COLORS := {
 	Kind.POLICE_HQ: Color("3f6fd0"), Kind.MAIN_HOSPITAL: Color("f4f2f8"), Kind.MAIN_SCHOOL: Color("e07a5f"),
 	Kind.MOUNTAIN: Color("8f8a82"), Kind.FIELD: Color("b9b04a"), Kind.POOR_BLDG: Color("a7a49e"),
 	Kind.RUSSIAN: Color("9a8f86"), Kind.PRISON_WING: Color("b59a78"), Kind.OIL_PUMP: Color("3a3a40"),
-	Kind.STALL: Color("f2a65a"),
+	Kind.STALL: Color("f2a65a"), Kind.FACTORY_BLDG: Color("9a9a9e"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -45,7 +45,7 @@ const NAMED := {
 	Kind.FIELD: ["field_wheat", "field_corn", "field_plowed", "field_green"],
 	Kind.MOUNTAIN: ["mountain_a", "mountain_b", "mountain_c"], Kind.OIL_PUMP: ["oil_pump"],
 	Kind.PRISON_WING: ["box"], Kind.MEGA_MALL: ["box"],
-	Kind.POOR_BLDG: ["box"], Kind.RUSSIAN: ["box"], Kind.STALL: ["box"],
+	Kind.POOR_BLDG: ["box"], Kind.RUSSIAN: ["box"], Kind.STALL: ["box"], Kind.FACTORY_BLDG: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -72,7 +72,7 @@ const SHOP_BOOST := 1.7
 ## Big buildings from the packs grow to fill their (big) lot, up to this scale.
 const MAX_FILL := 3.0
 ## The mall may grow a little more than other public buildings.
-const MALL_FILL := 3.4
+const MALL_FILL := 2.0
 ## Famous New York towers: wider lots and this height at least (stretched a bit).
 const LANDMARK_SCALE := 2.1
 const LANDMARK_HEIGHT := 11.0

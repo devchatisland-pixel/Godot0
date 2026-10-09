@@ -4,35 +4,23 @@ extends Node
 
 const Kind := CityTypes.Kind
 const SHOTS := [
-	{"zoom": 110.0, "at": "center"},
-	{"zoom": 110.0, "at": "center", "night": true},
-	{"zoom": 170.0, "at": "both"},
-	{"zoom": 60.0, "at": "fog"},
-	{"zoom": 26.0, "at": "bridge"},
+	{"zoom": 200.0, "at": "center"},
+	{"zoom": 200.0, "at": "center", "night": true},
+	{"zoom": 70.0, "at": "bridge"},
 	{"zoom": 50.0, "at": "west_desert"},
-	{"zoom": 50.0, "at": "poor"},
-	{"zoom": 24.0, "at": Kind.RUSSIAN},
+	{"zoom": 40.0, "at": Kind.AIRBASE},
 	{"zoom": 50.0, "at": "industrial"},
+	{"zoom": 36.0, "at": "poor"},
+	{"zoom": 36.0, "at": Kind.RUSSIAN},
 	{"zoom": 50.0, "at": "farm"},
-	{"zoom": 50.0, "at": "mountain"},
+	{"zoom": 40.0, "at": Kind.MOUNTAIN},
 	{"zoom": 40.0, "at": Kind.PRISON},
-	{"zoom": 40.0, "at": Kind.PRISON, "night": true},
 	{"zoom": 36.0, "at": Kind.FERRIS_WHEEL},
 	{"zoom": 30.0, "at": Kind.MEGA_MALL},
-	{"zoom": 30.0, "at": Kind.MEGA_MALL, "night": true},
-	{"zoom": 26.0, "at": Kind.MUSEUM},
-	{"zoom": 22.0, "at": Kind.BANK},
-	{"zoom": 20.0, "at": Kind.HOTEL},
-	{"zoom": 24.0, "at": Kind.CHURCH},
-	{"zoom": 26.0, "at": Kind.POLICE_HQ},
-	{"zoom": 30.0, "at": Kind.CITY_HALL},
-	{"zoom": 36.0, "at": Kind.STADIUM},
-	{"zoom": 30.0, "at": Kind.MAIN_SCHOOL},
-	{"zoom": 30.0, "at": Kind.CEMETERY},
-	{"zoom": 26.0, "at": Kind.UN_HQ},
-	{"zoom": 34.0, "at": Kind.NIGHTCLUB},
+	{"zoom": 30.0, "at": Kind.UN_HQ},
+	{"zoom": 30.0, "at": Kind.STADIUM},
+	{"zoom": 30.0, "at": Kind.DRIVE_IN},
 	{"zoom": 34.0, "at": Kind.NIGHTCLUB, "night": true},
-	{"zoom": 18.0, "at": Kind.STALL},
 ]
 
 var _dir := "user://"
@@ -86,15 +74,13 @@ func _place(data: CityData, at, base: Vector3) -> Vector3:
 		"bridge":
 			return Vector3(data.bridge.x + 10, 0, data.bridge.y)
 		"west_desert":
-			return Vector3(27, 0, 83)
+			return Vector3(62, 0, 143)
 		"poor":
-			return Vector3(27, 0, 114)
+			return Vector3(123, 0, 85)
 		"industrial":
-			return Vector3(37, 0, 143)
+			return Vector3(80, 0, 192)
 		"farm":
-			return Vector3(139, 0, 152)
-		"mountain":
-			return Vector3(80, 0, 30)
+			return Vector3(195, 0, 52)
 	return _find(data, at, base)
 
 

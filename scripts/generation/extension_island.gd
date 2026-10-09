@@ -6,23 +6,19 @@ extends IslandShaper
 ## a prison island far from the shore. Terrain, mainland and forest are then
 ## worked out for the whole map, keeping what the core already has.
 
-## Lobes of land: centre and radii in cells of the big map.
-const LOBES := [
-	{"at": Vector2(30, 98), "r": Vector2(22, 32)},    # west: desert, poor district
-	{"at": Vector2(42, 140), "r": Vector2(28, 18)},   # south-west: industrial zone
-	{"at": Vector2(80, 32), "r": Vector2(32, 24)},    # north: mountains and forest
-	{"at": Vector2(94, 152), "r": Vector2(30, 18)},   # south: the red quarter grows
-	{"at": Vector2(138, 152), "r": Vector2(24, 22)},  # south-east: farmland
-]
+## The main island: a big rounded ellipse (centre and radii in cells of the big
+## map). The core city sits inside it, a little to the south of the middle.
+const MAIN := {"at": Vector2(144, 126), "r": Vector2(128, 118)}
+## How ragged the coast of the big island is, compared with the core island.
+const COAST_ROUGHNESS := 0.5
 ## Palm islets: centre and radius in cells.
 const PALM_ISLETS := [
-	{"at": Vector2(52, 178), "r": 4.5}, {"at": Vector2(126, 178), "r": 5.0},
-	{"at": Vector2(150, 118), "r": 3.5},
+	{"at": Vector2(60, 238), "r": 4.5}, {"at": Vector2(232, 240), "r": 5.0},
+	{"at": Vector2(282, 84), "r": 3.5}, {"at": Vector2(150, 262), "r": 4.0},
 ]
 ## The prison island: centre, radii (long and short side) and turn in radians.
-const PRISON := {"at": Vector2(20, 34), "r": Vector2(15.0, 10.0), "turn": 0.45}
-## East of this column the sea is kept clear for the fog island.
-const FOG_GUARD := 158
+## Far out in the north-west, well away from the coast of the main island.
+const PRISON := {"at": Vector2(26, 24), "r": Vector2(15.0, 10.0), "turn": 0.45}
 
 ## The finished core city and its elevation, embedded at `offset` cells.
 var core: CityData
@@ -63,14 +59,12 @@ func _build_extended_elevation() -> void:
 	coast.fractal_type = FastNoiseLite.FRACTAL_FBM
 	coast.fractal_octaves = 4
 	coast.frequency = 4.0 / float(_cfg.core_size)
-	for lobe in LOBES:
-		var at: Vector2 = lobe["at"]
-		var r: Vector2 = lobe["r"]
-		for y in range(maxi(int(at.y - r.y * 1.3), 0), mini(int(at.y + r.y * 1.3), size)):
-			for x in range(maxi(int(at.x - r.x * 1.3), 0), mini(int(at.x + r.x * 1.3), size)):
-				var t := _ellipse_t(Vector2(x, y), at, r, 0.0)
-				var e := 1.0 - t * t + coast.get_noise_2d(x, y) * _cfg.coast_noise * 0.9
-				_raise(x, y, e)
+	var main_at: Vector2 = MAIN["at"]
+	var main_r: Vector2 = MAIN["r"]
+	for y in size:
+		for x in size:
+			var t := _ellipse_t(Vector2(x, y), main_at, main_r, 0.0)
+			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x, y) * _cfg.coast_noise * COAST_ROUGHNESS)
 	for it in PALM_ISLETS:
 		_islet(coast, it["at"], Vector2(it["r"], it["r"]), 0.0, 0.3, 0.05, 3.0)
 	_islet(coast, PRISON["at"], PRISON["r"], PRISON["turn"], 0.4, 0.15, 2.7)
@@ -80,8 +74,6 @@ func _build_extended_elevation() -> void:
 			var i := y * size + x
 			if edge < 6:
 				height[i] = minf(height[i], -0.3 + edge * 0.03)
-			if x >= FOG_GUARD:
-				height[i] = minf(height[i], -0.3)
 
 
 func _islet(coast: FastNoiseLite, at: Vector2, r: Vector2, turn: float, lift: float,

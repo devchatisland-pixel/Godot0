@@ -40,7 +40,9 @@ var _noise := FastNoiseLite.new()
 
 func _init(cfg: CityConfig, data: CityData) -> void:
 	_cfg = cfg
-	origin = Vector2(data.size - 32, 32)
+	# East of the bridge: the island starts about 22 cells beyond the end of the highway.
+	origin = Vector2(data.bridge.x + 12, data.bridge.y - 64) if data.bridge.x >= 0 \
+			else Vector2(data.size - 32, 32)
 	_noise.seed = cfg.seed + 9001
 	_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
 	_noise.fractal_type = FastNoiseLite.FRACTAL_FBM

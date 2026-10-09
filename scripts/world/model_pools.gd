@@ -75,6 +75,8 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return _poor(lib, roll, r)
 		Kind.RUSSIAN:
 			return lib.ids(Cat.RUSSIAN)
+		Kind.FACTORY_BLDG:
+			return _variant_of(_eight_factories(lib), seed)
 		Kind.PRISON_WING:
 			return _variant(lib, _prison_cat(lib, seed), seed)
 		Kind.STALL:
@@ -152,6 +154,27 @@ static func _industrial(lib: ModelLibrary, roll: float, r: Rect2i) -> PackedInt3
 	if roll > 0.8 and r.get_area() >= 6 and lib.has_cat(Cat.RUIN):
 		return lib.ids(Cat.RUIN)
 	return lib.ids(Cat.INDUSTRIAL)
+
+
+## The 8 different buildings of the industrial zone: the concrete factory, the
+## brick works, the ruin, a garage and four Kenney factories.
+static func _eight_factories(lib: ModelLibrary) -> PackedInt32Array:
+	var out := PackedInt32Array()
+	out.append_array(lib.ids(Cat.FACTORY))
+	out.append_array(lib.ids(Cat.RUIN))
+	out.append_array(lib.ids(Cat.WAREHOUSE))
+	var kit := lib.ids(Cat.INDUSTRIAL)
+	for i in range(0, kit.size(), maxi(1, kit.size() / 4)):
+		if out.size() >= 8:
+			break
+		out.append(kit[i])
+	return out
+
+
+static func _variant_of(ids: PackedInt32Array, seed: int) -> PackedInt32Array:
+	if ids.is_empty():
+		return ids
+	return PackedInt32Array([ids[absi(seed) % ids.size()]])
 
 
 ## Panel towers and slabs, garages and corner shops of the poor district.

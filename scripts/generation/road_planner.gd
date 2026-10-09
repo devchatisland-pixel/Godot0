@@ -138,8 +138,9 @@ func _set_road(p: Vector2i, value: int) -> void:
 
 ## Extension mode: splits `area` into blocks and draws its roads (the first
 ## splits are avenues, deeper ones streets). Dead ends are trimmed inside `area` only.
-func build_region(area: Rect2i, limits: Vector2i, start_depth: int = 1) -> void:
-	_reserved = []
+func build_region(area: Rect2i, limits: Vector2i, reserved: Array[Rect2i] = [],
+		start_depth: int = 1) -> void:
+	_reserved = reserved
 	limits_override = limits
 	var before := blocks.size()
 	_split(area, start_depth)

@@ -4,16 +4,7 @@
 There is no gameplay: you can only **navigate** and **zoom**.
 It runs on desktop, mobile and in the browser (GL Compatibility renderer).
 
-![Chat City and its new districts](docs/overview.jpg)
-![Chat City at night](docs/night.jpg)
-![The fog island and its title](docs/fog_island.jpg)
-![The Golden Gate bridge, with the police roadblock](docs/golden_gate.jpg)
-![The farmland](docs/farm.jpg)
-![The northern mountains](docs/mountains.jpg)
-![The prison island](docs/prison.jpg)
-![The poor district and the west desert](docs/poor.jpg)
-![The very big mall](docs/mall.jpg)
-![Las Vegas at night](docs/vegas_night.jpg)
+*(Screenshots: run the game with `-- --capture <folder>`, see Tests and tools.)*
 
 ## Controls
 
@@ -61,52 +52,51 @@ export_presets.cfg     "Web" (threads) and "Web Lite" (no threads) presets
 
 ## The island
 
-Chat City is a 192×192-cell map. The city that existed before the extension sits in the middle, **exactly as it was**
-(same seed, same streets and buildings); the new districts grow on new land around it. On screen north-west is up.
+Chat City is a 288×288-cell map with one big **rounded island**. The city of the earlier versions sits a little south of the
+middle **exactly as it was** (same seed, same streets and buildings); the countryside and the new districts surround it.
+On screen north-west is up. Special buildings are kept far from each other on purpose.
 
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
-| top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
-| left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size (XXX, BAR, CLUB), the cinema and the very big mall (supermarket) |
-| far west | **West desert** | a second desert right next to Las Vegas: mesas, ranches and oil pumps |
-| below the west desert | **Poor district** | grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
-| south-west | **Industrial zone** | Kenney factories, the big concrete factory and the brick works, yards of containers, barrels and trucks |
+| centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
+| just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
+| left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the mall (a big supermarket) |
+| west of Vegas | **West desert** | the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
+| south-west, between the desert and Vegas | **Industrial zone** | exactly 8 different buildings (concrete factory, brick works, ruin, garage and four Kenney factories) with a few yards of containers, barrels and trucks |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
-| right | **Desert** | a military airbase (runway, hangar, control tower, jets), a bunker, a telecom tower with 3 dishes, a mesa, cacti |
-| below the park | **Civic center** | the main city hall (own plot), police headquarters (own plot), bank (from the cartoon pack, with its sign), fire station, post office |
+| north-east of the park | **Mountain forest** | a forest with one tall snow-capped mountain in the middle |
+| below the park | **Civic center** | the main city hall and the police headquarters (each on its own plot), bank (from the cartoon pack, with its sign), fire station, post office |
+| right of the park | **United Nations** | the U.N. tower with its emblem (no text), on its own plot where everyone sees it |
 | left of the park | **Shopping streets** | the main hospital, the shopping center, the pharmacy, two big hotels, New York street buildings, mini hotels, cartoon shops (burgers and pizzerias drawn extra big, pizzerias rare) |
-| right of the park | **Museum** | a stately grey museum on its own plot |
 | right / bottom | **Residential** | houses with gardens (Kenney, cartoon, French red and blue), the main school with its sports ground, the big church, the cemetery, gas stations |
-| bottom (south coast) | **Colourful quarter** | white and red low-rise town, now bigger, mixed with French villas and colourful town houses; a big ferris wheel by the beach, a construction crane, ice cream stalls |
-| south-east | **Farmland** | crop fields (wheat, corn, plowed soil, green rows) and farms |
-| north | **Mountains and forest** | a dense forest with a range of snow-capped peaks |
-| left | **Sports corner** | the big stadium (own plot, floodlit at night) and the drive-in cinema |
+| south | **Colourful quarter** | white and red low-rise town, bigger than before, mixed with French villas and colourful houses; the drive-in cinema, the construction crane, and by the beach the big ferris wheel and ice cream stalls |
+| left | **Sports corner** | the big stadium (own plot, floodlit at night) |
+| all around the city | **Farmland** | eight patches of crop fields (wheat, corn, plowed soil, green rows) with farms and country roads, spread over the whole island, none near the desert; forests and meadows between them |
 | coast | **Beaches and rocky shores** | lighthouses and palm islets |
 | far north-west, at sea | **Prison island** | a long rocky island far from the coast: a big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses |
-| above the park | **United Nations** | a tall tower with the U.N. emblem (no text) |
-| east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke, blocked by two police cars and road barriers on the bridge. "ZONE UNLOCKED ON SEASON 2, COMING SOON" |
+| east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke. A three-lane highway leads to the bridge, closed by orange triangle barriers and cones. "ZONE UNLOCKED ON SEASON 2, COMING SOON" |
 
-How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same city on every device):
+How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same map on every device):
 
 **1. The core city** (the original pipeline, on a 128×128 grid):
 
 1. **`island_shaper.gd`**: an elliptical island with a little noise, sandy and rocky shores.
-2. **`district_planner.gd`**: the district layout (anchors, hints and the park, desert and big-building plots, in island units).
-3. **`road_planner.gd`**: recursive splitting (BSP) into blocks. The borders of the park, the desert and the plots of the big buildings (stadium, mall, city hall, police HQ, museum, main school, cemetery, ferris wheel) are cut first, so they become ring roads. The first splits are avenues with street lights.
+2. **`district_planner.gd`**: the district layout (anchors, hints and the park, mountain forest and big-building plots, in island units).
+3. **`road_planner.gd`**: recursive splitting (BSP) into blocks. The borders of the park, the forest and the plots of the big buildings (stadium, mall, city hall, police HQ, U.N., main school, cemetery) are cut first, so they become ring roads. The first splits are avenues with street lights.
 4. **`lot_planner.gd`**: blocks cut into lots, every building facing its street.
-5. **`service_planner.gd`**: the big buildings fill their plots; every main public building once, in the block closest to its district, never two in the same spot; then the small services of each district. The 7 landmark towers are each placed once downtown.
-6. **`landmark_planner.gd`**: the park lake and paths, the airbase, bunker, station and mesa of the desert, the road to the bridge, the lighthouses.
+5. **`service_planner.gd`**: the big buildings fill their plots; every main public building once, in the block closest to its district, never two close together; then the small services of each district.
+6. **`landmark_planner.gd`**: the park lake and paths, the mountain, the road to the bridge, the lighthouses.
 
-**2. The extension** (`core_embed.gd`, `extension_island.gd`, `extension_planner.gd`):
+**2. Everything around it** (`core_embed.gd`, `extension_island.gd`, `extension_planner.gd`):
 
-7. **`core_embed.gd`** copies the finished core city into the middle of the 192×192 map.
-8. **`extension_island.gd`** adds lobes of land (west, south-west, north, south, south-east), three palm islets and the prison island. The core keeps its own coastline, shores and forests.
-9. **`extension_planner.gd`** builds the new districts only on free land: streets (BSP) for the poor district, the industrial zone and the red quarter; links their streets to the old city with the shortest path; lots; then the desert features, mountains, farms, beach stalls and the prison compound.
-10. **`fog_island_shaper.gd`**: the island in the fog (ground colours, buildings and palms only, no streets).
+7. **`core_embed.gd`** copies the finished core city into the 288×288 map.
+8. **`extension_island.gd`** raises the big rounded island around it (the core keeps its own streets, shores and forests), plus palm islets and the prison island.
+9. **`extension_planner.gd`** works only on free land: the three-lane highway to the bridge; the small poor district and the south part of the red quarter (BSP streets and lots); the desert with the base, the industrial zone, the farmland patches, forests, beach stalls and the prison compound. Everything is linked to the old city by the shortest road.
+10. **`fog_island_shaper.gd`**: the island in the fog, placed right after the end of the highway.
 
 Which family of models a building uses (Kenney, photo towers, New York, cartoon shops, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
 
-To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `DESERT_AREA`, `PLOTS` or `HINTS` in `district_planner.gd` (core city), or `LOBES` / `DISTRICTS` and the rectangles in `extension_island.gd` / `extension_planner.gd` (new districts).
+To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA`, `PLOTS` or `HINTS` in `district_planner.gd` (core city), or the rectangles at the top of `extension_planner.gd` and `MAIN` / `PRISON` in `extension_island.gd` (everything around).
 
 ### The fog island
 
@@ -176,7 +166,7 @@ Landmarks also face a street on a side the camera sees, so their signs are in vi
 The road tiles are rotated automatically from their measured connection masks.
 Everything the kits do not have is modelled in code (`scripts/procedural/`) in the same style:
 
-* **Public buildings**: hospital (red H on the helipad), school, fire station, church, city hall, the bank with its "$" signs, the United Nations, the prison. Fallbacks are kept for the police station, the stadium, the bank, the church, the hotels and the museums.
+* **Public buildings**: hospital (red H on the helipad), school, fire station, church, city hall, the bank with its "$" signs, the United Nations, the prison. Fallbacks are kept for the police station, the stadium, the bank, the church and the hotels.
 * **Las Vegas**: casinos, neon clubs, ferris wheel, drive-in. The neon is drawn unshaded, with no post effect.
 * **Desert and coast**: telecom tower, satellite dishes, mesa, cactus, lighthouse, palm tree, park lake.
 
@@ -209,12 +199,12 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `crane` | building crane | CRANE | one crane in the colourful quarter |
 | `golden_gate` | Golden Gate bridge | BRIDGE | the bridge to the fog island |
 | `night_skyline` | low-poly night city skyline (keeps its light map) | SKYLINE | the hidden city of the fog island |
-| `carto` | CartoCity pack | MEGA_MALL, BANK_PACK, HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, POLICE_CAR, BARRIER, CONE, TRUCK, CONTAINER, BARREL | the supermarket (very big mall), the bank, colourful houses and shops, mini hotels, the roadblock, industrial props |
+| `carto` | CartoCity pack | MEGA_MALL, BANK_PACK, HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, BARRIER, CONE, TRUCK, CONTAINER, BARREL | the supermarket (the mall), the bank, colourful houses and shops, mini hotels, the orange barriers and cones of the bridge, industrial props |
 | `france` | 15 low-poly buildings (cut by position) | HOUSE2, MANSION, PRISON_BLOCK | French red and blue houses, stone blocks and villas of the prison island |
 | `accommodations` | low poly accommodations buildings | HOTEL_PACK, HOUSE2, TOWN2 | the two big hotels, villas, small apartment blocks |
 | `free_mini` | free low-poly buildings (cut by position) | CHURCH_PACK, GAS_PACK, SHOP2, HOTEL_SMALL, TOWN2 | the big church, a gas station, bars, boutiques, mini hotels |
 | `street` | low-poly city street buildings | SHOP2, STALL | textured shop blocks, ice cream stalls and food trucks |
-| `euro` | somewhat low-poly buildings | MUSEUM_PACK, TOWN2, HOUSE2, WAREHOUSE, FACTORY, FIELD | the museum, tall town houses, a garage, the brick works, a crop field |
+| `euro` | somewhat low-poly buildings | TOWN2, HOUSE2, WAREHOUSE, FACTORY, FIELD | tall town houses, a garage, the brick works, a crop field |
 | `poor` | buildings pack (cut by position) | POOR_SLAB, POOR_BLOCK | grey panel towers and slabs of the poor district |
 | `russian` | Russian building | RUSSIAN | the one big urban ghetto block |
 | `industrial` | low-poly industrial building | FACTORY, RUIN | the concrete factory (industrial zone) |
@@ -228,7 +218,7 @@ Not used:
 * **Duplicate**: the school (the procedural school is used).
 * **Licence not confirmed**: Half-Life 2 buildings.
 * **Skipped on request**: the neon woman sign.
-* **Not placed**: the train station and the gym of the CartoCity pack, the second grey museum of the European pack (dull).
+* **Not placed**: the train station and the gym of the CartoCity pack, the police car and solid roadblocks (removed on request), the museums of the European pack (the museum was replaced by the U.N.).
 
 ### Credits of the latest models
 

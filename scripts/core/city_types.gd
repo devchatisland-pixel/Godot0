@@ -88,6 +88,7 @@ enum Kind {
 	PRISON_WING,      # stone block, warden's house or workshop of the prison island
 	OIL_PUMP,         # pumpjack of the west desert
 	STALL,            # ice cream and food stall on the beach
+	FACTORY_BLDG,     # one of the 8 buildings of the industrial zone (variant = seed)
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -100,6 +101,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.POST_OFFICE, Kind.CEMETERY, Kind.BUNKER, Kind.AIRBASE, Kind.PHARMACY,
 	Kind.GAS_STATION, Kind.CRANE, Kind.POLICE_HQ, Kind.MAIN_HOSPITAL, Kind.MAIN_SCHOOL,
 	Kind.MOUNTAIN, Kind.FIELD, Kind.RUSSIAN, Kind.PRISON_WING, Kind.OIL_PUMP, Kind.STALL,
+	Kind.FACTORY_BLDG,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

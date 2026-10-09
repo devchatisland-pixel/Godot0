@@ -9,7 +9,7 @@ const Kind := CityTypes.Kind
 
 ## kind, lot size (building + its square / parking), how many, district anchor
 ## it should be close to, zones it may replace lots in.
-## The stadium, mall, city hall, art museum, main school, cemetery and ferris wheel have
+## The stadium, mall, city hall, police HQ, U.N., main school, cemetery and ferris wheel have
 ## their own plots (DistrictPlanner.PLOTS) and are not listed here.
 ## "near" is an anchor name, or a list of names (one building near each):
 ## the main services stand once, bigger, near the civic center; small police
@@ -24,8 +24,6 @@ const SPECS := [
 		"zones": [Zone.COMMERCIAL, Zone.SUBURBAN]},
 	{"kind": Kind.POST_OFFICE, "size": Vector2i(3, 2), "count": 1, "near": "post",
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.QUARTER]},
-	{"kind": Kind.MUSEUM, "size": Vector2i(4, 4), "count": 1, "near": "shops", "seed_base": 1,
-		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
 	{"kind": Kind.PHARMACY, "size": Vector2i(2, 2), "count": 1, "near": "shops",
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
 	{"kind": Kind.GAS_STATION, "size": Vector2i(3, 2), "count": 1, "near": "suburb_e",
@@ -34,35 +32,33 @@ const SPECS := [
 		"zones": [Zone.SUBURBAN]},
 	{"kind": Kind.HOTEL, "size": Vector2i(3, 3), "near": ["hotels", "hotels_b"],
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.DOWNTOWN], "same_gap": 16.0, "variants": true},
-	{"kind": Kind.DRIVE_IN, "size": Vector2i(4, 3), "count": 1, "near": "sports",
-		"zones": [Zone.APARTMENT, Zone.COMMERCIAL, Zone.SUBURBAN, Zone.ENTERTAINMENT]},
+	{"kind": Kind.DRIVE_IN, "size": Vector2i(4, 3), "count": 1, "near": "quarter",
+		"zones": [Zone.QUARTER]},
 	{"kind": Kind.CASINO, "size": Vector2i(3, 3), "count": 2, "near": "vegas",
-		"zones": [Zone.ENTERTAINMENT]},
+		"zones": [Zone.ENTERTAINMENT], "same_gap": 9.0},
 	{"kind": Kind.CRANE, "size": Vector2i(2, 2), "count": 1, "near": "quarter",
 		"zones": [Zone.QUARTER]},
 	{"kind": Kind.CINEMA, "size": Vector2i(4, 3), "count": 1, "near": "vegas",
 		"zones": [Zone.ENTERTAINMENT, Zone.COMMERCIAL]},
 	{"kind": Kind.SHOPPING_CENTER, "size": Vector2i(4, 2), "count": 1, "near": "shops",
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
-	{"kind": Kind.UN_HQ, "size": Vector2i(4, 4), "count": 1, "near": "uptown", "show_front": true,
-		"zones": [Zone.APARTMENT, Zone.DOWNTOWN, Zone.COMMERCIAL]},
 	# Famous towers in the heart of downtown, each one once (variant = order).
 	{"kind": Kind.LANDMARK, "size": Vector2i(3, 3), "count": 7, "near": "downtown",
 		"zones": [Zone.DOWNTOWN], "gap": 3.0, "same_gap": 4.0, "variants": true},
 	# Small services of the districts.
 	{"kind": Kind.POLICE, "size": Vector2i(2, 2), "near": ["vegas", "suburb_e", "quarter", "uptown"],
-		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN, Zone.ENTERTAINMENT, Zone.QUARTER]},
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN, Zone.ENTERTAINMENT, Zone.QUARTER], "gap": 6.0},
 	{"kind": Kind.FIRE_STATION, "size": Vector2i(2, 2), "near": ["shops", "suburb_ne", "suburb_s"],
-		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN]},
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN], "gap": 6.0},
 	{"kind": Kind.HOSPITAL, "size": Vector2i(3, 3), "near": ["uptown", "sports", "suburb_e"],
-		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN], "same_gap": 20.0},
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN], "gap": 6.0, "same_gap": 20.0},
 	{"kind": Kind.SCHOOL, "size": Vector2i(3, 3), "near": ["suburb_s", "uptown", "sports"],
-		"zones": [Zone.SUBURBAN, Zone.APARTMENT]},
+		"zones": [Zone.SUBURBAN, Zone.APARTMENT], "gap": 6.0},
 ]
 ## Any two services keep at least this distance (no "service clusters").
-const ANY_SERVICE_GAP := 5.0
+const ANY_SERVICE_GAP := 9.0
 ## Two buildings of the same kind keep at least this distance.
-const SAME_KIND_GAP := 10.0
+const SAME_KIND_GAP := 18.0
 
 var _cfg: CityConfig
 var _data: CityData

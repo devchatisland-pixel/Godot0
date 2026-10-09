@@ -35,12 +35,13 @@ func generate() -> CityData:
 
 	_report(0.97, "Hiding an island in the fog")
 	data.fog = FogIslandShaper.new(_cfg, data)
-	data.fog.shape(data.bridge.y - int(data.fog.origin.y))
+	data.fog.shape(64)
 
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	var services: Dictionary = core["services"].duplicate()
-	services.merge(extension.counts)
+	for k in extension.counts:
+		services[k] = services.get(k, 0) + extension.counts[k]
 	_print_stats(data, core["blocks"] + extension.block_count, services, Time.get_ticks_msec() - t0)
 	return data
 

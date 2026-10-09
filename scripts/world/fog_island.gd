@@ -124,7 +124,9 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	var length := box.size.x if along_x else box.size.z
 	var s := (x1 - x0) / length
 	var sy := minf(s, BRIDGE_HEIGHT / box.size.y)
-	var basis := (Basis() if along_x else Basis(Vector3.UP, PI * 0.5)) * Basis.from_scale(Vector3(s, sy, s))
+	# The deck is as wide as the three-lane highway that leads to it.
+	var width := 3.0 / (box.size.z if along_x else box.size.x)
+	var basis := (Basis() if along_x else Basis(Vector3.UP, PI * 0.5)) * Basis.from_scale(Vector3(s, sy, width))
 	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
 	var mi := MeshInstance3D.new()
 	mi.name = "GoldenGate"
@@ -135,28 +137,20 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	_build_checkpoint(lib, x0 + 0.5, z)
 
 
-## Two police cars and road barriers block the bridge on the city side.
+## Orange-and-white triangle barriers and cones close the highway before the bridge.
 func _build_checkpoint(lib: ModelLibrary, x: float, z: float) -> void:
 	var groups := {}
-	var cars := lib.ids(Cat.POLICE_CAR)
 	var barriers := lib.ids(Cat.BARRIER)
 	var cones := lib.ids(Cat.CONE)
-	if not cars.is_empty():
-		var s := 4.2
-		# Two cars side by side across the bridge, nose to the city, lights towards the camera.
-		_add(groups, cars[0], Transform3D(Basis(Vector3.UP, PI * 0.5 + 0.12).scaled(Vector3(s, s, s)),
-				Vector3(x, 0.0, z - 0.55)))
-		_add(groups, cars[0], Transform3D(Basis(Vector3.UP, PI * 0.5 - 0.1).scaled(Vector3(s, s, s)),
-				Vector3(x + 0.1, 0.0, z + 0.55)))
 	if not barriers.is_empty():
 		for i in 4:
 			var t := Transform3D(Basis(Vector3.UP, PI * 0.5).scaled(Vector3(2.6, 2.6, 2.6)),
-					Vector3(x + 1.2, 0.0, z - 1.1 + i * 0.75))
+					Vector3(x - 0.5, 0.0, z - 1.1 + i * 0.75))
 			_add(groups, barriers[i % barriers.size()], t)
 	if not cones.is_empty():
-		for i in 5:
+		for i in 7:
 			_add(groups, cones[0], Transform3D(Basis().scaled(Vector3(3.6, 3.6, 3.6)),
-					Vector3(x + 1.9, 0.0, z - 1.2 + i * 0.6)))
+					Vector3(x - 1.4 - float(i % 2) * 0.4, 0.0, z - 1.3 + i * 0.45)))
 	for id in groups:
 		_multimesh(lib.meshes[id], groups[id])
 

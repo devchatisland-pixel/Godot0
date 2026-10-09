@@ -1,8 +1,8 @@
 class_name LandmarkPlanner
 extends RefCounted
 ## Landmarks that are not in a city block: the lake and paths of the central
-## park, the airbase, bunker, telecom station, mesa and ranch of the desert,
-## the prison island, the road to the Golden Gate bridge and two lighthouses.
+## park, the one mountain of the north-east forest, the road to the Golden
+## Gate bridge and the lighthouses.
 
 const Zone := CityTypes.Zone
 const Kind := CityTypes.Kind
@@ -28,8 +28,7 @@ func _init(data: CityData, districts: DistrictPlanner, island: IslandShaper,
 
 func build() -> void:
 	_build_park()
-	_build_desert()
-	_build_prison()
+	_build_mountain()
 	_build_bridge_road()
 	_build_lighthouses()
 
@@ -55,70 +54,13 @@ func _paint_path(x: int, y: int) -> void:
 		_data.zone[i] = Zone.CIVIC
 
 
-# --- Desert: military airbase, bunker, telecom station, mesa and a lone ranch ---------
-## Airbase sizes tried from the biggest (runway along X).
-const AIRBASE_SIZES := [Vector2i(16, 5), Vector2i(14, 5), Vector2i(12, 4)]
-
-
-func _build_desert() -> void:
-	var desert := _districts.desert
-	var sum := Vector2.ZERO
-	var count := 0
-	for y in range(desert.position.y, desert.end.y):
-		for x in range(desert.position.x, desert.end.x):
-			if _data.zone[_data.idx(x, y)] == Zone.DESERT:
-				sum += Vector2(x, y)
-				count += 1
-	if count < 40:
-		return
-	var c := Vector2i(sum / count)
-	for size in AIRBASE_SIZES:
-		var base := _find_spot(c + Vector2i(-size.x / 2, -7), size, Zone.DESERT, 12, 1)
-		if base.size.x > 0:
-			_services.claim(base, Kind.AIRBASE, 2, Zone.CIVIC)
-			break
-	var tower := _find_spot(c + Vector2i(-4, 3), Vector2i(2, 2), Zone.DESERT, 10, 1)
-	if tower.size.x > 0:
-		_services.claim(tower, Kind.TELECOM_TOWER, 2, Zone.CIVIC)
-		for o in [Vector2i(3, -1), Vector2i(3, 2), Vector2i(0, 3)]:
-			var dish := _find_spot(tower.position + o, Vector2i(2, 2), Zone.DESERT, 3)
-			if dish.size.x > 0:
-				_services.claim(dish, Kind.SAT_DISH, 3, Zone.CIVIC)
-	var mesa := _find_spot(c + Vector2i(8, 1), Vector2i(6, 4), Zone.DESERT, 10, 1)
-	if mesa.size.x > 0:
-		_services.claim(mesa, Kind.MESA, 2)
-	var bunker := _find_spot(c + Vector2i(4, 6), Vector2i(3, 3), Zone.DESERT, 8, 2)
-	if bunker.size.x > 0:
-		_services.claim(bunker, Kind.BUNKER, 2, Zone.CIVIC)
-	_build_outpost(c + Vector2i(-6, 9))
-
-
-## A lone ranch: a few barns and trailers far apart from each other.
-func _build_outpost(center: Vector2i) -> void:
-	var spots := [Vector2i(0, 0), Vector2i(-7, -3), Vector2i(6, 2)]
-	for i in spots.size():
-		var r := _find_spot(center + spots[i], Vector2i(2, 2), Zone.DESERT, 4, 2)
-		if r.size.x > 0:
-			_services.claim(r, Kind.OUTPOST, 2, -1, i * 3)
-
-
-# --- Prison island: cellhouse in the middle, lighthouse on the shore ---------------------
-const PRISON_SIZES := [Vector2i(6, 4), Vector2i(5, 4), Vector2i(4, 3)]
-
-
-func _build_prison() -> void:
-	if _island.prison_radius <= 0.0:
-		return
-	var c := Vector2i(_island.prison_center.round())
-	# Facing the city (south-east of the island).
-	for size in PRISON_SIZES:
-		var cell := _find_spot(c - size / 2, size, Zone.PRISON, 3)
-		if cell.size.x > 0:
-			_services.claim(cell, Kind.PRISON, 2)
-			break
-	var light := _find_spot(c + Vector2i(-3, -4), Vector2i.ONE, Zone.PRISON, 3)
-	if light.size.x > 0:
-		_services.claim(light, Kind.LIGHTHOUSE, 2)
+# --- The one mountain, in the middle of its forest ------------------------------------------
+func _build_mountain() -> void:
+	var area := _districts.forest
+	var c := area.get_center()
+	var r := _find_spot(c + Vector2i(-4, -4), Vector2i(8, 8), Zone.NATURE, 14)
+	if r.size.x > 0:
+		_services.claim(r, Kind.MOUNTAIN, 2, -1, 16)
 
 
 # --- Road to the Golden Gate bridge (east coast) ---------------------------------------------

@@ -10,32 +10,12 @@
 			"node": "bank"
 		},
 		{
-			"cat": "TRAIN_STATION",
-			"node": "train_station"
-		},
-		{
-			"cat": "GYM",
-			"node": "gym"
-		},
-		{
-			"cat": "POLICE_CAR",
-			"node": "police_car"
-		},
-		{
 			"cat": "BARRIER",
 			"node": "barrier_a"
 		},
 		{
 			"cat": "BARRIER",
 			"node": "barrier_b"
-		},
-		{
-			"cat": "BARRIER",
-			"node": "jersey"
-		},
-		{
-			"cat": "BARRIER",
-			"node": "stop_barrier"
 		},
 		{
 			"cat": "CONE",

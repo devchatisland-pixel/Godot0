@@ -4,7 +4,7 @@ extends RefCounted
 ## (x: -1 west .. +1 east, y: -1 north .. +1 south, 1 = island radius) so the
 ## city always reads like a designed map:
 ##   a single skyscraper downtown, a little Las Vegas on the west coast,
-##   a big central park, a desert in the north-east, a civic center,
+##   a big central park, a mountain forest in the north-east, a civic center,
 ##   residential neighbourhoods in the south and east, a colourful town
 ##   quarter by the south coast and a sports corner.
 ## On screen north-west is up, so downtown sits at the top, the desert on the
@@ -28,19 +28,19 @@ const ANCHORS := [
 ]
 ## Areas without streets inside, surrounded by roads (island units).
 const PARK_AREA := Rect2(-0.24, -0.38, 0.42, 0.38)
-const DESERT_AREA := Rect2(0.26, -1.6, 1.6, 1.2)
+## The north-east corner is a forest with one mountain (the desert moved west).
+const FOREST_AREA := Rect2(0.26, -1.6, 1.6, 1.2)
 
 ## Big public buildings get a whole plot with a ring road, like the park:
 ## centre in island units, size in cells (interior, roads not included).
 const PLOTS := [
 	{"kind": CityTypes.Kind.STADIUM, "at": Vector2(-0.45, 0.58), "size": Vector2i(11, 9)},
-	{"kind": CityTypes.Kind.MEGA_MALL, "at": Vector2(-0.6, 0.12), "size": Vector2i(15, 7)},
-	{"kind": CityTypes.Kind.POLICE_HQ, "at": Vector2(-0.1, 0.32), "size": Vector2i(6, 6)},
+	{"kind": CityTypes.Kind.MEGA_MALL, "at": Vector2(-0.62, 0.1), "size": Vector2i(9, 5)},
 	{"kind": CityTypes.Kind.CITY_HALL, "at": Vector2(0.14, 0.24), "size": Vector2i(8, 8)},
-	{"kind": CityTypes.Kind.MUSEUM, "at": Vector2(0.34, -0.2), "size": Vector2i(8, 6)},
+	{"kind": CityTypes.Kind.POLICE_HQ, "at": Vector2(-0.3, 0.34), "size": Vector2i(6, 6)},
+	{"kind": CityTypes.Kind.UN_HQ, "at": Vector2(0.34, -0.2), "size": Vector2i(6, 6)},
 	{"kind": CityTypes.Kind.MAIN_SCHOOL, "at": Vector2(0.62, 0.08), "size": Vector2i(9, 7)},
-	{"kind": CityTypes.Kind.CEMETERY, "at": Vector2(0.48, 0.52), "size": Vector2i(8, 6)},
-	{"kind": CityTypes.Kind.FERRIS_WHEEL, "at": Vector2(-0.05, 0.84), "size": Vector2i(6, 6)},
+	{"kind": CityTypes.Kind.CEMETERY, "at": Vector2(0.48, 0.56), "size": Vector2i(8, 6)},
 ]
 
 ## Places some services should be close to, besides the district anchors.
@@ -71,9 +71,9 @@ var _radius := Vector2.ONE
 
 ## Anchor name -> position in cells.
 var anchors := {}
-## Interiors (cells) of the park and of the desert.
+## Interiors (cells) of the park and of the mountain forest.
 var park := Rect2i()
-var desert := Rect2i()
+var forest := Rect2i()
 ## [kind, Rect2i] of every big-building plot.
 var plots: Array = []
 
@@ -98,7 +98,7 @@ func plan() -> void:
 		var c := Vector2i(to_cells(p["at"]).round())
 		plots.append([p["kind"], Rect2i(c - size / 2, size)])
 	park = _rect_cells(PARK_AREA)
-	desert = _rect_cells(DESERT_AREA).intersection(Rect2i(0, 0, _data.size, _data.size))
+	forest = _rect_cells(FOREST_AREA).intersection(Rect2i(0, 0, _data.size, _data.size))
 	_data.centers = [_center]
 	_data.center_weights = PackedFloat32Array([1.0])
 
@@ -115,7 +115,7 @@ func _rect_cells(r: Rect2) -> Rect2i:
 
 ## Areas the road planner keeps free of streets.
 func exclusions() -> Array[Rect2i]:
-	var out: Array[Rect2i] = [park, desert]
+	var out: Array[Rect2i] = [park, forest]
 	for p in plots:
 		out.append(p[1])
 	return out
@@ -159,7 +159,7 @@ func assign_zones(blocks: Array[Rect2i]) -> PackedByteArray:
 	return zones
 
 
-## Paints zones on the cell grid: blocks, park, desert, islets; the rest of the
+## Paints zones on the cell grid: blocks, park, mountain forest, islets; the rest of the
 ## land becomes nature (beaches, coastal meadows).
 func paint_zones(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 	var size := _data.size
@@ -175,8 +175,8 @@ func paint_zones(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 				if _island.is_mainland(x, y):
 					if park.has_point(Vector2i(x, y)):
 						z = Zone.PARK
-					elif desert.has_point(Vector2i(x, y)):
-						z = Zone.DESERT
+					elif forest.has_point(Vector2i(x, y)):
+						_data.forest[i] = 230
 					elif _in_plot(x, y):
 						z = Zone.CIVIC
 			_data.zone[i] = z
