@@ -20,6 +20,8 @@ static func copy(core: CityData, dst: CityData, offset: int) -> void:
 			dst.forest[d] = core.forest[s]
 			dst.rocky[d] = core.rocky[s]
 	for b in core.building_count():
+		if core.b_kind[b] == CityTypes.Kind.LIGHTHOUSE:
+			continue # the core's lighthouses are no longer by the sea; the extension places new ones
 		var r := core.building_rect(b)
 		dst.add_building(Rect2i(r.position + Vector2i(offset, offset), r.size), core.b_kind[b],
 				core.b_facing[b], core.b_seed[b], core.b_height[b])

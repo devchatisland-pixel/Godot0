@@ -52,6 +52,9 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 				return lib.ids(Cat.SHOP2)
 			var share: float = BIZ_SHOP_SHARE.get(zone, 0.0)
 			if roll < share and lib.has_cat(Cat.BIZ_SHOP):
+				# Half of the cartoon restaurants and shops are replaced by normal (Kenney) shops.
+				if (seed >> 9) & 1 == 0:
+					return _kenney_commercial(lib, kind)
 				# Pizzerias stay rare: about one cartoon shop in a hundred.
 				if roll < share * PIZZA_SHARE and lib.has_cat(Cat.BIZ_PIZZA):
 					return lib.ids(Cat.BIZ_PIZZA)
@@ -81,8 +84,6 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.FUTURE)
 		Kind.PIRATE_SHIP:
 			return lib.ids(Cat.PIRATE_SHIP)
-		Kind.CARRIER:
-			return lib.ids(Cat.CARRIER)
 		Kind.URBAN_CLUSTER:
 			return _variant_of(_union(lib, [Cat.SKYLINE, Cat.SKYLINE2]), seed)
 		Kind.MCDONALDS:
@@ -103,8 +104,6 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.CHURCH_PACK)
 		Kind.MUSEUM:
 			return _variant(lib, Cat.MUSEUM_PACK, seed)
-		Kind.MEGA_MALL:
-			return lib.ids(Cat.MEGA_MALL)
 		Kind.GAS_STATION:
 			return lib.ids(Cat.GAS_STATION) if roll < 0.5 or not lib.has_cat(Cat.GAS_PACK) else lib.ids(Cat.GAS_PACK)
 		Kind.QUARTER_BLDG:

@@ -62,7 +62,7 @@ not squares. On screen north-west is up. Special buildings are kept far from eac
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
-| just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block; the big supermarket stands right beside it |
+| just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
 | left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the shopping center; the neon signs are all on the roofs, none at street level |
 | west coast | **West desert** | reaches the sea without a beach: the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
 | south-west coast, next to the desert and Vegas | **Industrial zone and port** | exactly 8 different buildings (concrete factory, brick works, ruin, garage and four Kenney factories), container yards and cranes on a quay (no beach) |
@@ -70,16 +70,16 @@ not squares. On screen north-west is up. Special buildings are kept far from eac
 | north-east | **Mountain forest** | a forest with three snow-capped mountains standing together far from the city (the one of the core is the biggest), and a wide sand beach on its coast; the forest thins to meadow at its edge |
 | below the park | **Civic center** | the main city hall and the police headquarters (each on its own plot), the bank, fire station, post office |
 | right of the park | **United Nations** | the U.N. tower (half the size it was) with a small emblem, on its own plot where everyone sees it |
-| left of the park | **Shopping streets** | the main hospital, the shopping center, hotels, New York street buildings, mini hotels, cartoon shops (burgers and pizzerias drawn extra big, pizzerias rare); three pharmacies and many more shops, all facing the camera |
+| left of the park | **Shopping streets** | the main hospital, the shopping center, hotels, New York street buildings, mini hotels, cartoon shops and restaurants (half of them replaced by normal shops, burgers and pizzerias drawn extra big, pizzerias rare); three pharmacies and many more shops, all facing the camera |
 | right / bottom | **Residential** | houses with gardens (Kenney, cartoon, French red and blue), the main school with its sports ground, the big church (far from the U.N.), the cemetery, gas stations |
-| south | **Red district** | white and red low-rise town, bigger than before, mixed with French villas and colourful houses; the drive-in cinema, a crane, McDonald's and Burger King, the big ferris wheel at the beach, and one of each food stall (ice cream, food trucks...) |
+| south | **Red district** | white and red low-rise town, bigger than before, mixed with French villas and colourful houses; the drive-in cinema, a crane, McDonald's and Burger King, the big ferris wheel at the beach, and one of each food stall (ice cream kiosks, and half-size food trucks) |
 | left | **Sports corner** | the big stadium (own plot, floodlit at night) |
 | south-east | **Farmland** | the one farming district: crop fields (wheat, corn, plowed soil, green rows) with farms and a country road |
 | everywhere | **Hotels** | nine different hotels, one of each model: four in the city, five in the red district |
-| far west, across the metal bridge | **Urban island** | the third island: very dense, with 25 big futuristic towers (from the night skyline pack, the biggest buildings of the island) standing together in the middle, normal towers in front of them hiding their bases, two night skyline blocks, few roads, no trees |
-| far north-west, at sea | **Prison island** | a long rocky island far from the coast: a very big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses, and an aircraft carrier moored beside it |
-| east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke (twice the area of before, same buildings). A three-lane highway leads to the Golden Gate (no roadblocks, the deck is level with the road, and the fog stays away from it). "SEASON 2" floats over it |
-| coast | **Beaches, rocky shores, islets** | lighthouses and palm islets; on the smallest one a pirate grave, with the pirate ship anchored off its coast |
+| far west, across the metal bridge | **Urban island** | the third island: very dense, with about 45 big futuristic towers (from the night skyline pack, the biggest buildings of the island) standing together in the middle, normal towers in front of them hiding their bases, two night skyline blocks, few roads, no trees |
+| far north-west, at sea | **Prison island** | a long rocky island far from the coast: a very big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses |
+| east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke (twice the area of before, same buildings). A three-lane highway leads to the Golden Gate (no roadblocks, the deck is level with the road; the fog stays clear only over the bridge itself and covers the island from its coast). "SEASON 2" floats over it |
+| coast | **Beaches, rocky shores, islets** | six lighthouses, each on a real coast cell (four round the main island, two on the prison island), and palm islets; on the smallest one a pirate grave, with the pirate ship anchored off its coast |
 
 How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same map on every device):
 
@@ -125,7 +125,7 @@ At night:
 * The windows of the procedural buildings glow too.
 * The buildings of the curated packs (New York, photo towers, stadium, coliseum, main public buildings...) are softly lit, like floodlit facades.
 * The stadium has floodlight masts, the drive-in shows its film and lights its lot, the airbase lights its runway.
-* The new packs (supermarket, bank, hotels, houses, factories, prison blocks...) are softly lit too.
+* The new packs (bank, hotels, houses, factories, prison blocks...) are softly lit too.
 * The red H and cross of the hospitals are neon, so they stay bright red.
 * Street lamps get bulbs.
 * Signs shine, and the neon stays bright.
@@ -211,8 +211,7 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `metal_bridge` | stylised metal bridge | METAL_BRIDGE | the bridge to the urban island |
 | `future` | night skyline pack, cut into 11 towers | FUTURE | the futuristic towers of the urban island |
 | `pirate` | pirate ship | PIRATE_SHIP | anchored beside the smallest islet |
-| `carrier` | USS Enterprise aircraft carrier | CARRIER | moored beside the prison island |
-| `carto` | CartoCity pack | MEGA_MALL, BANK_PACK, HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, BARRIER, CONE, TRUCK, CONTAINER, BARREL | the supermarket (the mall), the bank, colourful houses and shops, mini hotels, the orange barriers and cones of the bridge, industrial props |
+| `carto` | CartoCity pack | BANK_PACK, HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, BARRIER, CONE, TRUCK, CONTAINER, BARREL | the bank, colourful houses and shops, mini hotels, the orange barriers and cones of the bridge, industrial props |
 | `france` | 15 low-poly buildings (cut by position) | HOUSE2, MANSION, PRISON_BLOCK | French red and blue houses, stone blocks and villas of the prison island |
 | `accommodations` | low poly accommodations buildings | HOTEL_PACK, HOUSE2, TOWN2 | the two big hotels, villas, small apartment blocks |
 | `free_mini` | free low-poly buildings (cut by position) | CHURCH_PACK, GAS_PACK, SHOP2, HOTEL_SMALL, TOWN2 | the big church, a gas station, bars, boutiques, mini hotels |
@@ -245,7 +244,6 @@ Not used:
 * "Low-poly-night-city-building-skyline" by willis123, CC BY 4.0
 * "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
 * "Pirate Ship" by Oleg Muzyka, CC BY 4.0
-* "USS Enterprise CVN-65 Aircraft Carrier" by Muhamad Mirza Arrafi, CC BY 4.0
 * "Pack - Low Poly - 15 Building" by Islide, CC BY 4.0
 * "[Free] Buildings Low Poly" by GraphOrigin, CC BY 4.0
 * "Somewhat Low-poly Buildings" by Calne, CC BY 4.0

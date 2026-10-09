@@ -56,7 +56,7 @@ func _urban_core(c: Vector2i) -> bool:
 	var u: Dictionary = ExtensionIsland.URBAN
 	var at: Vector2 = u["at"]
 	var r: Vector2 = u["r"]
-	return Vector2((c.x - at.x) / r.x, (c.y - at.y) / r.y).length() < 0.72
+	return Vector2((c.x - at.x) / r.x, (c.y - at.y) / r.y).length() < 0.92
 
 
 # --- Subdivision --------------------------------------------------------------------
@@ -108,7 +108,7 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 		var at: Vector2 = u["at"]
 		var r: Vector2 = u["r"]
 		var n := Vector2((lot.get_center().x - at.x) / r.x, (lot.get_center().y - at.y) / r.y).length()
-		if mini(lot.size.x, lot.size.y) >= 3 and h < (0.85 if n < 0.72 else 0.35):
+		if mini(lot.size.x, lot.size.y) >= 3 and h < (0.8 if n < 0.92 else 0.45):
 			return Kind.FUTURE_BLDG
 		return Kind.URBAN_BLDG
 	if facing < 0: # no road access: courtyard

@@ -668,13 +668,6 @@
       "scale": 0.16,
       "items": [
         {
-          "id": "supermarket",
-          "nodes": [
-            "Cube_018"
-          ],
-          "cat": "MEGA_MALL"
-        },
-        {
           "id": "bank",
           "nodes": [
             "Cube_015"
@@ -1571,38 +1564,6 @@
           "cat": "PIRATE_SHIP",
           "footprint": 6.0,
           "yaw": 90
-        }
-      ]
-    },
-    {
-      "src": "res://FREEMODELS/_incoming/carrier.glb",
-      "out": "carrier",
-      "texture_max": 512,
-      "items": [
-        {
-          "id": "carrier",
-          "nodes": [
-            "Object_2",
-            "Object_3",
-            "Object_4",
-            "Object_5",
-            "Object_6",
-            "Object_7",
-            "Object_8",
-            "Object_9",
-            "Object_10",
-            "Object_11",
-            "Object_12",
-            "Object_13",
-            "Object_14",
-            "Object_15",
-            "Object_16",
-            "Object_17",
-            "Object_18",
-            "Object_19"
-          ],
-          "cat": "CARRIER",
-          "footprint": 22.0
         }
       ]
     },

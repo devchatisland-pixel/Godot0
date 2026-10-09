@@ -69,7 +69,6 @@ enum Kind {
 	OUTPOST,          # desert shacks, barns and trailers (variant = seed)
 	QUARTER_BLDG,     # building of the colourful quarter
 	UN_HQ,            # United Nations headquarters
-	MEGA_MALL,        # the very big supermarket mall
 	PRISON,           # cellhouse of the prison island
 	HOTEL,            # grand hotels of the city centre (variant = seed)
 	MUSEUM,
@@ -98,7 +97,6 @@ enum Kind {
 	FUTURE_BLDG,      # futuristic tower of the urban island (night skyline pack)
 	PIRATE_SHIP,
 	GRAVE,            # pirate grave on the little islet
-	CARRIER,          # aircraft carrier next to the prison island
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -107,12 +105,12 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.CASINO, Kind.FERRIS_WHEEL, Kind.DRIVE_IN, Kind.LIGHTHOUSE,
 	Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
 	Kind.LANDMARK, Kind.SHOPPING_CENTER, Kind.CINEMA, Kind.OUTPOST,
-	Kind.UN_HQ, Kind.MEGA_MALL, Kind.PRISON, Kind.HOTEL, Kind.MUSEUM,
+	Kind.UN_HQ, Kind.PRISON, Kind.HOTEL, Kind.MUSEUM,
 	Kind.POST_OFFICE, Kind.CEMETERY, Kind.BUNKER, Kind.AIRBASE, Kind.PHARMACY,
 	Kind.GAS_STATION, Kind.CRANE, Kind.POLICE_HQ, Kind.MAIN_HOSPITAL, Kind.MAIN_SCHOOL,
 	Kind.MOUNTAIN, Kind.FIELD, Kind.RUSSIAN, Kind.PRISON_WING, Kind.OIL_PUMP, Kind.STALL,
 	Kind.FACTORY_BLDG, Kind.MCDONALDS, Kind.BURGER_KING, Kind.URBAN_CLUSTER,
-	Kind.PIRATE_SHIP, Kind.GRAVE, Kind.CARRIER,
+	Kind.PIRATE_SHIP, Kind.GRAVE,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

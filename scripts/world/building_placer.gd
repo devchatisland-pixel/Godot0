@@ -23,7 +23,7 @@ const FAR_COLORS := {
 	Kind.SAT_DISH: Color("f4f2f8"), Kind.MESA: Color("c98a4b"), Kind.POND: Color("5fb7e0"),
 	Kind.LANDMARK: Color("c9c2b0"), Kind.SHOPPING_CENTER: Color("5aa9d6"),
 	Kind.CINEMA: Color("e98b8b"), Kind.OUTPOST: Color("a9876a"), Kind.QUARTER_BLDG: Color("efe6e3"),
-	Kind.UN_HQ: Color("4f8fb8"), Kind.MEGA_MALL: Color("2f4f9a"), Kind.PRISON: Color("d7d2c4"),
+	Kind.UN_HQ: Color("4f8fb8"), Kind.PRISON: Color("d7d2c4"),
 	Kind.HOTEL: Color("e9dcc8"), Kind.MUSEUM: Color("e6dcc6"), Kind.POST_OFFICE: Color("b5654a"),
 	Kind.CEMETERY: Color("74b85a"), Kind.BUNKER: Color("d9b06a"), Kind.AIRBASE: Color("6b6e78"),
 	Kind.PHARMACY: Color("f1eff6"), Kind.GAS_STATION: Color("f1eff6"), Kind.CRANE: Color("c0392b"),
@@ -46,10 +46,10 @@ const NAMED := {
 	Kind.AIRBASE: ["airbase"],
 	Kind.FIELD: ["field_wheat", "field_corn", "field_plowed", "field_green"],
 	Kind.MOUNTAIN: ["mountain_a", "mountain_b", "mountain_c"], Kind.OIL_PUMP: ["oil_pump"],
-	Kind.PRISON_WING: ["box"], Kind.MEGA_MALL: ["box"],
+	Kind.PRISON_WING: ["box"],
 	Kind.POOR_BLDG: ["box"], Kind.RUSSIAN: ["box"], Kind.STALL: ["box"], Kind.FACTORY_BLDG: ["box"], Kind.MCDONALDS: ["box"],
 	Kind.BURGER_KING: ["box"], Kind.URBAN_BLDG: ["box"], Kind.URBAN_CLUSTER: ["box"],
-	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.CARRIER: ["box"], Kind.GRAVE: ["grave"],
+	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.GRAVE: ["grave"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -66,6 +66,8 @@ const FIXED_SIZE: Array[int] = [
 ]
 ## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
 const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6}
+## Positions of the vehicles in the STALL list (the others are kiosks).
+const STALL_VEHICLES: Array[int] = [0, 6, 7]
 ## Seed of the mountain of the core forest: the biggest of the three.
 const BIG_MOUNTAIN_SEED := 16
 ## The U.N. tower is half the size it was; its emblem is a bit smaller than the tower is wide.
@@ -84,8 +86,6 @@ const VEGAS_BY_SIZE := {
 const SHOP_BOOST := 1.7
 ## Big buildings from the packs grow to fill their (big) lot, up to this scale.
 const MAX_FILL := 3.0
-## The mall may grow a little more than other public buildings.
-const MALL_FILL := 2.0
 ## Famous New York towers: wider lots and this height at least (stretched a bit).
 const LANDMARK_SCALE := 2.1
 const LANDMARK_HEIGHT := 11.0
@@ -168,9 +168,9 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 		Kind.CRANE:
 			scale = 1.0
 		Kind.STALL:
-			scale = 2.4
-		Kind.MEGA_MALL:
-			scale = minf(room, MALL_FILL)
+			# Kiosks are big enough to see; the three vehicles (ice cream truck, food truck, caravan)
+			# are half that size.
+			scale = 1.2 if STALL_VEHICLES.has(lib.ids(Cat.STALL).find(id)) else 2.4
 		Kind.UN_HQ:
 			scale = minf(room, UN_SCALE)
 		Kind.FUTURE_BLDG:

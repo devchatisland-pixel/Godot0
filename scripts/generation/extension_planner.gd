@@ -28,14 +28,9 @@ const FOREST := {"at": Vector2(178, 62), "r": Vector2(34, 17)}
 const SAND_BAND := 6
 ## Where the ferris wheel stands (6x6 plot, at the south beach) and the skyline plots of the urban island.
 const FERRIS_TARGET := Vector2i(146, 221)
-const CLUSTER_PLOT := Vector2i(22, 22)
-## The big supermarket stands just beside the poor district (9x5 plot).
-const MALL_TARGET := Vector2i(147, 73)
-const MALL_PLOT := Vector2i(9, 5)
+const CLUSTER_PLOT := Vector2i(18, 18)
 ## The smallest palm islet: the pirate grave stands on it, the pirate ship lies off its coast.
 const PIRATE_ISLET := Vector2i(250, 92)
-## The aircraft carrier lies in the sea next to the prison island (22x7 cells of water).
-const CARRIER_TARGET := Vector2i(36, 58)
 const CLUSTER_TARGETS := [Vector2i(28, 106), Vector2i(28, 162)]
 ## The 8 buildings of the industrial zone: sizes in cells.
 const FACTORY_SIZES := [Vector2i(7, 4), Vector2i(6, 4), Vector2i(5, 4), Vector2i(4, 3),
@@ -75,7 +70,6 @@ var _core_used := PackedByteArray()
 var _network := PackedByteArray()
 var _shape := FastNoiseLite.new()
 var _ferris := Rect2i()
-var _mall := Rect2i()
 var _clusters: Array[Rect2i] = []
 
 
@@ -101,9 +95,6 @@ func build() -> void:
 	_build_west_highway()
 	_paint_open_areas()
 	_ferris = _find_plot(FERRIS_TARGET, Vector2i(6, 6), QUARTER)
-	_mall = _find_open_plot(MALL_TARGET, MALL_PLOT)
-	if _mall.size.x > 0:
-		_reserve(_mall)
 	for t in CLUSTER_TARGETS:
 		_clusters.append(_find_plot(t, CLUSTER_PLOT, {}))
 
@@ -114,7 +105,7 @@ func build() -> void:
 		{"mask": _blob_mask(POOR), "zone": Zone.POOR, "limits": Vector2i(4, 8), "reserved": [] as Array[Rect2i]},
 		{"mask": _blob_mask(QUARTER), "zone": Zone.QUARTER, "limits": Vector2i(4, 9),
 				"reserved": [_ferris] as Array[Rect2i]},
-		{"mask": _urban_mask(), "zone": Zone.URBAN, "limits": Vector2i(7, 13), "reserved": _clusters},
+		{"mask": _urban_mask(), "zone": Zone.URBAN, "limits": Vector2i(9, 16), "reserved": _clusters},
 	]
 	for d in plans:
 		var mask: PackedByteArray = d["mask"]
@@ -133,8 +124,6 @@ func build() -> void:
 		_districts.anchors[_anchor_name(d["zone"])] = Vector2(area.get_center())
 		_link(_road_nearest_to_city(area))
 	block_count = roads.blocks.size()
-	if _mall.size.x > 0:
-		_link(_data.idx(_mall.get_center().x, _mall.end.y))
 	_spines(INDUSTRIAL)
 	_link(_road_nearest_to_city(_blob_rect(INDUSTRIAL)))
 	_link(_land_nearest_to_city(_blob_rect(FARM)))
@@ -151,8 +140,6 @@ func build() -> void:
 	_services.build_specs(SPECS, roads.blocks, zones)
 	if _ferris.size.x > 0:
 		_claim(_ferris, Kind.FERRIS_WHEEL, 2, Zone.CIVIC)
-	if _mall.size.x > 0:
-		_claim(_mall, Kind.MEGA_MALL, 2, Zone.CIVIC)
 	for k in _clusters.size():
 		if _clusters[k].size.x > 0:
 			_claim(_clusters[k], Kind.URBAN_CLUSTER, 2, Zone.URBAN, k)
@@ -163,7 +150,7 @@ func build() -> void:
 	_build_mountains()
 	_build_pirate_islet()
 	_build_prison()
-	_build_carrier()
+	_build_lighthouses()
 	_services.finish()
 	for k in _services.counts:
 		counts[k] = counts.get(k, 0) + _services.counts[k]
@@ -720,13 +707,6 @@ func _build_pirate_islet() -> void:
 		_claim(ship, Kind.PIRATE_SHIP, 2)
 
 
-## The aircraft carrier in the sea beside the prison island.
-func _build_carrier() -> void:
-	var r := _find_water(CARRIER_TARGET, Vector2i(24, 7), 14)
-	if r.size.x > 0:
-		_claim(r, Kind.CARRIER, 2)
-
-
 ## The prison compound: a big cellhouse, stone wings, a villa and lighthouses.
 func _build_prison() -> void:
 	var c := Vector2i(ExtensionIsland.PRISON["at"])
@@ -744,10 +724,46 @@ func _build_prison() -> void:
 		var r := _find_spot(near, wings[i], Zone.PRISON, 5, 0)
 		if r.size.x > 0:
 			_claim(r, Kind.PRISON_WING, 2, -1, i)
-	for o in [Vector2i(-11, -5), Vector2i(10, 4)]:
-		var r := _find_spot(c + o, Vector2i.ONE, Zone.PRISON, 4, 0)
-		if r.size.x > 0:
-			_claim(r, Kind.LIGHTHOUSE, 2)
+
+
+# --- Lighthouses ---------------------------------------------------------------------------------
+## Four on the coast of the main island, spread round it, and two at the ends of the prison
+## island. Each one stands on a dry cell with the sea less than three cells away.
+func _build_lighthouses() -> void:
+	var main_at: Vector2 = ExtensionIsland.MAIN["at"]
+	for deg in [135.0, 235.0, 330.0, 60.0]:
+		var cell := _coast_cell(main_at, Vector2.from_angle(deg_to_rad(deg)), false)
+		if cell.x >= 0:
+			_claim(Rect2i(cell, Vector2i.ONE), Kind.LIGHTHOUSE, 2)
+	var prison_at: Vector2 = ExtensionIsland.PRISON["at"]
+	var turn: float = ExtensionIsland.PRISON["turn"]
+	for sign in [-1.0, 1.0]:
+		var cell := _coast_cell(prison_at, Vector2.from_angle(turn) * sign, true)
+		if cell.x >= 0:
+			_claim(Rect2i(cell, Vector2i.ONE), Kind.LIGHTHOUSE, 2)
+
+
+## The free coast cell furthest in direction `dir` from `center`: dry, open meadow or
+## sand (or the prison island), with the sea within two cells.
+func _coast_cell(center: Vector2, dir: Vector2, prison: bool) -> Vector2i:
+	var best := Vector2i(-1, -1)
+	var best_score := -INF
+	for y in _data.size:
+		for x in _data.size:
+			var i := _data.idx(x, y)
+			if _data.terrain[i] != Terrain.LAND or _data.road[i] != 0 or _lots.owner[i] != -1:
+				continue
+			var z := _data.zone[i]
+			if prison:
+				if z != Zone.PRISON:
+					continue
+			elif not ((z == Zone.NATURE or z == Zone.SAND or z == Zone.FARM) and _island.is_mainland(x, y)):
+				continue
+			var score := (Vector2(x, y) - center).dot(dir)
+			if score > best_score and _near_water(x, y, 2):
+				best_score = score
+				best = Vector2i(x, y)
+	return best
 
 
 # --- Helpers ------------------------------------------------------------------------------------

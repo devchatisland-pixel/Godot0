@@ -2,10 +2,6 @@
 	"file": "carto.glb",
 	"models": [
 		{
-			"cat": "MEGA_MALL",
-			"node": "supermarket"
-		},
-		{
 			"cat": "BANK_PACK",
 			"node": "bank"
 		},

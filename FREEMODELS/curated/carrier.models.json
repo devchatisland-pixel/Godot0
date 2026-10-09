@@ -1,9 +1,0 @@
-{
-	"file": "carrier.glb",
-	"models": [
-		{
-			"cat": "CARRIER",
-			"node": "carrier"
-		}
-	]
-}
