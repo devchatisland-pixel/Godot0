@@ -1,194 +1,145 @@
 class_name DistrictPlanner
 extends RefCounted
-## Decides where the city is dense: a downtown, a few town centers and a port
-## with industry. Gives every block its zone.
+## The layout of Chat City. Districts are placed by hand in "island units"
+## (x: -1 west .. +1 east, y: -1 north .. +1 south, 1 = island radius) so the
+## city always reads like a designed map:
+##   a single skyscraper downtown, a little Las Vegas on the west coast,
+##   a big central park, a desert in the north-east, a civic center,
+##   residential neighbourhoods in the south and east and a sports corner.
+## On screen north-west is up, so downtown sits at the top, the desert on the
+## right and the suburbs at the bottom.
 
 const Zone := CityTypes.Zone
+
+## Voronoi anchors: every block takes the zone of its closest anchor
+## (distance divided by weight, so heavier anchors cover more ground).
+const ANCHORS := [
+	{"name": "downtown", "zone": Zone.DOWNTOWN, "at": Vector2(-0.44, -0.4), "weight": 0.72},
+	{"name": "uptown", "zone": Zone.APARTMENT, "at": Vector2(-0.12, -0.72), "weight": 0.65},
+	{"name": "vegas", "zone": Zone.ENTERTAINMENT, "at": Vector2(-0.8, 0.0), "weight": 0.85},
+	{"name": "shops", "zone": Zone.COMMERCIAL, "at": Vector2(-0.32, 0.14), "weight": 0.7},
+	{"name": "civic", "zone": Zone.COMMERCIAL, "at": Vector2(0.14, 0.22), "weight": 0.9},
+	{"name": "sports", "zone": Zone.APARTMENT, "at": Vector2(-0.45, 0.55), "weight": 0.9},
+	{"name": "suburb_ne", "zone": Zone.SUBURBAN, "at": Vector2(0.55, -0.22), "weight": 1.0},
+	{"name": "suburb_e", "zone": Zone.SUBURBAN, "at": Vector2(0.7, 0.3), "weight": 1.1},
+	{"name": "suburb_s", "zone": Zone.SUBURBAN, "at": Vector2(0.22, 0.68), "weight": 1.1},
+]
+## Areas without streets inside, surrounded by roads (island units).
+const PARK_AREA := Rect2(-0.24, -0.38, 0.42, 0.38)
+const DESERT_AREA := Rect2(0.26, -1.6, 1.6, 1.2)
+
+## Block interior limits (short side, long side) per zone.
+const BLOCK_LIMITS := {
+	Zone.DOWNTOWN: Vector2i(4, 8),
+	Zone.COMMERCIAL: Vector2i(4, 9),
+	Zone.ENTERTAINMENT: Vector2i(4, 8),
+	Zone.APARTMENT: Vector2i(4, 10),
+	Zone.SUBURBAN: Vector2i(4, 12),
+}
 
 var _cfg: CityConfig
 var _data: CityData
 var _island: IslandShaper
-var _rng: RandomNumberGenerator
 var _noise := FastNoiseLite.new()
+var _center := Vector2.ZERO
+var _radius := Vector2.ONE
 
-var main_center := Vector2.ZERO
-var port_center := Vector2(-9999, -9999)
-var port_radius := 0.0
-var _radii := PackedFloat32Array()
+## Anchor name -> position in cells.
+var anchors := {}
+## Interiors (cells) of the park and of the desert.
+var park := Rect2i()
+var desert := Rect2i()
 
 
-func _init(cfg: CityConfig, data: CityData, island: IslandShaper, rng: RandomNumberGenerator) -> void:
+func _init(cfg: CityConfig, data: CityData, island: IslandShaper) -> void:
 	_cfg = cfg
 	_data = data
 	_island = island
-	_rng = rng
 	_noise.seed = cfg.seed + 501
-	_noise.frequency = 6.0 / float(data.size)
-	_noise.fractal_octaves = 2
+	_noise.frequency = 8.0 / float(data.size)
+	_center = Vector2(data.size, data.size) * 0.5
+	_radius = _center * cfg.island_radius
 
 
-# --- Centers -----------------------------------------------------------------------
-func plan_centers() -> void:
-	var size := _data.size
-	var mid := Vector2(size, size) * 0.5
-	# Downtown: well inside the land, close to the map center.
-	var best := -INF
-	for y in range(0, size, 4):
-		for x in range(0, size, 4):
-			if not _island.is_mainland(x, y):
-				continue
-			var score := _island.elevation_at(x, y) - Vector2(x, y).distance_to(mid) / size
-			if score > best:
-				best = score
-				main_center = Vector2(x, y)
-	_add_center(main_center, 1.0, size * 0.16)
-
-	# Secondary town centers, spread out across the mainland.
-	var min_dist := size * 0.2
-	for i in _cfg.sub_centers:
-		var pick := _farthest_land_point(min_dist, 0.12)
-		if pick.x < 0.0:
-			break
-		_add_center(pick, _rng.randf_range(0.55, 0.72), size * _rng.randf_range(0.08, 0.11))
-
-	_plan_port()
+func plan() -> void:
+	for a in ANCHORS:
+		anchors[a["name"]] = to_cells(a["at"])
+	park = _rect_cells(PARK_AREA)
+	desert = _rect_cells(DESERT_AREA).intersection(Rect2i(0, 0, _data.size, _data.size))
+	_data.centers = [_center]
+	_data.center_weights = PackedFloat32Array([1.0])
 
 
-func _add_center(p: Vector2, weight: float, radius: float) -> void:
-	_data.centers.append(p)
-	_data.center_weights.append(weight)
-	_radii.append(radius)
+func to_cells(p: Vector2) -> Vector2:
+	return _center + p * _radius
 
 
-## Random mainland point that is far from existing centers.
-func _farthest_land_point(min_dist: float, min_height: float) -> Vector2:
-	var best := Vector2(-1, -1)
-	var best_d := min_dist
-	for attempt in 300:
-		var x := _rng.randi_range(0, _data.size - 1)
-		var y := _rng.randi_range(0, _data.size - 1)
-		if not _island.is_mainland(x, y) or _island.elevation_at(x, y) < min_height:
-			continue
-		var p := Vector2(x, y)
-		var d := INF
-		for c in _data.centers:
-			d = minf(d, c.distance_to(p))
-		if d > best_d:
+func _rect_cells(r: Rect2) -> Rect2i:
+	var a := to_cells(r.position)
+	var b := to_cells(r.end)
+	return Rect2i(Vector2i(a.round()), Vector2i((b - a).round()))
+
+
+## Areas the road planner keeps free of streets.
+func exclusions() -> Array[Rect2i]:
+	return [park, desert]
+
+
+# --- Districts -------------------------------------------------------------------------
+func district_at(x: float, y: float) -> Dictionary:
+	# Jitter the sample point so borders between districts are not straight.
+	var p := Vector2(x, y) + Vector2(_noise.get_noise_2d(x, y), _noise.get_noise_2d(y + 99.0, x)) * 5.0
+	var best: Dictionary = ANCHORS[0]
+	var best_d := INF
+	for a in ANCHORS:
+		var d: float = p.distance_to(anchors[a["name"]]) / float(a["weight"])
+		if d < best_d:
 			best_d = d
-			best = p
+			best = a
 	return best
 
 
-## Port + industrial area on a coast far from downtown.
-func _plan_port() -> void:
-	var size := _data.size
-	var best := -INF
-	for y in range(0, size, 3):
-		for x in range(0, size, 3):
-			if not _island.is_mainland(x, y) or _data.terrain[y * size + x] != CityTypes.Terrain.BEACH:
-				continue
-			var p := Vector2(x, y)
-			var d := p.distance_to(main_center)
-			if d < size * 0.18 or d > size * 0.38:
-				continue
-			var score := -absf(d - size * 0.26) + _rng.randf() * 10.0
-			if score > best:
-				best = score
-				port_center = p
-	port_radius = size * 0.1
+func zone_at(x: float, y: float) -> int:
+	return district_at(x, y)["zone"]
 
 
-# --- Density ---------------------------------------------------------------------------
-## 0..1 urban intensity at a cell.
-func density(x: float, y: float) -> float:
-	var p := Vector2(x, y)
-	var d := 0.0
-	for i in _data.centers.size():
-		var r := _radii[i]
-		var t := p.distance_to(_data.centers[i]) / r
-		d = maxf(d, _data.center_weights[i] * exp(-t * t * 0.5))
-	d += _noise.get_noise_2d(x, y) * 0.08
-	return clampf(d, 0.0, 1.0)
-
-
-func is_industrial(x: float, y: float) -> bool:
-	return Vector2(x, y).distance_to(port_center) < port_radius
-
-
-# --- Block sizes used by the road planner --------------------------------------------------
-## Returns Vector2i(short_max, long_max) interior size for a block at density d.
 func block_limits(x: float, y: float) -> Vector2i:
-	var d := density(x, y)
-	if is_industrial(x, y):
-		return Vector2i(8, 14)
-	if d > 0.86:
-		return Vector2i(5, 9)
-	if d > 0.62:
-		return Vector2i(4, 11)
-	if d > 0.4:
-		return Vector2i(5, 12)
-	return Vector2i(4, 15)
+	return BLOCK_LIMITS.get(zone_at(x, y), Vector2i(5, 10))
 
 
-# --- Zoning -------------------------------------------------------------------------------
-func zone_for_block(r: Rect2i) -> int:
-	var c := Vector2(r.get_center())
-	var d := density(c.x, c.y)
-	if d < _cfg.urban_threshold:
-		return Zone.NATURE
-	if is_industrial(c.x, c.y) and d < 0.75:
-		return Zone.INDUSTRIAL
-	if d > 0.86:
-		return Zone.DOWNTOWN
-	if d > 0.62:
-		return Zone.COMMERCIAL
-	if d > 0.4:
-		return Zone.APARTMENT
-	return Zone.SUBURBAN
+## 0..1, how central a point is in downtown (towers grow towards the middle).
+func intensity(x: float, y: float) -> float:
+	var d := Vector2(x, y).distance_to(anchors["downtown"])
+	return clampf(1.0 - d / (_radius.x * 0.35), 0.0, 1.0)
 
 
-## Zones every block, adds a central park and a few neighbourhood parks.
+# --- Zoning --------------------------------------------------------------------------------
 func assign_zones(blocks: Array[Rect2i]) -> PackedByteArray:
 	var zones := PackedByteArray()
 	zones.resize(blocks.size())
-	var central_park := -1
-	var central_best := INF
-	var park_spots: Array[Vector2] = []
 	for i in blocks.size():
-		var r := blocks[i]
-		var z := zone_for_block(r)
-		var c := Vector2(r.get_center())
-		var d := density(c.x, c.y)
-		# Central park: a big block near downtown but not in its very core.
-		if r.get_area() >= 36 and d > 0.55 and d < 0.86:
-			var dist := c.distance_to(main_center)
-			if dist > _data.size * 0.04 and dist < central_best:
-				central_best = dist
-				central_park = i
-		if z in [Zone.APARTMENT, Zone.SUBURBAN, Zone.COMMERCIAL]:
-			var h := CityTypes.hashf(r.position.x, r.position.y, _cfg.seed)
-			if h < _cfg.park_chance and _far_from(park_spots, c, 25.0):
-				z = Zone.PARK
-				park_spots.append(c)
-		zones[i] = z
-	if central_park >= 0:
-		zones[central_park] = Zone.PARK
+		var c := Vector2(blocks[i].get_center())
+		zones[i] = zone_at(c.x, c.y)
 	return zones
 
 
-func _far_from(points: Array[Vector2], p: Vector2, dist: float) -> bool:
-	for q in points:
-		if q.distance_to(p) < dist:
-			return false
-	return true
-
-
-## Writes block zones to the cell grid; the remaining land becomes nature.
+## Paints zones on the cell grid: blocks, park, desert, islets; the rest of the
+## land becomes nature (beaches, coastal meadows).
 func paint_zones(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 	var size := _data.size
-	for i in size * size:
-		var land := _data.terrain[i] >= CityTypes.Terrain.BEACH
-		_data.zone[i] = Zone.NATURE if land and _data.road[i] == 0 else Zone.NONE
+	for y in size:
+		for x in size:
+			var i := y * size + x
+			var land := _data.terrain[i] >= CityTypes.Terrain.BEACH
+			var z := Zone.NONE
+			if land and _data.road[i] == 0:
+				z = Zone.NATURE if _island.is_mainland(x, y) else Zone.ISLET
+				if _island.is_mainland(x, y):
+					if park.has_point(Vector2i(x, y)):
+						z = Zone.PARK
+					elif desert.has_point(Vector2i(x, y)):
+						z = Zone.DESERT
+			_data.zone[i] = z
 	for b in blocks.size():
 		var r := blocks[b]
 		for y in range(r.position.y, r.end.y):

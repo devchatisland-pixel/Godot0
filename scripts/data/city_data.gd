@@ -15,6 +15,10 @@ var road := PackedByteArray()
 var elevation := PackedByteArray()
 ## 0..1 forest density used for trees in nature areas.
 var forest := PackedByteArray()
+## 1 where the shore is rocky instead of sandy.
+var rocky := PackedByteArray()
+## 1 where a building stands (trees, palms and cacti avoid these cells).
+var occupied := PackedByteArray()
 
 # Buildings / lots (index = building id)
 var b_rect := PackedInt32Array()     # x, y, w, h (4 ints per building)
@@ -29,7 +33,7 @@ var chunk_buildings: Array[PackedInt32Array] = []
 # City centers, filled by the district planner (Vector2 in cells)
 var centers: Array[Vector2] = []
 var center_weights: PackedFloat32Array = PackedFloat32Array()
-var city_name := "Isla Nova"
+var city_name := "Chat City"
 
 
 func _init(p_size: int, p_chunk: int) -> void:
@@ -41,6 +45,8 @@ func _init(p_size: int, p_chunk: int) -> void:
 	road.resize(n)
 	elevation.resize(n)
 	forest.resize(n)
+	rocky.resize(n)
+	occupied.resize(n)
 
 
 # --- Cell access -----------------------------------------------------------------
@@ -138,10 +144,16 @@ func build_chunk_index() -> void:
 	chunk_buildings.resize(side * side)
 	for i in chunk_buildings.size():
 		chunk_buildings[i] = PackedInt32Array()
+	occupied.fill(0)
 	for i in b_kind.size():
 		var cx := b_rect[i * 4] / chunk_size
 		var cy := b_rect[i * 4 + 1] / chunk_size
 		chunk_buildings[cy * side + cx].append(i)
+		if b_kind[i] != CityTypes.Kind.PLAZA and b_kind[i] != CityTypes.Kind.GARDEN:
+			var r := building_rect(i)
+			for y in range(r.position.y, r.end.y):
+				for x in range(r.position.x, r.end.x):
+					occupied[y * size + x] = 1
 
 
 ## Returns true when a chunk holds nothing but deep water (skipped by streaming).

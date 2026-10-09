@@ -19,6 +19,9 @@ const ZONE_COLORS := {
 	CityTypes.Zone.SUBURBAN: Color("9fd27c"),
 	CityTypes.Zone.INDUSTRIAL: Color("b5afa2"),
 	CityTypes.Zone.CIVIC: Color("d8d3c4"),
+	CityTypes.Zone.DESERT: Color("e3b56a"),
+	CityTypes.Zone.ENTERTAINMENT: Color("8f88a6"),
+	CityTypes.Zone.ISLET: Color("86c867"),
 }
 
 ## Sea colour, also used as background so the ocean looks endless.
@@ -60,7 +63,7 @@ func _elevation_texture(data: CityData) -> ImageTexture:
 func _zone_texture(data: CityData) -> ImageTexture:
 	var n := data.size * data.size
 	var bytes := PackedByteArray()
-	bytes.resize(n * 3)
+	bytes.resize(n * 4)
 	var lut := []
 	for z in ZONE_COLORS:
 		while lut.size() <= z:
@@ -76,8 +79,10 @@ func _zone_texture(data: CityData) -> ImageTexture:
 			c = lut[z]
 			if z == CityTypes.Zone.NATURE:
 				c = GRASS.lerp(FOREST, float(data.forest[i]) / 255.0)
-		bytes[i * 3] = c.r8
-		bytes[i * 3 + 1] = c.g8
-		bytes[i * 3 + 2] = c.b8
-	var img := Image.create_from_data(data.size, data.size, false, Image.FORMAT_RGB8, bytes)
+		bytes[i * 4] = c.r8
+		bytes[i * 4 + 1] = c.g8
+		bytes[i * 4 + 2] = c.b8
+		# Alpha 0 = rocky shore instead of sand.
+		bytes[i * 4 + 3] = 0 if data.rocky[i] == 1 else 255
+	var img := Image.create_from_data(data.size, data.size, false, Image.FORMAT_RGBA8, bytes)
 	return ImageTexture.create_from_image(img)

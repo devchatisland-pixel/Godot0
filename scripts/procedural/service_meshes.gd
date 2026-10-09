@@ -2,7 +2,8 @@ class_name ServiceMeshes
 extends RefCounted
 ## Public buildings missing from the kits, modelled in the same low-poly style.
 ## Every mesh is centred on its lot, sits on y = 0 and faces +Z (its street).
-## Sizes are in cells: hospital 3x3, school 3x3, fire station 2x2, police 2x2.
+## Sizes are in cells: hospital 3x3, school 3x3, fire station 2x2, police 2x2,
+## bank 2x2, church 2x3.
 
 const WHITE := Color("f1eff6")
 const LAVENDER := Color("c9c6d6")
@@ -22,6 +23,8 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("school", school())
 	lib.add_named("fire_station", fire_station())
 	lib.add_named("police", police())
+	lib.add_named("bank", bank())
+	lib.add_named("church", church())
 
 
 # --- Hospital: white blocks, red cross, helipad on the tower -------------------------
@@ -123,4 +126,52 @@ static func police() -> ArrayMesh:
 	# Radio antennas.
 	k.block(Vector3(0.5, 0.85, -0.5), Vector3(0.04, 0.6, 0.04), LAVENDER)
 	k.block(Vector3(0.3, 0.85, -0.6), Vector3(0.2, 0.12, 0.2), LAVENDER)
+	return k.commit()
+
+
+# --- Bank: blue glass tower with a golden dollar sign on the roof --------------------------
+static func bank() -> ArrayMesh:
+	var k := MeshKit.new()
+	k.box(Vector3(-0.95, 0, -0.95), Vector3(1.9, 0.03, 1.9), Color("d8d3c4"))
+	var body := Vector3(-0.7, 0.03, -0.75)
+	var body_size := Vector3(1.4, 2.0, 1.3)
+	k.box(body, body_size, Color("5b7fc4"), ROOF)
+	k.windows(body, body_size, 8, 4, Color("a9c4f0"))
+	# Stone base with columns at the entrance.
+	k.box(Vector3(-0.75, 0.03, -0.8), Vector3(1.5, 0.35, 1.4), Color("e6dcc6"))
+	for i in 4:
+		k.block(Vector3(-0.45 + i * 0.3, 0.03, 0.62), Vector3(0.07, 0.35, 0.07), WHITE)
+	# Golden "$" made of boxes standing on the roof.
+	var gold := Color("e8b33a")
+	var y := 2.03
+	k.box(Vector3(-0.2, y + 0.4, 0.0), Vector3(0.4, 0.08, 0.06), gold)
+	k.box(Vector3(-0.2, y + 0.22, 0.0), Vector3(0.4, 0.08, 0.06), gold)
+	k.box(Vector3(-0.2, y + 0.04, 0.0), Vector3(0.4, 0.08, 0.06), gold)
+	k.box(Vector3(-0.2, y + 0.22, 0.0), Vector3(0.08, 0.26, 0.06), gold)
+	k.box(Vector3(0.12, y + 0.04, 0.0), Vector3(0.08, 0.26, 0.06), gold)
+	k.box(Vector3(-0.03, y - 0.04, 0.0), Vector3(0.06, 0.6, 0.06), gold)
+	return k.commit()
+
+
+# --- Church (2x3): stone nave, gabled roof and a pointed spire at the front --------------------
+static func church() -> ArrayMesh:
+	var k := MeshKit.new()
+	var stone := Color("9d8f86")
+	var roof := Color("4a4d63")
+	k.box(Vector3(-0.95, 0, -1.45), Vector3(1.9, 0.02, 2.9), Color("8cc56b"))
+	# Nave along Z: build the gable along X and turn it.
+	k.box(Vector3(-0.45, 0, -1.1), Vector3(0.9, 0.6, 1.7), stone)
+	k.xform = Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(0, 0.6, -0.25))
+	k.gable(Vector3(-0.85, 0, -0.5), Vector3(1.7, 0.45, 1.0), roof, stone)
+	k.xform = Transform3D.IDENTITY
+	for i in 4:
+		k.box(Vector3(0.455, 0.2, -0.95 + i * 0.4), Vector3(0.01, 0.28, 0.12), Color("6fa8dc"))
+		k.box(Vector3(-0.465, 0.2, -0.95 + i * 0.4), Vector3(0.01, 0.28, 0.12), Color("6fa8dc"))
+	# Bell tower and spire at the front.
+	k.box(Vector3(-0.22, 0, 0.6), Vector3(0.44, 1.2, 0.44), stone)
+	k.box(Vector3(-0.08, 0.75, 1.045), Vector3(0.16, 0.25, 0.01), WINDOW)
+	k.cylinder(Vector3(0, 1.2, 0.82), 0.3, 0.0, 0.9, 4, roof)
+	k.block(Vector3(0, 2.1, 0.82), Vector3(0.03, 0.22, 0.03), Color("e8b33a"))
+	k.box(Vector3(-0.08, 2.24, 0.805), Vector3(0.16, 0.03, 0.03), Color("e8b33a"))
+	k.box(Vector3(-0.12, 0, 1.045), Vector3(0.24, 0.35, 0.01), Color("6b4a2a"))
 	return k.commit()

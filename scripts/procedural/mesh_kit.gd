@@ -3,13 +3,27 @@ extends RefCounted
 ## Tiny helper to build flat-shaded, vertex-coloured meshes in the Kenney style
 ## (boxes, cylinders, prisms). Used for buildings the kits do not provide.
 
-var _st := SurfaceTool.new()
+var _lit := SurfaceTool.new()
+var _neon := SurfaceTool.new()
+var _st: SurfaceTool
+var _neon_used := false
+## Transform applied to everything added (rotate / move parts of a model).
+var xform := Transform3D.IDENTITY
 
 static var _material: StandardMaterial3D
+static var _neon_material: StandardMaterial3D
 
 
 func _init() -> void:
-	_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_lit.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_neon.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_st = _lit
+
+
+## Following primitives are drawn unshaded at full brightness (neon signs).
+func neon(enabled: bool) -> void:
+	_st = _neon if enabled else _lit
+	_neon_used = _neon_used or enabled
 
 
 ## Shared material: vertex colours, no texture, works on every renderer.
@@ -21,9 +35,21 @@ static func material() -> StandardMaterial3D:
 	return _material
 
 
+static func neon_material() -> StandardMaterial3D:
+	if _neon_material == null:
+		_neon_material = StandardMaterial3D.new()
+		_neon_material.vertex_color_use_as_albedo = true
+		_neon_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return _neon_material
+
+
 func commit() -> ArrayMesh:
-	_st.set_material(material())
-	return _st.commit()
+	_lit.set_material(material())
+	var mesh := _lit.commit()
+	if _neon_used:
+		_neon.set_material(neon_material())
+		_neon.commit(mesh)
+	return mesh
 
 
 # --- Primitives ---------------------------------------------------------------------
@@ -139,6 +165,11 @@ func _quad(a: Vector3, b: Vector3, c: Vector3, d: Vector3, n: Vector3, color: Co
 
 ## Emits a triangle so that its front side looks along `n` (Godot: clockwise = front).
 func _tri(a: Vector3, b: Vector3, c: Vector3, n: Vector3, color: Color) -> void:
+	if xform != Transform3D.IDENTITY:
+		a = xform * a
+		b = xform * b
+		c = xform * c
+		n = (xform.basis * n).normalized()
 	_st.set_color(color)
 	_st.set_normal(n)
 	if (b - a).cross(c - a).dot(n) > 0.0:

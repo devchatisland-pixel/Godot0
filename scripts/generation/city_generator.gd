@@ -3,9 +3,6 @@ extends RefCounted
 ## Runs every generation step in order. Designed to run on a worker thread:
 ## it only touches its own CityData and reports progress through a callable.
 
-const NAME_START := ["Port", "San", "Nova", "Bel", "Aria", "Cora", "Mar", "Vela", "Isla", "Alta"]
-const NAME_END := ["haven", "mar", "bay", "ville", "rocca", "polis", "sol", "mora", "vista", "lia"]
-
 var _cfg: CityConfig
 var _progress: Callable
 
@@ -20,15 +17,15 @@ func generate() -> CityData:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _cfg.seed
 	var data := CityData.new(_cfg.map_size, _cfg.chunk_size)
-	data.city_name = _make_name(rng)
+	data.city_name = _cfg.city_name
 
 	_report(0.05, "Raising the island")
 	var island := IslandShaper.new(_cfg, data)
 	island.shape()
 
 	_report(0.3, "Choosing districts")
-	var districts := DistrictPlanner.new(_cfg, data, island, rng)
-	districts.plan_centers()
+	var districts := DistrictPlanner.new(_cfg, data, island)
+	districts.plan()
 
 	_report(0.4, "Laying out roads")
 	var roads := RoadPlanner.new(_cfg, data, island, districts, rng)
@@ -45,6 +42,8 @@ func generate() -> CityData:
 	_report(0.85, "Placing public services")
 	var services := ServicePlanner.new(_cfg, data, districts, lots)
 	services.build(roads.blocks, zones)
+	LandmarkPlanner.new(data, districts, island, services, lots).build()
+	services.finish()
 
 	data.build_chunk_index()
 	_report(1.0, "City ready")
@@ -55,10 +54,6 @@ func generate() -> CityData:
 func _report(value: float, text: String) -> void:
 	if _progress.is_valid():
 		_progress.call_deferred(value, text)
-
-
-func _make_name(rng: RandomNumberGenerator) -> String:
-	return NAME_START[rng.randi() % NAME_START.size()] + NAME_END[rng.randi() % NAME_END.size()]
 
 
 func _print_stats(data: CityData, block_count: int, services: Dictionary, ms: int) -> void:

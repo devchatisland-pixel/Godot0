@@ -19,12 +19,22 @@ const FAR_COLORS := {
 	Kind.SCHOOL: Color("c97b55"), Kind.FIRE_STATION: Color("b8473f"),
 	Kind.POLICE: Color("c8d2ea"), Kind.CITY_HALL: Color("e6dcc6"),
 	Kind.STADIUM: Color("bcbacb"), Kind.FOUNTAIN: Color("d8d3c4"),
+	Kind.BANK: Color("5b7fc4"), Kind.CHURCH: Color("9d8f86"),
+	Kind.CASINO: Color("8e3a9a"), Kind.NIGHTCLUB: Color("4a3a66"),
+	Kind.FERRIS_WHEEL: Color("f4f2f8"), Kind.DRIVE_IN: Color("4c4f5e"),
+	Kind.LIGHTHOUSE: Color("d23b2f"), Kind.TELECOM_TOWER: Color("d23b2f"),
+	Kind.SAT_DISH: Color("f4f2f8"), Kind.MESA: Color("c98a4b"), Kind.POND: Color("5fb7e0"),
 }
 
+## Procedural meshes per kind (several names = variants picked by seed).
 const NAMED := {
-	Kind.HOSPITAL: "hospital", Kind.SCHOOL: "school", Kind.FIRE_STATION: "fire_station",
-	Kind.POLICE: "police", Kind.CITY_HALL: "city_hall", Kind.STADIUM: "stadium",
-	Kind.FOUNTAIN: "fountain",
+	Kind.HOSPITAL: ["hospital"], Kind.SCHOOL: ["school"], Kind.FIRE_STATION: ["fire_station"],
+	Kind.POLICE: ["police"], Kind.CITY_HALL: ["city_hall"], Kind.STADIUM: ["stadium"],
+	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
+	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b"],
+	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
+	Kind.LIGHTHOUSE: ["lighthouse"], Kind.TELECOM_TOWER: ["telecom_tower"],
+	Kind.SAT_DISH: ["sat_dish"], Kind.MESA: ["mesa"], Kind.POND: ["pond"],
 }
 
 
@@ -58,7 +68,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	var seed: int = data.b_seed[i]
 	var density: float = data.b_height[i]
 	if NAMED.has(kind):
-		var nid := lib.named_id(NAMED[kind])
+		var names: Array = NAMED[kind]
+		var nid := lib.named_id(names[(seed >> 3) % names.size()])
 		return {"id": nid, "xform": _fit(lib, nid, r, facing, 1.0, 1.0, 0.0, true)}
 	var candidates := _candidates(lib, kind)
 	if candidates.is_empty():
@@ -75,7 +86,7 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 		Kind.SKYSCRAPER:
 			# Taller towards the heart of downtown, leaving room between towers.
 			scale = clampf(room * 0.85, 0.8, 1.1)
-			stretch = 0.8 + clampf((density - 0.86) * 2.0, 0.0, 0.3) + float(seed & 7) * 0.03
+			stretch = 0.85 + density * 0.55 + float(seed & 7) * 0.03
 		Kind.OFFICE:
 			scale = clampf(room, 0.8, 1.15)
 		_:

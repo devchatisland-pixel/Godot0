@@ -18,7 +18,7 @@ var _max_zoom := 500.0
 var _input: CameraInput
 
 
-func setup(cfg: CityConfig, map_size: int, start: Vector3) -> void:
+func setup(cfg: CityConfig, map_size: int, start: Vector3, start_zoom: float) -> void:
 	projection = PROJECTION_ORTHOGONAL
 	near = 1.0
 	far = 6000.0
@@ -27,7 +27,7 @@ func setup(cfg: CityConfig, map_size: int, start: Vector3) -> void:
 	_bounds = Rect2(0, 0, map_size, map_size)
 	rotation_degrees = Vector3(cfg.camera_pitch_deg, cfg.camera_yaw_deg, 0.0)
 	target = start
-	zoom = 45.0
+	zoom = clampf(start_zoom, _min_zoom, _max_zoom)
 	_zoom_goal = zoom
 	_input = CameraInput.new(self)
 	_apply()

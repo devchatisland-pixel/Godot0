@@ -11,6 +11,7 @@ uniform vec3 deep_color : source_color = vec3(0.16, 0.45, 0.66);
 uniform vec3 shallow_color : source_color = vec3(0.30, 0.68, 0.80);
 uniform vec3 sand_color : source_color = vec3(0.91, 0.83, 0.60);
 uniform vec3 wet_sand_color : source_color = vec3(0.80, 0.74, 0.55);
+uniform vec3 rock_color : source_color = vec3(0.60, 0.47, 0.33);
 uniform float map_size = 640.0;
 
 varying vec2 map_uv;
@@ -22,7 +23,8 @@ void vertex() {
 void fragment() {
 	vec2 uv = clamp(map_uv, vec2(0.0), vec2(1.0));
 	float e = texture(elevation_tex, uv).r - 128.0 / 255.0;
-	vec3 land = texture(zone_tex, uv).rgb;
+	vec4 zone = texture(zone_tex, uv);
+	vec3 land = zone.rgb;
 	vec3 col;
 	if (e < 0.0) {
 		float t = clamp(-e / shallow_level, 0.0, 1.0);
@@ -31,6 +33,7 @@ void fragment() {
 		col = mix(col, vec3(0.85, 0.93, 0.95), smoothstep(-0.006, 0.0, e) * 0.6);
 	} else if (e < beach_level) {
 		col = mix(wet_sand_color, sand_color, smoothstep(0.0, beach_level * 0.5, e));
+		col = mix(rock_color, col, zone.a);
 	} else {
 		col = land;
 	}

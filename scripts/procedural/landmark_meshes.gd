@@ -20,6 +20,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("city_hall", city_hall())
 	lib.add_named("stadium", stadium())
 	lib.add_named("fountain", fountain())
+	lib.add_named("pond", pond())
 	lib.add_named("box", unit_box())
 	lib.add_named("tree", fallback_tree())
 
@@ -86,6 +87,22 @@ static func fountain() -> ArrayMesh:
 	k.cylinder(Vector3(0, 0, 0), 0.12, 0.08, 0.35, 10, STONE)
 	k.cylinder(Vector3(0, 0.35, 0), 0.22, 0.22, 0.04, 12, STONE, WATER)
 	k.cylinder(Vector3(0, 0.39, 0), 0.04, 0.0, 0.18, 8, WATER)
+	return k.commit()
+
+
+# --- Central park lake (6x4) with a fountain ---------------------------------------------
+static func pond() -> ArrayMesh:
+	var k := MeshKit.new()
+	var rim: Array[Color] = [Color("d8d3c4")]
+	k.elliptic_ring(Vector3(0, 0, 0), Vector2(2.6, 1.6), Vector2(2.85, 1.85), 0.06, 0.06, 32, rim, Color("bdb6a5"))
+	k.disc(Vector3(0, 0.03, 0), Vector2(2.62, 1.62), 32, Color("4aa6d6"))
+	k.disc(Vector3(0, 0.032, 0), Vector2(2.0, 1.1), 32, Color("5fb7e0"))
+	k.cylinder(Vector3(0, 0, 0), 0.45, 0.45, 0.12, 16, STONE, WATER)
+	k.cylinder(Vector3(0, 0.12, 0), 0.08, 0.06, 0.3, 8, STONE)
+	k.cylinder(Vector3(0, 0.42, 0), 0.2, 0.2, 0.04, 12, STONE, WATER)
+	k.neon(true)
+	k.cylinder(Vector3(0, 0.46, 0), 0.05, 0.0, 0.35, 8, Color("cfeeff"))
+	k.neon(false)
 	return k.commit()
 
 

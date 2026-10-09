@@ -17,6 +17,9 @@ enum Zone {
 	SUBURBAN,    # detached houses
 	INDUSTRIAL,
 	CIVIC,       # land reserved by a public service
+	DESERT,
+	ENTERTAINMENT, # the little Las Vegas
+	ISLET,       # small palm islands off the coast
 }
 
 # --- Road grid values ---------------------------------------------------------
@@ -43,11 +46,24 @@ enum Kind {
 	FOUNTAIN,
 	PLAZA,            # empty paved inner lot (ground only, a tree maybe)
 	GARDEN,           # empty green inner lot
+	BANK,
+	CHURCH,
+	CASINO,
+	NIGHTCLUB,
+	FERRIS_WHEEL,
+	DRIVE_IN,
+	LIGHTHOUSE,
+	TELECOM_TOWER,
+	SAT_DISH,
+	MESA,
+	POND,             # central park lake with its fountain
 }
 
 const SERVICE_KINDS: Array[int] = [
 	Kind.HOSPITAL, Kind.SCHOOL, Kind.FIRE_STATION, Kind.POLICE,
-	Kind.CITY_HALL, Kind.STADIUM, Kind.FOUNTAIN,
+	Kind.CITY_HALL, Kind.STADIUM, Kind.FOUNTAIN, Kind.BANK, Kind.CHURCH,
+	Kind.CASINO, Kind.FERRIS_WHEEL, Kind.DRIVE_IN, Kind.LIGHTHOUSE,
+	Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

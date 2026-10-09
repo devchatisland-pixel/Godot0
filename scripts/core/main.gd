@@ -80,6 +80,8 @@ func _update_loading() -> void:
 func _start_city() -> void:
 	ServiceMeshes.build_all(library)
 	LandmarkMeshes.build_all(library)
+	EntertainmentMeshes.build_all(library)
+	NatureMeshes.build_all(library)
 	var ground := GroundLayer.new()
 	ground.name = "Ground"
 	add_child(ground)
@@ -92,8 +94,9 @@ func _start_city() -> void:
 	add_child(streamer)
 	streamer.setup(cfg, data, library)
 
-	var c := data.centers[0] if not data.centers.is_empty() else Vector2(data.size, data.size) * 0.5
-	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y))
+	# Start with the whole island in view.
+	var c := Vector2(data.size, data.size) * 0.5
+	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y), data.size * 0.62)
 	_overlay.finish(data.city_name)
 	_phase = Phase.RUNNING
 

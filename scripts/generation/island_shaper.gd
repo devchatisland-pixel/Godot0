@@ -27,33 +27,44 @@ func elevation_at(x: int, y: int) -> float:
 
 
 # --- Elevation -------------------------------------------------------------------
+## Small palm islands off the south and south-east coast
+## (position in island units: 1 = radius; radius as a fraction of the map).
+const ISLETS := [
+	{"at": Vector2(0.05, 1.2), "radius": 0.034},
+	{"at": Vector2(0.82, 0.84), "radius": 0.028},
+	{"at": Vector2(-0.55, 1.05), "radius": 0.023},
+]
+
+
 func _build_elevation() -> void:
 	var size := _data.size
 	var coast := FastNoiseLite.new()
 	coast.seed = _cfg.seed
 	coast.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
 	coast.fractal_type = FastNoiseLite.FRACTAL_FBM
-	coast.fractal_octaves = 5
-	coast.frequency = 3.2 / float(size)
-	coast.domain_warp_enabled = true
-	coast.domain_warp_amplitude = float(size) * 0.05
-	coast.domain_warp_frequency = 1.5 / float(size)
+	coast.fractal_octaves = 4
+	coast.frequency = 4.0 / float(size)
 
 	height.resize(size * size)
 	var half := float(size) * 0.5
-	var radius := half * _cfg.island_radius
+	var radius := Vector2(half, half) * _cfg.island_radius
+	var islets := []
+	for it in ISLETS:
+		var at: Vector2 = it["at"]
+		islets.append([Vector2(half + at.x * radius.x, half + at.y * radius.y), float(it["radius"]) * size])
 	for y in size:
-		var ny := (float(y) + 0.5 - half) / radius
+		var ny := (float(y) + 0.5 - half) / radius.y
 		for x in size:
-			var nx := (float(x) + 0.5 - half) / radius
-			# Slightly elliptical falloff gives a less "perfect circle" island.
-			var d2 := nx * nx * 0.9 + ny * ny * 1.1
-			var e := 1.0 - d2
+			var nx := (float(x) + 0.5 - half) / radius.x
+			var e := 1.0 - (nx * nx + ny * ny)
 			e += coast.get_noise_2d(x, y) * _cfg.coast_noise
+			for isl in islets:
+				var t: float = Vector2(x, y).distance_to(isl[0]) / isl[1]
+				e = maxf(e, (1.0 - t * t) * 0.3 + coast.get_noise_2d(x * 3, y * 3) * 0.05)
 			# Hard edge so the map border is always ocean.
 			var edge := minf(minf(x, y), minf(size - 1 - x, size - 1 - y))
-			if edge < 12:
-				e = minf(e, -0.3 + edge * 0.02)
+			if edge < 6:
+				e = minf(e, -0.3 + edge * 0.03)
 			height[y * size + x] = e
 
 
@@ -72,6 +83,19 @@ func _classify_terrain() -> void:
 			t = CityTypes.Terrain.BEACH
 		_data.terrain[i] = t
 		_data.elevation[i] = clampi(128 + int(e * 255.0), 0, 255)
+	_mark_rocky_shores()
+
+
+## Some stretches of coast are rocky cliffs instead of beaches.
+func _mark_rocky_shores() -> void:
+	var noise := FastNoiseLite.new()
+	noise.seed = _cfg.seed + 33
+	noise.frequency = 6.0 / float(_data.size)
+	for y in _data.size:
+		for x in _data.size:
+			var i := y * _data.size + x
+			if _data.terrain[i] == CityTypes.Terrain.BEACH and noise.get_noise_2d(x, y) > 0.15:
+				_data.rocky[i] = 1
 
 
 # --- Mainland (largest connected land area) ---------------------------------------

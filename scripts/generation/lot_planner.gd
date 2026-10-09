@@ -13,6 +13,7 @@ const LOT_SIZES := {
 	Zone.APARTMENT: Vector2i(2, 2),
 	Zone.SUBURBAN: Vector2i(2, 2),
 	Zone.INDUSTRIAL: Vector2i(2, 3),
+	Zone.ENTERTAINMENT: Vector2i(2, 3),
 }
 
 var _cfg: CityConfig
@@ -37,9 +38,7 @@ func _init(cfg: CityConfig, data: CityData, districts: DistrictPlanner,
 func build(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 	for b in blocks.size():
 		var z: int = zones[b]
-		if z == Zone.PARK:
-			_add_park(blocks[b])
-		elif LOT_SIZES.has(z):
+		if LOT_SIZES.has(z):
 			var lots: Array[Rect2i] = []
 			_split_lots(blocks[b], LOT_SIZES[z], lots)
 			for lot in lots:
@@ -72,7 +71,7 @@ func _add_lot(lot: Rect2i, zone: int) -> void:
 	if not _all_land(lot):
 		return
 	var c := Vector2(lot.get_center())
-	var d := _districts.density(c.x, c.y)
+	var d := _districts.intensity(c.x, c.y)
 	var facing := road_facing(_data, lot, _rng.randi())
 	var seed := _rng.randi()
 	var kind := _pick_kind(zone, lot, d, facing, seed)
@@ -90,15 +89,19 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 			_: return Kind.PLAZA if h < 0.6 else Kind.GARDEN
 	match zone:
 		Zone.DOWNTOWN:
-			if h < 0.08:
+			# The only skyscraper district of the island.
+			if h < 0.06:
 				return Kind.PLAZA # small squares between the towers
-			if mini(lot.size.x, lot.size.y) >= 2 and h < 0.15 + (d - 0.86) * 3.0:
+			if mini(lot.size.x, lot.size.y) >= 2:
 				return Kind.SKYSCRAPER
 			return Kind.OFFICE
 		Zone.COMMERCIAL:
-			if area >= 4 and h < 0.04 + (d - 0.62) * 0.5:
-				return Kind.SKYSCRAPER
-			return Kind.OFFICE if area >= 4 and h < 0.55 else Kind.SHOP
+			return Kind.OFFICE if area >= 4 and h < 0.45 else Kind.SHOP
+		Zone.ENTERTAINMENT:
+			# Neon clubs and small casinos, a few hotels and shops in between.
+			if mini(lot.size.x, lot.size.y) >= 2 and h < 0.6:
+				return Kind.NIGHTCLUB
+			return Kind.OFFICE if area >= 4 else Kind.SHOP
 		Zone.APARTMENT:
 			if area < 4:
 				return Kind.SHOP
@@ -117,19 +120,6 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 func _faces_avenue(lot: Rect2i, facing: int) -> bool:
 	var p := _side_cell(lot, facing)
 	return _data.in_bounds(p.x, p.y) and (_data.road[_data.idx(p.x, p.y)] & 3) == CityTypes.ROAD_AVENUE
-
-
-## Park blocks get a fountain in the middle when big enough; trees come later.
-func _add_park(r: Rect2i) -> void:
-	if r.size.x >= 5 and r.size.y >= 5:
-		var c := r.get_center()
-		var f := Rect2i(c.x - 1, c.y - 1, 2, 2)
-		if _all_land(f):
-			var id := _data.add_building(f, Kind.FOUNTAIN, 2, _rng.randi(), 0.0)
-			mark(f, id)
-			for y in range(f.position.y, f.end.y):
-				for x in range(f.position.x, f.end.x):
-					_data.zone[_data.idx(x, y)] = Zone.CIVIC
 
 
 # --- Helpers (also used by the service planner) -----------------------------------------

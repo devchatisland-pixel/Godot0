@@ -4,16 +4,17 @@ extends Node
 
 const Kind := CityTypes.Kind
 const SHOTS := [
-	{"zoom": 40.0, "at": "center"},
-	{"zoom": 480.0, "at": "center"},
-	{"zoom": 120.0, "at": "center"},
-	{"zoom": 14.0, "at": Kind.HOSPITAL},
-	{"zoom": 14.0, "at": Kind.SCHOOL},
+	{"zoom": 80.0, "at": "center"},
+	{"zoom": 60.0, "at": "center"},
+	{"zoom": 22.0, "at": Kind.CASINO},
+	{"zoom": 22.0, "at": Kind.TELECOM_TOWER},
+	{"zoom": 24.0, "at": Kind.POND},
+	{"zoom": 20.0, "at": Kind.CITY_HALL},
 	{"zoom": 22.0, "at": Kind.STADIUM},
-	{"zoom": 14.0, "at": Kind.CITY_HALL},
-	{"zoom": 18.0, "at": Kind.HOUSE},
-	{"zoom": 18.0, "at": Kind.INDUSTRIAL},
-	{"zoom": 10.0, "at": Kind.FIRE_STATION},
+	{"zoom": 22.0, "at": Kind.SCHOOL},
+	{"zoom": 26.0, "at": Kind.SKYSCRAPER},
+	{"zoom": 16.0, "at": Kind.LIGHTHOUSE},
+	{"zoom": 22.0, "at": Kind.HOUSE},
 ]
 
 var _dir := "user://"
@@ -64,7 +65,7 @@ func _find(data: CityData, kind: int, near: Vector3) -> Vector3:
 		var p := Vector3(r.get_center().x, 0, r.get_center().y)
 		var d := p.distance_to(near)
 		if kind == Kind.HOUSE:
-			d = absf(d - 120.0)
+			d = absf(d - 50.0)
 		if d < best_d:
 			best_d = d
 			best = p

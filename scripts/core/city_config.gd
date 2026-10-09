@@ -4,29 +4,26 @@ extends RefCounted
 ## mobile devices keep a smaller memory and draw-call budget.
 
 # --- World ------------------------------------------------------------------
+## Name shown on screen.
+var city_name := "Chat City"
 ## Seed of the whole city. Same seed = same city on every device.
 var seed: int = 20240611
 ## Island grid size in cells (1 cell = 1 Kenney road tile ~ 12 m).
-var map_size: int = 640
+var map_size: int = 128
 ## Cells per streaming chunk (the unit of loading / unloading).
-var chunk_size: int = 48
+var chunk_size: int = 32
 ## Folder scanned recursively for .glb / .gltf models.
 var models_root: String = "res://FREEMODELS"
 
 # --- Island shape -------------------------------------------------------------
-var island_radius := 0.86       # fraction of half map size
-var coast_noise := 0.75         # how ragged the coastline is
-var beach_width := 0.035
-var shallow_width := 0.10
-
-# --- City layout ----------------------------------------------------------------
-var sub_centers := 4            # secondary town centers around downtown
-var urban_threshold := 0.16     # density under this stays nature
-var park_chance := 0.05         # random extra parks among residential blocks
+var island_radius := Vector2(0.8, 0.7) # fraction of half map size (x, y)
+var coast_noise := 0.45         # how ragged the coastline is
+var beach_width := 0.05
+var shallow_width := 0.12
 
 # --- Streaming / LOD --------------------------------------------------------------
 ## Camera ortho size under which full models are shown.
-var near_lod_size := 90.0
+var near_lod_size := 140.0
 ## Max chunks with full models kept in memory (LRU).
 var max_near_chunks := 48
 ## Max chunks with box LOD kept in memory.
@@ -56,19 +53,14 @@ static func create() -> CityConfig:
 	c.is_mobile = OS.has_feature("mobile") or OS.has_feature("web_android") \
 			or OS.has_feature("web_ios")
 	if c.is_mobile:
-		c.map_size = 512
-		c.near_lod_size = 60.0
+		c.near_lod_size = 80.0
 		c.max_near_chunks = 20
-		c.max_far_chunks = 160
 		c.max_jobs = 2
 		c.applies_per_frame = 1
 		c.max_variants = 10
 	c.use_threads = not (OS.has_feature("web") and not OS.has_feature("threads"))
-	if not c.use_threads:
-		c.map_size = mini(c.map_size, 512)
-		c.max_near_chunks = mini(c.max_near_chunks, 24)
 	if c.max_zoom <= 0.0:
-		c.max_zoom = float(c.map_size) * 0.75
+		c.max_zoom = float(c.map_size) * 0.8
 	return c
 
 
