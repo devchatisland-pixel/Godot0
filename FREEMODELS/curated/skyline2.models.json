@@ -1,0 +1,9 @@
+{
+	"file": "skyline2.glb",
+	"models": [
+		{
+			"cat": "SKYLINE2",
+			"node": "skyline2"
+		}
+	]
+}

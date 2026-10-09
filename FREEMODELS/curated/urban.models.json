@@ -1,0 +1,33 @@
+{
+	"file": "urban.glb",
+	"models": [
+		{
+			"cat": "URBAN",
+			"node": "tower0"
+		},
+		{
+			"cat": "URBAN",
+			"node": "tower1"
+		},
+		{
+			"cat": "URBAN",
+			"node": "tower2"
+		},
+		{
+			"cat": "URBAN",
+			"node": "tower3"
+		},
+		{
+			"cat": "URBAN",
+			"node": "tower4"
+		},
+		{
+			"cat": "URBAN",
+			"node": "tower5"
+		},
+		{
+			"cat": "URBAN",
+			"node": "tower6"
+		}
+	]
+}

@@ -9,7 +9,7 @@ var city_name := "Chat City"
 ## Seed of the whole city. Same seed = same city on every device.
 var seed: int = 20240611
 ## Island grid size in cells (1 cell = 1 Kenney road tile ~ 12 m).
-var map_size: int = 288
+var map_size: int = 272
 ## The original city is generated on a grid of this size and embedded in the
 ## middle of the bigger map; the rounded island and its new districts grow around it.
 var core_size: int = 128

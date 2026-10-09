@@ -2,35 +2,34 @@ class_name ExtensionPlanner
 extends RefCounted
 ## Everything around the finished city (see ExtensionIsland for the land).
 ## Nothing of the core city is moved or changed: roads and lots only go on
-## free land. Special places are kept far from each other on purpose.
-##   west          the desert next to Las Vegas, with the secret base ("area 51"),
-##                 mesas, ranches and oil pumps; the industrial zone (exactly 8
-##                 different buildings) beside it
-##   north         the poor district, just behind the skyscrapers
-##   south         the red quarter grows towards the beach, with the ferris wheel
-##   all around    farmland: fields and farms spread over the whole island,
-##                 never next to the desert, and patches of forest
+## free land. Districts are round blobs (ellipses with a wobbly edge), not
+## squares, and special places are kept far from each other on purpose.
+##   west coast     the desert with the secret base, and south of it the
+##                  industrial zone and its port: both touch the sea, no beach
+##   north          the small poor district right behind the skyscrapers
+##   north-east     a forest with three mountains, a wide beach on its coast
+##   south          the red quarter grows towards the beach
+##   south-east     the one farmland district
+##   far west       the urban island (towers and night skylines, no trees)
 ##   far north-west the prison island
 
 const Zone := CityTypes.Zone
 const Kind := CityTypes.Kind
 const Terrain := CityTypes.Terrain
 
-## Areas without streets inside (cells of the big map).
-const DESERT := Rect2i(34, 112, 56, 62)
-const INDUSTRIAL := Rect2i(58, 180, 44, 24)
-## The poor district: small, right behind the skyscrapers.
-const POOR := Rect2i(108, 76, 30, 18)
-## The red quarter grows south, down to the beach; the ferris wheel has its own plot.
-const QUARTER := Rect2i(112, 190, 76, 46)
-const FERRIS_PLOT := Rect2i(156, 226, 6, 6)
-## Farmland patches spread over the island (none near the desert) and forests.
-const FARMS := [
-	Rect2i(28, 48, 52, 52), Rect2i(100, 22, 60, 44), Rect2i(168, 26, 62, 50),
-	Rect2i(214, 70, 50, 50), Rect2i(216, 152, 52, 52), Rect2i(150, 214, 56, 28),
-	Rect2i(212, 206, 34, 30), Rect2i(30, 196, 26, 36),
-]
-const FORESTS := [Rect2i(84, 18, 40, 28), Rect2i(236, 104, 30, 32), Rect2i(60, 212, 30, 24)]
+## Round districts: centre and radii in cells of the big map.
+const DESERT := {"at": Vector2(78, 128), "r": Vector2(22, 36)}
+const INDUSTRIAL := {"at": Vector2(84, 182), "r": Vector2(22, 19)}
+const POOR := {"at": Vector2(122, 76), "r": Vector2(18, 10)}
+const QUARTER := {"at": Vector2(138, 211), "r": Vector2(36, 17)}
+const FARM := {"at": Vector2(202, 190), "r": Vector2(24, 32)}
+const FOREST := {"at": Vector2(178, 62), "r": Vector2(34, 17)}
+## Land cells within this distance of the sea in the forest patch become a wide beach.
+const SAND_BAND := 6
+## Where the ferris wheel stands (6x6 plot, at the south beach) and the skyline plots of the urban island.
+const FERRIS_TARGET := Vector2i(146, 221)
+const CLUSTER_PLOT := Vector2i(16, 16)
+const CLUSTER_TARGETS := [Vector2i(28, 106), Vector2i(28, 162)]
 ## The 8 buildings of the industrial zone: sizes in cells.
 const FACTORY_SIZES := [Vector2i(7, 4), Vector2i(6, 4), Vector2i(5, 4), Vector2i(4, 3),
 		Vector2i(4, 3), Vector2i(3, 3), Vector2i(3, 3), Vector2i(3, 3)]
@@ -38,6 +37,14 @@ const FACTORY_SIZES := [Vector2i(7, 4), Vector2i(6, 4), Vector2i(5, 4), Vector2i
 const SPECS := [
 	{"kind": Kind.RUSSIAN, "size": Vector2i(4, 4), "count": 1, "near": "poor_center",
 		"zones": [Zone.POOR]},
+	# The red district: the two burger restaurants and the other five hotels (variants 4..8).
+	{"kind": Kind.MCDONALDS, "size": Vector2i(3, 3), "count": 1, "near": "quarter_south_center",
+		"zones": [Zone.QUARTER]},
+	{"kind": Kind.BURGER_KING, "size": Vector2i(4, 4), "count": 1, "near": "quarter_south_center",
+		"zones": [Zone.QUARTER]},
+	{"kind": Kind.HOTEL, "size": Vector2i(3, 3), "seed_base": 4, "variants": true, "same_gap": 12.0,
+		"near": ["quarter_south_center", "quarter_south_center", "quarter_south_center",
+				"quarter_south_center", "quarter_south_center"], "zones": [Zone.QUARTER]},
 ]
 const AIRBASE_SIZES := [Vector2i(16, 5), Vector2i(14, 5), Vector2i(12, 4)]
 
@@ -53,6 +60,9 @@ var _lots: LotPlanner
 var _services: ServicePlanner
 var _core_used := PackedByteArray()
 var _network := PackedByteArray()
+var _shape := FastNoiseLite.new()
+var _ferris := Rect2i()
+var _clusters: Array[Rect2i] = []
 
 
 func _init(cfg: CityConfig, data: CityData, island: ExtensionIsland, rng: RandomNumberGenerator) -> void:
@@ -60,42 +70,56 @@ func _init(cfg: CityConfig, data: CityData, island: ExtensionIsland, rng: Random
 	_data = data
 	_island = island
 	_rng = rng
+	_shape.seed = cfg.seed + 31
+	_shape.frequency = 0.045
 
 
 func build() -> void:
 	_districts = DistrictPlanner.new(_cfg, _data, _island)
 	_districts.plan()
-	# Cells the core city uses (buildings, parks, plots, its forest road...): off limits.
+	# Cells the core city uses (buildings, parks, plots, ...): off limits.
 	_core_used.resize(_data.zone.size())
 	for i in _core_used.size():
 		_core_used[i] = 0 if _is_open(i) else 1
 	_paint_new_land()
 	_network = _data.road.duplicate()
-	_build_highway()
+	_build_east_highway()
+	_build_west_highway()
 	_paint_open_areas()
+	_ferris = _find_plot(FERRIS_TARGET, Vector2i(6, 6), QUARTER)
+	for t in CLUSTER_TARGETS:
+		_clusters.append(_find_plot(t, CLUSTER_PLOT, {}))
 
-	# Streets of the poor district and of the red quarter, only on free land.
+	# Streets of the poor district, the red quarter and the urban island (free land only).
 	var roads := RoadPlanner.new(_cfg, _data, _island, _districts, _rng)
-	roads.free_mask = _free_mask()
 	var zones := PackedByteArray()
 	var plans := [
-		{"rect": POOR, "zone": Zone.POOR, "limits": Vector2i(4, 8), "reserved": [] as Array[Rect2i]},
-		{"rect": QUARTER, "zone": Zone.QUARTER, "limits": Vector2i(4, 9), "reserved": [FERRIS_PLOT] as Array[Rect2i]},
+		{"mask": _blob_mask(POOR), "zone": Zone.POOR, "limits": Vector2i(4, 8), "reserved": [] as Array[Rect2i]},
+		{"mask": _blob_mask(QUARTER), "zone": Zone.QUARTER, "limits": Vector2i(4, 9),
+				"reserved": [_ferris] as Array[Rect2i]},
+		{"mask": _urban_mask(), "zone": Zone.URBAN, "limits": Vector2i(7, 13), "reserved": _clusters},
 	]
 	for d in plans:
+		var mask: PackedByteArray = d["mask"]
+		roads.free_mask = mask
 		var before := roads.blocks.size()
-		roads.build_region(d["rect"], d["limits"], d["reserved"])
+		roads.build_region(_mask_bounds(mask), d["limits"], d["reserved"])
+		var kept: Array[Rect2i] = []
 		for b in range(before, roads.blocks.size()):
+			if _mostly_free(roads.blocks[b], mask):
+				kept.append(roads.blocks[b])
+		roads.blocks = roads.blocks.slice(0, before)
+		roads.blocks.append_array(kept)
+		for k in kept.size():
 			zones.append(d["zone"])
-		var area: Rect2i = d["rect"]
+		var area := _mask_bounds(mask)
 		_districts.anchors[_anchor_name(d["zone"])] = Vector2(area.get_center())
 		_link(_road_nearest_to_city(area))
 	block_count = roads.blocks.size()
-	for area in [DESERT, INDUSTRIAL]:
-		_ring_road(area)
-		_link(_road_nearest_to_city(area.grow(1)))
-	for area in FARMS:
-		_link(_land_nearest_to_city(area))
+	_spines(INDUSTRIAL)
+	_link(_road_nearest_to_city(_blob_rect(INDUSTRIAL)))
+	_link(_land_nearest_to_city(_blob_rect(FARM)))
+	_link_urban_clusters()
 
 	# Lots (never over what the core already built), zoning, public buildings.
 	_lots = LotPlanner.new(_cfg, _data, _districts, _rng)
@@ -106,12 +130,16 @@ func build() -> void:
 	_paint_blocks(roads.blocks, zones)
 	_services = ServicePlanner.new(_cfg, _data, _districts, _lots)
 	_services.build_specs(SPECS, roads.blocks, zones)
-	_claim_ferris_wheel()
-	_build_drive_in_if_missing(roads.blocks, zones)
+	if _ferris.size.x > 0:
+		_claim(_ferris, Kind.FERRIS_WHEEL, 2, Zone.CIVIC)
+	for k in _clusters.size():
+		if _clusters[k].size.x > 0:
+			_claim(_clusters[k], Kind.URBAN_CLUSTER, 2, Zone.URBAN, k)
 
 	_build_desert()
 	_build_industrial()
 	_build_farms()
+	_build_mountains()
 	_build_beach_stalls()
 	_build_prison()
 	_services.finish()
@@ -120,11 +148,73 @@ func build() -> void:
 
 
 func _anchor_name(zone: int) -> String:
-	return {Zone.POOR: "poor_center", Zone.QUARTER: "quarter_south_center"}.get(zone, "ext_%d" % zone)
+	return {Zone.POOR: "poor_center", Zone.QUARTER: "quarter_south_center",
+			Zone.URBAN: "urban_center"}.get(zone, "ext_%d" % zone)
+
+
+# --- Round shapes --------------------------------------------------------------------------
+## True when the cell is inside the blob (an ellipse with a wobbly edge).
+func _in_blob(b: Dictionary, x: int, y: int, grow: float = 0.0) -> bool:
+	var at: Vector2 = b["at"]
+	var r: Vector2 = b["r"]
+	var n := Vector2((float(x) + 0.5 - at.x) / r.x, (float(y) + 0.5 - at.y) / r.y)
+	return n.length() + _shape.get_noise_2d(x, y) * 0.22 < 1.0 + grow
+
+
+func _blob_rect(b: Dictionary) -> Rect2i:
+	var at: Vector2 = b["at"]
+	var r: Vector2 = b["r"]
+	return Rect2i(Vector2i((at - r * 1.15).round()), Vector2i((r * 2.3).round()))
+
+
+## Free cells (open land, no road) inside the blob.
+func _blob_mask(b: Dictionary) -> PackedByteArray:
+	var mask := PackedByteArray()
+	mask.resize(_data.size * _data.size)
+	var rect := _blob_rect(b)
+	for y in range(maxi(rect.position.y, 0), mini(rect.end.y, _data.size)):
+		for x in range(maxi(rect.position.x, 0), mini(rect.end.x, _data.size)):
+			var i := _data.idx(x, y)
+			if _in_blob(b, x, y) and _data.terrain[i] == Terrain.LAND and _is_open(i) and _data.road[i] == 0:
+				mask[i] = 1
+	return mask
+
+
+## Free cells of the urban island.
+func _urban_mask() -> PackedByteArray:
+	var mask := PackedByteArray()
+	mask.resize(_data.size * _data.size)
+	for y in _data.size:
+		for x in range(0, 60):
+			var i := _data.idx(x, y)
+			if _island.is_urban_island(x, y) and _data.terrain[i] == Terrain.LAND and _data.road[i] == 0:
+				mask[i] = 1
+	return mask
+
+
+func _mask_bounds(mask: PackedByteArray) -> Rect2i:
+	var mn := Vector2i(_data.size, _data.size)
+	var mx := Vector2i(-1, -1)
+	for i in mask.size():
+		if mask[i] == 1:
+			var x := i % _data.size
+			var y := i / _data.size
+			mn = Vector2i(mini(mn.x, x), mini(mn.y, y))
+			mx = Vector2i(maxi(mx.x, x), maxi(mx.y, y))
+	return Rect2i(mn, mx - mn + Vector2i.ONE) if mx.x >= 0 else Rect2i()
+
+
+## A block counts when most of its cells are free.
+func _mostly_free(r: Rect2i, mask: PackedByteArray) -> bool:
+	var free := 0
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			free += mask[_data.idx(x, y)]
+	return free * 4 >= r.get_area() * 3
 
 
 # --- Land and zones -------------------------------------------------------------------------
-## New land that the core did not have: meadows on the mainland, islets, the prison island.
+## New land that the core did not have: meadows on the mainland, the islands.
 func _paint_new_land() -> void:
 	for y in _data.size:
 		for x in _data.size:
@@ -135,46 +225,88 @@ func _paint_new_land() -> void:
 				_data.zone[i] = Zone.NATURE
 			elif _island.is_prison_island(x, y):
 				_data.zone[i] = Zone.PRISON
+			elif _island.is_urban_island(x, y):
+				_data.zone[i] = Zone.URBAN
 			else:
 				_data.zone[i] = Zone.ISLET
 
 
-## Desert, industrial ground, farmland and forests (no streets inside).
+## Desert and industrial ground reach the sea without a beach; the forest keeps a wide one.
 func _paint_open_areas() -> void:
-	_paint(DESERT, Zone.DESERT, 0)
-	_paint(INDUSTRIAL, Zone.INDUSTRIAL, 0)
-	for a in FARMS:
-		_paint(a, Zone.FARM, 0)
-	for a in FORESTS:
-		_paint(a, Zone.NATURE, 225)
+	_paint(DESERT, Zone.DESERT, 0, true)
+	_paint(INDUSTRIAL, Zone.INDUSTRIAL, 0, true)
+	_paint(FARM, Zone.FARM, 0, false)
+	_paint(FOREST, Zone.NATURE, 225, false)
+	_sand_band(FOREST)
+	_thin_core_forest()
 
 
-func _paint(area: Rect2i, zone: int, forest: int) -> void:
-	for y in range(area.position.y, area.end.y):
-		for x in range(area.position.x, area.end.x):
-			if not _data.in_bounds(x, y):
-				continue
+func _paint(b: Dictionary, zone: int, forest: int, to_sea: bool) -> void:
+	var rect := _blob_rect(b)
+	for y in range(maxi(rect.position.y, 0), mini(rect.end.y, _data.size)):
+		for x in range(maxi(rect.position.x, 0), mini(rect.end.x, _data.size)):
 			var i := _data.idx(x, y)
-			if _data.terrain[i] != Terrain.LAND or not _is_open(i) or _data.road[i] != 0:
+			if not _in_blob(b, x, y) or not _is_open(i) or _data.road[i] != 0:
+				continue
+			var land := _data.terrain[i] == Terrain.LAND
+			if not land and not (to_sea and _data.terrain[i] == Terrain.BEACH):
 				continue
 			_data.zone[i] = zone
+			if not land:
+				_data.rocky[i] = 2 # the land colour reaches the sea (quay, dunes)
 			if forest > 0:
 				_data.forest[i] = forest
 			elif zone != Zone.NATURE:
 				_data.forest[i] = 0
 
 
+## A wide strip of sand where the forest meets the sea.
+func _sand_band(b: Dictionary) -> void:
+	var rect := _blob_rect(b)
+	for y in range(maxi(rect.position.y, 0), mini(rect.end.y, _data.size)):
+		for x in range(maxi(rect.position.x, 0), mini(rect.end.x, _data.size)):
+			var i := _data.idx(x, y)
+			if not _in_blob(b, x, y, 0.35) or _data.terrain[i] != Terrain.LAND or not _is_open(i):
+				continue
+			if _near_water(x, y, SAND_BAND):
+				_data.zone[i] = Zone.SAND
+				_data.forest[i] = 0
+
+
+func _near_water(x: int, y: int, dist: int) -> bool:
+	for dy in range(-dist, dist + 1):
+		for dx in range(-dist, dist + 1):
+			if dx * dx + dy * dy > dist * dist or not _data.in_bounds(x + dx, y + dy):
+				continue
+			if _data.terrain[_data.idx(x + dx, y + dy)] < Terrain.BEACH:
+				return true
+	return false
+
+
+## The core's north-east forest stays dense only around its mountain; the rest thins to meadow.
+func _thin_core_forest() -> void:
+	var area := _districts.forest
+	var mountain := Vector2i(-1, -1)
+	for b in _data.building_count():
+		if _data.b_kind[b] == Kind.MOUNTAIN:
+			mountain = _data.building_rect(b).get_center()
+	var center := Vector2(mountain) if mountain.x >= 0 else Vector2(area.get_center())
+	for y in range(area.position.y, area.end.y):
+		for x in range(area.position.x, area.end.x):
+			if not _data.in_bounds(x, y):
+				continue
+			var i := _data.idx(x, y)
+			if _data.zone[i] != Zone.NATURE or _data.forest[i] < 200:
+				continue
+			var d := Vector2((x - center.x) / 22.0, (y - center.y) / 18.0).length() \
+					+ _shape.get_noise_2d(x * 2.0, y * 2.0) * 0.3
+			if d > 1.0:
+				_data.forest[i] = 70
+
+
 ## Free for the extension: land that is not used by the core (or by a district).
 func _is_open(i: int) -> bool:
 	return _data.zone[i] == Zone.NONE or _data.zone[i] == Zone.NATURE
-
-
-func _free_mask() -> PackedByteArray:
-	var mask := PackedByteArray()
-	mask.resize(_data.size * _data.size)
-	for i in mask.size():
-		mask[i] = 1 if _is_open(i) and _data.road[i] == 0 else 0
-	return mask
 
 
 func _paint_blocks(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
@@ -187,24 +319,78 @@ func _paint_blocks(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 					_data.zone[i] = zones[b]
 
 
-# --- Highway to the Golden Gate bridge ------------------------------------------------------
-## Three lanes wide, like the bridge: from the end of the core's road to the east
-## coast. The bridge starts where the highway reaches the water.
-func _build_highway() -> void:
+# --- Highways -------------------------------------------------------------------------------
+## East: three lanes wide, like the Golden Gate: from the end of the core's road
+## to the coast. The bridge starts where the highway reaches the water.
+func _build_east_highway() -> void:
 	var start := _data.bridge
 	if start.x < 0:
 		return
 	var x := start.x
 	var last := x
 	while x < _data.size - 2 and _data.terrain[_data.idx(x, start.y)] == Terrain.LAND:
-		for dy in range(-1, 2):
-			var i := _data.idx(x, start.y + dy)
-			if _data.terrain[i] == Terrain.LAND and _data.road[i] == 0 and _is_open(i):
-				_data.road[i] = CityTypes.ROAD_AVENUE
-				_network[i] = 1
+		_lane(x, start.y)
 		last = x
 		x += 1
 	_data.bridge = Vector2i(last + 1, start.y)
+
+
+## West: from the west-most street of the core to the west coast, then over the
+## metal bridge to the urban island. Rows are tried from the one with the
+## west-most road; the way west of it must be free.
+func _build_west_highway() -> void:
+	var rows := []
+	for y in range(112, 156):
+		for x in range(_data.size):
+			if _data.road[_data.idx(x, y)] != 0:
+				rows.append([x, y])
+				break
+	rows.sort_custom(func(a, b): return a[0] < b[0])
+	for cand in rows:
+		var y: int = cand[1]
+		var x: int = cand[0]
+		var coast := _clear_way_west(x, y)
+		if coast < 0:
+			continue
+		for cx in range(coast, x):
+			_lane(cx, y)
+		# First land of the urban island on the same row (east coast of the island).
+		var urban := -1
+		for ux in range(coast - 2, 0, -1):
+			if _data.terrain[_data.idx(ux, y)] == Terrain.LAND and _island.is_urban_island(ux, y):
+				urban = ux
+				break
+		if urban < 0:
+			return
+		for ux in range(urban, maxi(urban - 12, 1), -1):
+			if _data.terrain[_data.idx(ux, y)] == Terrain.LAND:
+				_lane(ux, y)
+		_data.west_bridge = Vector3i(coast, urban, y)
+		return
+
+
+## The last land column (west-most) of the way west from (x, y), or -1 when blocked.
+func _clear_way_west(x: int, y: int) -> int:
+	var last := -1
+	for cx in range(x - 1, 0, -1):
+		var i := _data.idx(cx, y)
+		if _data.terrain[i] != Terrain.LAND:
+			return last
+		if not _is_open(i) or _data.road[i] != 0:
+			return -1
+		last = cx
+	return -1
+
+
+## One column of the three-lane highway (the middle lane is the row itself).
+func _lane(x: int, y: int) -> void:
+	for dy in range(-1, 2):
+		if not _data.in_bounds(x, y + dy):
+			continue
+		var i := _data.idx(x, y + dy)
+		if _data.terrain[i] == Terrain.LAND and _data.road[i] == 0 and (_is_open(i) or _data.zone[i] == Zone.URBAN):
+			_data.road[i] = CityTypes.ROAD_AVENUE
+			_network[i] = 1
 
 
 # --- Roads to the city ----------------------------------------------------------------------
@@ -218,7 +404,7 @@ func _land_nearest_to_city(area: Rect2i) -> int:
 	return _nearest(area, center, false)
 
 
-## The road cell (or free land cell) of `area` closest to `target`, -1 when none.
+## The road cell (or free farm cell) of `area` closest to `target`, -1 when none.
 func _nearest(area: Rect2i, target: Vector2, want_road: bool) -> int:
 	var best := -1
 	var best_d := INF
@@ -228,7 +414,7 @@ func _nearest(area: Rect2i, target: Vector2, want_road: bool) -> int:
 				continue
 			var i := _data.idx(x, y)
 			var ok := (_data.road[i] != 0 and _network[i] == 0) if want_road \
-					else (_data.terrain[i] == Terrain.LAND and _data.road[i] == 0)
+					else (_data.terrain[i] == Terrain.LAND and _data.road[i] == 0 and _data.zone[i] == Zone.FARM)
 			if ok:
 				var d := target.distance_squared_to(Vector2(x, y))
 				if d < best_d:
@@ -268,8 +454,7 @@ func _link(start: int) -> void:
 				goal = ni
 				break
 			var z := _data.zone[ni]
-			if _data.road[ni] == 0 and z != Zone.NONE and z != Zone.NATURE and z != Zone.DESERT \
-					and z != Zone.FARM and z != Zone.INDUSTRIAL:
+			if _data.road[ni] == 0 and not _link_zone(z):
 				continue
 			prev[ni] = cur
 			queue.append(ni)
@@ -283,105 +468,144 @@ func _link(start: int) -> void:
 		at = prev[at]
 
 
-## A road all around `area` (on free land), like the ring roads of the park.
-func _ring_road(area: Rect2i) -> void:
-	var ring := area.grow(1)
-	for y in range(ring.position.y, ring.end.y):
-		for x in range(ring.position.x, ring.end.x):
-			if area.has_point(Vector2i(x, y)) or not _data.in_bounds(x, y):
-				continue
-			var i := _data.idx(x, y)
-			if _data.terrain[i] == Terrain.LAND and _is_open(i) and _data.road[i] == 0:
-				_data.road[i] = CityTypes.ROAD_AVENUE
+func _link_zone(z: int) -> bool:
+	return z == Zone.NONE or z == Zone.NATURE or z == Zone.DESERT or z == Zone.FARM \
+			or z == Zone.INDUSTRIAL or z == Zone.URBAN or z == Zone.SAND
+
+
+## A cross of streets through the middle of a blob (the industrial zone).
+func _spines(b: Dictionary) -> void:
+	var at: Vector2 = b["at"]
+	var r: Vector2 = b["r"]
+	for x in range(int(at.x - r.x), int(at.x + r.x) + 1):
+		_street_cell(x, int(at.y), b)
+	for y in range(int(at.y - r.y), int(at.y + r.y) + 1):
+		_street_cell(int(at.x), y, b)
+
+
+func _street_cell(x: int, y: int, b: Dictionary) -> void:
+	var i := _data.idx(x, y)
+	if _in_blob(b, x, y) and _data.terrain[i] == Terrain.LAND and _data.road[i] == 0 \
+			and _data.zone[i] == Zone.INDUSTRIAL:
+		_data.road[i] = CityTypes.ROAD_STREET
+		_network[i] = 1
+
+
+## Each skyline plot of the urban island gets a street to the others.
+func _link_urban_clusters() -> void:
+	for r in _clusters:
+		if r.size.x > 0:
+			_link(_data.idx(r.position.x - 1, r.get_center().y))
 
 
 # --- Features ---------------------------------------------------------------------------------
-func _claim_ferris_wheel() -> void:
-	if _spot_free_plot(FERRIS_PLOT):
-		_claim(FERRIS_PLOT, Kind.FERRIS_WHEEL, 2, Zone.CIVIC)
+## A free 6x6-like plot closest to `target` whose cells are all dry open land; for a
+## blob given, the whole plot must be inside it.
+func _find_plot(target: Vector2i, size: Vector2i, blob: Dictionary) -> Rect2i:
+	for radius in 30:
+		for dy in range(-radius, radius + 1):
+			for dx in range(-radius, radius + 1):
+				if maxi(absi(dx), absi(dy)) != radius:
+					continue
+				var r := Rect2i(target + Vector2i(dx, dy) - size / 2, size)
+				if _plot_ok(r, blob):
+					return r
+	return Rect2i()
 
 
-func _spot_free_plot(r: Rect2i) -> bool:
-	for y in range(r.position.y, r.end.y):
-		for x in range(r.position.x, r.end.x):
+func _plot_ok(r: Rect2i, blob: Dictionary) -> bool:
+	for y in range(r.position.y - 1, r.end.y + 1):
+		for x in range(r.position.x - 1, r.end.x + 1):
+			if not _data.in_bounds(x, y):
+				return false
 			var i := _data.idx(x, y)
-			if _data.terrain[i] != Terrain.LAND or _data.road[i] != 0 or _lots.owner[i] == -2:
+			if _data.terrain[i] != Terrain.LAND or _data.road[i] != 0 \
+					or not (_is_open(i) or _data.zone[i] == Zone.URBAN):
+				return false
+			if not blob.is_empty() and not _in_blob(blob, x, y):
+				return false
+			# Cluster plots stay on the urban island, ferris wheel plots on the main one.
+			if blob.is_empty() and not _island.is_urban_island(x, y):
 				return false
 	return true
-
-
-## Only when the core's red quarter had no room for it.
-func _build_drive_in_if_missing(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
-	for b in _data.building_count():
-		if _data.b_kind[b] == Kind.DRIVE_IN:
-			return
-	_services.build_specs([{"kind": Kind.DRIVE_IN, "size": Vector2i(4, 3), "count": 1,
-			"near": "quarter_south_center", "zones": [Zone.QUARTER]}], blocks, zones)
 
 
 ## The desert next to Las Vegas: the secret base (airbase, bunker, radio station), mesas,
 ## ranches and oil pumps, far apart from each other.
 func _build_desert() -> void:
-	var c := DESERT.get_center()
+	var c := Vector2i(DESERT["at"])
 	for size in AIRBASE_SIZES:
-		var r := _find_spot(c + Vector2i(-size.x / 2, -8), size, Zone.DESERT, 16, 2)
+		var r := _find_spot(c + Vector2i(-size.x / 2, -14), size, Zone.DESERT, 16, 2)
 		if r.size.x > 0:
 			_claim(r, Kind.AIRBASE, 2, Zone.CIVIC)
 			break
-	var bunker := _find_spot(c + Vector2i(14, 10), Vector2i(3, 3), Zone.DESERT, 12, 3)
+	var bunker := _find_spot(c + Vector2i(2, 14), Vector2i(3, 3), Zone.DESERT, 12, 3)
 	if bunker.size.x > 0:
 		_claim(bunker, Kind.BUNKER, 2, Zone.CIVIC)
-	var tower := _find_spot(c + Vector2i(-14, 14), Vector2i(2, 2), Zone.DESERT, 12, 2)
+	var tower := _find_spot(c + Vector2i(-6, 4), Vector2i(2, 2), Zone.DESERT, 12, 2)
 	if tower.size.x > 0:
 		_claim(tower, Kind.TELECOM_TOWER, 2, Zone.CIVIC)
 		for o in [Vector2i(4, -1), Vector2i(4, 3), Vector2i(0, 4)]:
 			var d := Rect2i(tower.position + o, Vector2i(2, 2))
 			if _spot_free(d, Zone.DESERT, 0):
 				_claim(d, Kind.SAT_DISH, 3, Zone.CIVIC)
-	for r in _spots(DESERT, Zone.DESERT, Vector2i(6, 4), 2, 20.0, 1):
+	for r in _spots(_blob_rect(DESERT), Zone.DESERT, Vector2i(6, 4), 2, 20.0, 1):
 		_claim(r, Kind.MESA, 2)
 	var i := 0
-	for r in _spots(DESERT, Zone.DESERT, Vector2i(2, 2), 3, 14.0, 2):
+	for r in _spots(_blob_rect(DESERT), Zone.DESERT, Vector2i(2, 2), 3, 14.0, 2):
 		_claim(r, Kind.OUTPOST, 2, -1, i * 3)
 		i += 1
-	for r in _spots(DESERT, Zone.DESERT, Vector2i(2, 2), 8, 9.0, 1):
+	for r in _spots(_blob_rect(DESERT), Zone.DESERT, Vector2i(2, 2), 7, 9.0, 1):
 		_claim(r, Kind.OIL_PUMP, 2)
 
 
-## The industrial zone: exactly 8 different buildings (variant 0..7) and a few yards.
+## The industrial zone: exactly 8 different buildings (variant 0..7), and its port:
+## container yards and two cranes on the quay.
 func _build_industrial() -> void:
+	var rect := _blob_rect(INDUSTRIAL)
 	for i in FACTORY_SIZES.size():
-		var r := _spots_one(INDUSTRIAL, Zone.INDUSTRIAL, FACTORY_SIZES[i], 1)
+		var r := _spots_one(rect, Zone.INDUSTRIAL, FACTORY_SIZES[i], 1)
 		if r.size.x > 0:
 			_claim(r, Kind.FACTORY_BLDG, 2, -1, i)
-	for k in 4:
-		var y := _spots_one(INDUSTRIAL, Zone.INDUSTRIAL, Vector2i(2, 2), 0)
-		if y.size.x > 0:
-			_claim(y, Kind.INDUSTRIAL_YARD, 2, -1, k)
+	var quay: Array[Rect2i] = []
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			if _near_water(x, y, 3) and _data.in_bounds(x, y) and _data.zone[_data.idx(x, y)] == Zone.INDUSTRIAL:
+				var r := Rect2i(x, y, 2, 2)
+				if _spot_free(r, Zone.INDUSTRIAL, 0) and not quay.any(func(q: Rect2i) -> bool:
+						return Vector2(q.get_center()).distance_to(Vector2(r.get_center())) < 5.0):
+					quay.append(r)
+	var cranes := 0
+	for k in quay.size():
+		if cranes < 2 and k % 3 == 1:
+			_claim(quay[k], Kind.CRANE, 2)
+			cranes += 1
+		elif k % 3 != 1:
+			_claim(quay[k], Kind.INDUSTRIAL_YARD, 2, -1, k)
 
 
-## Farm houses and barns, then crop fields tiled over each patch of farmland.
+## Farm houses and barns, then crop fields tiled over the one farmland district.
 func _build_farms() -> void:
+	var rect := _blob_rect(FARM)
 	var k := 0
-	for area: Rect2i in FARMS:
-		for yard in _spots(area, Zone.FARM, Vector2i(2, 2), 2, 16.0, 2, 500):
-			_claim(yard, Kind.OUTPOST, 2, Zone.CIVIC, k * 3)
+	for yard in _spots(rect, Zone.FARM, Vector2i(2, 2), 4, 14.0, 2, 600):
+		_claim(yard, Kind.OUTPOST, 2, Zone.CIVIC, k * 3)
+		k += 1
+		var side := Rect2i(yard.position + Vector2i(3, 0), Vector2i(2, 2))
+		if _spot_free(side, Zone.FARM, 0):
+			_claim(side, Kind.OUTPOST, 2, Zone.CIVIC, k * 3 + 1)
 			k += 1
-			var side := Rect2i(yard.position + Vector2i(3, 0), Vector2i(2, 2))
-			if _spot_free(side, Zone.FARM, 0):
-				_claim(side, Kind.OUTPOST, 2, Zone.CIVIC, k * 3 + 1)
-				k += 1
-		var y := area.position.y + 1
-		while y + 4 < area.end.y:
-			var h := _rng.randi_range(4, 6)
-			var x := area.position.x + 1
-			while x + 4 < area.end.x:
-				var w := _rng.randi_range(5, 8)
-				var field := _shrink_to_fit(x, y, mini(w, area.end.x - x - 1), h)
-				if field.size.x > 0:
-					_claim(field, Kind.FIELD, 2, Zone.FARM, _rng.randi())
-				x += w + 1
-			y += h + 1
+	var y := rect.position.y
+	while y < rect.end.y:
+		var h := _rng.randi_range(4, 6)
+		var x := rect.position.x
+		while x < rect.end.x:
+			var w := _rng.randi_range(5, 8)
+			var field := _shrink_to_fit(x, y, w, h)
+			if field.size.x > 0:
+				_claim(field, Kind.FIELD, 2, Zone.FARM, _rng.randi())
+			x += w + 1
+		y += h + 1
 
 
 ## The biggest field starting at (x, y), at most w x h, that fits on the free farmland.
@@ -394,19 +618,35 @@ func _shrink_to_fit(x: int, y: int, w: int, h: int) -> Rect2i:
 	return Rect2i()
 
 
+## Two more mountains next to the one of the core, in the forest.
+func _build_mountains() -> void:
+	var first := Vector2i(-1, -1)
+	for b in _data.building_count():
+		if _data.b_kind[b] == Kind.MOUNTAIN:
+			first = _data.building_rect(b).get_center()
+	if first.x < 0:
+		first = Vector2i(FOREST["at"])
+	var i := 1
+	for o in [Vector2i(-19, -17), Vector2i(19, -15)]:
+		var r := _find_spot(first + o - Vector2i(4, 4), Vector2i(8, 8), Zone.NATURE, 14, 1)
+		if r.size.x > 0:
+			_claim(r, Kind.MOUNTAIN, 2, -1, i * 8 + 8)
+			i += 1
+
+
 ## Ice cream and food stalls on the meadow behind the beaches, spread along the coast.
 func _build_beach_stalls() -> void:
 	var placed: Array[Vector2] = []
 	var i := 0
 	for y in range(8, _data.size - 8):
 		for x in range(8, _data.size - 8):
-			if placed.size() >= 10 or CityTypes.hash2(x, y, 55) % 9 != 0 or not _beach_edge(x, y):
+			if placed.size() >= 9 or CityTypes.hash2(x, y, 55) % 9 != 0 or not _beach_edge(x, y):
 				continue
 			var c := Vector2(x, y)
 			if placed.any(func(p: Vector2) -> bool: return p.distance_to(c) < 18.0):
 				continue
 			var r := Rect2i(x, y, 1, 1)
-			if _spot_free(r, Zone.NATURE, 0) or _spot_free(r, Zone.FARM, 0):
+			if _spot_free(r, Zone.NATURE, 0) or _spot_free(r, Zone.SAND, 0):
 				placed.append(c)
 				_claim(r, Kind.STALL, 2, -1, i * 5)
 				i += 1

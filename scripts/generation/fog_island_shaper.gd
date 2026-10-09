@@ -6,8 +6,12 @@ extends RefCounted
 ## the cell grid of the city (no roads or lots), so it costs almost nothing.
 ## Runs on the generation thread; the FogIsland node draws it.
 
-const SIZE := 128
-## Hills (top), two hidden downtowns and the palm coast, in local cells.
+## Size of the island square in cells: 1.5 times the first version (128), so about
+## twice the area. Only the fog grows: the buildings stay where they were, in the middle.
+const SIZE := 192
+## Moves the original 128-cell layout to the middle of the bigger square.
+const SHIFT := Vector2(28.0, 32.0)
+## Hills (top), two hidden downtowns and the palm coast, in the original 128-cell layout.
 const CLUSTERS := [
 	{"at": Vector2(72, 38), "radius": 15.0, "towers": true},
 	{"at": Vector2(74, 92), "radius": 17.0, "towers": true},
@@ -41,7 +45,7 @@ var _noise := FastNoiseLite.new()
 func _init(cfg: CityConfig, data: CityData) -> void:
 	_cfg = cfg
 	# East of the bridge: the island starts about 22 cells beyond the end of the highway.
-	origin = Vector2(data.bridge.x + 12, data.bridge.y - 64) if data.bridge.x >= 0 \
+	origin = Vector2(data.bridge.x + 12, data.bridge.y - SIZE / 2) if data.bridge.x >= 0 \
 			else Vector2(data.size - 32, 32)
 	_noise.seed = cfg.seed + 9001
 	_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
@@ -91,11 +95,11 @@ func _paint() -> void:
 			var p := Vector2(x, y)
 			var f := clampf(_noise.get_noise_2d(x * 3.0, y * 3.0) * 0.8 + 0.5, 0.0, 1.0)
 			var c := GRASS.lerp(FOREST, f)
-			var hill := 1.0 - p.distance_to(HILLS) / 26.0
+			var hill := 1.0 - p.distance_to(HILLS + SHIFT) / 26.0
 			if hill > 0.0:
 				c = c.lerp(HILL, clampf(hill * 1.6, 0.0, 0.85))
 			for cl in CLUSTERS:
-				var d: float = p.distance_to(cl["at"]) / float(cl["radius"])
+				var d: float = p.distance_to(cluster_at(cl)) / float(cl["radius"])
 				if d < 1.0:
 					c = STREET if (x % 5 == 0 or y % 5 == 0) else CITY
 			colors[i * 4] = c.r8
@@ -109,7 +113,7 @@ func _paint() -> void:
 func _place_buildings() -> void:
 	for c in CLUSTERS.size():
 		var cl: Dictionary = CLUSTERS[c]
-		var at: Vector2 = cl["at"]
+		var at := cluster_at(cl)
 		var r: float = cl["radius"]
 		for y in range(int(at.y - r), int(at.y + r) + 1, 5):
 			for x in range(int(at.x - r), int(at.x + r) + 1, 5):
@@ -146,9 +150,14 @@ func _is_land(p: Vector2) -> bool:
 
 func _in_cluster(p: Vector2) -> bool:
 	for cl in CLUSTERS:
-		if p.distance_to(cl["at"]) < float(cl["radius"]):
+		if p.distance_to(cluster_at(cl)) < float(cl["radius"]):
 			return true
 	return false
+
+
+## Centre of a hidden downtown in local cells.
+static func cluster_at(cl: Dictionary) -> Vector2:
+	return (cl["at"] as Vector2) + SHIFT
 
 
 ## Centre of the island in world coordinates (x, z).

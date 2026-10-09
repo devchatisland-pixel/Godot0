@@ -1454,6 +1454,130 @@
         }
       ],
       "texture_max": 384
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/urban_blackthorn.glb",
+      "out": "urban",
+      "texture_max": 384,
+      "items": [
+        {
+          "id": "tower0",
+          "nodes": [
+            "Cube"
+          ],
+          "cat": "URBAN",
+          "footprint": 1.8
+        },
+        {
+          "id": "tower1",
+          "nodes": [
+            "Cube_001"
+          ],
+          "cat": "URBAN",
+          "footprint": 2.0
+        },
+        {
+          "id": "tower2",
+          "nodes": [
+            "Cube_002"
+          ],
+          "cat": "URBAN",
+          "footprint": 2.0
+        },
+        {
+          "id": "tower3",
+          "nodes": [
+            "Cube_003"
+          ],
+          "cat": "URBAN",
+          "footprint": 2.4
+        },
+        {
+          "id": "tower4",
+          "nodes": [
+            "Cube_004"
+          ],
+          "cat": "URBAN",
+          "footprint": 3.4
+        },
+        {
+          "id": "tower5",
+          "nodes": [
+            "Cube_005"
+          ],
+          "cat": "URBAN",
+          "footprint": 3.6
+        },
+        {
+          "id": "tower6",
+          "nodes": [
+            "Cube_006"
+          ],
+          "cat": "URBAN",
+          "footprint": 3.4
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/mcdonalds.glb",
+      "out": "mcdonalds",
+      "items": [
+        {
+          "id": "mcdonalds",
+          "nodes": [
+            "Cube_341"
+          ],
+          "cat": "MCDONALDS",
+          "footprint": 3.2
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/hungry_jacks.glb",
+      "out": "hungry",
+      "texture_max": 512,
+      "items": [
+        {
+          "id": "burger_king",
+          "nodes": [
+            "Plane_003",
+            "Plane_001"
+          ],
+          "cat": "BURGER_KING",
+          "footprint": 4.6
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/night_skyline_2.glb",
+      "out": "skyline2",
+      "keep_emission": true,
+      "texture_max": 1024,
+      "items": [
+        {
+          "id": "skyline2",
+          "nodes": [
+            "Cube_001_Background_Night_Buildings_0"
+          ],
+          "cat": "SKYLINE2",
+          "footprint": 26.0
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/metal_bridge.glb",
+      "out": "metal_bridge",
+      "texture_max": 512,
+      "items": [
+        {
+          "id": "metal_bridge",
+          "nodes": [
+            "Pont_001"
+          ],
+          "cat": "METAL_BRIDGE",
+          "footprint": 8.0
+        }
+      ]
     }
   ]
 }

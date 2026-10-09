@@ -75,14 +75,22 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return _poor(lib, roll, r)
 		Kind.RUSSIAN:
 			return lib.ids(Cat.RUSSIAN)
+		Kind.URBAN_BLDG:
+			return lib.ids(Cat.URBAN)
+		Kind.URBAN_CLUSTER:
+			return _variant_of(_union(lib, [Cat.SKYLINE, Cat.SKYLINE2]), seed)
+		Kind.MCDONALDS:
+			return lib.ids(Cat.MCDONALDS)
+		Kind.BURGER_KING:
+			return lib.ids(Cat.BURGER_KING)
+		Kind.HOTEL:
+			return _variant_of(_union(lib, [Cat.HOTEL_PACK, Cat.HOTEL_SMALL]), seed)
 		Kind.FACTORY_BLDG:
 			return _variant_of(_eight_factories(lib), seed)
 		Kind.PRISON_WING:
 			return _variant(lib, _prison_cat(lib, seed), seed)
 		Kind.STALL:
 			return _variant(lib, Cat.STALL, seed)
-		Kind.HOTEL:
-			return _variant(lib, Cat.HOTEL_PACK, seed)
 		Kind.BANK:
 			return lib.ids(Cat.BANK_PACK)
 		Kind.CHURCH:

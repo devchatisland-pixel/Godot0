@@ -106,6 +106,10 @@ func _start_city() -> void:
 	fog_island.name = "FogIsland"
 	add_child(fog_island)
 	fog_island.build(cfg, data, library)
+	var west_bridge := WestBridge.new()
+	west_bridge.name = "WestBridge"
+	add_child(west_bridge)
+	west_bridge.build(data, library)
 
 	# Start with the whole island in view; the fog island can be reached too.
 	var c := Vector2(data.size, data.size) * 0.5

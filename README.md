@@ -52,29 +52,32 @@ export_presets.cfg     "Web" (threads) and "Web Lite" (no threads) presets
 
 ## The island
 
-Chat City is a 288×288-cell map with one big **rounded island**. The city of the earlier versions sits a little south of the
-middle **exactly as it was** (same seed, same streets and buildings); the countryside and the new districts surround it.
-On screen north-west is up. Special buildings are kept far from each other on purpose.
+Chat City is a 272×272-cell map: one big **rounded main island**, the **urban island** to the west and the
+**fog island** to the east. The city of the earlier versions sits in the west part of the main island
+**exactly as it was** (same seed, same streets and buildings); the districts around it are round blobs,
+not squares. On screen north-west is up. Special buildings are kept far from each other on purpose.
 
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
 | just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
 | left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the mall (a big supermarket) |
-| west of Vegas | **West desert** | the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
-| south-west, between the desert and Vegas | **Industrial zone** | exactly 8 different buildings (concrete factory, brick works, ruin, garage and four Kenney factories) with a few yards of containers, barrels and trucks |
+| west coast | **West desert** | reaches the sea without a beach: the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
+| south-west coast, next to the desert and Vegas | **Industrial zone and port** | exactly 8 different buildings (concrete factory, brick works, ruin, garage and four Kenney factories), container yards and cranes on a quay (no beach) |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
-| north-east of the park | **Mountain forest** | a forest with one tall snow-capped mountain in the middle |
-| below the park | **Civic center** | the main city hall and the police headquarters (each on its own plot), bank (from the cartoon pack, with its sign), fire station, post office |
+| north-east | **Mountain forest** | a forest with three snow-capped mountains and a wide sand beach on its coast; its edge thins to meadow |
+| below the park | **Civic center** | the main city hall and the police headquarters (each on its own plot), the bank, fire station, post office |
 | right of the park | **United Nations** | the U.N. tower with its emblem (no text), on its own plot where everyone sees it |
-| left of the park | **Shopping streets** | the main hospital, the shopping center, the pharmacy, two big hotels, New York street buildings, mini hotels, cartoon shops (burgers and pizzerias drawn extra big, pizzerias rare) |
-| right / bottom | **Residential** | houses with gardens (Kenney, cartoon, French red and blue), the main school with its sports ground, the big church, the cemetery, gas stations |
-| south | **Colourful quarter** | white and red low-rise town, bigger than before, mixed with French villas and colourful houses; the drive-in cinema, the construction crane, and by the beach the big ferris wheel and ice cream stalls |
+| left of the park | **Shopping streets** | the main hospital, the shopping center, hotels, New York street buildings, mini hotels, cartoon shops (burgers and pizzerias drawn extra big, pizzerias rare); three pharmacies in the city |
+| right / bottom | **Residential** | houses with gardens (Kenney, cartoon, French red and blue), the main school with its sports ground, the big church (far from the U.N.), the cemetery, gas stations |
+| south | **Red district** | white and red low-rise town, bigger than before, mixed with French villas and colourful houses; the drive-in cinema, a crane, McDonald's and Burger King (one of each), the big ferris wheel at the beach and ice cream stalls |
 | left | **Sports corner** | the big stadium (own plot, floodlit at night) |
-| all around the city | **Farmland** | eight patches of crop fields (wheat, corn, plowed soil, green rows) with farms and country roads, spread over the whole island, none near the desert; forests and meadows between them |
-| coast | **Beaches and rocky shores** | lighthouses and palm islets |
+| south-east | **Farmland** | the one farming district: crop fields (wheat, corn, plowed soil, green rows) with farms and a country road |
+| everywhere | **Hotels** | nine different hotels, one of each model: four in the city, five in the red district |
+| far west, across the metal bridge | **Urban island** | the third island: dense towers (BlackThornProd buildings) and two night skyline blocks, few roads, no trees |
 | far north-west, at sea | **Prison island** | a long rocky island far from the coast: a big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses |
-| east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke. A three-lane highway leads to the bridge, closed by orange triangle barriers and cones. "ZONE UNLOCKED ON SEASON 2, COMING SOON" |
+| east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke (twice the area of before, same buildings). A three-lane highway leads to the bridge, closed by orange triangle barriers and cones. "SEASON 2" floats over it |
+| coast | **Beaches and rocky shores** | lighthouses and palm islets |
 
 How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same map on every device):
 
@@ -82,21 +85,21 @@ How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same 
 
 1. **`island_shaper.gd`**: an elliptical island with a little noise, sandy and rocky shores.
 2. **`district_planner.gd`**: the district layout (anchors, hints and the park, mountain forest and big-building plots, in island units).
-3. **`road_planner.gd`**: recursive splitting (BSP) into blocks. The borders of the park, the forest and the plots of the big buildings (stadium, mall, city hall, police HQ, U.N., main school, cemetery) are cut first, so they become ring roads. The first splits are avenues with street lights.
+3. **`road_planner.gd`**: recursive splitting (BSP) into blocks. The borders of the park, the forest and the plots of the big buildings are cut first, so they become ring roads. The first splits are avenues with street lights.
 4. **`lot_planner.gd`**: blocks cut into lots, every building facing its street.
-5. **`service_planner.gd`**: the big buildings fill their plots; every main public building once, in the block closest to its district, never two close together; then the small services of each district.
-6. **`landmark_planner.gd`**: the park lake and paths, the mountain, the road to the bridge, the lighthouses.
+5. **`service_planner.gd`**: the big buildings fill their plots; every main public building once, never two close together; then the small services of each district (4 hotels, 3 pharmacies...).
+6. **`landmark_planner.gd`**: the park lake and paths, the first mountain, the road to the Golden Gate, the lighthouses.
 
 **2. Everything around it** (`core_embed.gd`, `extension_island.gd`, `extension_planner.gd`):
 
-7. **`core_embed.gd`** copies the finished core city into the 288×288 map.
-8. **`extension_island.gd`** raises the big rounded island around it (the core keeps its own streets, shores and forests), plus palm islets and the prison island.
-9. **`extension_planner.gd`** works only on free land: the three-lane highway to the bridge; the small poor district and the south part of the red quarter (BSP streets and lots); the desert with the base, the industrial zone, the farmland patches, forests, beach stalls and the prison compound. Everything is linked to the old city by the shortest road.
-10. **`fog_island_shaper.gd`**: the island in the fog, placed right after the end of the highway.
+7. **`core_embed.gd`** copies the finished core city into the 272×272 map.
+8. **`extension_island.gd`** raises the rounded main island around it (the core keeps its own streets, shores and forests), the urban island, palm islets and the prison island.
+9. **`extension_planner.gd`** works only on free land, with round blobs: the two highways (east to the Golden Gate, west to the metal bridge); the poor district, the red district and the urban island (BSP streets and lots, shapes cut round); the desert with the base, the industrial zone and port, the farmland, the sand band, two more mountains, beach stalls and the prison compound. Everything is linked to the old city by the shortest road.
+10. **`fog_island_shaper.gd`**: the island in the fog, placed right after the end of the east highway.
 
 Which family of models a building uses (Kenney, photo towers, New York, cartoon shops, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
 
-To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA`, `PLOTS` or `HINTS` in `district_planner.gd` (core city), or the rectangles at the top of `extension_planner.gd` and `MAIN` / `PRISON` in `extension_island.gd` (everything around).
+To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA`, `PLOTS` or `HINTS` in `district_planner.gd` (core city), or the blobs at the top of `extension_planner.gd` and `MAIN` / `URBAN` / `PRISON` in `extension_island.gd` (everything around). The size of the fog island is `FogIslandShaper.SIZE`.
 
 ### The fog island
 
@@ -198,7 +201,12 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `un_tower` | building 3 | UN_TOWER | the United Nations tower |
 | `crane` | building crane | CRANE | one crane in the colourful quarter |
 | `golden_gate` | Golden Gate bridge | BRIDGE | the bridge to the fog island |
-| `night_skyline` | low-poly night city skyline (keeps its light map) | SKYLINE | the hidden city of the fog island |
+| `night_skyline` | low-poly night city skyline (keeps its light map) | SKYLINE | the hidden city of the fog island, a block of the urban island |
+| `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the second skyline block of the urban island |
+| `urban` | City Buildings - BlackThornProd | URBAN | the towers of the urban island |
+| `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |
+| `hungry` | Hungry Jack's restaurant | BURGER_KING | the Burger King of the red district |
+| `metal_bridge` | stylised metal bridge | METAL_BRIDGE | the bridge to the urban island |
 | `carto` | CartoCity pack | MEGA_MALL, BANK_PACK, HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, BARRIER, CONE, TRUCK, CONTAINER, BARREL | the supermarket (the mall), the bank, colourful houses and shops, mini hotels, the orange barriers and cones of the bridge, industrial props |
 | `france` | 15 low-poly buildings (cut by position) | HOUSE2, MANSION, PRISON_BLOCK | French red and blue houses, stone blocks and villas of the prison island |
 | `accommodations` | low poly accommodations buildings | HOTEL_PACK, HOUSE2, TOWN2 | the two big hotels, villas, small apartment blocks |
@@ -227,13 +235,17 @@ Not used:
 * "Low Poly Night City Building Skyline" by 99.Miles, CC BY 4.0
 * "Building Crane (low poly)" by jmarco2000, CC BY 4.0
 * "Low Poly City | CartoCity Pack | Cartoonsih City" by DevPoly3D, CC BY 4.0
+* "City Buildings - BlackThornProd Video" by Tiko, CC BY 4.0
+* "Low Poly Game Ready McDonalds Building" by costoWRLD, CC BY 4.0
+* "Low-poly-night-city-building-skyline" by willis123, CC BY 4.0
+* "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
 * "Pack - Low Poly - 15 Building" by Islide, CC BY 4.0
 * "[Free] Buildings Low Poly" by GraphOrigin, CC BY 4.0
 * "Somewhat Low-poly Buildings" by Calne, CC BY 4.0
 * "Low-Poly City Street Buildings Asset Pack" by treasureimpact, CC BY 4.0
 * "Buildings Pack" by maxk3, CC BY 4.0
 * "Russian Building 4k texture low-poly game model" by BlackMonolith, CC BY 4.0
-* "Low poly public buildings pack" and "Low poly accommodations buildings" by assetfactory, and "Low-Poly Industrial Building" by FlunkedPunk: Sketchfab Standard licence. They may be used in the game, but the raw files must not be shared on their own, so they are kept out of git; only the curated copies the game needs are committed.
+* "Low poly public buildings pack" and "Low poly accommodations buildings" by assetfactory, "Low-Poly Industrial Building" by FlunkedPunk and "Hungry Jack's Restaurant (low Poly)" by Jotrain Models: Sketchfab Standard licence. They may be used in the game, but the raw files must not be shared on their own, so they are kept out of git; only the curated copies the game needs are committed.
 
 All from sketchfab.com. CC BY 4.0 needs this credit wherever the game is shown.
 The raw files of the two latest waves are not in the repository either (they are heavy):

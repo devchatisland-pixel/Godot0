@@ -6,24 +6,26 @@ extends IslandShaper
 ## a prison island far from the shore. Terrain, mainland and forest are then
 ## worked out for the whole map, keeping what the core already has.
 
-## The main island: a big rounded ellipse (centre and radii in cells of the big
-## map). The core city sits inside it, a little to the south of the middle.
-const MAIN := {"at": Vector2(144, 126), "r": Vector2(128, 118)}
+## The main island: a rounded ellipse (centre and radii in cells of the big map).
+## The core city sits inside it, a little to the west of the middle.
+const MAIN := {"at": Vector2(141, 133), "r": Vector2(80, 94)}
 ## How ragged the coast of the big island is, compared with the core island.
 const COAST_ROUGHNESS := 0.5
+## The urban island (third island) west of the main one, joined by the metal bridge.
+const URBAN := {"at": Vector2(28, 133), "r": Vector2(19, 44)}
 ## Palm islets: centre and radius in cells.
 const PALM_ISLETS := [
-	{"at": Vector2(60, 238), "r": 4.5}, {"at": Vector2(232, 240), "r": 5.0},
-	{"at": Vector2(282, 84), "r": 3.5}, {"at": Vector2(150, 262), "r": 4.0},
+	{"at": Vector2(70, 252), "r": 4.5}, {"at": Vector2(150, 259), "r": 5.0},
+	{"at": Vector2(236, 246), "r": 4.0}, {"at": Vector2(250, 92), "r": 3.5},
 ]
 ## The prison island: centre, radii (long and short side) and turn in radians.
 ## Far out in the north-west, well away from the coast of the main island.
-const PRISON := {"at": Vector2(26, 24), "r": Vector2(15.0, 10.0), "turn": 0.45}
+const PRISON := {"at": Vector2(34, 38), "r": Vector2(15.0, 10.0), "turn": 0.45}
 
 ## The finished core city and its elevation, embedded at `offset` cells.
 var core: CityData
 var core_height := PackedFloat32Array()
-var offset := 32
+var offset := 72
 
 
 func shape() -> void:
@@ -31,6 +33,14 @@ func shape() -> void:
 	_classify_terrain()
 	_find_mainland()
 	_build_forest()
+
+
+func is_buildable(x: int, y: int) -> bool:
+	return is_mainland(x, y) or (is_urban_island(x, y) and _data.terrain[y * _data.size + x] == CityTypes.Terrain.LAND)
+
+
+func is_urban_island(x: int, y: int) -> bool:
+	return _ellipse_t(Vector2(x, y), URBAN["at"], URBAN["r"], 0.0) < 1.15
 
 
 func is_prison_island(x: int, y: int) -> bool:
@@ -65,6 +75,12 @@ func _build_extended_elevation() -> void:
 		for x in size:
 			var t := _ellipse_t(Vector2(x, y), main_at, main_r, 0.0)
 			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x, y) * _cfg.coast_noise * COAST_ROUGHNESS)
+	var urban_at: Vector2 = URBAN["at"]
+	var urban_r: Vector2 = URBAN["r"]
+	for y in range(maxi(int(urban_at.y - urban_r.y * 1.3), 0), mini(int(urban_at.y + urban_r.y * 1.3), size)):
+		for x in range(maxi(int(urban_at.x - urban_r.x * 1.4), 0), mini(int(urban_at.x + urban_r.x * 1.4), size)):
+			var t := _ellipse_t(Vector2(x, y), urban_at, urban_r, 0.0)
+			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x * 1.4, y * 1.4) * 0.12)
 	for it in PALM_ISLETS:
 		_islet(coast, it["at"], Vector2(it["r"], it["r"]), 0.0, 0.3, 0.05, 3.0)
 	_islet(coast, PRISON["at"], PRISON["r"], PRISON["turn"], 0.4, 0.15, 2.7)

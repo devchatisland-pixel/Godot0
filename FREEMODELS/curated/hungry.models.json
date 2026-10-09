@@ -1,0 +1,9 @@
+{
+	"file": "hungry.glb",
+	"models": [
+		{
+			"cat": "BURGER_KING",
+			"node": "burger_king"
+		}
+	]
+}

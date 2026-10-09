@@ -151,6 +151,11 @@ func is_prison_island(x: int, y: int) -> bool:
 	return prison_radius > 0.0 and Vector2(x, y).distance_to(prison_center) < prison_radius * 1.4
 
 
+## Land where streets and lots may go (the mainland; the extension adds the urban island).
+func is_buildable(x: int, y: int) -> bool:
+	return is_mainland(x, y)
+
+
 func is_mainland(x: int, y: int) -> bool:
 	return _data.in_bounds(x, y) and mainland[y * _data.size + x] == 1
 

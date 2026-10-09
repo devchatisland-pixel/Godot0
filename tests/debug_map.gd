@@ -6,7 +6,7 @@ extends SceneTree
 const ZONE_COLORS := [
 	Color("2a6fa0"), Color("6fae5a"), Color("3f9a3a"), Color("8a6fc0"), Color("c48fb0"),
 	Color("d9b38a"), Color("a7d38f"), Color("9a8f7a"), Color("f0f0f0"), Color("e3b56a"),
-	Color("d040c0"), Color("40d080"), Color("ff8060"), Color("606060"), Color("8a7a6a"), Color("c0c040"),
+	Color("d040c0"), Color("40d080"), Color("ff8060"), Color("606060"), Color("8a7a6a"), Color("c0c040"), Color("7a7f8a"), Color("f0e0a0"),
 ]
 
 func _init() -> void:

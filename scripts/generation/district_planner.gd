@@ -45,7 +45,7 @@ const PLOTS := [
 
 ## Places some services should be close to, besides the district anchors.
 const HINTS := {
-	"church": Vector2(0.5, -0.02),       # east suburbs, away from the desert
+	"church": Vector2(0.72, 0.4),        # east suburbs, far from the U.N.
 	"beach_quarter": Vector2(-0.05, 1.0), # colourful quarter by the south beach
 	"hotels": Vector2(-0.3, 0.05),       # shopping streets, not Las Vegas
 	"hotels_b": Vector2(0.3, 0.4),       # avenue south of the civic center

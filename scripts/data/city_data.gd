@@ -36,6 +36,9 @@ var center_weights: PackedFloat32Array = PackedFloat32Array()
 var city_name := "Chat City"
 ## Cell (x, row) where the Golden Gate bridge leaves the east coast; x < 0 = none.
 var bridge := Vector2i(-1, -1)
+## West bridge: (x of the main island's west-most land, x of the urban island's east-most land,
+## row); x < 0 = none. Drawn by WestBridge with the metal bridge model.
+var west_bridge := Vector3i(-1, -1, -1)
 ## The island hidden in the fog, east of the map (FogIslandShaper).
 var fog: FogIslandShaper
 

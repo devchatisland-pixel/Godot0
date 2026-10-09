@@ -22,8 +22,10 @@ enum Zone {
 	ISLET,       # small palm islands off the coast
 	QUARTER,     # colourful low-rise town quarter
 	PRISON,      # the Alcatraz-like prison island
-	POOR,        # run-down district of panel blocks, next to the west desert
+	POOR,        # run-down district of panel blocks, behind downtown
 	FARM,        # fields and farms of the countryside
+	URBAN,       # the third island: massive urbanism, no trees
+	SAND,        # wide beach strip around the mountain forest
 }
 
 # --- Road grid values ---------------------------------------------------------
@@ -89,6 +91,10 @@ enum Kind {
 	OIL_PUMP,         # pumpjack of the west desert
 	STALL,            # ice cream and food stall on the beach
 	FACTORY_BLDG,     # one of the 8 buildings of the industrial zone (variant = seed)
+	MCDONALDS,
+	BURGER_KING,
+	URBAN_BLDG,       # tower of the urban island
+	URBAN_CLUSTER,    # night skyline block of the urban island
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -101,7 +107,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.POST_OFFICE, Kind.CEMETERY, Kind.BUNKER, Kind.AIRBASE, Kind.PHARMACY,
 	Kind.GAS_STATION, Kind.CRANE, Kind.POLICE_HQ, Kind.MAIN_HOSPITAL, Kind.MAIN_SCHOOL,
 	Kind.MOUNTAIN, Kind.FIELD, Kind.RUSSIAN, Kind.PRISON_WING, Kind.OIL_PUMP, Kind.STALL,
-	Kind.FACTORY_BLDG,
+	Kind.FACTORY_BLDG, Kind.MCDONALDS, Kind.BURGER_KING, Kind.URBAN_CLUSTER,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

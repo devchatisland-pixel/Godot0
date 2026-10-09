@@ -108,7 +108,7 @@ func _draw_line(start: Vector2i, step: Vector2i, length: int, road_type: int) ->
 			run_start = -1
 			seen_land = false
 			continue
-		var land := _island.is_mainland(p.x, p.y) \
+		var land := _island.is_buildable(p.x, p.y) \
 				and _data.terrain[_data.idx(p.x, p.y)] == CityTypes.Terrain.LAND
 		if land:
 			if run_start >= 0 and seen_land and i - run_start <= MAX_BRIDGE:
@@ -207,6 +207,6 @@ func _has_land(r: Rect2i) -> bool:
 	var step := maxi(1, mini(r.size.x, r.size.y) / 4)
 	for y in range(r.position.y, r.end.y, step):
 		for x in range(r.position.x, r.end.x, step):
-			if _island.is_mainland(x, y) and _data.terrain[_data.idx(x, y)] == CityTypes.Terrain.LAND:
+			if _island.is_buildable(x, y) and _data.terrain[_data.idx(x, y)] == CityTypes.Terrain.LAND:
 				return true
 	return false

@@ -1,0 +1,9 @@
+{
+	"file": "metal_bridge.glb",
+	"models": [
+		{
+			"cat": "METAL_BRIDGE",
+			"node": "metal_bridge"
+		}
+	]
+}

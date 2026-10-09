@@ -35,7 +35,7 @@ func generate() -> CityData:
 
 	_report(0.97, "Hiding an island in the fog")
 	data.fog = FogIslandShaper.new(_cfg, data)
-	data.fog.shape(64)
+	data.fog.shape(FogIslandShaper.SIZE / 2)
 
 	data.build_chunk_index()
 	_report(1.0, "City ready")

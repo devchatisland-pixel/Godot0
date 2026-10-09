@@ -21,12 +21,12 @@ const LAYERS := [
 	[0.5, 1.0, 0.03, 0.0], [2.2, 0.95, 0.022, 0.31], [4.5, 0.9, 0.017, 0.57], [8.0, 0.7, 0.012, 0.83],
 ]
 ## Smoke plumes rising from the hidden city (local cells of the fog island).
-const PLUMES := [Vector2(70, 40), Vector2(78, 88)]
+const PLUMES := [Vector2(70, 40) + FogIslandShaper.SHIFT, Vector2(78, 88) + FogIslandShaper.SHIFT]
 ## Highest the bridge towers may stand (the model is squashed to keep them slim).
 const BRIDGE_HEIGHT := 3.6
 ## Width of the title in world units and its height above the island.
-const TITLE_WIDTH := 64.0
-const TITLE_HEIGHT := 16.0
+const TITLE_WIDTH := 84.0
+const TITLE_HEIGHT := 3.0
 
 var _materials: Array[ShaderMaterial] = []
 
@@ -41,7 +41,7 @@ func build(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
 		_build_skylines(fog, lib, skyline[0])
 	_build_bridge(data, lib)
 	_build_layers(fog)
-	_build_puffs(fog, 30 if cfg.is_mobile else 56)
+	_build_puffs(fog, 60 if cfg.is_mobile else 120)
 	_build_title(fog)
 
 
@@ -84,7 +84,7 @@ func _build_buildings(fog: FogIslandShaper, lib: ModelLibrary, has_skyline: bool
 
 func _near_downtown(fog: FogIslandShaper, p: Vector2, r: float) -> bool:
 	for cl in FogIslandShaper.CLUSTERS:
-		if cl["towers"] and p.distance_to(fog.origin + cl["at"]) < r:
+		if cl["towers"] and p.distance_to(fog.origin + FogIslandShaper.cluster_at(cl)) < r:
 			return true
 	return false
 
@@ -96,7 +96,7 @@ func _build_skylines(fog: FogIslandShaper, lib: ModelLibrary, id: int) -> void:
 	for cl in FogIslandShaper.CLUSTERS:
 		if not cl["towers"]:
 			continue
-		var at: Vector2 = fog.origin + cl["at"]
+		var at: Vector2 = fog.origin + FogIslandShaper.cluster_at(cl)
 		var basis := Basis(Vector3.UP, PI * 0.5 * k)
 		var center := Vector3(box.get_center().x, 0, box.get_center().z)
 		var mi := MeshInstance3D.new()
@@ -182,7 +182,7 @@ func _build_layers(fog: FogIslandShaper) -> void:
 ## Big billows over the island (thicker towards the bridge) and smoke plumes.
 func _build_puffs(fog: FogIslandShaper, count: int) -> void:
 	var c := fog.center()
-	var radius := Vector2(52, 46)
+	var radius := Vector2(52, 46) * float(FogIslandShaper.SIZE) / 128.0
 	var puffs := [] # [position, size, picture, opacity, darkness]
 	for i in count:
 		var h := CityTypes.hash2(i, 31, 7)
@@ -223,7 +223,8 @@ func _build_puffs(fog: FogIslandShaper, count: int) -> void:
 	mmi.material_override = m
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Quads are turned to the camera in the shader: give a box that holds them all.
-	mmi.custom_aabb = AABB(Vector3(c.x - 90, -10, c.y - 90), Vector3(180, 60, 180))
+	var half := 135.0
+	mmi.custom_aabb = AABB(Vector3(c.x - half, -10, c.y - half), Vector3(half * 2.0, 60, half * 2.0))
 	add_child(mmi)
 
 

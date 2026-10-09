@@ -26,6 +26,8 @@ const ZONE_COLORS := {
 	CityTypes.Zone.PRISON: Color("a9a59b"),
 	CityTypes.Zone.POOR: Color("bdb7ab"),
 	CityTypes.Zone.FARM: Color("a6b45c"),
+	CityTypes.Zone.URBAN: Color("8f929c"),
+	CityTypes.Zone.SAND: Color("ead9a4"),
 }
 
 ## Sea colour, also used as background so the ocean looks endless.
@@ -96,6 +98,6 @@ func _zone_texture(data: CityData) -> ImageTexture:
 		bytes[i * 4 + 1] = c.g8
 		bytes[i * 4 + 2] = c.b8
 		# Alpha 0 = rocky shore instead of sand.
-		bytes[i * 4 + 3] = 0 if data.rocky[i] == 1 else 255
+		bytes[i * 4 + 3] = 0 if data.rocky[i] == 1 else (128 if data.rocky[i] == 2 else 255)
 	var img := Image.create_from_data(data.size, data.size, false, Image.FORMAT_RGBA8, bytes)
 	return ImageTexture.create_from_image(img)

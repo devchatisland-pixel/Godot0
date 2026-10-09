@@ -16,6 +16,7 @@ const LOT_SIZES := {
 	Zone.ENTERTAINMENT: Vector2i(1, 4),
 	Zone.QUARTER: Vector2i(2, 3),
 	Zone.POOR: Vector2i(2, 3),
+	Zone.URBAN: Vector2i(2, 3),
 }
 
 var _cfg: CityConfig
@@ -84,6 +85,8 @@ func _add_lot(lot: Rect2i, zone: int) -> void:
 func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int:
 	var h := float(seed & 0xffff) / 65536.0
 	var area := lot.get_area()
+	if zone == Zone.URBAN:
+		return Kind.URBAN_BLDG # towers everywhere, even without a street
 	if facing < 0: # no road access: courtyard
 		match zone:
 			Zone.INDUSTRIAL: return Kind.INDUSTRIAL_YARD

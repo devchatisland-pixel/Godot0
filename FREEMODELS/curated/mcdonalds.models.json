@@ -1,0 +1,9 @@
+{
+	"file": "mcdonalds.glb",
+	"models": [
+		{
+			"cat": "MCDONALDS",
+			"node": "mcdonalds"
+		}
+	]
+}

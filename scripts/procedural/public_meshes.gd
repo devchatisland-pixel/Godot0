@@ -25,6 +25,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("cemetery", cemetery())
 	lib.add_named("hotel_a", hotel(Color("e9dcc8"), Color("7a2338"), false))
 	lib.add_named("hotel_b", hotel(Color("5b7fc4"), Color("2b3550"), true))
+	lib.add_named("golden_arches", golden_arches())
 
 
 # --- Art museum (7x5): wide temple front, two wings, glass pyramid --------------------
@@ -203,4 +204,28 @@ static func hotel(wall: Color, accent: Color, pool: bool) -> ArrayMesh:
 	k.box(Vector3(0.9, top - 0.12, -1.0), Vector3(0.02, 0.05, 1.5), WHITE)
 	k.box(Vector3(-0.92, top - 0.12, -1.0), Vector3(0.02, 0.05, 1.5), WHITE)
 	k.glow(false)
+	return k.commit()
+
+
+# --- Golden arches (unit sign, in the XY plane facing +Z): two big yellow arches, glowing ----------
+static func golden_arches() -> ArrayMesh:
+	var k := MeshKit.new()
+	k.neon(true)
+	var yellow := Color("ffc61a")
+	for cx in [-0.2, 0.2]:
+		var segs := 9
+		for i in segs:
+			var a0 := PI * float(i) / segs
+			var a1 := PI * float(i + 1) / segs
+			var p0 := Vector3(cx + cos(a0) * 0.2, 0.18 + sin(a0) * 0.36, 0.0)
+			var p1 := Vector3(cx + cos(a1) * 0.2, 0.18 + sin(a1) * 0.36, 0.0)
+			var mid := (p0 + p1) * 0.5
+			var len := p0.distance_to(p1) + 0.02
+			k.xform = Transform3D(Basis(Vector3.BACK, atan2(p1.y - p0.y, p1.x - p0.x)), mid)
+			k.box(Vector3(-len * 0.5, -0.035, -0.03), Vector3(len, 0.07, 0.06), yellow)
+		for side in [-1.0, 1.0]:
+			k.xform = Transform3D.IDENTITY
+			k.box(Vector3(cx + side * 0.2 - 0.035, 0.0, -0.03), Vector3(0.07, 0.18, 0.06), yellow)
+	k.xform = Transform3D.IDENTITY
+	k.neon(false)
 	return k.commit()

@@ -102,6 +102,8 @@ func _build_item(src: Node, out: Node3D, item: Dictionary, pack: Dictionary) -> 
 	var s := float(pack["_scale"]) * float(item.get("scale_mul", 1.0))
 	if pack.has("footprint"):
 		s = float(pack["footprint"]) / maxf(box.size.x, box.size.z)
+	if item.has("footprint"):
+		s = float(item["footprint"]) / maxf(box.size.x, box.size.z)
 	if item.has("height"):
 		s = float(item["height"]) / box.size.y
 	if pack.has("max_height") and box.size.y * s > float(pack["max_height"]):

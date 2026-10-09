@@ -31,6 +31,8 @@ const FAR_COLORS := {
 	Kind.MOUNTAIN: Color("8f8a82"), Kind.FIELD: Color("b9b04a"), Kind.POOR_BLDG: Color("a7a49e"),
 	Kind.RUSSIAN: Color("9a8f86"), Kind.PRISON_WING: Color("b59a78"), Kind.OIL_PUMP: Color("3a3a40"),
 	Kind.STALL: Color("f2a65a"), Kind.FACTORY_BLDG: Color("9a9a9e"),
+	Kind.MCDONALDS: Color("e2b43a"), Kind.BURGER_KING: Color("d6402f"), Kind.URBAN_BLDG: Color("b9bcc6"),
+	Kind.URBAN_CLUSTER: Color("4a4f60"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -45,7 +47,8 @@ const NAMED := {
 	Kind.FIELD: ["field_wheat", "field_corn", "field_plowed", "field_green"],
 	Kind.MOUNTAIN: ["mountain_a", "mountain_b", "mountain_c"], Kind.OIL_PUMP: ["oil_pump"],
 	Kind.PRISON_WING: ["box"], Kind.MEGA_MALL: ["box"],
-	Kind.POOR_BLDG: ["box"], Kind.RUSSIAN: ["box"], Kind.STALL: ["box"], Kind.FACTORY_BLDG: ["box"],
+	Kind.POOR_BLDG: ["box"], Kind.RUSSIAN: ["box"], Kind.STALL: ["box"], Kind.FACTORY_BLDG: ["box"], Kind.MCDONALDS: ["box"],
+	Kind.BURGER_KING: ["box"], Kind.URBAN_BLDG: ["box"], Kind.URBAN_CLUSTER: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -272,6 +275,11 @@ static func _place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 			var lights := lib.named_id("stadium_lights")
 			var h := box.size.y * xform.basis.get_scale().y * 1.6
 			batch.add(lights, Transform3D(Basis.from_scale(Vector3(r.size.x, h, r.size.y)), lot_center))
+		Kind.MCDONALDS:
+			# Golden arches over the front, lit at night.
+			var w := box.size.x * 0.5
+			var at := Vector3(box.get_center().x, box.end.y + 0.02, box.get_center().z + box.size.z * 0.3)
+			batch.add(lib.named_id("golden_arches"), xform * Transform3D(Basis.from_scale(Vector3(w, w, w)), at))
 		Kind.UN_HQ:
 			if ModelPools.is_pack_model(lib, pid, Cat.UN_TOWER):
 				# Emblem and name high on the front of the tower.

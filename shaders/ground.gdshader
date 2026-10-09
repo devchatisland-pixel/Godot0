@@ -44,6 +44,9 @@ void fragment() {
 	} else if (e < beach_level) {
 		col = mix(wet_sand_color, sand_color, smoothstep(0.0, beach_level * 0.5, e));
 		col = mix(rock_color, col, zone.a);
+		// Alpha 0.5 = quay or coast without beach (port, desert): the land colour reaches the sea.
+		float quay = step(0.4, zone.a) * (1.0 - step(0.6, zone.a));
+		col = mix(col, land * 0.92, quay);
 	} else {
 		col = land;
 	}

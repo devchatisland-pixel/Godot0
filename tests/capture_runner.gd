@@ -4,23 +4,20 @@ extends Node
 
 const Kind := CityTypes.Kind
 const SHOTS := [
-	{"zoom": 200.0, "at": "center"},
-	{"zoom": 200.0, "at": "center", "night": true},
-	{"zoom": 70.0, "at": "bridge"},
-	{"zoom": 50.0, "at": "west_desert"},
-	{"zoom": 40.0, "at": Kind.AIRBASE},
-	{"zoom": 50.0, "at": "industrial"},
-	{"zoom": 36.0, "at": "poor"},
-	{"zoom": 36.0, "at": Kind.RUSSIAN},
-	{"zoom": 50.0, "at": "farm"},
+	{"zoom": 230.0, "at": "center"},
+	{"zoom": 230.0, "at": "center", "night": true},
+	{"zoom": 60.0, "at": "west_bridge"},
+	{"zoom": 70.0, "at": "urban"},
+	{"zoom": 70.0, "at": "urban", "night": true},
+	{"zoom": 50.0, "at": "port"},
+	{"zoom": 40.0, "at": "bridge"},
+	{"zoom": 90.0, "at": "fog"},
+	{"zoom": 26.0, "at": Kind.MCDONALDS},
+	{"zoom": 26.0, "at": Kind.BURGER_KING},
+	{"zoom": 30.0, "at": Kind.HOTEL},
+	{"zoom": 26.0, "at": Kind.CHURCH},
+	{"zoom": 26.0, "at": Kind.PHARMACY},
 	{"zoom": 40.0, "at": Kind.MOUNTAIN},
-	{"zoom": 40.0, "at": Kind.PRISON},
-	{"zoom": 36.0, "at": Kind.FERRIS_WHEEL},
-	{"zoom": 30.0, "at": Kind.MEGA_MALL},
-	{"zoom": 30.0, "at": Kind.UN_HQ},
-	{"zoom": 30.0, "at": Kind.STADIUM},
-	{"zoom": 30.0, "at": Kind.DRIVE_IN},
-	{"zoom": 34.0, "at": Kind.NIGHTCLUB, "night": true},
 ]
 
 var _dir := "user://"
@@ -73,14 +70,12 @@ func _place(data: CityData, at, base: Vector3) -> Vector3:
 			return Vector3(c.x, 0, c.y)
 		"bridge":
 			return Vector3(data.bridge.x + 10, 0, data.bridge.y)
-		"west_desert":
-			return Vector3(62, 0, 143)
-		"poor":
-			return Vector3(123, 0, 85)
-		"industrial":
-			return Vector3(80, 0, 192)
-		"farm":
-			return Vector3(195, 0, 52)
+		"west_bridge":
+			return Vector3(data.west_bridge.x - 6, 0, data.west_bridge.z)
+		"urban":
+			return Vector3(28, 0, 133)
+		"port":
+			return Vector3(84, 0, 182)
 	return _find(data, at, base)
 
 

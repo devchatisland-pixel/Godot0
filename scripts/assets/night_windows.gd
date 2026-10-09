@@ -26,7 +26,8 @@ const PACK_GLOW := {
 	ModelCat.MEGA_MALL: 0.7, ModelCat.BANK_PACK: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
 	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.MUSEUM_PACK: 0.6,
 	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
-	ModelCat.RUIN: 0.3, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
+	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
+	ModelCat.METAL_BRIDGE: 0.4, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
 }
 
@@ -37,8 +38,9 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in PACK_GLOW:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
-	for id in lib.ids(ModelCat.SKYLINE):
-		_light_skyline(lib.meshes[id], done)
+	for cat in [ModelCat.SKYLINE, ModelCat.SKYLINE2]:
+		for id in lib.ids(cat):
+			_light_skyline(lib.meshes[id], done)
 
 
 ## Copy of every material of `mesh` whose texture also lights it at night.

@@ -118,7 +118,7 @@ def white_text(size, text, h):
 def season_title():
     w, h = 1024, 512
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    lines = [white_text(64, "ZONE UNLOCKED ON", 110), gold_text(150, "SEASON 2,", 200),
+    lines = [white_text(64, "ZONE UNLOCKED ON", 110), gold_text(150, "SEASON 2", 200),
             white_text(78, "COMING SOON", 120)]
     y = 40
     for line in lines:
