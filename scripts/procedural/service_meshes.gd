@@ -3,7 +3,7 @@ extends RefCounted
 ## Public buildings missing from the kits, modelled in the same low-poly style.
 ## Every mesh is centred on its lot, sits on y = 0 and faces +Z (its street).
 ## Sizes are in cells: hospital 3x3, school 3x3, fire station 2x2, police 2x2,
-## bank 2x2, church 2x3.
+## church 2x3. The bank is in CivicMeshes.
 
 const WHITE := Color("f1eff6")
 const LAVENDER := Color("c9c6d6")
@@ -23,7 +23,6 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("school", school())
 	lib.add_named("fire_station", fire_station())
 	lib.add_named("police", police())
-	lib.add_named("bank", bank())
 	lib.add_named("church", church())
 
 
@@ -53,10 +52,10 @@ static func hospital() -> ArrayMesh:
 	var pad := Vector3(0, 2.0, -0.55)
 	k.cylinder(pad, 0.5, 0.5, 0.03, 16, ASPHALT)
 	k.disc(pad + Vector3(0, 0.032, 0), Vector2(0.42, 0.42), 16, LINE)
-	k.disc(pad + Vector3(0, 0.034, 0), Vector2(0.37, 0.37), 16, ASPHALT)
-	k.box(pad + Vector3(-0.17, 0.035, -0.17), Vector3(0.07, 0.005, 0.34), LINE)
-	k.box(pad + Vector3(0.10, 0.035, -0.17), Vector3(0.07, 0.005, 0.34), LINE)
-	k.box(pad + Vector3(-0.10, 0.035, -0.035), Vector3(0.2, 0.005, 0.07), LINE)
+	k.disc(pad + Vector3(0, 0.034, 0), Vector2(0.37, 0.37), 16, WHITE)
+	k.box(pad + Vector3(-0.17, 0.035, -0.17), Vector3(0.07, 0.005, 0.34), RED)
+	k.box(pad + Vector3(0.10, 0.035, -0.17), Vector3(0.07, 0.005, 0.34), RED)
+	k.box(pad + Vector3(-0.10, 0.035, -0.035), Vector3(0.2, 0.005, 0.07), RED)
 	# Rooftop machines on the wing.
 	k.block(Vector3(0.95, 0.55, -0.9), Vector3(0.35, 0.18, 0.3), LAVENDER)
 	k.block(Vector3(-1.0, 0.55, 0.2), Vector3(0.3, 0.15, 0.3), LAVENDER)
@@ -126,30 +125,6 @@ static func police() -> ArrayMesh:
 	# Radio antennas.
 	k.block(Vector3(0.5, 0.85, -0.5), Vector3(0.04, 0.6, 0.04), LAVENDER)
 	k.block(Vector3(0.3, 0.85, -0.6), Vector3(0.2, 0.12, 0.2), LAVENDER)
-	return k.commit()
-
-
-# --- Bank: blue glass tower with a golden dollar sign on the roof --------------------------
-static func bank() -> ArrayMesh:
-	var k := MeshKit.new()
-	k.box(Vector3(-0.95, 0, -0.95), Vector3(1.9, 0.03, 1.9), Color("d8d3c4"))
-	var body := Vector3(-0.7, 0.03, -0.75)
-	var body_size := Vector3(1.4, 2.0, 1.3)
-	k.box(body, body_size, Color("5b7fc4"), ROOF)
-	k.windows(body, body_size, 8, 4, Color("a9c4f0"))
-	# Stone base with columns at the entrance.
-	k.box(Vector3(-0.75, 0.03, -0.8), Vector3(1.5, 0.35, 1.4), Color("e6dcc6"))
-	for i in 4:
-		k.block(Vector3(-0.45 + i * 0.3, 0.03, 0.62), Vector3(0.07, 0.35, 0.07), WHITE)
-	# Golden "$" made of boxes standing on the roof.
-	var gold := Color("e8b33a")
-	var y := 2.03
-	k.box(Vector3(-0.2, y + 0.4, 0.0), Vector3(0.4, 0.08, 0.06), gold)
-	k.box(Vector3(-0.2, y + 0.22, 0.0), Vector3(0.4, 0.08, 0.06), gold)
-	k.box(Vector3(-0.2, y + 0.04, 0.0), Vector3(0.4, 0.08, 0.06), gold)
-	k.box(Vector3(-0.2, y + 0.22, 0.0), Vector3(0.08, 0.26, 0.06), gold)
-	k.box(Vector3(0.12, y + 0.04, 0.0), Vector3(0.08, 0.26, 0.06), gold)
-	k.box(Vector3(-0.03, y - 0.04, 0.0), Vector3(0.06, 0.6, 0.06), gold)
 	return k.commit()
 
 

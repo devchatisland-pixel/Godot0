@@ -389,6 +389,50 @@
         "node": "house01",
         "footprint": 1.5
       }
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/low_poly_police_station.glb",
+      "out": "police",
+      "footprint": 1.85,
+      "items": [
+        {
+          "id": "police_station",
+          "nodes": [
+            "PublicBuilding_Police"
+          ],
+          "cat": "POLICE"
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/stadium_low_poly.glb",
+      "out": "stadium",
+      "footprint": 4.7,
+      "items": [
+        {
+          "id": "stadium",
+          "nodes": [
+            "1_0",
+            "Field_1"
+          ],
+          "cat": "STADIUM"
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/coliseum_from_poly_by_google.glb",
+      "out": "coliseum",
+      "footprint": 3.8,
+      "albedo": "d8c7a0",
+      "items": [
+        {
+          "id": "coliseum",
+          "nodes": [
+            "node-0_0"
+          ],
+          "cat": "COLISEUM"
+        }
+      ]
     }
   ]
 }

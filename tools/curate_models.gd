@@ -13,6 +13,8 @@ const OUT_DIR := "res://FREEMODELS/curated"
 
 var _tex_max := 512
 var _default_tex_max := 512
+## Optional colour forced on every material of a pack (untextured white models).
+var _albedo := Color(0, 0, 0, 0)
 var _tex_cache := {}
 var _mat_cache := {}
 
@@ -40,6 +42,7 @@ func _curate(pack: Dictionary) -> void:
 	_mat_cache.clear()
 	_tex_max = int(pack.get("texture_max", _default_tex_max))
 	pack["_scale"] = _pack_scale(src, pack)
+	_albedo = Color(pack["albedo"]) if pack.has("albedo") else Color(0, 0, 0, 0)
 	var items: Array = pack["items"] if pack.has("items") else _auto_items(src, pack)
 	var out := Node3D.new()
 	out.name = pack["out"]
@@ -168,7 +171,7 @@ func _slim(mat: BaseMaterial3D) -> StandardMaterial3D:
 	if _mat_cache.has(mat):
 		return _mat_cache[mat]
 	var m := StandardMaterial3D.new()
-	m.albedo_color = mat.albedo_color
+	m.albedo_color = _albedo if _albedo.a > 0.0 else mat.albedo_color
 	m.albedo_texture = _small(mat.albedo_texture)
 	m.vertex_color_use_as_albedo = mat.vertex_color_use_as_albedo
 	m.transparency = mat.transparency

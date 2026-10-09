@@ -2,11 +2,19 @@ class_name MeshKit
 extends RefCounted
 ## Tiny helper to build flat-shaded, vertex-coloured meshes in the Kenney style
 ## (boxes, cylinders, prisms). Used for buildings the kits do not provide.
+## A mesh has up to five surfaces: lit, neon (unshaded), windows and bulbs
+## (glowing at night) and textured signs from the sign atlas.
 
 var _lit := SurfaceTool.new()
 var _neon := SurfaceTool.new()
+var _win := SurfaceTool.new()
+var _bulb := SurfaceTool.new()
+var _sign := SurfaceTool.new()
 var _st: SurfaceTool
 var _neon_used := false
+var _win_used := false
+var _bulb_used := false
+var _sign_used := false
 ## Transform applied to everything added (rotate / move parts of a model).
 var xform := Transform3D.IDENTITY
 
@@ -15,8 +23,8 @@ static var _neon_material: StandardMaterial3D
 
 
 func _init() -> void:
-	_lit.begin(Mesh.PRIMITIVE_TRIANGLES)
-	_neon.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for st in [_lit, _neon, _win, _bulb, _sign]:
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	_st = _lit
 
 
@@ -24,6 +32,12 @@ func _init() -> void:
 func neon(enabled: bool) -> void:
 	_st = _neon if enabled else _lit
 	_neon_used = _neon_used or enabled
+
+
+## Following primitives are light bulbs: pale by day, glowing at night.
+func glow(enabled: bool) -> void:
+	_st = _bulb if enabled else _lit
+	_bulb_used = _bulb_used or enabled
 
 
 ## Shared material: vertex colours, no texture, works on every renderer.
@@ -49,7 +63,50 @@ func commit() -> ArrayMesh:
 	if _neon_used:
 		_neon.set_material(neon_material())
 		_neon.commit(mesh)
+	if _win_used:
+		_win.set_material(SignAtlas.window_material())
+		_win.commit(mesh)
+	if _bulb_used:
+		_bulb.set_material(SignAtlas.bulb_material())
+		_bulb.commit(mesh)
+	if _sign_used:
+		_sign.set_material(SignAtlas.sign_material())
+		_sign.commit(mesh)
 	return mesh
+
+
+## A sign from the atlas on a flat panel. `right` and `up` span the panel
+## from its bottom-left corner; it faces right x up, so text always reads
+## left to right for someone looking at it (never mirrored).
+func panel(bottom_left: Vector3, right: Vector3, up: Vector3, region: String) -> void:
+	var r := SignAtlas.uv(region)
+	var a := bottom_left
+	var b := a + right
+	var c := b + up
+	var d := a + up
+	var n := right.cross(up).normalized()
+	if xform != Transform3D.IDENTITY:
+		a = xform * a
+		b = xform * b
+		c = xform * c
+		d = xform * d
+		n = (xform.basis * n).normalized()
+	var uv_a := Vector2(r.position.x, r.end.y)
+	var uv_b := Vector2(r.end.x, r.end.y)
+	var uv_c := Vector2(r.end.x, r.position.y)
+	var uv_d := Vector2(r.position.x, r.position.y)
+	_sign_used = true
+	_sign.set_normal(n)
+	# Clockwise seen from the front (Godot front faces).
+	for v in [[a, uv_a], [d, uv_d], [c, uv_c], [a, uv_a], [c, uv_c], [b, uv_b]]:
+		_sign.set_uv(v[1])
+		_sign.add_vertex(v[0])
+
+
+## Sign standing on the front face (+Z) of a box: centred at x, bottom at y.
+func front_sign(center_x: float, bottom_y: float, z: float, width: float, region: String) -> void:
+	var h := width / SignAtlas.aspect(region)
+	panel(Vector3(center_x - width * 0.5, bottom_y, z), Vector3(width, 0, 0), Vector3(0, h, 0), region)
 
 
 # --- Primitives ---------------------------------------------------------------------
@@ -137,6 +194,9 @@ func windows(min_c: Vector3, size: Vector3, floors: int, per_side: int, color: C
 		from_floor: int = 0) -> void:
 	var fh := size.y / floors
 	var depth := 0.012
+	var previous := _st
+	_st = _win
+	_win_used = true
 	for f in range(from_floor, floors):
 		var y := min_c.y + fh * f + fh * 0.3
 		var wh := fh * 0.45
@@ -150,6 +210,7 @@ func windows(min_c: Vector3, size: Vector3, floors: int, per_side: int, color: C
 			box(Vector3(px - wx * 0.5, y, min_c.z - depth), Vector3(wx, wh, depth), color)
 			box(Vector3(min_c.x + size.x, y, pz - wz * 0.5), Vector3(depth, wh, wz), color)
 			box(Vector3(min_c.x - depth, y, pz - wz * 0.5), Vector3(depth, wh, wz), color)
+	_st = previous
 
 
 # --- Low level -------------------------------------------------------------------------

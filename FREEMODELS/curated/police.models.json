@@ -1,0 +1,9 @@
+{
+	"file": "police.glb",
+	"models": [
+		{
+			"cat": "POLICE",
+			"node": "police_station"
+		}
+	]
+}

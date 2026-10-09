@@ -5,15 +5,17 @@ extends Node
 const Kind := CityTypes.Kind
 const SHOTS := [
 	{"zoom": 80.0, "at": "center"},
-	{"zoom": 26.0, "at": Kind.LANDMARK},
-	{"zoom": 20.0, "at": Kind.QUARTER_BLDG},
-	{"zoom": 20.0, "at": Kind.SHOPPING_CENTER},
-	{"zoom": 18.0, "at": Kind.CINEMA},
-	{"zoom": 20.0, "at": Kind.OUTPOST},
-	{"zoom": 22.0, "at": Kind.CASINO},
-	{"zoom": 20.0, "at": Kind.CITY_HALL},
-	{"zoom": 22.0, "at": Kind.HOUSE},
-	{"zoom": 45.0, "at": Kind.POND},
+	{"zoom": 80.0, "at": "center", "night": true},
+	{"zoom": 18.0, "at": Kind.BANK},
+	{"zoom": 22.0, "at": Kind.UN_HQ},
+	{"zoom": 12.0, "at": Kind.HOSPITAL},
+	{"zoom": 16.0, "at": Kind.PRISON},
+	{"zoom": 22.0, "at": Kind.COLISEUM},
+	{"zoom": 22.0, "at": Kind.COLISEUM, "night": true},
+	{"zoom": 14.0, "at": Kind.POLICE},
+	{"zoom": 20.0, "at": Kind.STADIUM},
+	{"zoom": 30.0, "at": Kind.LANDMARK, "night": true},
+	{"zoom": 16.0, "at": Kind.CASINO},
 ]
 
 var _dir := "user://"
@@ -45,6 +47,8 @@ func _run() -> void:
 			frames += 1
 			if frames > 20 and main.streamer.pending_jobs() == 0:
 				break
+		if main.day_night != null:
+			main.day_night.set_phase(0.78 if shot.get("night", false) else 0.2)
 		for k in 5:
 			await get_tree().process_frame
 		var path: String = _dir.path_join("shot_%d.png" % s)

@@ -12,7 +12,7 @@ const Kind := CityTypes.Kind
 const SPECS := [
 	{"kind": Kind.CITY_HALL, "size": Vector2i(4, 4), "count": 1, "near": "civic",
 		"zones": [Zone.COMMERCIAL]},
-	{"kind": Kind.BANK, "size": Vector2i(2, 2), "count": 1, "near": "civic",
+	{"kind": Kind.BANK, "size": Vector2i(3, 3), "count": 1, "near": "civic",
 		"zones": [Zone.COMMERCIAL]},
 	{"kind": Kind.POLICE, "size": Vector2i(2, 2), "count": 1, "near": "civic",
 		"zones": [Zone.COMMERCIAL, Zone.SUBURBAN]},
@@ -36,6 +36,10 @@ const SPECS := [
 		"zones": [Zone.ENTERTAINMENT, Zone.COMMERCIAL]},
 	{"kind": Kind.SHOPPING_CENTER, "size": Vector2i(4, 2), "count": 1, "near": "shops",
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
+	{"kind": Kind.UN_HQ, "size": Vector2i(3, 3), "count": 1, "near": "uptown",
+		"zones": [Zone.APARTMENT, Zone.DOWNTOWN, Zone.COMMERCIAL]},
+	{"kind": Kind.COLISEUM, "size": Vector2i(4, 4), "count": 1, "near": "vegas",
+		"zones": [Zone.ENTERTAINMENT]},
 	# Famous towers in the heart of downtown, each one once (variant = order).
 	{"kind": Kind.LANDMARK, "size": Vector2i(2, 2), "count": 7, "near": "downtown",
 		"zones": [Zone.DOWNTOWN], "gap": 3.0, "same_gap": 4.0, "variants": true},
@@ -114,7 +118,7 @@ func _try_place(spec: Dictionary, block: Rect2i, seed: int) -> bool:
 			continue
 		if not _respects_spacing(spec["kind"], Vector2(r.get_center()), any_gap, same_gap):
 			continue
-		var facing := LotPlanner.road_facing(_data, r, CityTypes.hash2(p.x, p.y))
+		var facing := LotPlanner.road_facing(_data, r, CityTypes.hash2(p.x, p.y), true)
 		if facing < 0:
 			continue
 		claim(r, spec["kind"], facing, Zone.CIVIC, seed)

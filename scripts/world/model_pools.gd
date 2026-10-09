@@ -60,6 +60,13 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.MALL)
 		Kind.CINEMA:
 			return lib.ids(Cat.CINEMA)
+		# Models from the packs replace the procedural ones when present.
+		Kind.POLICE:
+			return lib.ids(Cat.POLICE)
+		Kind.STADIUM:
+			return lib.ids(Cat.STADIUM)
+		Kind.COLISEUM:
+			return lib.ids(Cat.COLISEUM)
 	return PackedInt32Array()
 
 

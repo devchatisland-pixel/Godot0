@@ -5,6 +5,11 @@ There is no gameplay: you can only **navigate** and **zoom**.
 It runs on desktop, mobile and in the browser (GL Compatibility renderer).
 
 ![Chat City](docs/overview.jpg)
+![Chat City at night](docs/night.jpg)
+![Las Vegas at night](docs/vegas_night.jpg)
+![Bank](docs/bank.jpg)
+![United Nations](docs/un.jpg)
+![Prison island](docs/alcatraz.jpg)
 ![Downtown and its landmarks](docs/downtown.jpg)
 ![The colourful quarter](docs/quarter.jpg)
 ![Little Las Vegas and the cinema](docs/vegas.jpg)
@@ -73,6 +78,8 @@ On screen north-west is up.
 | bottom (south coast) | **Colourful quarter** | white and red low-rise town, a few towers |
 | left | **Sports corner** | the stadium and the drive-in cinema |
 | coast | **Beaches and rocky shores** | 2 lighthouses and 3 palm islets |
+| top-left, at sea | **Prison island** | a rocky Alcatraz-like island facing downtown: cellhouse, water tower, guard towers, lighthouse |
+| above the park | **United Nations** | glass slab with the emblem, assembly hall and flags |
 
 How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same city on every device):
 
@@ -86,6 +93,33 @@ How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same 
 Which family of models a building uses (Kenney, photo towers, New York, cartoon shops, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
 
 To move a district or change its size, edit `ANCHORS`, `PARK_AREA` or `DESERT_AREA` in `district_planner.gd`.
+
+## Day and night
+
+The city runs an automatic day and night cycle (`CityConfig.day_cycle_seconds`, 4 minutes by default; `scripts/world/day_night.gd`).
+At night:
+
+* Kenney windows glow. An emission mask is built from their colour palette, so only the glass lights up.
+* The windows of the procedural buildings glow too.
+* Street lamps get bulbs.
+* Signs shine, and the neon stays bright.
+
+No real lights are added, so night costs the same as day, on phones too.
+The New York and photo towers have no window mask, so they simply get dark.
+
+## Signs
+
+All signs are on one 1024×1024 texture, `textures/signs.png`:
+
+* the U.N. emblem and the "UNITED NATIONS" name
+* the gold "$" coin and the "BANK" plate
+* neon "XXX", "CASINO", "HOTEL", "BAR" and "CLUB"
+* four playing cards
+* the "PENITENTIARY" plate
+
+`tools/make_sign_atlas.py` draws it with the free DejaVu fonts; the emblem source is `tools/sign_sources/un_emblem.png`.
+Signs are flat panels placed with `MeshKit.panel()`, which always faces the reader, so text is never mirrored.
+Landmarks also face a street on a side the camera sees, so their signs are in view.
 
 ## Memory and performance
 
@@ -112,7 +146,7 @@ To move a district or change its size, edit `ANCHORS`, `PARK_AREA` or `DESERT_AR
 The road tiles are rotated automatically from their measured connection masks.
 Everything the kits do not have is modelled in code (`scripts/procedural/`) in the same style:
 
-* **Public buildings**: hospital, school, fire and police stations, bank, church, city hall, stadium.
+* **Public buildings**: hospital (red H on the helipad), school, fire station, church, city hall, the bank with its "$" signs, the United Nations, the prison. Fallbacks are kept for the police station and the stadium.
 * **Las Vegas**: casinos, neon clubs, ferris wheel, drive-in. The neon is drawn unshaded, with no post effect.
 * **Desert and coast**: telecom tower, satellite dishes, mesa, cactus, lighthouse, palm tree, park lake.
 
@@ -138,6 +172,9 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `quarter` | 100 low-poly buildings | QUARTER_LOW / MID / TALL | the colourful quarter (87 buildings) |
 | `business` | low-poly business pack | BIZ_SHOP, CINEMA, MALL | diners and shops, the cinema, the shopping center |
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
+| `police` | low-poly police station | POLICE | the police station |
+| `stadium` | low-poly stadium (+ its pitch) | STADIUM | the stadium |
+| `coliseum` | coliseum (tinted stone colour) | COLISEUM | the coliseum in Las Vegas |
 
 Not used:
 
@@ -165,15 +202,19 @@ scripts/
   data/       city_data.gd        packed city layers + buildings + chunk index
   generation/ city_generator.gd   pipeline: island_shaper, district_planner, road_planner,
                                   lot_planner, service_planner, landmark_planner
-  assets/     model_catalog.gd (scan + classify + curated lists), model_library.gd (load, merge, mesh ids)
-  procedural/ mesh_kit.gd (low-poly builder), service_meshes.gd, landmark_meshes.gd,
+  assets/     model_catalog.gd (scan + classify + curated lists), model_library.gd (load, merge, mesh ids),
+              night_windows.gd (window glow of the Kenney kits)
+  procedural/ mesh_kit.gd (low-poly builder), sign_atlas.gd (signs + night materials),
+              service_meshes.gd, civic_meshes.gd (bank, U.N., prison), landmark_meshes.gd,
               entertainment_meshes.gd (Las Vegas), nature_meshes.gd (desert, coast)
-  world/      chunk_streamer.gd (LOD + streaming), building_placer.gd, model_pools.gd,
+  world/      chunk_streamer.gd (LOD + streaming), building_placer.gd, model_pools.gd, day_night.gd,
               ground_placer.gd, instance_batch.gd, ground_layer.gd
   camera/     iso_camera.gd (ortho iso camera), camera_input.gd (mouse/touch/keys)
   ui/         loading_overlay.gd
 tests/        headless checks and the screenshot runner
-tools/        curate_models.gd + curate_spec.json (model packs), model_sheet.gd (contact sheets)
+tools/        curate_models.gd + curate_spec.json (model packs), model_sheet.gd (contact sheets),
+              make_sign_atlas.py (signs texture)
+textures/     signs.png
 ```
 
 ## Tuning

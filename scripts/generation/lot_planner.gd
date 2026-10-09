@@ -144,8 +144,10 @@ func _all_land(r: Rect2i) -> bool:
 
 
 ## Facing (0..3) of the side of `r` that touches a road, -1 when none.
-## Avenues are preferred; ties are broken with `pick`.
-static func road_facing(data: CityData, r: Rect2i, pick: int) -> int:
+## Avenues are preferred; ties are broken with `pick`. With `visible`, a road
+## on the east or south side wins: the camera sees those faces, so signs and
+## entrances of landmarks are always in view.
+static func road_facing(data: CityData, r: Rect2i, pick: int, visible: bool = false) -> int:
 	var best := -1
 	var best_score := 0
 	for f in 4:
@@ -157,6 +159,8 @@ static func road_facing(data: CityData, r: Rect2i, pick: int) -> int:
 		if score == 0:
 			continue
 		score += (pick >> (f * 3)) & 3
+		if visible and (f == 1 or f == 2):
+			score += 1000
 		if score > best_score:
 			best_score = score
 			best = f

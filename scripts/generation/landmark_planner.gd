@@ -1,8 +1,8 @@
 class_name LandmarkPlanner
 extends RefCounted
 ## Landmarks that are not in a city block: the lake and paths of the central
-## park, the telecom station, mesa and outpost of the desert, and two
-## lighthouses on the coast.
+## park, the telecom station, mesa and outpost of the desert, the prison
+## island and two lighthouses on the coast.
 
 const Zone := CityTypes.Zone
 const Kind := CityTypes.Kind
@@ -29,6 +29,7 @@ func _init(data: CityData, districts: DistrictPlanner, island: IslandShaper,
 func build() -> void:
 	_build_park()
 	_build_desert()
+	_build_prison()
 	_build_lighthouses()
 
 
@@ -94,6 +95,20 @@ func _build_outpost(center: Vector2i) -> void:
 			elif d.y != 0:
 				facing = 2 if d.y > 0 else 0
 			_services.claim(r, Kind.OUTPOST, facing, -1, i)
+
+
+# --- Prison island: cellhouse in the middle, lighthouse on the shore ---------------------
+func _build_prison() -> void:
+	if _island.prison_radius <= 0.0:
+		return
+	var c := Vector2i(_island.prison_center.round())
+	# Facing the city (south-east of the island).
+	var cell := _find_spot(c - Vector2i(2, 1), Vector2i(4, 3), Zone.PRISON, 3)
+	if cell.size.x > 0:
+		_services.claim(cell, Kind.PRISON, 2)
+	var light := _find_spot(c + Vector2i(-2, -3), Vector2i.ONE, Zone.PRISON, 3)
+	if light.size.x > 0:
+		_services.claim(light, Kind.LIGHTHOUSE, 2)
 
 
 # --- Lighthouses ---------------------------------------------------------------------------

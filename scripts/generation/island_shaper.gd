@@ -27,13 +27,19 @@ func elevation_at(x: int, y: int) -> float:
 
 
 # --- Elevation -------------------------------------------------------------------
-## Small palm islands off the south and south-east coast
+## Small islands: palm islets off the south coast and the rocky prison island
+## off the north-west coast, facing downtown
 ## (position in island units: 1 = radius; radius as a fraction of the map).
 const ISLETS := [
 	{"at": Vector2(0.05, 1.2), "radius": 0.034},
 	{"at": Vector2(0.82, 0.84), "radius": 0.028},
 	{"at": Vector2(-0.55, 1.05), "radius": 0.023},
+	{"at": Vector2(-0.9, -0.92), "radius": 0.042, "prison": true},
 ]
+
+## Centre and radius (cells) of the prison island; radius 0 = none.
+var prison_center := Vector2.ZERO
+var prison_radius := 0.0
 
 
 func _build_elevation() -> void:
@@ -51,7 +57,11 @@ func _build_elevation() -> void:
 	var islets := []
 	for it in ISLETS:
 		var at: Vector2 = it["at"]
-		islets.append([Vector2(half + at.x * radius.x, half + at.y * radius.y), float(it["radius"]) * size])
+		var c := Vector2(half + at.x * radius.x, half + at.y * radius.y)
+		islets.append([c, float(it["radius"]) * size])
+		if it.get("prison", false):
+			prison_center = c
+			prison_radius = float(it["radius"]) * size
 	for y in size:
 		var ny := (float(y) + 0.5 - half) / radius.y
 		for x in size:
@@ -94,7 +104,10 @@ func _mark_rocky_shores() -> void:
 	for y in _data.size:
 		for x in _data.size:
 			var i := y * _data.size + x
-			if _data.terrain[i] == CityTypes.Terrain.BEACH and noise.get_noise_2d(x, y) > 0.15:
+			if _data.terrain[i] != CityTypes.Terrain.BEACH:
+				continue
+			# The prison island is all rocks, like the real one.
+			if noise.get_noise_2d(x, y) > 0.15 or is_prison_island(x, y):
 				_data.rocky[i] = 1
 
 
@@ -137,6 +150,10 @@ func _find_mainland() -> void:
 	mainland.resize(n)
 	for i in n:
 		mainland[i] = 1 if label[i] == best_label and best_label >= 0 else 0
+
+
+func is_prison_island(x: int, y: int) -> bool:
+	return prison_radius > 0.0 and Vector2(x, y).distance_to(prison_center) < prison_radius * 1.4
 
 
 func is_mainland(x: int, y: int) -> bool:

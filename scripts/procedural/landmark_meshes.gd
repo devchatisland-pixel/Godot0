@@ -22,6 +22,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("fountain", fountain())
 	lib.add_named("pond", pond())
 	lib.add_named("box", unit_box())
+	lib.add_named("lamp_bulb", lamp_bulb())
 	lib.add_named("tree", fallback_tree())
 
 
@@ -111,6 +112,15 @@ static func pond() -> ArrayMesh:
 static func unit_box() -> ArrayMesh:
 	var k := MeshKit.new()
 	k.box(Vector3(-0.5, 0, -0.5), Vector3.ONE, Color.WHITE, Color(0.82, 0.82, 0.86))
+	return k.commit()
+
+
+## Bulb under the head of a street light; it glows at night.
+static func lamp_bulb() -> ArrayMesh:
+	var k := MeshKit.new()
+	k.glow(true)
+	k.block(Vector3(0, -0.035, 0), Vector3(0.07, 0.035, 0.07), Color.WHITE)
+	k.glow(false)
 	return k.commit()
 
 

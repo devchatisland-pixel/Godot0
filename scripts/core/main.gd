@@ -9,6 +9,7 @@ var data: CityData
 var library: ModelLibrary
 var camera: IsoCamera
 var streamer: ChunkStreamer
+var day_night: DayNight
 
 var _phase := Phase.GENERATING
 var _thread := Thread.new()
@@ -16,6 +17,8 @@ var _overlay: LoadingOverlay
 var _gen_progress := 0.0
 var _gen_text := ""
 var _models_progress := 0.0
+var _env: Environment
+var _sun: DirectionalLight3D
 
 
 func _ready() -> void:
@@ -82,6 +85,8 @@ func _start_city() -> void:
 	LandmarkMeshes.build_all(library)
 	EntertainmentMeshes.build_all(library)
 	NatureMeshes.build_all(library)
+	CivicMeshes.build_all(library)
+	NightWindows.apply(library)
 	var ground := GroundLayer.new()
 	ground.name = "Ground"
 	add_child(ground)
@@ -98,6 +103,11 @@ func _start_city() -> void:
 	var c := Vector2(data.size, data.size) * 0.5
 	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y), data.size * 0.62)
 	_overlay.finish(data.city_name)
+
+	day_night = DayNight.new()
+	day_night.name = "DayNight"
+	add_child(day_night)
+	day_night.setup(_sun, _env, cfg.day_cycle_seconds, 0.05)
 	_phase = Phase.RUNNING
 
 
@@ -112,6 +122,7 @@ func _setup_environment() -> void:
 	var world_env := WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
+	_env = env
 
 	var sun := DirectionalLight3D.new()
 	sun.name = "Sun"
@@ -120,6 +131,7 @@ func _setup_environment() -> void:
 	sun.light_color = Color(1.0, 0.97, 0.92)
 	sun.shadow_enabled = cfg.shadows
 	add_child(sun)
+	_sun = sun
 
 
 func _exit_tree() -> void:

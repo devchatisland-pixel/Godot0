@@ -21,6 +21,7 @@ enum Zone {
 	ENTERTAINMENT, # the little Las Vegas
 	ISLET,       # small palm islands off the coast
 	QUARTER,     # colourful low-rise town quarter
+	PRISON,      # the Alcatraz-like prison island
 }
 
 # --- Road grid values ---------------------------------------------------------
@@ -63,6 +64,9 @@ enum Kind {
 	CINEMA,
 	OUTPOST,          # desert shacks, barns and trailers (variant = seed)
 	QUARTER_BLDG,     # building of the colourful quarter
+	UN_HQ,            # United Nations headquarters
+	COLISEUM,
+	PRISON,           # cellhouse of the prison island
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -71,6 +75,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.CASINO, Kind.FERRIS_WHEEL, Kind.DRIVE_IN, Kind.LIGHTHOUSE,
 	Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
 	Kind.LANDMARK, Kind.SHOPPING_CENTER, Kind.CINEMA, Kind.OUTPOST,
+	Kind.UN_HQ, Kind.COLISEUM, Kind.PRISON,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

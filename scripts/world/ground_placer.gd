@@ -7,6 +7,8 @@ extends RefCounted
 
 const Cat := ModelCatalog.Cat
 const Zone := CityTypes.Zone
+## Where the bulb hangs under the arm of the Kenney street light (model space).
+const BULB_OFFSET := Vector3(0.0, 0.64, -0.17)
 
 ## Road category for a connection mask.
 static func road_cat(mask: int) -> int:
@@ -53,6 +55,9 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 					_place_park_tree(data, x, y, trees, batch)
 				Zone.DESERT:
 					_scatter(x, y, 0.035, 0.1, cactus, batch)
+				Zone.PRISON:
+					if data.terrain[i] == CityTypes.Terrain.LAND:
+						_scatter(x, y, 0.12, 0.2, trees[(x + y) % trees.size()], batch)
 
 
 # --- Roads --------------------------------------------------------------------------------
@@ -92,7 +97,9 @@ static func _place_road(data: CityData, lib: ModelLibrary, x: int, y: int, road:
 				var off := Vector3(0, 0, s * 0.47) if along_x else Vector3(s * 0.47, 0, 0)
 				# The lamp arm points to -Z in the model: turn it towards the road.
 				var yaw := atan2(off.x, off.z)
-				batch.add(lights[0], Transform3D(Basis(Vector3.UP, yaw), center + off))
+				var lamp := Transform3D(Basis(Vector3.UP, yaw), center + off)
+				batch.add(lights[0], lamp)
+				batch.add(lib.named_id("lamp_bulb"), lamp * Transform3D(Basis(), BULB_OFFSET))
 
 
 # --- Trees -------------------------------------------------------------------------------------

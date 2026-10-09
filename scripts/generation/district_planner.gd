@@ -137,6 +137,8 @@ func paint_zones(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 			var z := Zone.NONE
 			if land and _data.road[i] == 0:
 				z = Zone.NATURE if _island.is_mainland(x, y) else Zone.ISLET
+				if z == Zone.ISLET and _island.is_prison_island(x, y):
+					z = Zone.PRISON
 				if _island.is_mainland(x, y):
 					if park.has_point(Vector2i(x, y)):
 						z = Zone.PARK
