@@ -9,7 +9,7 @@ const Kind := CityTypes.Kind
 
 ## kind, lot size (building + its square / parking), how many, district anchor
 ## it should be close to, zones it may replace lots in.
-## The stadium, mall, city hall, police HQ, U.N., main school, cemetery and ferris wheel have
+## The stadium, shopping center, city hall, police HQ, U.N., main school and cemetery have
 ## their own plots (DistrictPlanner.PLOTS) and are not listed here.
 ## "near" is an anchor name, or a list of names (one building near each):
 ## the main services stand once, bigger, near the civic center; small police
@@ -32,7 +32,8 @@ const SPECS := [
 		"zones": [Zone.SUBURBAN]},
 	# Nine different hotels in all: four here, five in the red quarter (ExtensionPlanner).
 	{"kind": Kind.HOTEL, "size": Vector2i(3, 3), "near": ["hotels", "hotels_b", "shops", "suburb_s"],
-		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN], "same_gap": 14.0, "variants": true},
+		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN], "same_gap": 14.0, "variants": true,
+		"force_facing": 1},
 	{"kind": Kind.DRIVE_IN, "size": Vector2i(4, 3), "count": 1, "near": "quarter",
 		"zones": [Zone.QUARTER]},
 	{"kind": Kind.CASINO, "size": Vector2i(3, 3), "count": 2, "near": "vegas",
@@ -41,8 +42,6 @@ const SPECS := [
 		"zones": [Zone.QUARTER]},
 	{"kind": Kind.CINEMA, "size": Vector2i(4, 3), "count": 1, "near": "vegas",
 		"zones": [Zone.ENTERTAINMENT, Zone.COMMERCIAL]},
-	{"kind": Kind.SHOPPING_CENTER, "size": Vector2i(4, 2), "count": 1, "near": "shops",
-		"zones": [Zone.COMMERCIAL, Zone.APARTMENT]},
 	# Famous towers in the heart of downtown, each one once (variant = order).
 	{"kind": Kind.LANDMARK, "size": Vector2i(3, 3), "count": 7, "near": "downtown",
 		"zones": [Zone.DOWNTOWN], "gap": 3.0, "same_gap": 4.0, "variants": true},
@@ -170,6 +169,8 @@ func _try_place(spec: Dictionary, block: Rect2i, seed: int) -> bool:
 			continue
 		if spec.get("show_front", false) and (facing == 0 or facing == 3):
 			facing = 2 # front (and signs) towards the camera
+		if spec.has("force_facing"):
+			facing = int(spec["force_facing"]) # e.g. hotels always look to the bottom right
 		claim(r, spec["kind"], facing, Zone.CIVIC, seed)
 		return true
 	return false

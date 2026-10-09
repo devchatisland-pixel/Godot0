@@ -43,9 +43,20 @@ func build(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 		var z: int = zones[b]
 		if LOT_SIZES.has(z):
 			var lots: Array[Rect2i] = []
-			_split_lots(blocks[b], LOT_SIZES[z], lots)
+			var range_: Vector2i = LOT_SIZES[z]
+			if z == Zone.URBAN and _urban_core(blocks[b].get_center()):
+				range_ = Vector2i(3, 3) # big lots for the futuristic towers in the middle
+			_split_lots(blocks[b], range_, lots)
 			for lot in lots:
 				_add_lot(lot, z)
+
+
+## True in the middle of the urban island (where the futuristic towers stand).
+func _urban_core(c: Vector2i) -> bool:
+	var u: Dictionary = ExtensionIsland.URBAN
+	var at: Vector2 = u["at"]
+	var r: Vector2 = u["r"]
+	return Vector2((c.x - at.x) / r.x, (c.y - at.y) / r.y).length() < 0.72
 
 
 # --- Subdivision --------------------------------------------------------------------
@@ -78,6 +89,11 @@ func _add_lot(lot: Rect2i, zone: int) -> void:
 	var facing := road_facing(_data, lot, _rng.randi())
 	var seed := _rng.randi()
 	var kind := _pick_kind(zone, lot, d, facing, seed)
+	if kind == Kind.SHOP:
+		# Shops show their front to the camera (an east or south street side when there is one).
+		var visible := road_facing(_data, lot, seed >> 4, true)
+		if visible >= 0:
+			facing = visible
 	var id := _data.add_building(lot, kind, maxi(facing, 0), seed, d)
 	mark(lot, id)
 
@@ -86,7 +102,15 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 	var h := float(seed & 0xffff) / 65536.0
 	var area := lot.get_area()
 	if zone == Zone.URBAN:
-		return Kind.URBAN_BLDG # towers everywhere, even without a street
+		# Futuristic towers fill the middle of the island (3x3 lots or more), normal towers
+		# stand in front of them and around.
+		var u: Dictionary = ExtensionIsland.URBAN
+		var at: Vector2 = u["at"]
+		var r: Vector2 = u["r"]
+		var n := Vector2((lot.get_center().x - at.x) / r.x, (lot.get_center().y - at.y) / r.y).length()
+		if mini(lot.size.x, lot.size.y) >= 3 and h < (0.85 if n < 0.72 else 0.35):
+			return Kind.FUTURE_BLDG
+		return Kind.URBAN_BLDG
 	if facing < 0: # no road access: courtyard
 		match zone:
 			Zone.INDUSTRIAL: return Kind.INDUSTRIAL_YARD
@@ -101,7 +125,7 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 				return Kind.SKYSCRAPER
 			return Kind.OFFICE
 		Zone.COMMERCIAL:
-			return Kind.OFFICE if area >= 4 and h < 0.45 else Kind.SHOP
+			return Kind.OFFICE if area >= 4 and h < 0.3 else Kind.SHOP
 		Zone.ENTERTAINMENT:
 			# Neon clubs of every size (bars to resorts), offices and shops in between.
 			if h < (0.7 if mini(lot.size.x, lot.size.y) <= 1 else 0.55):
@@ -110,11 +134,15 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 		Zone.APARTMENT:
 			if area < 4:
 				return Kind.SHOP
-			# Older row houses remain between the apartment blocks.
+			# Older row houses remain between the apartment blocks, with more shops around.
+			if h > 0.84:
+				return Kind.SHOP
 			return Kind.HOUSE if h < 0.3 else Kind.APARTMENT
 		Zone.SUBURBAN:
 			# Corner shops along the avenues of residential areas.
-			if _faces_avenue(lot, facing) and h < 0.45:
+			if _faces_avenue(lot, facing) and h < 0.7:
+				return Kind.SHOP
+			if h > 0.93:
 				return Kind.SHOP
 			return Kind.HOUSE
 		Zone.INDUSTRIAL:

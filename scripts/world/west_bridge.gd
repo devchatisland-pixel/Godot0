@@ -11,6 +11,8 @@ const SPAN := 9.0
 const WIDTH := 3.0
 ## Truss height limit (cells): the model is squashed so it stays low.
 const MAX_HEIGHT := 1.6
+const DECK_FRACTION := 0.0917
+const DECK_LEVEL := 0.06
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
@@ -33,13 +35,15 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 	var turn := Basis() if along_x else Basis(Vector3.UP, PI * 0.5)
 	var basis := turn * Basis.from_scale(Vector3(sx, sy, sz))
 	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
+	# The deck of the model (9% of its height) lies level with the highway.
+	var deck := (box.position.y + DECK_FRACTION * box.size.y) * sy - DECK_LEVEL
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.mesh = lib.meshes[ids[0]]
 	mm.instance_count = count
 	for i in count:
 		var at := Vector3(x_far + span * (float(i) + 0.5), 0.0, float(wb.z) + 0.5)
-		mm.set_instance_transform(i, Transform3D(basis, at - basis * center))
+		mm.set_instance_transform(i, Transform3D(basis, at - basis * center - Vector3(0, deck, 0)))
 	var mmi := MultiMeshInstance3D.new()
 	mmi.name = "MetalBridge"
 	mmi.multimesh = mm

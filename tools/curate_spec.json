@@ -682,27 +682,6 @@
           "cat": "BANK_PACK"
         },
         {
-          "id": "barrier_a",
-          "nodes": [
-            "kw_barriers_stand_white__1_"
-          ],
-          "cat": "BARRIER"
-        },
-        {
-          "id": "barrier_b",
-          "nodes": [
-            "kw_barriers_stand_white__1__001"
-          ],
-          "cat": "BARRIER"
-        },
-        {
-          "id": "cone",
-          "nodes": [
-            "Cylinder_001"
-          ],
-          "cat": "CONE"
-        },
-        {
           "id": "bakery",
           "nodes": [
             "Cube_012"
@@ -1576,6 +1555,183 @@
           ],
           "cat": "METAL_BRIDGE",
           "footprint": 8.0
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/pirate_ship.glb",
+      "out": "pirate",
+      "texture_max": 512,
+      "items": [
+        {
+          "id": "pirate_ship",
+          "nodes": [
+            "Polygon_Reduction_1"
+          ],
+          "cat": "PIRATE_SHIP",
+          "footprint": 6.0,
+          "yaw": 90
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/carrier.glb",
+      "out": "carrier",
+      "texture_max": 512,
+      "items": [
+        {
+          "id": "carrier",
+          "nodes": [
+            "Object_2",
+            "Object_3",
+            "Object_4",
+            "Object_5",
+            "Object_6",
+            "Object_7",
+            "Object_8",
+            "Object_9",
+            "Object_10",
+            "Object_11",
+            "Object_12",
+            "Object_13",
+            "Object_14",
+            "Object_15",
+            "Object_16",
+            "Object_17",
+            "Object_18",
+            "Object_19"
+          ],
+          "cat": "CARRIER",
+          "footprint": 22.0
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/night_skyline_2.glb",
+      "out": "future",
+      "keep_emission": true,
+      "texture_max": 1024,
+      "items": [
+        {
+          "id": "tower_a",
+          "region": [
+            -6,
+            -12.5,
+            -2.4,
+            -8.8
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_b",
+          "region": [
+            -11.3,
+            -8,
+            -7.6,
+            -4.2
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_c",
+          "region": [
+            7,
+            -6.8,
+            10,
+            -3.4
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_d",
+          "region": [
+            0,
+            -4.6,
+            3.8,
+            -1.0
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_e",
+          "region": [
+            -17,
+            -3.8,
+            -12.6,
+            1.3
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_f",
+          "region": [
+            -21.5,
+            1.2,
+            -16.8,
+            5.8
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_g",
+          "region": [
+            -6,
+            0.2,
+            -3,
+            4
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_h",
+          "region": [
+            7.3,
+            1.9,
+            11.3,
+            5.9
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_i",
+          "region": [
+            1.1,
+            3,
+            4.7,
+            6.8
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_k",
+          "region": [
+            2.3,
+            9.2,
+            6.4,
+            12.4
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
+        },
+        {
+          "id": "tower_l",
+          "region": [
+            -18,
+            11.3,
+            -12.8,
+            15.5
+          ],
+          "cat": "FUTURE",
+          "footprint": 2.8
         }
       ]
     }

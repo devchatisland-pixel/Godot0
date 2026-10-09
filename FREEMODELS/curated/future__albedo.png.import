@@ -2,19 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfmstcrvxeqgf"
-path="res://.godot/imported/carto__albedo31.png-635396c8ca52ce29a9b2deee14f4d453.ctex"
+uid="uid://lpbk3aq5jh1o"
+path="res://.godot/imported/future__albedo.png-5a1bbdbd3d03325757aa38514b2a9c94.ctex"
 metadata={
 "vram_texture": false
 }
 generator_parameters={
-"md5": "55a6a0c288a0a95c038482a40e962bc6"
+"md5": "dc67218084491380837bd188c3a4e9ed"
 }
 
 [deps]
 
-source_file="res://FREEMODELS/curated/carto__albedo31.png"
-dest_files=["res://.godot/imported/carto__albedo31.png-635396c8ca52ce29a9b2deee14f4d453.ctex"]
+source_file="res://FREEMODELS/curated/future__albedo.png"
+dest_files=["res://.godot/imported/future__albedo.png-5a1bbdbd3d03325757aa38514b2a9c94.ctex"]
 
 [params]
 

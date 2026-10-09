@@ -49,6 +49,7 @@ const NAMED := {
 	Kind.PRISON_WING: ["box"], Kind.MEGA_MALL: ["box"],
 	Kind.POOR_BLDG: ["box"], Kind.RUSSIAN: ["box"], Kind.STALL: ["box"], Kind.FACTORY_BLDG: ["box"], Kind.MCDONALDS: ["box"],
 	Kind.BURGER_KING: ["box"], Kind.URBAN_BLDG: ["box"], Kind.URBAN_CLUSTER: ["box"],
+	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.CARRIER: ["box"], Kind.GRAVE: ["grave"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -61,8 +62,17 @@ const SEED_VARIANTS: Array[int] = [Kind.MUSEUM, Kind.HOTEL]
 ## Small props that keep their modelled size instead of filling the lot.
 const FIXED_SIZE: Array[int] = [
 	Kind.LIGHTHOUSE, Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
-	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL,
+	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE,
 ]
+## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
+const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6}
+## Seed of the mountain of the core forest: the biggest of the three.
+const BIG_MOUNTAIN_SEED := 16
+## The U.N. tower is half the size it was; its emblem is a bit smaller than the tower is wide.
+const UN_SCALE := 1.5
+const UN_EMBLEM := 0.38
+## Futuristic towers of the urban island: a bit wider than their lot allows for others, much taller.
+const FUTURE_STRETCH := 1.5
 ## Las Vegas buildings by the short side of their lot: small bars and chapels,
 ## clubs, then neon towers and resorts that fill bigger lots.
 const VEGAS_BY_SIZE := {
@@ -123,6 +133,9 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 		var fill := 1.0
 		if not FIXED_SIZE.has(kind):
 			fill = clampf(_named_room(lib, nid, r, facing), 0.5, MAX_FILL)
+		fill *= KIND_SCALE.get(kind, 1.0)
+		if kind == Kind.MOUNTAIN and seed == BIG_MOUNTAIN_SEED:
+			fill *= 1.4
 		return {"id": nid, "xform": _fit(lib, nid, r, facing, fill, 1.0, 0.0, true)}
 	if candidates.is_empty():
 		var bid := lib.named_id("box")
@@ -158,6 +171,14 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 			scale = 2.4
 		Kind.MEGA_MALL:
 			scale = minf(room, MALL_FILL)
+		Kind.UN_HQ:
+			scale = minf(room, UN_SCALE)
+		Kind.FUTURE_BLDG:
+			scale = minf(room, 1.15)
+			stretch = FUTURE_STRETCH
+		Kind.URBAN_CLUSTER:
+			scale = minf(room, 1.0)
+			stretch = 1.6
 		Kind.SHOP:
 			var biz := lib.ids(Cat.BIZ_SHOP).has(id) or lib.ids(Cat.BIZ_PIZZA).has(id)
 			scale = minf(room, SHOP_BOOST if biz else 1.0)
@@ -284,7 +305,7 @@ static func _place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 			if ModelPools.is_pack_model(lib, pid, Cat.UN_TOWER):
 				# Emblem and name high on the front of the tower.
 				var front := Vector3(box.get_center().x, box.size.y * 0.66, box.end.z + 0.01)
-				var w := box.size.x * 0.55
+				var w := box.size.x * UN_EMBLEM
 				batch.add(lib.named_id("un_signs"), xform * Transform3D(Basis.from_scale(Vector3(w, w, w)), front))
 		Kind.MAIN_HOSPITAL:
 			if ModelPools.is_pack_model(lib, pid, Cat.HOSPITAL_MAIN):

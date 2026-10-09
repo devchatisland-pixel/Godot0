@@ -10,18 +10,6 @@
 			"node": "bank"
 		},
 		{
-			"cat": "BARRIER",
-			"node": "barrier_a"
-		},
-		{
-			"cat": "BARRIER",
-			"node": "barrier_b"
-		},
-		{
-			"cat": "CONE",
-			"node": "cone"
-		},
-		{
 			"cat": "SHOP2",
 			"node": "bakery"
 		},

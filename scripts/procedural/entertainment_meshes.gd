@@ -63,6 +63,15 @@ static func casino() -> ArrayMesh:
 	return k.commit()
 
 
+## Neon sign on two posts standing on a roof, facing the street (the only signs of Las Vegas
+## now: none at street level). `y` is the roof height, `z` the depth of the sign.
+static func _roof_sign(k: MeshKit, y: float, z: float, width: float, region: String) -> void:
+	var post := Color("2b2b33")
+	k.block(Vector3(-width * 0.4, y, z), Vector3(0.05, 0.22, 0.05), post)
+	k.block(Vector3(width * 0.4, y, z), Vector3(0.05, 0.22, 0.05), post)
+	k.front_sign(0.0, y + 0.2, z + 0.03, width, region)
+
+
 ## Neon tubes along the top edges of a box.
 static func _outline(k: MeshKit, min_c: Vector3, size: Vector3, color: Color) -> void:
 	var t := 0.04
@@ -83,9 +92,8 @@ static func club(tube: Color, sign_region: String, height: float) -> ArrayMesh:
 	k.box(Vector3(-0.3, 0, 0.6), Vector3(0.6, 0.3, 0.05), Color("15101e"))
 	k.neon(true)
 	_outline(k, body, body_size, tube)
-	k.box(Vector3(-0.8, 0.0, 0.6), Vector3(1.6, 0.04, 0.03), tube)
 	k.neon(false)
-	k.front_sign(0.0, 0.34, 0.62, 1.2, sign_region)
+	_roof_sign(k, height, 0.2, 1.2, sign_region)
 	return k.commit()
 
 
@@ -101,13 +109,8 @@ static func club_tower(tube: Color, strip: Color, sign_region: String) -> ArrayM
 		k.box(Vector3(x - 0.02, 0.0, 0.5), Vector3(0.04, size.y, 0.03), strip)
 		k.box(Vector3(x - 0.02, 0.0, -0.53), Vector3(0.04, size.y, 0.03), strip)
 	_outline(k, body, size, tube)
-	k.box(Vector3(-0.5, 0.0, 0.5), Vector3(1.0, 0.04, 0.03), tube)
 	k.neon(false)
-	k.front_sign(0.0, 0.2, 0.52, 0.9, sign_region)
-	# Rooftop sign on two posts, facing the street.
-	k.block(Vector3(-0.3, size.y, 0.0), Vector3(0.05, 0.3, 0.05), Color("2b2b33"))
-	k.block(Vector3(0.3, size.y, 0.0), Vector3(0.05, 0.3, 0.05), Color("2b2b33"))
-	k.front_sign(0.0, size.y + 0.18, 0.04, 0.9, sign_region)
+	_roof_sign(k, size.y, 0.0, 0.9, sign_region)
 	return k.commit()
 
 
@@ -122,7 +125,7 @@ static func small_bar() -> ArrayMesh:
 	k.neon(true)
 	_outline(k, body, size, GREEN)
 	k.neon(false)
-	k.front_sign(0.0, 0.32, 0.325, 0.6, "neon_bar")
+	_roof_sign(k, size.y, 0.0, 0.6, "neon_bar")
 	return k.commit()
 
 
@@ -165,7 +168,7 @@ static func resort() -> ArrayMesh:
 	_outline(k, Vector3(-1.25, 0.5, -1.15), Vector3(0.9, 1.9, 1.1), CYAN)
 	_outline(k, Vector3(0.35, 0.5, -1.15), Vector3(0.9, 1.9, 1.1), CYAN)
 	k.neon(false)
-	k.front_sign(0.0, 0.52, 1.52, 1.6, "neon_xxx")
+	_roof_sign(k, podium_size.y, 0.9, 1.6, "neon_xxx")
 	return k.commit()
 
 

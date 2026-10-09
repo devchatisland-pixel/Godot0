@@ -26,6 +26,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("hotel_a", hotel(Color("e9dcc8"), Color("7a2338"), false))
 	lib.add_named("hotel_b", hotel(Color("5b7fc4"), Color("2b3550"), true))
 	lib.add_named("golden_arches", golden_arches())
+	lib.add_named("grave", grave())
 
 
 # --- Art museum (7x5): wide temple front, two wings, glass pyramid --------------------
@@ -228,4 +229,24 @@ static func golden_arches() -> ArrayMesh:
 			k.box(Vector3(cx + side * 0.2 - 0.035, 0.0, -0.03), Vector3(0.07, 0.18, 0.06), yellow)
 	k.xform = Transform3D.IDENTITY
 	k.neon(false)
+	return k.commit()
+
+
+# --- Pirate grave (1x1): earth mound, wooden cross, tombstone with a skull, a shovel ----------------
+static func grave() -> ArrayMesh:
+	var k := MeshKit.new()
+	var earth := Color("6e5236")
+	var wood := Color("7a5230")
+	var stone := Color("a9a69e")
+	k.cylinder(Vector3(0, 0, 0.05), 0.36, 0.2, 0.12, 8, earth, Color("7a5d3e"))
+	# Cross at the head of the mound.
+	k.block(Vector3(0, 0.0, -0.22), Vector3(0.05, 0.5, 0.05), wood)
+	k.block(Vector3(0, 0.3, -0.22), Vector3(0.26, 0.05, 0.05), wood)
+	# Tombstone with a skull.
+	k.block(Vector3(0.32, 0.0, -0.1), Vector3(0.2, 0.3, 0.06), stone)
+	k.block(Vector3(0.32, 0.3, -0.1), Vector3(0.16, 0.05, 0.06), stone)
+	k.block(Vector3(0.32, 0.17, -0.065), Vector3(0.07, 0.07, 0.02), Color("f1efe6"))
+	# Shovel stuck in the earth.
+	k.block(Vector3(-0.3, 0.0, 0.1), Vector3(0.03, 0.34, 0.03), wood)
+	k.block(Vector3(-0.3, 0.0, 0.1), Vector3(0.1, 0.07, 0.02), Color("8d8f96"))
 	return k.commit()

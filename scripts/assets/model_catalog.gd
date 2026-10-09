@@ -24,6 +24,8 @@ enum Cat {
 	WAREHOUSE, FACTORY, RUIN, MANSION, PRISON_BLOCK, POOR_SLAB, POOR_BLOCK, RUSSIAN, FIELD, STALL,
 	# Fourth wave: the urban island, burger restaurants, the west bridge
 	URBAN, MCDONALDS, BURGER_KING, SKYLINE2, METAL_BRIDGE,
+	# Fifth wave: futuristic towers, pirate ship, aircraft carrier
+	FUTURE, PIRATE_SHIP, CARRIER,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

@@ -1,0 +1,49 @@
+{
+	"file": "future.glb",
+	"models": [
+		{
+			"cat": "FUTURE",
+			"node": "tower_a"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_b"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_c"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_d"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_e"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_f"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_g"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_h"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_i"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_k"
+		},
+		{
+			"cat": "FUTURE",
+			"node": "tower_l"
+		}
+	]
+}

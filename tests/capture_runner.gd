@@ -4,19 +4,14 @@ extends Node
 
 const Kind := CityTypes.Kind
 const SHOTS := [
+	{"zoom": 62.0, "at": "start"},
 	{"zoom": 230.0, "at": "center"},
 	{"zoom": 230.0, "at": "center", "night": true},
-	{"zoom": 60.0, "at": "west_bridge"},
-	{"zoom": 70.0, "at": "urban"},
-	{"zoom": 70.0, "at": "urban", "night": true},
-	{"zoom": 50.0, "at": "port"},
 	{"zoom": 40.0, "at": "bridge"},
-	{"zoom": 90.0, "at": "fog"},
+	{"zoom": 70.0, "at": "urban"},
+	{"zoom": 50.0, "at": "port"},
 	{"zoom": 26.0, "at": Kind.MCDONALDS},
-	{"zoom": 26.0, "at": Kind.BURGER_KING},
-	{"zoom": 30.0, "at": Kind.HOTEL},
-	{"zoom": 26.0, "at": Kind.CHURCH},
-	{"zoom": 26.0, "at": Kind.PHARMACY},
+	{"zoom": 40.0, "at": Kind.PRISON},
 	{"zoom": 40.0, "at": Kind.MOUNTAIN},
 ]
 
@@ -61,7 +56,7 @@ func _run() -> void:
 
 func _place(data: CityData, at, base: Vector3) -> Vector3:
 	match at:
-		"center":
+		"center", "start":
 			return base
 		"both":
 			return Vector3(data.size, 0, data.size * 0.5)
@@ -69,7 +64,7 @@ func _place(data: CityData, at, base: Vector3) -> Vector3:
 			var c := data.fog.center()
 			return Vector3(c.x, 0, c.y)
 		"bridge":
-			return Vector3(data.bridge.x + 10, 0, data.bridge.y)
+			return Vector3(data.bridge.x + 4, 0, data.bridge.y)
 		"west_bridge":
 			return Vector3(data.west_bridge.x - 6, 0, data.west_bridge.z)
 		"urban":

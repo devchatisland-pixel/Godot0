@@ -12,6 +12,10 @@ uniform float density = 0.8;
 uniform float scale = 0.02;
 uniform vec2 wind = vec2(0.006, 0.003);
 uniform float seed = 0.0;
+// The fog stays away from the Golden Gate: x range of the bridge, its row, clear radius and fade width.
+uniform vec3 clear_seg = vec3(-1000.0, -1000.0, 0.0);
+uniform float clear_radius = 14.0;
+uniform float clear_fade = 18.0;
 uniform float night = 0.0;
 uniform vec3 day_light : source_color = vec3(0.92, 0.92, 0.94);
 uniform vec3 day_shadow : source_color = vec3(0.42, 0.44, 0.50);
@@ -36,4 +40,7 @@ void fragment() {
 	vec3 shade = mix(day_shadow, night_shadow, night);
 	ALBEDO = mix(shade, lit, smoothstep(0.3, 1.15, d));
 	ALPHA = clamp(smoothstep(0.24, 0.85, d) * mask * density, 0.0, 1.0);
+	float dx = max(max(clear_seg.x - wpos.x, wpos.x - clear_seg.y), 0.0);
+	float dist_to_bridge = length(vec2(dx, wpos.y - clear_seg.z));
+	ALPHA *= smoothstep(clear_radius, clear_radius + clear_fade, dist_to_bridge);
 }

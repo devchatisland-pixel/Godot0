@@ -24,11 +24,19 @@ const LAYERS := [
 const PLUMES := [Vector2(70, 40) + FogIslandShaper.SHIFT, Vector2(78, 88) + FogIslandShaper.SHIFT]
 ## Highest the bridge towers may stand (the model is squashed to keep them slim).
 const BRIDGE_HEIGHT := 3.6
+## Where the deck of the bridge model is (fraction of its height) and the height it must have
+## (just above the road tiles), so the highway runs onto the bridge without a step.
+const DECK_FRACTION := 0.3083
+const DECK_LEVEL := 0.06
 ## Width of the title in world units and its height above the island.
 const TITLE_WIDTH := 84.0
 const TITLE_HEIGHT := 3.0
 
 var _materials: Array[ShaderMaterial] = []
+## x range and row of the Golden Gate, kept free of fog.
+var _clear := Vector3(-1000.0, -1000.0, 0.0)
+## Clear radius around the bridge (cells) and how wide the fog fades back in.
+const CLEAR_RADIUS := 16.0
 
 
 func build(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
@@ -131,28 +139,12 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	var mi := MeshInstance3D.new()
 	mi.name = "GoldenGate"
 	mi.mesh = lib.meshes[ids[0]]
-	mi.transform = Transform3D(basis, Vector3((x0 + x1) * 0.5, 0.0, z) - basis * center)
+	# Lower the model so that its deck (measured: 31% of its height) is level with the highway.
+	var deck := (box.position.y + DECK_FRACTION * box.size.y) * sy
+	mi.transform = Transform3D(basis, Vector3((x0 + x1) * 0.5, DECK_LEVEL - deck, z) - basis * center)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
-	_build_checkpoint(lib, x0 + 0.5, z)
-
-
-## Orange-and-white triangle barriers and cones close the highway before the bridge.
-func _build_checkpoint(lib: ModelLibrary, x: float, z: float) -> void:
-	var groups := {}
-	var barriers := lib.ids(Cat.BARRIER)
-	var cones := lib.ids(Cat.CONE)
-	if not barriers.is_empty():
-		for i in 4:
-			var t := Transform3D(Basis(Vector3.UP, PI * 0.5).scaled(Vector3(2.6, 2.6, 2.6)),
-					Vector3(x - 0.5, 0.0, z - 1.1 + i * 0.75))
-			_add(groups, barriers[i % barriers.size()], t)
-	if not cones.is_empty():
-		for i in 7:
-			_add(groups, cones[0], Transform3D(Basis().scaled(Vector3(3.6, 3.6, 3.6)),
-					Vector3(x - 1.4 - float(i % 2) * 0.4, 0.0, z - 1.3 + i * 0.45)))
-	for id in groups:
-		_multimesh(lib.meshes[id], groups[id])
+	_clear = Vector3(x0 - 4.0, x1 + 6.0, z)
 
 
 # --- Fog ------------------------------------------------------------------------------------------
@@ -168,6 +160,8 @@ func _build_layers(fog: FogIslandShaper) -> void:
 		m.set_shader_parameter("density", l[1])
 		m.set_shader_parameter("scale", l[2])
 		m.set_shader_parameter("seed", l[3])
+		m.set_shader_parameter("clear_seg", _clear)
+		m.set_shader_parameter("clear_radius", CLEAR_RADIUS)
 		_materials.append(m)
 		var plane := PlaneMesh.new()
 		plane.size = radius * 2.6
@@ -177,6 +171,11 @@ func _build_layers(fog: FogIslandShaper) -> void:
 		mi.position = Vector3(c.x, l[0], c.y)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(mi)
+
+
+func _near_bridge(p: Vector2, margin: float) -> bool:
+	var dx := maxf(maxf(_clear.x - p.x, p.x - _clear.y), 0.0)
+	return Vector2(dx, p.y - _clear.z).length() < CLEAR_RADIUS + margin * 0.6
 
 
 ## Big billows over the island (thicker towards the bridge) and smoke plumes.
@@ -193,6 +192,8 @@ func _build_puffs(fog: FogIslandShaper, count: int) -> void:
 			p.x = c.x - radius.x * (0.75 + 0.3 * float((h >> 20) & 15) / 15.0)
 		var y := 1.0 + float((h >> 3) & 7) * 1.1
 		var size := 18.0 + float((h >> 6) & 15) * 1.2
+		if _near_bridge(p, size + y * 1.5):
+			continue
 		puffs.append([Vector3(p.x, y, p.y), size, h % 4, 0.6 + float((h >> 12) & 3) * 0.08,
 				0.45 if i % 5 == 0 else 0.0])
 	for k in PLUMES.size():

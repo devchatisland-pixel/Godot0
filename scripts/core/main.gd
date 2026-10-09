@@ -4,6 +4,9 @@ extends Node3D
 
 enum Phase { GENERATING, LOADING_MODELS, RUNNING }
 
+## Starting zoom (ortho size): the middle of the city, close enough to see its buildings.
+const START_ZOOM := 62.0
+
 var cfg: CityConfig
 var data: CityData
 var library: ModelLibrary
@@ -111,9 +114,9 @@ func _start_city() -> void:
 	add_child(west_bridge)
 	west_bridge.build(data, library)
 
-	# Start with the whole island in view; the fog island can be reached too.
+	# Start on the centre of the city (zoom out to see the islands).
 	var c := Vector2(data.size, data.size) * 0.5
-	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y), data.size * 0.55)
+	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y), START_ZOOM)
 	camera.set_bounds(Rect2(0, 0, data.fog.origin.x + FogIslandShaper.SIZE, data.size))
 	_overlay.finish(data.city_name)
 
