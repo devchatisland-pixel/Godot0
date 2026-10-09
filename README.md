@@ -5,10 +5,12 @@ There is no gameplay: you can only **navigate** and **zoom**.
 It runs on desktop, mobile and in the browser (GL Compatibility renderer).
 
 ![Chat City](docs/overview.jpg)
-![Central park and downtown](docs/park.jpg)
-![Little Las Vegas](docs/vegas.jpg)
-![Desert](docs/desert.jpg)
-![Coast](docs/coast.jpg)
+![Downtown and its landmarks](docs/downtown.jpg)
+![The colourful quarter](docs/quarter.jpg)
+![Little Las Vegas and the cinema](docs/vegas.jpg)
+![Shops and the shopping center](docs/shops.jpg)
+![Desert, telecom station and outpost](docs/desert.jpg)
+![Central park](docs/park.jpg)
 
 ## Controls
 
@@ -61,12 +63,14 @@ On screen north-west is up.
 
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
-| top | **Downtown** | the only skyscraper district, tallest in its middle |
-| top-left (west coast) | **Little Las Vegas** | 2 casino palaces with golden domes, neon clubs, a ferris wheel |
+| top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron) |
+| top-left (west coast) | **Little Las Vegas** | 2 casino palaces with golden domes, neon clubs, a ferris wheel, a cinema, cartoon diners |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
-| right | **Desert** | a telecom tower, 3 satellite dishes, a mesa, cacti |
+| right | **Desert** | a telecom tower, 3 satellite dishes, a mesa, an outpost (barns, ranch houses, trailers, water tank), cacti |
 | below the park | **Civic center** | city hall, bank, police, fire station, hospital (one of each) |
+| left of the park | **Shopping streets** | the shopping center, New York street buildings, cartoon shops |
 | right / bottom | **Residential** | houses with gardens; the school and the church |
+| bottom (south coast) | **Colourful quarter** | white and red low-rise town, a few towers |
 | left | **Sports corner** | the stadium and the drive-in cinema |
 | coast | **Beaches and rocky shores** | 2 lighthouses and 3 palm islets |
 
@@ -76,8 +80,10 @@ How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same 
 2. **`district_planner.gd`**: the district layout (anchors and the park and desert areas, in island units).
 3. **`road_planner.gd`**: recursive splitting (BSP) into blocks. The borders of the park and the desert are cut first, so they become ring roads. The first splits are avenues with street lights.
 4. **`lot_planner.gd`**: blocks cut into lots, every building facing its street.
-5. **`service_planner.gd`**: every public building once (casinos twice), in the block closest to its district, never two in the same spot.
-6. **`landmark_planner.gd`**: the park lake and paths, the desert station and mesa, the lighthouses.
+5. **`service_planner.gd`**: every public building once (casinos twice), in the block closest to its district, never two in the same spot. The 7 landmark towers are each placed once downtown.
+6. **`landmark_planner.gd`**: the park lake and paths, the desert station, mesa and outpost, the lighthouses.
+
+Which family of models a building uses (Kenney, photo towers, New York, cartoon shops, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
 
 To move a district or change its size, edit `ANCHORS`, `PARK_AREA` or `DESERT_AREA` in `district_planner.gd`.
 
@@ -92,6 +98,8 @@ To move a district or change its size, edit `ANCHORS`, `PARK_AREA` or `DESERT_AR
 * **Worker threads**: chunk contents are computed on `WorkerThreadPool`. The main thread only creates nodes, a few per frame.
 * **LRU eviction** keeps at most `max_near_chunks` and `max_far_chunks` in memory.
 * **Mobile profile** (`CityConfig.create()`): fewer detailed chunks, fewer threads, fewer model variants.
+* **Curated models**: textures are reduced to 256 or 512 px and only the colour map is kept. Packs are opened once while loading, then freed.
+* **Browser download**: about 16 MB of game data plus the 37 MB engine (cached by the browser).
 
 ## Models (FREEMODELS)
 
@@ -111,6 +119,41 @@ Everything the kits do not have is modelled in code (`scripts/procedural/`) in t
 > If your local `FREEMODELS` also contains the `FBX format` / `OBJ format` / `Previews` folders from the zips,
 > put an empty `.gdignore` file in each of them. Godot then skips importing duplicates (faster import, smaller export).
 
+### Extra model packs (curated)
+
+The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignore` stops Godot from importing them, and Docker skips them too.
+`tools/curate_models.gd` builds `FREEMODELS/curated/` from them, following `tools/curate_spec.json`:
+
+* **What is kept**: only complete buildings. Wall slabs, ground pieces and props are dropped, and the bad automatic picks are listed in `exclude`.
+* **Scale**: every building is put at Kenney scale (1 unit = 1 road tile), centred, standing on the ground, front towards +Z.
+* **Textures**: reduced, colour map only.
+* **Output**: one `.glb` per pack plus a `.models.json` list (building name to category). The game reads these lists.
+
+| Curated pack | From | Category | Used for |
+| --- | --- | --- | --- |
+| `ny_buildings` | New York buildings | LANDMARK, TOWER_PHOTO, NY_MIDRISE | 7 landmarks, glass towers, brick buildings |
+| `ny_street` | buildings | NY_STREET | shop and office buildings in commercial streets |
+| `towers_a`, `towers_b` | city pack 7 / 8 | TOWER_PHOTO | 16 towers for the middle of downtown |
+| `panel_block` | 12-storey panel block | PANEL | some apartment lots |
+| `quarter` | 100 low-poly buildings | QUARTER_LOW / MID / TALL | the colourful quarter (87 buildings) |
+| `business` | low-poly business pack | BIZ_SHOP, CINEMA, MALL | diners and shops, the cinema, the shopping center |
+| `outpost` | low-poly buildings | OUTPOST | the desert outpost |
+
+Not used:
+
+* **Kit parts, not whole buildings**: buildings pack, European asset pack, European facades, `building.glb`.
+* **Duplicate**: the school (the procedural school is used).
+* **Licence not confirmed**: Half-Life 2 buildings.
+
+**Rebuild after changing the spec** (needs a display, or `xvfb-run` on Linux):
+
+```
+godot --rendering-driver opengl3 --script res://tools/curate_models.gd
+godot --rendering-driver opengl3 --script res://tools/model_sheet.gd -- FREEMODELS/curated/quarter.glb sheet.png
+```
+
+The second command renders a numbered contact sheet of a pack, to choose what to keep.
+
 ## Project structure
 
 ```
@@ -122,14 +165,15 @@ scripts/
   data/       city_data.gd        packed city layers + buildings + chunk index
   generation/ city_generator.gd   pipeline: island_shaper, district_planner, road_planner,
                                   lot_planner, service_planner, landmark_planner
-  assets/     model_catalog.gd (scan + classify), model_library.gd (load, merge, mesh ids)
+  assets/     model_catalog.gd (scan + classify + curated lists), model_library.gd (load, merge, mesh ids)
   procedural/ mesh_kit.gd (low-poly builder), service_meshes.gd, landmark_meshes.gd,
               entertainment_meshes.gd (Las Vegas), nature_meshes.gd (desert, coast)
-  world/      chunk_streamer.gd (LOD + streaming), building_placer.gd, ground_placer.gd,
-              instance_batch.gd, ground_layer.gd
+  world/      chunk_streamer.gd (LOD + streaming), building_placer.gd, model_pools.gd,
+              ground_placer.gd, instance_batch.gd, ground_layer.gd
   camera/     iso_camera.gd (ortho iso camera), camera_input.gd (mouse/touch/keys)
   ui/         loading_overlay.gd
 tests/        headless checks and the screenshot runner
+tools/        curate_models.gd + curate_spec.json (model packs), model_sheet.gd (contact sheets)
 ```
 
 ## Tuning
