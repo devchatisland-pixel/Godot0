@@ -93,20 +93,45 @@ static func place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, b
 		batch.add(trees[h % trees.size()], tree_xform(p, h))
 
 
-## Industrial yard: stacked containers, oil barrels or a truck (cartoon pack), else the Kenney props.
+## Scale of the shipping containers of the yards (cells per metre): 6.1 m long = 1.2 cells.
+const YARD_BOX_SCALE := 0.2
+
+
+## The shipping containers of the Low-poly Container pack used on the map (named meshes).
+static func _yard_boxes(lib: ModelLibrary) -> PackedInt32Array:
+	var out := PackedInt32Array()
+	for c in ModelLibrary.YARD_CONTAINERS:
+		var id := lib.named_id("yardbox:" + String(c).trim_prefix("container-"))
+		if id >= 0:
+			out.append(id)
+	return out
+
+
+## Industrial yard: stacked containers or oil barrels (cartoon pack), else the Kenney props. The
+## containers are the five textures of the Low-poly Container pack; there are no trucks.
 static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: InstanceBatch) -> void:
 	var c := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
 	var turn := Basis(Vector3.UP, (seed & 1) * PI * 0.5)
 	match seed % 3:
 		0:
-			var boxes := lib.ids(Cat.CONTAINER)
+			var boxes := _yard_boxes(lib)
 			if not boxes.is_empty():
 				for i in 3:
 					var p := c + turn * Vector3(0.0, 0.0, (i - 1) * 0.55)
-					var s := Basis.from_scale(Vector3(1.5, 1.5, 1.5))
-					batch.add(boxes[(seed >> 3) % boxes.size()], Transform3D(turn * s, p))
+					var s := Basis.from_scale(Vector3.ONE * YARD_BOX_SCALE)
+					batch.add(boxes[((seed >> 3) + i) % boxes.size()], Transform3D(turn * s, p))
 					if i == 1:
-						batch.add(boxes[(seed >> 5) % boxes.size()], Transform3D(turn * s, p + Vector3(0, 0.62, 0)))
+						batch.add(boxes[(seed >> 5) % boxes.size()],
+								Transform3D(turn * s, p + Vector3(0, 2.65 * YARD_BOX_SCALE, 0)))
+				return
+			var old := lib.ids(Cat.CONTAINER)
+			if not old.is_empty():
+				for i in 3:
+					var p := c + turn * Vector3(0.0, 0.0, (i - 1) * 0.55)
+					var s := Basis.from_scale(Vector3(1.5, 1.5, 1.5))
+					batch.add(old[(seed >> 3) % old.size()], Transform3D(turn * s, p))
+					if i == 1:
+						batch.add(old[(seed >> 5) % old.size()], Transform3D(turn * s, p + Vector3(0, 0.62, 0)))
 				return
 		1:
 			var barrels := lib.ids(Cat.BARREL)
@@ -116,13 +141,16 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 					batch.add(barrels[(seed >> (3 + i)) % barrels.size()], Transform3D(Basis.from_scale(Vector3(1.8, 1.8, 1.8)), p))
 				return
 		_:
-			var trucks := lib.ids(Cat.TRUCK)
-			if not trucks.is_empty():
-				batch.add(trucks[0], Transform3D(turn * Basis.from_scale(Vector3(1.3, 1.3, 1.3)), c))
-				return
+			# The truck of the cartoon pack was removed on request: this yard stays bare.
+			return
 	var props := lib.ids(Cat.INDUSTRIAL_PROP)
 	if not props.is_empty():
-		batch.add(props[seed % props.size()], Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c))
+		var prop := props[seed % props.size()]
+		var boxes := _yard_boxes(lib)
+		if not boxes.is_empty() and lib.model_name(prop).contains("shipping-container"):
+			batch.add(boxes[seed % boxes.size()], Transform3D(turn * Basis.from_scale(Vector3.ONE * YARD_BOX_SCALE), c))
+			return
+		batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c))
 
 
 static func tree_xform(p: Vector3, seed: int) -> Transform3D:
