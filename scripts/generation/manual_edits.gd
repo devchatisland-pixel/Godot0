@@ -219,6 +219,7 @@ const LATE := [
 	{"kind": "BILLBOARD", "at": Vector2i(75, 126)},
 	{"kind": "BILLBOARD", "at": Vector2i(199, 179)},
 	{"kind": "BILLBOARD", "at": Vector2i(150, 255)},
+	{"kind": "BEACH_HUT", "at": Vector2i(215, 122)},
 ]
 
 

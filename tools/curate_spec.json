@@ -491,20 +491,6 @@
       ]
     },
     {
-      "src": "res://FREEMODELS/_incoming/golden_gate_bridge.glb",
-      "out": "golden_gate",
-      "items": [
-        {
-          "id": "golden_gate",
-          "nodes": [
-            "Cube.001"
-          ],
-          "cat": "BRIDGE",
-          "height": 6.0
-        }
-      ]
-    },
-    {
       "src": "res://FREEMODELS/_incoming/night_city_skyline.glb",
       "out": "night_skyline",
       "keep_emission": true,

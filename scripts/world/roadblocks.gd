@@ -12,7 +12,7 @@ const WEST_BACK := 11
 ## Longest side of each model once placed, in cells.
 const BARRIER_LEN := 1.05
 const CAR_LEN := 0.85
-const CONE_LEN := 0.3
+const CONE_LEN := 0.15
 const TANK_LEN := 2.2
 
 
@@ -55,15 +55,14 @@ func _police_car(lib: ModelLibrary, x: int, row: int, side: float = 2.7) -> void
 	_put(lib, car["id"], Vector3(float(x) - 1.6, 0.0, float(row) + 0.5 + side), PI + car["turn"], CAR_LEN, "Police car (roadblock)")
 
 
-## The two police cars stand on the highway just beyond the barriers, slanted across the
-## lanes like a real roadblock, noses together: they wait for what comes from the bridge.
+## The two police cars stand on the highway just beyond the barriers, both facing north.
 func _roadblock_cars(lib: ModelLibrary, x: int, row: int) -> void:
 	var car := _cruiser(lib)
 	if car.is_empty():
 		return
 	var z := float(row) + 0.5
-	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z - 0.9), PI * 0.5 + 0.5 + car["turn"], CAR_LEN, "Police car (roadblock)")
-	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z + 0.9), PI * 0.5 - 0.5 + car["turn"], CAR_LEN, "Police car (roadblock)")
+	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z - 0.9), PI + car["turn"], CAR_LEN, "Police car (roadblock)")
+	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z + 0.9), PI + car["turn"], CAR_LEN, "Police car (roadblock)")
 
 
 ## The police car of the roadblocks: the US cruiser of the vehicle catalog (its nose is -Z,

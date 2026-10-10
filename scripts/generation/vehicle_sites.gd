@@ -241,8 +241,35 @@ func _forest_suv() -> void:
 		push_warning("[Vehicles] no forest road for the SUV")
 
 
-## One machine in each of three different crop fields (the biggest ones, far apart).
+## The loader beside the barn B-01076 (OUTPOST at 195,169); the tractor and the harvester
+## together on the crop field B-01088 (FIELD at 196,174, 5x5). Falls back to one machine in
+## each of three fields when those two lots are not there.
 func _farm_machines() -> void:
+	var barn := _lot_at(Kind.OUTPOST, Vector2i(195, 169))
+	var field := _lot_at(Kind.FIELD, Vector2i(196, 174))
+	if barn < 0 or field < 0:
+		_farm_machines_auto()
+		return
+	var br := _d.building_rect(barn)
+	if not _beside("p54_41_loader_claw_yellow", br, "next to the barn", 61, 0.6, 3.0):
+		_add("p54_41_loader_claw_yellow", Vector2(br.position.x + br.size.x * 0.5, br.end.y + 0.8),
+				Vector2(1, 0), "next to the barn")
+	var fr := _d.building_rect(field)
+	var c := Vector2(fr.position) + Vector2(fr.size) * 0.5
+	_add("p54_43_tractor_vintage_trailer", c + Vector2(-1.0, -0.9), Vector2(1, 0), "in an agricultural field")
+	_add("p54_21_harvester_olive", c + Vector2(0.9, 1.0), Vector2(1, 0), "in an agricultural field")
+
+
+## Building of `kind` whose lot starts at `at` (-1 when there is none).
+func _lot_at(kind: int, at: Vector2i) -> int:
+	for b in _d.building_count():
+		if _d.b_kind[b] == kind and _d.building_rect(b).position == at:
+			return b
+	return -1
+
+
+## One machine in each of three different crop fields (the biggest ones, far apart).
+func _farm_machines_auto() -> void:
 	var fields: Array[int] = []
 	for b in _d.building_count():
 		if _d.b_kind[b] == Kind.FIELD:

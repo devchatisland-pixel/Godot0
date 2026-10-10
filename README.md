@@ -107,7 +107,7 @@ To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA
 
 ### The fog island
 
-East of Chat City, the Golden Gate bridge leaves the east coast and disappears into the fog (`scripts/world/fog_island.gd`).
+East of Chat City, a metal bridge (the same model as the west one) leaves the east coast and disappears into the fog (`scripts/world/fog_island.gd`).
 The island itself lies next to the city map and costs very little: it is not streamed, it has no streets and it is drawn with a few MultiMeshes.
 The fog is made of pictures, not 3D volumes:
 
@@ -260,7 +260,6 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `public_main` | low-poly public buildings pack | POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, PHARMACY, GAS_STATION | the main public buildings, one of each, drawn big |
 | `un_tower` | building 3 | UN_TOWER | the United Nations tower |
 | `crane` | building crane | CRANE | one crane in the colourful quarter |
-| `golden_gate` | Golden Gate bridge | BRIDGE | the bridge to the fog island |
 | `night_skyline` | low-poly night city skyline (keeps its light map) | SKYLINE | the hidden city of the fog island, a block of the urban island |
 | `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the second skyline block of the urban island |
 | `urban` | City Buildings - BlackThornProd | URBAN | the towers of the urban island |
@@ -300,7 +299,6 @@ Not used:
 
 ### Credits of the latest models
 
-* "Golden Gate Bridge" by JuanG3D, CC BY 4.0
 * "building 3" by geniusrahman155, CC BY 4.0
 * "Low Poly Night City Building Skyline" by 99.Miles, CC BY 4.0
 * "Building Crane (low poly)" by jmarco2000, CC BY 4.0

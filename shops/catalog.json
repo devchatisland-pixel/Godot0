@@ -83,26 +83,6 @@
    "_x": 35.285
   },
   {
-   "id": "shop-convenience-quickstop",
-   "file": "res://shops/models/shop-convenience-quickstop.glb",
-   "category": "Convenience",
-   "name": "Jay and Silent Bob Quick Stop",
-   "credit": {
-    "title": "Jay And Silent Bob Quick Stop",
-    "author": "Kris Kovac",
-    "url": "https://sketchfab.com/3d-models/jay-and-silent-bob-quick-stop-49e19755f4ae4688b9b07c82cf4e0699",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 12.02,
-    "depth": 10.26,
-    "height": 6.21
-   },
-   "triangles": 64834,
-   "notes": "Biggest file (6.3 MB, 65k tris). Includes asphalt slab + parked car; origin far from 0 (x 2..12). Heavy for a city tile.",
-   "_x": 135.89
-  },
-  {
    "id": "shop-general-orange-a",
    "file": "res://shops/models/shop-general-orange-a.glb",
    "category": "General",
@@ -261,26 +241,6 @@
    "triangles": 12366,
    "notes": "Coffee shop with cup + COFFEE sign on roof, lamp post, fence, on a dark base slab. 12k tris; floats at y 0.68 min.",
    "_x": 158.425
-  },
-  {
-   "id": "shop-townhouse-belgium",
-   "file": "res://shops/models/shop-townhouse-belgium.glb",
-   "category": "Townhouse",
-   "name": "Nivelles Shop 1 (Belgium)",
-   "credit": {
-    "title": "Nivelles Shop 1 [Belgium]",
-    "author": "Lost Gecko",
-    "url": "https://sketchfab.com/3d-models/nivelles-shop-1-belgium-209c0097e5ab46fd8be7ca5d904479e9",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 8.0,
-    "depth": 9.3,
-    "height": 12.51
-   },
-   "triangles": 543,
-   "notes": "Tall grey townhouse, untextured single material, 543 tris, 12.5 tall.",
-   "_x": 170.45000000000002
   },
   {
    "id": "shop-building-multi",
