@@ -43,6 +43,8 @@ func generate() -> CityData:
 	print("[City] %d hand edits applied" % edits)
 	var huts := BeachSites.apply(data)
 	print("[City] %d beach huts" % huts)
+	var boats := BoatSites.apply(data)
+	print("[City] %d boats" % boats)
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")

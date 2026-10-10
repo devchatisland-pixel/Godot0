@@ -130,6 +130,13 @@ At night the fog turns dark blue-grey and the night skyline model shows its city
 
 All of it is stored in two layers of `CityData` (`deco`, `edge`) and drawn by `GroundPlacer` / `GroundLayer`.
 
+## Boats
+
+`boat_sites.gd` puts one boat of each kind at sea (five packs `boat_*`, a boat is `Kind.BOAT`, its seed is the
+kind): the cargo ship west of the industrial port, the submarine north of the Golden Gate bridge about 20 cells
+away from the highway, a fishing boat and a wooden boat beside the piers, a simple boat off the red district.
+The sea around each boat must be free, and the corridors of both bridges are kept clear.
+
 ## Hand edits
 
 `scripts/generation/manual_edits.gd` lists single-building corrections made after the map is generated:
@@ -249,6 +256,7 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `neon_pacman` | Neon Pac-Man (rest pose, no animation) | NEON_PACMAN | a neon roof sign (on the police station B-00685) |
 | `pirate_huts` | Stylized Pirate Island Pack (huts and pavilions only, no boats) | BEACH_HUT | huts on the beaches |
 | `pier_old`, `pier_game` | Old pier, Pier (Game ready model) | PIER | piers beside the huts |
+| `boat_simple`, `boat_wooden`, `boat_fishing`, `boat_cargo`, `boat_sub` | the five boat files | BOAT_* | one boat of each at sea |
 | `watchtower` | low poly Watchtower (without fences, rails, lamps and trees) | WATCHTOWER | the two forest lookouts |
 | `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |
 | `hungry` | Hungry Jack's restaurant | BURGER_KING | the Burger King of the red district |
@@ -288,6 +296,7 @@ Not used:
 * "Low-poly-night-city-building-skyline" by willis123, CC BY 4.0
 * "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
 * "Pirate Ship" by Oleg Muzyka, CC BY 4.0
+* "Simple Low poly Boat" by Jewel John, "Wooden Boat" by sumitmangela, "Low Poly Cargo Ship" by Javier_Fernandez and "The Project 941 / Akula / Typhoon submarine" by yakudami, CC BY 4.0; "Fishing Boat (low poly style)" by liborv, Sketchfab Standard licence (raw file kept out of git)
 * "Pier (Game ready model)" by BlackBox613, "Old pier" by smitecraft.swe and "Stylized Pirate Island Pack" by CG Lads, CC BY 4.0
 * "neon game controller" by alina_dreiman and "Neon Pac-Man" by patrakeevasveta, CC BY 4.0
 * "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)

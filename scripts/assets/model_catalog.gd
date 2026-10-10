@@ -34,6 +34,8 @@ enum Cat {
 	NEON_CONTROLLER, NEON_PACMAN,
 	# Ninth wave: beach huts and piers
 	BEACH_HUT, PIER,
+	# Tenth wave: boats
+	BOAT_SIMPLE, BOAT_WOODEN, BOAT_FISHING, BOAT_CARGO, BOAT_SUB,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

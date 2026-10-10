@@ -1,0 +1,9 @@
+{
+	"file": "boat_simple.glb",
+	"models": [
+		{
+			"cat": "BOAT_SIMPLE",
+			"node": "boat_simple"
+		}
+	]
+}

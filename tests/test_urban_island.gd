@@ -24,6 +24,7 @@ func _init() -> void:
 	_check_towers(data, by_kind)
 	_check_watchtowers(data, by_kind)
 	_check_edits(data)
+	_check_boats(data, by_kind)
 	var fill: int = by_kind.get(Kind.URBAN_BLDG, []).filter(func(b): return data.building_rect(b).position.y > 181 and data.building_rect(b).position.x < 60).size()
 	print("[Test] towers south of the airport: %d" % fill)
 	if fill < 3:
@@ -128,6 +129,25 @@ func _check_watchtowers(data: CityData, by_kind: Dictionary) -> void:
 	print("[Test] watchtowers: ", list.map(func(b): return data.building_rect(b)))
 
 
+## One boat of each kind; the cargo ship by the port, the submarine away from the bridge.
+func _check_boats(data: CityData, by_kind: Dictionary) -> void:
+	var seeds := {}
+	for b in by_kind.get(Kind.BOAT, []):
+		var s: int = data.b_seed[b]
+		seeds[s] = data.building_rect(b)
+		print("[Test] boat %d at %s" % [s, data.building_rect(b)])
+	if seeds.size() != 5:
+		_fail("expected 5 different boats, found %d" % seeds.size())
+		return
+	var port := Vector2(ExtensionFeatures.INDUSTRIAL["at"])
+	if Vector2((seeds[BoatSites.CARGO] as Rect2i).get_center()).distance_to(port) > 35.0:
+		_fail("the cargo ship is not near the industrial port")
+	var d := Vector2((seeds[BoatSites.SUB] as Rect2i).get_center()).distance_to(Vector2(data.bridge))
+	print("[Test] the submarine is %.0f cells from the end of the highway" % d)
+	if d < 12.0 or d > 40.0:
+		_fail("the submarine is %.0f cells from the Golden Gate bridge" % d)
+
+
 ## Every hand edit (ManualEdits) was applied: the kind, facing and scale are the wanted ones.
 func _check_edits(data: CityData) -> void:
 	for e in ManualEdits.EDITS:
@@ -176,7 +196,7 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 	var seen := {}
 	var tallest_club := 0.0
 	for k in [Kind.AIRPORT, Kind.NUCLEAR_PLANT, Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER,
-			Kind.WATCHTOWER, Kind.SAT_DISH, Kind.URBAN_BLDG, Kind.FUTURE_BLDG, Kind.NIGHTCLUB]:
+			Kind.WATCHTOWER, Kind.SAT_DISH, Kind.BOAT, Kind.URBAN_BLDG, Kind.FUTURE_BLDG, Kind.NIGHTCLUB]:
 		for b in by_kind.get(k, []):
 			var pick := BuildingPlacer.pick_for(data, lib, b)
 			if not pick.has("id") or pick["id"] < 0:

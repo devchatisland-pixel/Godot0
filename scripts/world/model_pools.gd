@@ -16,6 +16,9 @@ const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 const Cat := ModelCatalog.Cat
 
+## The boats, in the order of their seed (BoatSites).
+const BOAT_CATS := [Cat.BOAT_SIMPLE, Cat.BOAT_WOODEN, Cat.BOAT_FISHING, Cat.BOAT_CARGO, Cat.BOAT_SUB]
+
 ## Kenney commercial models taller than this are offices, lower ones shops.
 const OFFICE_MIN_HEIGHT := 1.6
 
@@ -90,6 +93,8 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return _variant(lib, Cat.BEACH_HUT, seed)
 		Kind.PIER:
 			return _variant(lib, Cat.PIER, seed)
+		Kind.BOAT:
+			return lib.ids(BOAT_CATS[absi(seed) % BOAT_CATS.size()])
 		Kind.FUTURE_BLDG:
 			return lib.ids(Cat.FUTURE)
 		Kind.PIRATE_SHIP:

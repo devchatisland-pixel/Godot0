@@ -1,0 +1,9 @@
+{
+	"file": "boat_wooden.glb",
+	"models": [
+		{
+			"cat": "BOAT_WOODEN",
+			"node": "boat_wooden"
+		}
+	]
+}

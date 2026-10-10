@@ -261,6 +261,88 @@
 					"base_frac": 0.9
 				}
 			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/simple_low_poly_boat.glb",
+			"out": "boat_simple",
+			"texture_max": 256,
+			"items": [
+				{
+					"id": "boat_simple",
+					"nodes": [
+						"RootNode"
+					],
+					"cat": "BOAT_SIMPLE",
+					"footprint": 3.2,
+					"base_frac": 0.02
+				}
+			],
+			"comment": "Boats: long side along +Z, the waterline at the ground (the hull below it is hidden by the sea)."
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/wooden_boat.glb",
+			"out": "boat_wooden",
+			"texture_max": 512,
+			"items": [
+				{
+					"id": "boat_wooden",
+					"nodes": [
+						"GLTF_SceneRootNode"
+					],
+					"cat": "BOAT_WOODEN",
+					"footprint": 2.8,
+					"base_frac": 0.1
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/fishing_boat_low_poly_style.glb",
+			"out": "boat_fishing",
+			"texture_max": 256,
+			"items": [
+				{
+					"id": "boat_fishing",
+					"nodes": [
+						"RootNode"
+					],
+					"cat": "BOAT_FISHING",
+					"footprint": 4.0,
+					"base_frac": 0.15,
+					"yaw": -90
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/low_poly_cargo_ship.glb",
+			"out": "boat_cargo",
+			"texture_max": 512,
+			"items": [
+				{
+					"id": "boat_cargo",
+					"nodes": [
+						"Box002"
+					],
+					"cat": "BOAT_CARGO",
+					"footprint": 9.0,
+					"base_frac": 0.5
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/the_project_941__akula__typhoon_submarine.glb",
+			"out": "boat_sub",
+			"texture_max": 256,
+			"items": [
+				{
+					"id": "boat_sub",
+					"nodes": [
+						"Cube"
+					],
+					"cat": "BOAT_SUB",
+					"footprint": 8.0,
+					"base_frac": 0.31
+				}
+			]
 		}
 	]
 }
