@@ -60,6 +60,30 @@ def neon(img, name, text, color, size, border=True):
     img.paste(board, (x, y))
 
 
+def xxx_from_model(img, path):
+    """The XXX neon: a front render of the "XXX Neon Sign" model (CC BY 4.0, Jimmy Johansson),
+    tubes only, on a dark board with a soft glow. A flat texture instead of 40k polygons."""
+    x, y, w, h = REGIONS["neon_xxx"]
+    src = Image.open(path).convert("RGB")
+    src.thumbnail((w - 16, h - 16), Image.LANCZOS)
+    board = Image.new("RGBA", (w, h), (24, 14, 36, 255))
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    layer.paste(src.convert("RGBA"), ((w - src.width) // 2, (h - src.height) // 2))
+    glow = layer.filter(ImageFilter.GaussianBlur(7))
+    board.alpha_composite(glow)
+    board.alpha_composite(glow)
+    # Black parts of the render stay transparent: only the lit tubes are added.
+    lit = layer.copy()
+    px = lit.load()
+    for j in range(h):
+        for i in range(w):
+            r, g, b, a = px[i, j]
+            k = max(r, g, b)
+            px[i, j] = (r, g, b, min(255, k * 3))
+    board.alpha_composite(lit)
+    img.paste(board, (x, y))
+
+
 def plate(img, name, text, bg, fg, size, serif=False):
     x, y, w, h = REGIONS[name]
     board = Image.new("RGBA", (w, h), bg)
@@ -121,7 +145,7 @@ def main():
     un_emblem(img, "tools/sign_sources/un_emblem.png")
     dollar(img)
     movie(img)
-    neon(img, "neon_xxx", "XXX", (255, 60, 200), 170)
+    xxx_from_model(img, "tools/sign_sources/xxx_neon_render.png")
     neon(img, "neon_casino", "CASINO", (255, 200, 40), 110)
     plate(img, "sign_hotel", "GRAND HOTEL", (110, 20, 40, 255), (240, 195, 70, 255), 50, serif=True)
     plate(img, "sign_post", "POST OFFICE", (30, 70, 160, 255), (255, 255, 255, 255), 62)

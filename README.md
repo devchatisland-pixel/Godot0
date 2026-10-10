@@ -138,7 +138,7 @@ All signs are on one 1024×1024 texture, `textures/signs.png`:
 
 * the U.N. emblem (the name is not used any more)
 * the gold "$" coin (procedural bank, now only a fallback)
-* neon "XXX", "CASINO", "BAR" and "CLUB"
+* neon "XXX" (a render of the XXX Neon Sign model, a flat texture with glow instead of 40,000 polygons), "CASINO", "BAR" and "CLUB"
 * the "POST OFFICE" and "MUSEUM" plates
 * the film shown at the drive-in
 
@@ -244,6 +244,7 @@ Not used:
 * "Low-poly-night-city-building-skyline" by willis123, CC BY 4.0
 * "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
 * "Pirate Ship" by Oleg Muzyka, CC BY 4.0
+* "XXX Neon Sign" by Jimmy Johansson, CC BY 4.0 (only a front render of it is used, as the XXX texture of the sign atlas)
 * "Pack - Low Poly - 15 Building" by Islide, CC BY 4.0
 * "[Free] Buildings Low Poly" by GraphOrigin, CC BY 4.0
 * "Somewhat Low-poly Buildings" by Calne, CC BY 4.0
