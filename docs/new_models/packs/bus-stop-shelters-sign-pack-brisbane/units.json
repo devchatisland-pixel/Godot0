@@ -1,0 +1,115 @@
+{
+ "source": "bus_stop_shelters__sign_pack__brisbane.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "bus_shelter01",
+   "triangles": 510,
+   "size": [
+    4.77,
+    3.4,
+    2.17
+   ]
+  },
+  {
+   "index": 1,
+   "node": "bus_shelter02",
+   "triangles": 702,
+   "size": [
+    5.26,
+    3.49,
+    2.25
+   ]
+  },
+  {
+   "index": 2,
+   "node": "bus_shelter03",
+   "triangles": 376,
+   "size": [
+    4.22,
+    3.27,
+    1.8
+   ]
+  },
+  {
+   "index": 3,
+   "node": "bus_shelter04",
+   "triangles": 376,
+   "size": [
+    4.22,
+    3.27,
+    1.8
+   ]
+  },
+  {
+   "index": 4,
+   "node": "bus_shelter05",
+   "triangles": 852,
+   "size": [
+    6.67,
+    4.33,
+    4.62
+   ]
+  },
+  {
+   "index": 5,
+   "node": "bus_stop_sign_rectangle01",
+   "triangles": 28,
+   "size": [
+    0.14,
+    2.43,
+    0.5
+   ]
+  },
+  {
+   "index": 6,
+   "node": "bus_stop_sign_rectangle02",
+   "triangles": 28,
+   "size": [
+    0.14,
+    2.43,
+    0.5
+   ]
+  },
+  {
+   "index": 7,
+   "node": "bus_stop_sign_rectangle02.001",
+   "triangles": 28,
+   "size": [
+    0.14,
+    2.43,
+    0.5
+   ]
+  },
+  {
+   "index": 8,
+   "node": "jpole_small_white",
+   "triangles": 228,
+   "size": [
+    0.08,
+    3.08,
+    0.8
+   ]
+  },
+  {
+   "index": 9,
+   "node": "jpole_white_lod0",
+   "triangles": 240,
+   "size": [
+    0.08,
+    3.4,
+    1.32
+   ]
+  },
+  {
+   "index": 10,
+   "node": "jpole_yellow",
+   "triangles": 212,
+   "size": [
+    0.08,
+    3.4,
+    1.32
+   ]
+  }
+ ]
+}

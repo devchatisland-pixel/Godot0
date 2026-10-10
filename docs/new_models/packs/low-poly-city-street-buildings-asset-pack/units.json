@@ -1,0 +1,255 @@
+{
+ "source": "low-poly_city_street_buildings_asset_pack.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "Truck - Ice Cream_0",
+   "triangles": 1277,
+   "size": [
+    3.48,
+    3.34,
+    2.49
+   ]
+  },
+  {
+   "index": 1,
+   "node": "Stall - Potato Pancakes_1",
+   "triangles": 1114,
+   "size": [
+    5.06,
+    4.47,
+    2.7
+   ]
+  },
+  {
+   "index": 2,
+   "node": "Stall - Ice Cream Old Bathing Station_2",
+   "triangles": 856,
+   "size": [
+    4.51,
+    3.45,
+    2.4
+   ]
+  },
+  {
+   "index": 3,
+   "node": "Stall - Ice Cream Kellys_3",
+   "triangles": 1064,
+   "size": [
+    4.66,
+    3.15,
+    2.97
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Stall - El Palast_4",
+   "triangles": 948,
+   "size": [
+    7.67,
+    3.41,
+    4.8
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Stall  - Ice Cream Funland_5",
+   "triangles": 268,
+   "size": [
+    4.34,
+    3.18,
+    3.11
+   ]
+  },
+  {
+   "index": 6,
+   "node": "SOLAR PANELS.014_6",
+   "triangles": 28,
+   "size": [
+    1.02,
+    0.03,
+    1.96
+   ]
+  },
+  {
+   "index": 7,
+   "node": "AC Unit.001_7",
+   "triangles": 12,
+   "size": [
+    0.36,
+    0.62,
+    0.87
+   ]
+  },
+  {
+   "index": 8,
+   "node": "Truck - Food Truck_8",
+   "triangles": 1252,
+   "size": [
+    4.71,
+    3.56,
+    2.01
+   ]
+  },
+  {
+   "index": 9,
+   "node": "Caravan - Ice Cream - Red_9",
+   "triangles": 748,
+   "size": [
+    3.77,
+    2.98,
+    3.59
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Block -Coffee Shack_10",
+   "triangles": 508,
+   "size": [
+    5.66,
+    3.66,
+    6.79
+   ]
+  },
+  {
+   "index": 11,
+   "node": "Block - White + Amber_11",
+   "triangles": 1728,
+   "size": [
+    15.19,
+    4.64,
+    5.92
+   ]
+  },
+  {
+   "index": 12,
+   "node": "Block - Red Bricks, Orange, Peach_12",
+   "triangles": 2352,
+   "size": [
+    6.29,
+    8.68,
+    22.71
+   ]
+  },
+  {
+   "index": 13,
+   "node": "Block - Garage_13",
+   "triangles": 1185,
+   "size": [
+    19.98,
+    9.34,
+    7.58
+   ]
+  },
+  {
+   "index": 14,
+   "node": "Block - Zinc Building_14",
+   "triangles": 654,
+   "size": [
+    5.68,
+    5.28,
+    8.04
+   ]
+  },
+  {
+   "index": 15,
+   "node": "Block - Red brick + Beige Brick + Zinc Block + Self Con_15",
+   "triangles": 4588,
+   "size": [
+    22.73,
+    8.53,
+    5.28
+   ]
+  },
+  {
+   "index": 16,
+   "node": "Block - Self Con_16",
+   "triangles": 457,
+   "size": [
+    3.69,
+    2.95,
+    3.83
+   ]
+  },
+  {
+   "index": 17,
+   "node": "AC Unit.002_17",
+   "triangles": 12,
+   "size": [
+    0.36,
+    0.62,
+    0.87
+   ]
+  },
+  {
+   "index": 18,
+   "node": "SOLAR PANELS.001_18",
+   "triangles": 28,
+   "size": [
+    1.02,
+    0.03,
+    1.96
+   ]
+  },
+  {
+   "index": 19,
+   "node": "SOLAR PANELS.002_19",
+   "triangles": 28,
+   "size": [
+    1.02,
+    0.03,
+    1.96
+   ]
+  },
+  {
+   "index": 20,
+   "node": "SOLAR PANELS.003_20",
+   "triangles": 28,
+   "size": [
+    1.02,
+    0.03,
+    1.96
+   ]
+  },
+  {
+   "index": 21,
+   "node": "SOLAR PANELS.004_21",
+   "triangles": 28,
+   "size": [
+    1.02,
+    0.03,
+    1.96
+   ]
+  },
+  {
+   "index": 22,
+   "node": "SOLAR PANELS.005_22",
+   "triangles": 28,
+   "size": [
+    1.02,
+    0.03,
+    1.96
+   ]
+  },
+  {
+   "index": 23,
+   "node": "SOLAR PANELS.006_23",
+   "triangles": 28,
+   "size": [
+    1.02,
+    0.03,
+    1.96
+   ]
+  },
+  {
+   "index": 24,
+   "node": "SOLAR PANELS.007_24",
+   "triangles": 28,
+   "size": [
+    1.02,
+    0.03,
+    1.96
+   ]
+  }
+ ]
+}

@@ -1,0 +1,595 @@
+{
+ "source": "low_poly_city__cartocity_pack__cartoonsih_city.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "Cube.004",
+   "triangles": 352,
+   "size": [
+    6.89,
+    10.91,
+    3.73
+   ]
+  },
+  {
+   "index": 1,
+   "node": "Cube.001",
+   "triangles": 202,
+   "size": [
+    9.5,
+    6.02,
+    3.99
+   ]
+  },
+  {
+   "index": 2,
+   "node": "Cube.002",
+   "triangles": 108,
+   "size": [
+    8.79,
+    5.72,
+    2.97
+   ]
+  },
+  {
+   "index": 3,
+   "node": "Cube.003",
+   "triangles": 166,
+   "size": [
+    7.32,
+    9.78,
+    5.03
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Cube.005",
+   "triangles": 230,
+   "size": [
+    7.76,
+    8.15,
+    5.46
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Cube.006",
+   "triangles": 576,
+   "size": [
+    7.67,
+    11.08,
+    4.9
+   ]
+  },
+  {
+   "index": 6,
+   "node": "Cube.007",
+   "triangles": 182,
+   "size": [
+    11.31,
+    11.31,
+    5.17
+   ]
+  },
+  {
+   "index": 7,
+   "node": "Cube.008",
+   "triangles": 576,
+   "size": [
+    7.2,
+    10.41,
+    4.6
+   ]
+  },
+  {
+   "index": 8,
+   "node": "Cube.009",
+   "triangles": 576,
+   "size": [
+    8.89,
+    12.85,
+    5.68
+   ]
+  },
+  {
+   "index": 9,
+   "node": "Cube.010",
+   "triangles": 324,
+   "size": [
+    10.46,
+    11.89,
+    7.89
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Cube.011",
+   "triangles": 350,
+   "size": [
+    13.57,
+    18.04,
+    14.6
+   ]
+  },
+  {
+   "index": 11,
+   "node": "Cube.012",
+   "triangles": 586,
+   "size": [
+    6.69,
+    4.78,
+    4.69
+   ]
+  },
+  {
+   "index": 12,
+   "node": "Cube.013",
+   "triangles": 424,
+   "size": [
+    16.83,
+    14.31,
+    13.68
+   ]
+  },
+  {
+   "index": 13,
+   "node": "Cube.014",
+   "triangles": 196,
+   "size": [
+    10.44,
+    15.71,
+    10.43
+   ]
+  },
+  {
+   "index": 14,
+   "node": "Cube.015",
+   "triangles": 500,
+   "size": [
+    16.11,
+    16.11,
+    16.77
+   ]
+  },
+  {
+   "index": 15,
+   "node": "Cube.016",
+   "triangles": 200,
+   "size": [
+    7.97,
+    11.98,
+    7.95
+   ]
+  },
+  {
+   "index": 16,
+   "node": "Cube.017",
+   "triangles": 696,
+   "size": [
+    8.02,
+    6.42,
+    6.02
+   ]
+  },
+  {
+   "index": 17,
+   "node": "Cube.018",
+   "triangles": 496,
+   "size": [
+    30.56,
+    11.33,
+    9.15
+   ]
+  },
+  {
+   "index": 18,
+   "node": "Cube.019",
+   "triangles": 644,
+   "size": [
+    15.29,
+    10.92,
+    8.62
+   ]
+  },
+  {
+   "index": 19,
+   "node": "Cube.020",
+   "triangles": 274,
+   "size": [
+    10.87,
+    9.14,
+    5.5
+   ]
+  },
+  {
+   "index": 20,
+   "node": "Cube.021",
+   "triangles": 756,
+   "size": [
+    8.24,
+    6.01,
+    6.57
+   ]
+  },
+  {
+   "index": 21,
+   "node": "Cube.022",
+   "triangles": 644,
+   "size": [
+    5.67,
+    4.05,
+    2.12
+   ]
+  },
+  {
+   "index": 22,
+   "node": "Cube.023",
+   "triangles": 350,
+   "size": [
+    7.89,
+    12.48,
+    4.27
+   ]
+  },
+  {
+   "index": 23,
+   "node": "Cube.024",
+   "triangles": 200,
+   "size": [
+    7.26,
+    10.93,
+    7.25
+   ]
+  },
+  {
+   "index": 24,
+   "node": "Cube.025",
+   "triangles": 348,
+   "size": [
+    7.51,
+    11.88,
+    4.06
+   ]
+  },
+  {
+   "index": 25,
+   "node": "Cube.026",
+   "triangles": 348,
+   "size": [
+    8.83,
+    13.97,
+    4.78
+   ]
+  },
+  {
+   "index": 26,
+   "node": "Cube.028",
+   "triangles": 166,
+   "size": [
+    7.54,
+    10.07,
+    5.17
+   ]
+  },
+  {
+   "index": 27,
+   "node": "Cube.029",
+   "triangles": 166,
+   "size": [
+    7.37,
+    9.85,
+    5.06
+   ]
+  },
+  {
+   "index": 28,
+   "node": "Cube.027",
+   "triangles": 166,
+   "size": [
+    6.16,
+    8.23,
+    4.23
+   ]
+  },
+  {
+   "index": 29,
+   "node": "Cube.030",
+   "triangles": 166,
+   "size": [
+    8.99,
+    12.01,
+    6.17
+   ]
+  },
+  {
+   "index": 30,
+   "node": "Cube.031",
+   "triangles": 200,
+   "size": [
+    7.03,
+    10.57,
+    7.02
+   ]
+  },
+  {
+   "index": 31,
+   "node": "Cube.032",
+   "triangles": 344,
+   "size": [
+    2.31,
+    2.19,
+    6.51
+   ]
+  },
+  {
+   "index": 32,
+   "node": "Cube.034",
+   "triangles": 208,
+   "size": [
+    2.37,
+    2.05,
+    7.66
+   ]
+  },
+  {
+   "index": 33,
+   "node": "Cube.035",
+   "triangles": 238,
+   "size": [
+    1.97,
+    1.84,
+    6.2
+   ]
+  },
+  {
+   "index": 34,
+   "node": "Cube.036",
+   "triangles": 646,
+   "size": [
+    3.14,
+    4.58,
+    17.21
+   ]
+  },
+  {
+   "index": 35,
+   "node": "Cube.037",
+   "triangles": 340,
+   "size": [
+    3.21,
+    4.29,
+    12.16
+   ]
+  },
+  {
+   "index": 36,
+   "node": "Plane",
+   "triangles": 338,
+   "size": [
+    2.05,
+    1.76,
+    5.25
+   ]
+  },
+  {
+   "index": 37,
+   "node": "Cube.039",
+   "triangles": 248,
+   "size": [
+    1.81,
+    1.91,
+    4.5
+   ]
+  },
+  {
+   "index": 38,
+   "node": "Cube",
+   "triangles": 12,
+   "size": [
+    0.78,
+    0.78,
+    0.78
+   ]
+  },
+  {
+   "index": 39,
+   "node": "Cube.033",
+   "triangles": 96,
+   "size": [
+    2.34,
+    1.22,
+    0.58
+   ]
+  },
+  {
+   "index": 40,
+   "node": "Cube.038",
+   "triangles": 168,
+   "size": [
+    5.37,
+    0.78,
+    0.09
+   ]
+  },
+  {
+   "index": 41,
+   "node": "Cube.040",
+   "triangles": 84,
+   "size": [
+    1.0,
+    1.9,
+    0.33
+   ]
+  },
+  {
+   "index": 42,
+   "node": "Cylinder.001",
+   "triangles": 92,
+   "size": [
+    0.63,
+    0.95,
+    0.63
+   ]
+  },
+  {
+   "index": 43,
+   "node": "Cube.041",
+   "triangles": 64,
+   "size": [
+    0.86,
+    1.39,
+    0.53
+   ]
+  },
+  {
+   "index": 44,
+   "node": "kw_barriers_stand_white__1_",
+   "triangles": 364,
+   "size": [
+    4.55,
+    1.23,
+    1.27
+   ]
+  },
+  {
+   "index": 45,
+   "node": "kw_barriers_stand_white__1_.001",
+   "triangles": 364,
+   "size": [
+    4.55,
+    1.23,
+    1.27
+   ]
+  },
+  {
+   "index": 46,
+   "node": "Cylinder.002",
+   "triangles": 124,
+   "size": [
+    1.15,
+    1.69,
+    1.15
+   ]
+  },
+  {
+   "index": 47,
+   "node": "Cylinder.004",
+   "triangles": 124,
+   "size": [
+    1.15,
+    1.69,
+    1.15
+   ]
+  },
+  {
+   "index": 48,
+   "node": "Cylinder.003",
+   "triangles": 124,
+   "size": [
+    1.15,
+    1.69,
+    1.15
+   ]
+  },
+  {
+   "index": 49,
+   "node": "Cylinder.005",
+   "triangles": 124,
+   "size": [
+    1.15,
+    1.69,
+    1.15
+   ]
+  },
+  {
+   "index": 50,
+   "node": "crate_03",
+   "triangles": 12,
+   "size": [
+    0.66,
+    0.66,
+    0.66
+   ]
+  },
+  {
+   "index": 51,
+   "node": "crate_03.001",
+   "triangles": 12,
+   "size": [
+    0.65,
+    0.65,
+    0.65
+   ]
+  },
+  {
+   "index": 52,
+   "node": "Cylinder.006",
+   "triangles": 220,
+   "size": [
+    0.88,
+    0.95,
+    0.88
+   ]
+  },
+  {
+   "index": 53,
+   "node": "Cube.042",
+   "triangles": 12,
+   "size": [
+    2.03,
+    2.36,
+    7.47
+   ]
+  },
+  {
+   "index": 54,
+   "node": "Cube.043",
+   "triangles": 12,
+   "size": [
+    2.03,
+    2.36,
+    7.47
+   ]
+  },
+  {
+   "index": 55,
+   "node": "Cube.044",
+   "triangles": 12,
+   "size": [
+    2.03,
+    2.36,
+    7.47
+   ]
+  },
+  {
+   "index": 56,
+   "node": "Cube.045",
+   "triangles": 12,
+   "size": [
+    2.03,
+    2.36,
+    7.47
+   ]
+  },
+  {
+   "index": 57,
+   "node": "Cube.046",
+   "triangles": 28,
+   "size": [
+    2.56,
+    1.05,
+    0.78
+   ]
+  },
+  {
+   "index": 58,
+   "node": "Cube.047",
+   "triangles": 28,
+   "size": [
+    2.56,
+    1.05,
+    0.78
+   ]
+  }
+ ]
+}

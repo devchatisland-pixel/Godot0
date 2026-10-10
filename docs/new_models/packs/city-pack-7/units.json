@@ -1,0 +1,1025 @@
+{
+ "source": "city_pack_7.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "Material2",
+   "triangles": 1233,
+   "size": [
+    34451.28,
+    5938.58,
+    12267.1
+   ]
+  },
+  {
+   "index": 1,
+   "node": "Material3",
+   "triangles": 48,
+   "size": [
+    3615.75,
+    1164.15,
+    1692.91
+   ]
+  },
+  {
+   "index": 2,
+   "node": "Material3",
+   "triangles": 48,
+   "size": [
+    1610.24,
+    2312.03,
+    1387.4
+   ]
+  },
+  {
+   "index": 3,
+   "node": "Material2",
+   "triangles": 1870,
+   "size": [
+    35919.94,
+    6761.18,
+    17425.01
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Material3",
+   "triangles": 12,
+   "size": [
+    1523.07,
+    5056.08,
+    2144.69
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Material2",
+   "triangles": 1745,
+   "size": [
+    34705.35,
+    6753.8,
+    17823.1
+   ]
+  },
+  {
+   "index": 6,
+   "node": "Material3",
+   "triangles": 10,
+   "size": [
+    1214.56,
+    5235.64,
+    1971.66
+   ]
+  },
+  {
+   "index": 7,
+   "node": "Material3",
+   "triangles": 29,
+   "size": [
+    1567.94,
+    4657.19,
+    2748.43
+   ]
+  },
+  {
+   "index": 8,
+   "node": "Material2",
+   "triangles": 23,
+   "size": [
+    2172.13,
+    6026.38,
+    2237.23
+   ]
+  },
+  {
+   "index": 9,
+   "node": "Material3",
+   "triangles": 18,
+   "size": [
+    1304.36,
+    3270.87,
+    2903.85
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Material2",
+   "triangles": 76,
+   "size": [
+    4540.19,
+    9454.72,
+    2128.7
+   ]
+  },
+  {
+   "index": 11,
+   "node": "Material3",
+   "triangles": 1482,
+   "size": [
+    34695.45,
+    8631.97,
+    17362.65
+   ]
+  },
+  {
+   "index": 12,
+   "node": "Material3",
+   "triangles": 280,
+   "size": [
+    4959.36,
+    7054.09,
+    2301.32
+   ]
+  },
+  {
+   "index": 13,
+   "node": "Material3",
+   "triangles": 34,
+   "size": [
+    2669.69,
+    4061.81,
+    1055.91
+   ]
+  },
+  {
+   "index": 14,
+   "node": "Material3",
+   "triangles": 20,
+   "size": [
+    3163.38,
+    2748.94,
+    1187.8
+   ]
+  },
+  {
+   "index": 15,
+   "node": "Material3",
+   "triangles": 30,
+   "size": [
+    3327.95,
+    1158.85,
+    3059.84
+   ]
+  },
+  {
+   "index": 16,
+   "node": "Material3",
+   "triangles": 586,
+   "size": [
+    2057.86,
+    10440.94,
+    2057.86
+   ]
+  },
+  {
+   "index": 17,
+   "node": "Material3",
+   "triangles": 1991,
+   "size": [
+    34981.99,
+    10440.94,
+    12384.92
+   ]
+  },
+  {
+   "index": 18,
+   "node": "Material3",
+   "triangles": 11,
+   "size": [
+    3381.9,
+    2964.96,
+    3456.35
+   ]
+  },
+  {
+   "index": 19,
+   "node": "Material3",
+   "triangles": 58,
+   "size": [
+    2768.59,
+    5809.45,
+    3240.56
+   ]
+  },
+  {
+   "index": 20,
+   "node": "Material3",
+   "triangles": 28,
+   "size": [
+    2165.52,
+    2908.38,
+    1097.54
+   ]
+  },
+  {
+   "index": 21,
+   "node": "Material3",
+   "triangles": 31,
+   "size": [
+    1314.76,
+    2742.13,
+    2112.99
+   ]
+  },
+  {
+   "index": 22,
+   "node": "Material2",
+   "triangles": 28,
+   "size": [
+    2286.09,
+    2222.23,
+    1120.97
+   ]
+  },
+  {
+   "index": 23,
+   "node": "Material3",
+   "triangles": 12,
+   "size": [
+    2163.39,
+    1822.45,
+    1414.17
+   ]
+  },
+  {
+   "index": 24,
+   "node": "Material3",
+   "triangles": 11,
+   "size": [
+    2126.94,
+    2263.99,
+    787.0
+   ]
+  },
+  {
+   "index": 25,
+   "node": "Material3",
+   "triangles": 88,
+   "size": [
+    2044.49,
+    3872.83,
+    2044.49
+   ]
+  },
+  {
+   "index": 26,
+   "node": "Material3",
+   "triangles": 135,
+   "size": [
+    4774.8,
+    1792.63,
+    884.02
+   ]
+  },
+  {
+   "index": 27,
+   "node": "Material3",
+   "triangles": 24,
+   "size": [
+    4886.62,
+    1103.0,
+    1090.91
+   ]
+  },
+  {
+   "index": 28,
+   "node": "Material2",
+   "triangles": 23,
+   "size": [
+    3834.65,
+    962.6,
+    1980.71
+   ]
+  },
+  {
+   "index": 29,
+   "node": "Material3",
+   "triangles": 54,
+   "size": [
+    4101.99,
+    925.2,
+    11299.2
+   ]
+  },
+  {
+   "index": 30,
+   "node": "Material3",
+   "triangles": 114,
+   "size": [
+    4265.15,
+    2904.33,
+    8266.39
+   ]
+  },
+  {
+   "index": 31,
+   "node": "Material3",
+   "triangles": 173,
+   "size": [
+    4234.98,
+    1084.74,
+    4531.08
+   ]
+  },
+  {
+   "index": 32,
+   "node": "Material2",
+   "triangles": 90,
+   "size": [
+    2786.09,
+    6931.1,
+    2657.22
+   ]
+  },
+  {
+   "index": 33,
+   "node": "Material3",
+   "triangles": 40,
+   "size": [
+    4408.27,
+    1621.9,
+    2038.19
+   ]
+  },
+  {
+   "index": 34,
+   "node": "Material3",
+   "triangles": 143,
+   "size": [
+    4263.98,
+    3557.09,
+    3375.18
+   ]
+  },
+  {
+   "index": 35,
+   "node": "Material3",
+   "triangles": 818,
+   "size": [
+    33401.43,
+    3557.09,
+    17313.87
+   ]
+  },
+  {
+   "index": 36,
+   "node": "Material3",
+   "triangles": 114,
+   "size": [
+    1601.81,
+    4404.57,
+    3100.85
+   ]
+  },
+  {
+   "index": 37,
+   "node": "Material3",
+   "triangles": 76,
+   "size": [
+    1745.25,
+    4744.09,
+    2264.91
+   ]
+  },
+  {
+   "index": 38,
+   "node": "Material3",
+   "triangles": 43,
+   "size": [
+    2588.58,
+    2632.78,
+    1089.65
+   ]
+  },
+  {
+   "index": 39,
+   "node": "Material3",
+   "triangles": 34,
+   "size": [
+    10108.91,
+    829.04,
+    9427.31
+   ]
+  },
+  {
+   "index": 40,
+   "node": "Material3",
+   "triangles": 12,
+   "size": [
+    2685.43,
+    2536.22,
+    1504.73
+   ]
+  },
+  {
+   "index": 41,
+   "node": "Material3",
+   "triangles": 14,
+   "size": [
+    871.98,
+    1783.5,
+    2603.16
+   ]
+  },
+  {
+   "index": 42,
+   "node": "Material3",
+   "triangles": 106,
+   "size": [
+    4430.33,
+    842.23,
+    7901.18
+   ]
+  },
+  {
+   "index": 43,
+   "node": "Material3",
+   "triangles": 63,
+   "size": [
+    1225.76,
+    3535.04,
+    3450.74
+   ]
+  },
+  {
+   "index": 44,
+   "node": "Material3",
+   "triangles": 24,
+   "size": [
+    1966.78,
+    3623.29,
+    3175.95
+   ]
+  },
+  {
+   "index": 45,
+   "node": "Material3",
+   "triangles": 160,
+   "size": [
+    2248.24,
+    5409.32,
+    2701.3
+   ]
+  },
+  {
+   "index": 46,
+   "node": "Material3",
+   "triangles": 185,
+   "size": [
+    2414.98,
+    7909.37,
+    4527.9
+   ]
+  },
+  {
+   "index": 47,
+   "node": "Material3",
+   "triangles": 14,
+   "size": [
+    1463.52,
+    2372.83,
+    2007.68
+   ]
+  },
+  {
+   "index": 48,
+   "node": "Material3",
+   "triangles": 34,
+   "size": [
+    3816.53,
+    1811.5,
+    1782.29
+   ]
+  },
+  {
+   "index": 49,
+   "node": "Material3",
+   "triangles": 57,
+   "size": [
+    1634.14,
+    2568.11,
+    3503.54
+   ]
+  },
+  {
+   "index": 50,
+   "node": "Material3",
+   "triangles": 112,
+   "size": [
+    2293.95,
+    7514.09,
+    3818.48
+   ]
+  },
+  {
+   "index": 51,
+   "node": "Material3",
+   "triangles": 38,
+   "size": [
+    1185.04,
+    3356.53,
+    2819.5
+   ]
+  },
+  {
+   "index": 52,
+   "node": "Material3",
+   "triangles": 66,
+   "size": [
+    3766.2,
+    2278.59,
+    4343.89
+   ]
+  },
+  {
+   "index": 53,
+   "node": "Material3",
+   "triangles": 26,
+   "size": [
+    2356.31,
+    2245.67,
+    1759.93
+   ]
+  },
+  {
+   "index": 54,
+   "node": "Material3",
+   "triangles": 27,
+   "size": [
+    3759.56,
+    5489.37,
+    1626.6
+   ]
+  },
+  {
+   "index": 55,
+   "node": "Material3",
+   "triangles": 67,
+   "size": [
+    4838.99,
+    5401.58,
+    1576.3
+   ]
+  },
+  {
+   "index": 56,
+   "node": "Material3",
+   "triangles": 135,
+   "size": [
+    2838.49,
+    948.24,
+    2713.53
+   ]
+  },
+  {
+   "index": 57,
+   "node": "Material3",
+   "triangles": 174,
+   "size": [
+    5674.47,
+    1378.62,
+    4946.41
+   ]
+  },
+  {
+   "index": 58,
+   "node": "Material3",
+   "triangles": 82,
+   "size": [
+    4804.83,
+    1615.0,
+    5387.54
+   ]
+  },
+  {
+   "index": 59,
+   "node": "Material3",
+   "triangles": 490,
+   "size": [
+    7087.2,
+    1152.36,
+    9885.08
+   ]
+  },
+  {
+   "index": 60,
+   "node": "Material2",
+   "triangles": 420,
+   "size": [
+    10338.71,
+    940.55,
+    9738.44
+   ]
+  },
+  {
+   "index": 61,
+   "node": "Material2",
+   "triangles": 178,
+   "size": [
+    7404.23,
+    783.86,
+    6056.09
+   ]
+  },
+  {
+   "index": 62,
+   "node": "Material3",
+   "triangles": 52,
+   "size": [
+    9202.13,
+    687.34,
+    8642.33
+   ]
+  },
+  {
+   "index": 63,
+   "node": "Material3",
+   "triangles": 544,
+   "size": [
+    9201.47,
+    988.43,
+    3734.43
+   ]
+  },
+  {
+   "index": 64,
+   "node": "Material3",
+   "triangles": 89,
+   "size": [
+    9202.13,
+    543.01,
+    7974.41
+   ]
+  },
+  {
+   "index": 65,
+   "node": "Material3",
+   "triangles": 54,
+   "size": [
+    2483.9,
+    3072.83,
+    1630.81
+   ]
+  },
+  {
+   "index": 66,
+   "node": "Material3",
+   "triangles": 31,
+   "size": [
+    2069.47,
+    2410.4,
+    2030.27
+   ]
+  },
+  {
+   "index": 67,
+   "node": "Material2",
+   "triangles": 13,
+   "size": [
+    1783.45,
+    2963.48,
+    2270.34
+   ]
+  },
+  {
+   "index": 68,
+   "node": "Material3",
+   "triangles": 22,
+   "size": [
+    4500.2,
+    1036.23,
+    3746.65
+   ]
+  },
+  {
+   "index": 69,
+   "node": "Material3",
+   "triangles": 41,
+   "size": [
+    5516.13,
+    2889.22,
+    1815.08
+   ]
+  },
+  {
+   "index": 70,
+   "node": "Material2",
+   "triangles": 91,
+   "size": [
+    4050.0,
+    1758.48,
+    1792.91
+   ]
+  },
+  {
+   "index": 71,
+   "node": "Material3",
+   "triangles": 8,
+   "size": [
+    1531.28,
+    1850.29,
+    4397.89
+   ]
+  },
+  {
+   "index": 72,
+   "node": "Material3",
+   "triangles": 20,
+   "size": [
+    1716.27,
+    3844.45,
+    1380.48
+   ]
+  },
+  {
+   "index": 73,
+   "node": "Material3",
+   "triangles": 20,
+   "size": [
+    3306.95,
+    2233.86,
+    1977.16
+   ]
+  },
+  {
+   "index": 74,
+   "node": "Material3",
+   "triangles": 150,
+   "size": [
+    2802.79,
+    5059.59,
+    2125.2
+   ]
+  },
+  {
+   "index": 75,
+   "node": "Material3",
+   "triangles": 17,
+   "size": [
+    880.99,
+    1887.01,
+    1952.46
+   ]
+  },
+  {
+   "index": 76,
+   "node": "Material3",
+   "triangles": 107,
+   "size": [
+    1775.44,
+    2963.3,
+    2736.35
+   ]
+  },
+  {
+   "index": 77,
+   "node": "Material3",
+   "triangles": 24,
+   "size": [
+    2531.89,
+    929.37,
+    3846.06
+   ]
+  },
+  {
+   "index": 78,
+   "node": "Material3",
+   "triangles": 354,
+   "size": [
+    6226.42,
+    1829.5,
+    3828.86
+   ]
+  },
+  {
+   "index": 79,
+   "node": "Material3",
+   "triangles": 19,
+   "size": [
+    3479.42,
+    1121.6,
+    1577.08
+   ]
+  },
+  {
+   "index": 80,
+   "node": "Material3",
+   "triangles": 27,
+   "size": [
+    2043.52,
+    2213.45,
+    1214.6
+   ]
+  },
+  {
+   "index": 81,
+   "node": "Material3",
+   "triangles": 8,
+   "size": [
+    3254.07,
+    1023.09,
+    564.96
+   ]
+  },
+  {
+   "index": 82,
+   "node": "Material3",
+   "triangles": 86,
+   "size": [
+    2725.64,
+    5556.04,
+    1937.36
+   ]
+  },
+  {
+   "index": 83,
+   "node": "Material3",
+   "triangles": 127,
+   "size": [
+    5281.11,
+    2746.06,
+    3295.67
+   ]
+  },
+  {
+   "index": 84,
+   "node": "Material3",
+   "triangles": 8,
+   "size": [
+    3410.11,
+    1482.28,
+    3410.1
+   ]
+  },
+  {
+   "index": 85,
+   "node": "Material3",
+   "triangles": 82,
+   "size": [
+    1713.63,
+    4297.31,
+    2567.72
+   ]
+  },
+  {
+   "index": 86,
+   "node": "Material3",
+   "triangles": 53,
+   "size": [
+    2272.91,
+    1006.68,
+    4450.21
+   ]
+  },
+  {
+   "index": 87,
+   "node": "Material2",
+   "triangles": 112,
+   "size": [
+    2561.71,
+    2025.6,
+    1819.66
+   ]
+  },
+  {
+   "index": 88,
+   "node": "Material3",
+   "triangles": 121,
+   "size": [
+    4499.43,
+    1304.52,
+    4558.53
+   ]
+  },
+  {
+   "index": 89,
+   "node": "Material3",
+   "triangles": 30,
+   "size": [
+    2267.79,
+    2167.78,
+    2852.66
+   ]
+  },
+  {
+   "index": 90,
+   "node": "Material3",
+   "triangles": 42,
+   "size": [
+    4112.83,
+    2065.5,
+    3892.78
+   ]
+  },
+  {
+   "index": 91,
+   "node": "Material3",
+   "triangles": 17,
+   "size": [
+    5472.83,
+    672.05,
+    1021.26
+   ]
+  },
+  {
+   "index": 92,
+   "node": "Material3",
+   "triangles": 19,
+   "size": [
+    917.89,
+    1939.91,
+    2766.17
+   ]
+  },
+  {
+   "index": 93,
+   "node": "Material3",
+   "triangles": 59,
+   "size": [
+    5437.8,
+    887.7,
+    4327.07
+   ]
+  },
+  {
+   "index": 94,
+   "node": "Material3",
+   "triangles": 68,
+   "size": [
+    3701.11,
+    921.02,
+    3800.52
+   ]
+  },
+  {
+   "index": 95,
+   "node": "Material3",
+   "triangles": 38,
+   "size": [
+    2349.22,
+    1045.3,
+    3669.6
+   ]
+  },
+  {
+   "index": 96,
+   "node": "Material3",
+   "triangles": 42,
+   "size": [
+    2919.68,
+    877.17,
+    1548.42
+   ]
+  },
+  {
+   "index": 97,
+   "node": "Material3",
+   "triangles": 34,
+   "size": [
+    1509.06,
+    1215.86,
+    2938.93
+   ]
+  },
+  {
+   "index": 98,
+   "node": "Material3",
+   "triangles": 52,
+   "size": [
+    4395.52,
+    1041.81,
+    3686.41
+   ]
+  },
+  {
+   "index": 101,
+   "node": "Material3",
+   "triangles": 1701,
+   "size": [
+    65427.32,
+    6155.51,
+    46168.46
+   ]
+  },
+  {
+   "index": 102,
+   "node": "Material2",
+   "triangles": 10371,
+   "size": [
+    66005.47,
+    10570.07,
+    42766.84
+   ]
+  },
+  {
+   "index": 103,
+   "node": "Material3",
+   "triangles": 1411,
+   "size": [
+    63737.03,
+    1654.36,
+    45829.6
+   ]
+  }
+ ]
+}

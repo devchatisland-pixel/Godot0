@@ -1,0 +1,205 @@
+{
+ "source": "low_poly_accommodations_buildings.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "PublicBuilding_1",
+   "triangles": 18606,
+   "size": [
+    6.9,
+    10.09,
+    6.67
+   ]
+  },
+  {
+   "index": 1,
+   "node": "PublicBuilding_2",
+   "triangles": 12842,
+   "size": [
+    7.51,
+    9.67,
+    9.92
+   ]
+  },
+  {
+   "index": 2,
+   "node": "PublicBuilding_3",
+   "triangles": 4420,
+   "size": [
+    3.68,
+    3.39,
+    3.69
+   ]
+  },
+  {
+   "index": 3,
+   "node": "PublicBuilding_4",
+   "triangles": 4177,
+   "size": [
+    2.93,
+    3.44,
+    4.97
+   ]
+  },
+  {
+   "index": 4,
+   "node": "PublicBuilding_5",
+   "triangles": 4140,
+   "size": [
+    3.68,
+    2.66,
+    4.81
+   ]
+  },
+  {
+   "index": 5,
+   "node": "PublicBuilding_6",
+   "triangles": 4056,
+   "size": [
+    2.74,
+    3.23,
+    4.16
+   ]
+  },
+  {
+   "index": 6,
+   "node": "PublicBuilding_7",
+   "triangles": 4335,
+   "size": [
+    3.24,
+    3.09,
+    4.79
+   ]
+  },
+  {
+   "index": 7,
+   "node": "PublicBuilding_8",
+   "triangles": 4868,
+   "size": [
+    5.74,
+    6.72,
+    5.48
+   ]
+  },
+  {
+   "index": 8,
+   "node": "PublicBuilding_9",
+   "triangles": 19427,
+   "size": [
+    3.51,
+    7.21,
+    6.86
+   ]
+  },
+  {
+   "index": 9,
+   "node": "PublicBuilding_10",
+   "triangles": 16094,
+   "size": [
+    4.32,
+    6.93,
+    7.56
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Collider_1",
+   "triangles": 364,
+   "size": [
+    6.9,
+    10.1,
+    6.67
+   ]
+  },
+  {
+   "index": 11,
+   "node": "Collider_2",
+   "triangles": 556,
+   "size": [
+    7.51,
+    9.67,
+    9.92
+   ]
+  },
+  {
+   "index": 12,
+   "node": "Collider_3",
+   "triangles": 272,
+   "size": [
+    3.69,
+    3.39,
+    3.71
+   ]
+  },
+  {
+   "index": 13,
+   "node": "Collider_4",
+   "triangles": 326,
+   "size": [
+    2.93,
+    3.44,
+    4.97
+   ]
+  },
+  {
+   "index": 14,
+   "node": "Collider_5",
+   "triangles": 202,
+   "size": [
+    3.69,
+    2.66,
+    4.95
+   ]
+  },
+  {
+   "index": 15,
+   "node": "Collider_8",
+   "triangles": 860,
+   "size": [
+    5.73,
+    6.73,
+    5.48
+   ]
+  },
+  {
+   "index": 16,
+   "node": "Collider_10",
+   "triangles": 456,
+   "size": [
+    4.22,
+    6.93,
+    7.35
+   ]
+  },
+  {
+   "index": 17,
+   "node": "Collider_6",
+   "triangles": 222,
+   "size": [
+    2.79,
+    3.23,
+    4.17
+   ]
+  },
+  {
+   "index": 18,
+   "node": "Collider_9",
+   "triangles": 574,
+   "size": [
+    3.51,
+    7.21,
+    6.85
+   ]
+  },
+  {
+   "index": 19,
+   "node": "Collider_7",
+   "triangles": 407,
+   "size": [
+    3.24,
+    3.1,
+    4.8
+   ]
+  }
+ ]
+}

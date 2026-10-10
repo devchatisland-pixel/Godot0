@@ -1,0 +1,75 @@
+{
+ "source": "city_buildings_-_blackthornprod_video.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "Cube",
+   "triangles": 60,
+   "size": [
+    39.94,
+    125.02,
+    41.18
+   ]
+  },
+  {
+   "index": 1,
+   "node": "Cube.001",
+   "triangles": 512,
+   "size": [
+    60.69,
+    234.52,
+    60.07
+   ]
+  },
+  {
+   "index": 2,
+   "node": "Cube.002",
+   "triangles": 632,
+   "size": [
+    60.69,
+    234.52,
+    63.64
+   ]
+  },
+  {
+   "index": 3,
+   "node": "Cube.003",
+   "triangles": 612,
+   "size": [
+    60.69,
+    270.62,
+    75.38
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Cube.004",
+   "triangles": 128,
+   "size": [
+    148.9,
+    140.11,
+    60.07
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Cube.005",
+   "triangles": 140,
+   "size": [
+    148.9,
+    185.07,
+    60.07
+   ]
+  },
+  {
+   "index": 6,
+   "node": "Cube.006",
+   "triangles": 564,
+   "size": [
+    81.35,
+    234.52,
+    165.07
+   ]
+  }
+ ]
+}

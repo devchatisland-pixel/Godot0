@@ -1,0 +1,105 @@
+{
+ "source": "buildings.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "Building_03",
+   "triangles": 256,
+   "size": [
+    23.19,
+    18.8,
+    17.15
+   ]
+  },
+  {
+   "index": 1,
+   "node": "Building_01",
+   "triangles": 162,
+   "size": [
+    34.05,
+    23.55,
+    19.51
+   ]
+  },
+  {
+   "index": 2,
+   "node": "Building",
+   "triangles": 196,
+   "size": [
+    28.18,
+    19.6,
+    19.43
+   ]
+  },
+  {
+   "index": 3,
+   "node": "Building_02",
+   "triangles": 546,
+   "size": [
+    40.8,
+    26.34,
+    22.88
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Building_04",
+   "triangles": 162,
+   "size": [
+    25.49,
+    18.56,
+    18.15
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Building_09",
+   "triangles": 236,
+   "size": [
+    16.89,
+    11.89,
+    13.86
+   ]
+  },
+  {
+   "index": 6,
+   "node": "Building_05",
+   "triangles": 360,
+   "size": [
+    29.79,
+    18.82,
+    19.1
+   ]
+  },
+  {
+   "index": 7,
+   "node": "Building_07",
+   "triangles": 220,
+   "size": [
+    24.88,
+    14.8,
+    16.24
+   ]
+  },
+  {
+   "index": 8,
+   "node": "Building_08",
+   "triangles": 126,
+   "size": [
+    15.52,
+    12.97,
+    13.95
+   ]
+  },
+  {
+   "index": 9,
+   "node": "Building_06",
+   "triangles": 204,
+   "size": [
+    33.45,
+    14.47,
+    18.67
+   ]
+  }
+ ]
+}

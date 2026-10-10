@@ -1,0 +1,945 @@
+{
+ "source": "buildings_pack.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-_0",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 1,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd_1",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 2,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.001_2",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 3,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.002_3",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Cube_4",
+   "triangles": 28,
+   "size": [
+    1.01,
+    0.03,
+    1.02
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Cube.001_5",
+   "triangles": 12,
+   "size": [
+    1.01,
+    0.01,
+    1.02
+   ]
+  },
+  {
+   "index": 6,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.003_6",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 7,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.004_7",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 8,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.005_8",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 9,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.006_9",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Cube.002_10",
+   "triangles": 28,
+   "size": [
+    1.01,
+    0.03,
+    1.02
+   ]
+  },
+  {
+   "index": 11,
+   "node": "Cube.003_11",
+   "triangles": 12,
+   "size": [
+    1.01,
+    0.01,
+    1.02
+   ]
+  },
+  {
+   "index": 12,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.007_12",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 13,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.008_13",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 14,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.009_14",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 15,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.010_15",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 16,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.011_16",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 17,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.012_17",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 18,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.013_18",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 19,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.014_19",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 20,
+   "node": "Cube.004_20",
+   "triangles": 28,
+   "size": [
+    1.01,
+    0.03,
+    1.02
+   ]
+  },
+  {
+   "index": 21,
+   "node": "Cube.005_21",
+   "triangles": 12,
+   "size": [
+    1.01,
+    0.01,
+    1.02
+   ]
+  },
+  {
+   "index": 22,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.015_22",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 23,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.016_23",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 24,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.017_24",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 25,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.018_25",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 26,
+   "node": "Cube.006_26",
+   "triangles": 28,
+   "size": [
+    1.01,
+    0.03,
+    1.02
+   ]
+  },
+  {
+   "index": 27,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.019_27",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 28,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.020_28",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 29,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.021_29",
+   "triangles": 1402,
+   "size": [
+    0.01,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "index": 30,
+   "node": "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd-\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd.022_30",
+   "triangles": 1402,
+   "size": [
+    1.0,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 31,
+   "node": "Cube.007_31",
+   "triangles": 28,
+   "size": [
+    1.01,
+    0.03,
+    1.02
+   ]
+  },
+  {
+   "index": 32,
+   "node": "Cube.008_32",
+   "triangles": 28,
+   "size": [
+    1.01,
+    0.03,
+    1.02
+   ]
+  },
+  {
+   "index": 33,
+   "node": "buildingshighrise0494-9-l_33",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 34,
+   "node": "buildingshighrise0494-9-l.001_34",
+   "triangles": 316,
+   "size": [
+    0.0,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 35,
+   "node": "buildingshighrise0494-9-l.002_35",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 36,
+   "node": "buildingshighrise0494-9-l.003_36",
+   "triangles": 316,
+   "size": [
+    0.01,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 37,
+   "node": "Cube.009_37",
+   "triangles": 28,
+   "size": [
+    0.96,
+    0.03,
+    0.97
+   ]
+  },
+  {
+   "index": 38,
+   "node": "Cube.010_38",
+   "triangles": 28,
+   "size": [
+    0.94,
+    0.02,
+    0.95
+   ]
+  },
+  {
+   "index": 39,
+   "node": "buildingshighrise0494-9-l.004_39",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 40,
+   "node": "buildingshighrise0494-9-l.005_40",
+   "triangles": 316,
+   "size": [
+    0.0,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 41,
+   "node": "buildingshighrise0494-9-l.006_41",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 42,
+   "node": "buildingshighrise0494-9-l.007_42",
+   "triangles": 316,
+   "size": [
+    0.01,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 43,
+   "node": "Cube.011_43",
+   "triangles": 28,
+   "size": [
+    0.96,
+    0.03,
+    0.97
+   ]
+  },
+  {
+   "index": 44,
+   "node": "Cube.012_44",
+   "triangles": 28,
+   "size": [
+    0.94,
+    0.02,
+    0.95
+   ]
+  },
+  {
+   "index": 45,
+   "node": "buildingshighrise0494-9-l.008_45",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 46,
+   "node": "buildingshighrise0494-9-l.009_46",
+   "triangles": 316,
+   "size": [
+    0.0,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 47,
+   "node": "buildingshighrise0494-9-l.010_47",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 48,
+   "node": "buildingshighrise0494-9-l.011_48",
+   "triangles": 316,
+   "size": [
+    0.01,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 49,
+   "node": "Cube.013_49",
+   "triangles": 28,
+   "size": [
+    0.96,
+    0.03,
+    0.97
+   ]
+  },
+  {
+   "index": 50,
+   "node": "buildingshighrise0494-9-l.012_50",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 51,
+   "node": "buildingshighrise0494-9-l.013_51",
+   "triangles": 316,
+   "size": [
+    0.0,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 52,
+   "node": "buildingshighrise0494-9-l.014_52",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 53,
+   "node": "buildingshighrise0494-9-l.015_53",
+   "triangles": 316,
+   "size": [
+    0.01,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 54,
+   "node": "Cube.014_54",
+   "triangles": 28,
+   "size": [
+    0.96,
+    0.03,
+    0.97
+   ]
+  },
+  {
+   "index": 55,
+   "node": "Cube.015_55",
+   "triangles": 28,
+   "size": [
+    0.94,
+    0.02,
+    0.95
+   ]
+  },
+  {
+   "index": 56,
+   "node": "buildingshighrise0494-9-l.016_56",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 57,
+   "node": "buildingshighrise0494-9-l.017_57",
+   "triangles": 316,
+   "size": [
+    0.0,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 58,
+   "node": "buildingshighrise0494-9-l.018_58",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 59,
+   "node": "buildingshighrise0494-9-l.019_59",
+   "triangles": 316,
+   "size": [
+    0.01,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 60,
+   "node": "Cube.016_60",
+   "triangles": 28,
+   "size": [
+    0.96,
+    0.03,
+    0.97
+   ]
+  },
+  {
+   "index": 61,
+   "node": "buildingshighrise0494-9-l.020_61",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.02
+   ]
+  },
+  {
+   "index": 62,
+   "node": "buildingshighrise0494-9-l.021_62",
+   "triangles": 316,
+   "size": [
+    0.0,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 63,
+   "node": "buildingshighrise0494-9-l.022_63",
+   "triangles": 316,
+   "size": [
+    0.94,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 64,
+   "node": "buildingshighrise0494-9-l.023_64",
+   "triangles": 316,
+   "size": [
+    0.01,
+    1.0,
+    0.94
+   ]
+  },
+  {
+   "index": 65,
+   "node": "Cube.017_65",
+   "triangles": 28,
+   "size": [
+    0.96,
+    0.03,
+    0.97
+   ]
+  },
+  {
+   "index": 66,
+   "node": "BuildingsHighRise0308_2_download600_66",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 67,
+   "node": "BuildingsHighRise0308_2_download600.001_67",
+   "triangles": 514,
+   "size": [
+    0.02,
+    1.0,
+    1.8
+   ]
+  },
+  {
+   "index": 68,
+   "node": "BuildingsHighRise0308_2_download600.002_68",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.03
+   ]
+  },
+  {
+   "index": 69,
+   "node": "BuildingsHighRise0308_2_download600.003_69",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 70,
+   "node": "BuildingsHighRise0308_2_download600.004_70",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.03
+   ]
+  },
+  {
+   "index": 71,
+   "node": "BuildingsHighRise0308_2_download600.005_71",
+   "triangles": 514,
+   "size": [
+    0.02,
+    1.0,
+    1.84
+   ]
+  },
+  {
+   "index": 72,
+   "node": "Cube.018_72",
+   "triangles": 28,
+   "size": [
+    3.67,
+    0.03,
+    1.88
+   ]
+  },
+  {
+   "index": 73,
+   "node": "Cube.019_73",
+   "triangles": 28,
+   "size": [
+    3.67,
+    0.03,
+    1.86
+   ]
+  },
+  {
+   "index": 74,
+   "node": "BuildingsHighRise0308_2_download600.006_74",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.03
+   ]
+  },
+  {
+   "index": 75,
+   "node": "BuildingsHighRise0308_2_download600.007_75",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 76,
+   "node": "BuildingsHighRise0308_2_download600.008_76",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.03
+   ]
+  },
+  {
+   "index": 77,
+   "node": "BuildingsHighRise0308_2_download600.009_77",
+   "triangles": 514,
+   "size": [
+    0.02,
+    1.0,
+    1.84
+   ]
+  },
+  {
+   "index": 78,
+   "node": "Cube.020_78",
+   "triangles": 28,
+   "size": [
+    3.67,
+    0.03,
+    1.86
+   ]
+  },
+  {
+   "index": 79,
+   "node": "Cube.021_79",
+   "triangles": 28,
+   "size": [
+    3.67,
+    0.03,
+    1.86
+   ]
+  },
+  {
+   "index": 80,
+   "node": "BuildingsHighRise0308_2_download600.010_80",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.03
+   ]
+  },
+  {
+   "index": 81,
+   "node": "BuildingsHighRise0308_2_download600.011_81",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 82,
+   "node": "BuildingsHighRise0308_2_download600.012_82",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.03
+   ]
+  },
+  {
+   "index": 83,
+   "node": "BuildingsHighRise0308_2_download600.013_83",
+   "triangles": 514,
+   "size": [
+    0.02,
+    1.0,
+    1.84
+   ]
+  },
+  {
+   "index": 84,
+   "node": "Cube.022_84",
+   "triangles": 28,
+   "size": [
+    3.67,
+    0.03,
+    1.86
+   ]
+  },
+  {
+   "index": 85,
+   "node": "BuildingsHighRise0308_2_download600.014_85",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 86,
+   "node": "BuildingsHighRise0308_2_download600.015_86",
+   "triangles": 514,
+   "size": [
+    0.02,
+    1.0,
+    1.8
+   ]
+  },
+  {
+   "index": 87,
+   "node": "BuildingsHighRise0308_2_download600.016_87",
+   "triangles": 514,
+   "size": [
+    1.8,
+    1.0,
+    0.01
+   ]
+  },
+  {
+   "index": 88,
+   "node": "BuildingsHighRise0308_2_download600.017_88",
+   "triangles": 514,
+   "size": [
+    0.02,
+    1.0,
+    1.8
+   ]
+  },
+  {
+   "index": 89,
+   "node": "Cube.023_89",
+   "triangles": 20,
+   "size": [
+    0.26,
+    3.45,
+    0.26
+   ]
+  },
+  {
+   "index": 90,
+   "node": "Cube.024_90",
+   "triangles": 13,
+   "size": [
+    2.73,
+    0.18,
+    2.39
+   ]
+  },
+  {
+   "index": 91,
+   "node": "Cube.025_91",
+   "triangles": 32,
+   "size": [
+    1.27,
+    0.03,
+    1.14
+   ]
+  },
+  {
+   "index": 92,
+   "node": "Cube.026_92",
+   "triangles": 38,
+   "size": [
+    0.5,
+    0.35,
+    0.5
+   ]
+  },
+  {
+   "index": 93,
+   "node": "Plane_93",
+   "triangles": 8,
+   "size": [
+    3.69,
+    0.52,
+    3.22
+   ]
+  }
+ ]
+}

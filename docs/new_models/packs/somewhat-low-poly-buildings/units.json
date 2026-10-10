@@ -1,0 +1,115 @@
+{
+ "source": "somewhat_low-poly_buildings.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "Object_2",
+   "triangles": 584,
+   "size": [
+    514.05,
+    5.34,
+    730.74
+   ]
+  },
+  {
+   "index": 1,
+   "node": "Object_3",
+   "triangles": 1686,
+   "size": [
+    133.88,
+    116.39,
+    93.7
+   ]
+  },
+  {
+   "index": 2,
+   "node": "Object_4",
+   "triangles": 4170,
+   "size": [
+    176.89,
+    129.82,
+    93.7
+   ]
+  },
+  {
+   "index": 3,
+   "node": "Object_5",
+   "triangles": 2572,
+   "size": [
+    39.26,
+    138.06,
+    36.25
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Object_6",
+   "triangles": 1040,
+   "size": [
+    39.26,
+    108.01,
+    36.25
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Object_7",
+   "triangles": 2170,
+   "size": [
+    39.26,
+    123.08,
+    36.25
+   ]
+  },
+  {
+   "index": 6,
+   "node": "Object_8",
+   "triangles": 1332,
+   "size": [
+    51.34,
+    55.99,
+    72.75
+   ]
+  },
+  {
+   "index": 7,
+   "node": "Object_9",
+   "triangles": 124,
+   "size": [
+    69.26,
+    80.65,
+    66.22
+   ]
+  },
+  {
+   "index": 8,
+   "node": "Object_10",
+   "triangles": 36062,
+   "size": [
+    468.12,
+    216.84,
+    245.47
+   ]
+  },
+  {
+   "index": 9,
+   "node": "Object_11",
+   "triangles": 11011,
+   "size": [
+    455.33,
+    216.84,
+    172.91
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Object_12",
+   "triangles": 214,
+   "size": [
+    3.54,
+    7.8,
+    0.77
+   ]
+  }
+ ]
+}
