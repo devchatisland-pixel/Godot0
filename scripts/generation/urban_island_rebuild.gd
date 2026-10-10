@@ -6,8 +6,8 @@ extends RefCounted
 ##   - everything the planners put on the island is taken away (towers, yards and containers,
 ##     industry, the cooling hall, the fire truck, the billboard, the bus stops), and so are its
 ##     streets and the fence round the plant: the towers stand too close for any of that;
-##   - the two plants get the same size and one is turned half a turn (facing 2 and facing 0),
-##     side by side, where as few cells as possible lie on their line of sight to the camera;
+##   - the two plants get the same size and both show the same face (facing 2, south), where
+##     as few cells as possible lie on their line of sight to the camera;
 ##   - the land that is left is tiled with futuristic towers (FUTURE_BLDG) without a gap, but
 ##     for a short landing for the metal bridge. On the line of sight of a plant the towers
 ##     rise like the seats of a stadium: no tower is taller than what the camera (30 degrees
@@ -174,17 +174,23 @@ static func _sight_cells(r: Rect2i, cells: Array[Vector2i]) -> int:
 
 
 ## Gives both plants the same lot and puts them where few land cells lie in their way to the
-## camera. Returns the two lots; the first plant keeps the facing it had, the second is turned
-## half a turn.
+## camera. Returns the two lots; both plants face south.
 static func _place_plants(data: CityData, land: PackedByteArray, cells: Array[Vector2i],
 		plants: Array[int]) -> Array[Rect2i]:
 	var lobe := MapLayout.blob("urban_north")
 	var at: Vector2 = lobe["at"]
 	var reach: Vector2 = lobe["r"]
-	var first := _best_spot(data, land, cells, int(at.y - reach.y), int(at.y + reach.y), [], Vector2i(-1, -1))
+	# The lobe first; the whole island when the lobe has no room for both.
+	var first := Rect2i()
+	var second := Rect2i()
+	for rows: Vector2i in [Vector2i(int(at.y - reach.y), int(at.y + reach.y)), Vector2i(1, data.size - 1)]:
+		first = _best_spot(data, land, cells, rows.x, rows.y, [], Vector2i(-1, -1))
+		if first.size.x > 0:
+			second = _best_spot(data, land, cells, rows.x, rows.y, [first], first.position)
+		if second.size.x > 0:
+			break
 	if first.size.x <= 0:
 		return []
-	var second := _best_spot(data, land, cells, int(at.y - reach.y), int(at.y + reach.y), [first], first.position)
 	# The plants of the planners are reused (their numbers stay); missing ones are added.
 	while plants.size() < 2:
 		plants.append(data.add_building(Rect2i(), Kind.NUCLEAR_PLANT, 2, 0, 0.5))
@@ -196,7 +202,7 @@ static func _place_plants(data: CityData, land: PackedByteArray, cells: Array[Ve
 			data.b_kind[b] = Kind.EMPTY
 			continue
 		data.set_building_rect(b, spots[n])
-		data.b_facing[b] = 2 if n == 0 else 0
+		data.b_facing[b] = 2
 		data.b_seed[b] = seed
 		data.b_scale[b] = 1.0
 		data.b_height[b] = 0.5

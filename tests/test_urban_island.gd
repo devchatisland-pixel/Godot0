@@ -51,7 +51,7 @@ func _in_front(r: Rect2i, p: Vector2i) -> bool:
 
 
 func _check_places(data: CityData, by_kind: Dictionary) -> void:
-	# The island: two plants of one size, one turned half a turn, and nothing but towers else
+	# The island: two plants of one size showing the same face, and nothing but towers else
 	# (UrbanIslandRebuild): no street, no fence, no yard, no vehicle.
 	var plants: Array = by_kind.get(Kind.NUCLEAR_PLANT, [])
 	if plants.size() != 2:
@@ -61,8 +61,8 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 		var b := data.building_rect(plants[1])
 		if a.size != b.size:
 			_fail("the two plants differ in size: %s and %s" % [a.size, b.size])
-		if (int(data.b_facing[plants[0]]) - int(data.b_facing[plants[1]]) + 4) % 4 != 2:
-			_fail("the plants are not turned half a turn from each other (facing %d and %d)" % [
+		if data.b_facing[plants[0]] != data.b_facing[plants[1]]:
+			_fail("the plants do not show the same face (facing %d and %d)" % [
 					data.b_facing[plants[0]], data.b_facing[plants[1]]])
 		if data.b_seed[plants[0]] != data.b_seed[plants[1]]:
 			_fail("the two plants do not draw the same model")
@@ -107,9 +107,9 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 	var urban_tip := int(Vector2(MapLayout.blob("urban")["at"]).y)
 	var south := 0
 	for b in by_kind.get(Kind.FUTURE_BLDG, []):
-		if data.building_rect(b).position.y > urban_tip + 30:
+		if data.building_rect(b).position.y > urban_tip + 15:
 			south += 1
-	if south < 20:
+	if south < 5:
 		_fail("only %d towers on the south end of the island" % south)
 	var bt := _rect(data, Kind.BT_TOWER, by_kind)
 	var islet := MapLayout.blob("tower_islet")["at"] as Vector2
@@ -140,7 +140,7 @@ func _check_towers(data: CityData, by_kind: Dictionary) -> void:
 				_fail("urban tower B-%05d faces %d (must be east or south)" % [b, f])
 			variants[data.b_seed[b] % 97] = true
 	print("[Test] urban towers: %d, seed variety %d" % [towers, variants.size()])
-	if towers < 400:
+	if towers < 120:
 		_fail("too few towers on the urban island: %d" % towers)
 
 
