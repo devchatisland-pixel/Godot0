@@ -89,9 +89,6 @@ const CELLS := {
 	# Rows tried for the west highway (from, to).
 	"west_highway_from": 112,
 	"west_highway_to": 156,
-	# The yards round the nuclear plant that get the fence: rows (from, to) and columns below.
-	"plant_yard_from": 84,
-	"plant_yard_to": 108,
 	# South end of the urban island checked by the tests.
 	"urban_south_end": 215,
 }
@@ -156,6 +153,21 @@ static func block_limits(v: Vector2i) -> Vector2i:
 ## then clears the surplus.
 static func lot_range(v: Vector2i) -> Vector2i:
 	return Vector2i(maxi(1, roundi(float(v.x) * scale)), maxi(1, roundi(float(v.y) * scale)))
+
+
+## True when the cell lies on the urban island (its two ellipses, as ExtensionIsland draws it:
+## the coast is the same, the sea round it within 15 % of the radius counts as well).
+static func on_urban_island(cell: Vector2i) -> bool:
+	if cell.x >= cells("urban_columns"):
+		return false
+	var p := Vector2(cell) + Vector2(0.5, 0.5)
+	for name in ["urban", "urban_north"]:
+		var b := blob(name)
+		var d := p - (b["at"] as Vector2)
+		var r := b["r"] as Vector2
+		if Vector2(d.x / r.x, d.y / r.y).length() < 1.15:
+			return true
+	return false
 
 
 ## A cell (or a shift in cells) of the first map on this map.

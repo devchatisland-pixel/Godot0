@@ -1,8 +1,8 @@
 extends SceneTree
-## Checks the urban island, the BT tower islet, the Vegas buildings and the watchtowers.
+## Checks the urban island (two plants and a mass of towers), the BT tower islet, the Vegas
+## buildings and the watchtowers.
 ## Run: godot --headless --script res://tests/test_urban_island.gd
-## Prints a text map of the urban island (A airport, N plant, c cooling, T tower, I industry,
-## H helipad, B BT tower, # road, . land) and exits with an error when a rule is broken.
+## Prints a text map of the urban island (N plant, F futuristic tower, B BT tower, # road, . land) and exits with an error when a rule is broken.
 
 const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
@@ -51,36 +51,66 @@ func _in_front(r: Rect2i, p: Vector2i) -> bool:
 
 
 func _check_places(data: CityData, by_kind: Dictionary) -> void:
-	var airport := _rect(data, Kind.AIRPORT, by_kind)
-	var plant := _rect(data, Kind.NUCLEAR_PLANT, by_kind)
-	# The airport was taken away by hand (ManualEdits.DELETED_KINDS).
-	if plant.size.x == 0:
-		_fail("no nuclear plant")
-	var urban_tip := int(Vector2(MapLayout.blob("urban")["at"]).y)
-	if airport.size.x > 0 and airport.end.y < urban_tip + 38:
-		_fail("airport is not at the south end: rows %d-%d" % [airport.position.y, airport.end.y])
-	if plant.size.x > 0 and plant.get_center().y > MapLayout.cells("nuclear_end"):
-		_fail("plant is not at the north end: centre row %d" % plant.get_center().y)
-	# Nothing in front of the airport; only low industry in front of the plant.
+	# The island: two plants of one size, one turned half a turn, and nothing but towers else
+	# (UrbanIslandRebuild): no street, no fence, no yard, no vehicle.
+	var plants: Array = by_kind.get(Kind.NUCLEAR_PLANT, [])
+	if plants.size() != 2:
+		_fail("expected 2 nuclear plants, found %d" % plants.size())
+	else:
+		var a := data.building_rect(plants[0])
+		var b := data.building_rect(plants[1])
+		if a.size != b.size:
+			_fail("the two plants differ in size: %s and %s" % [a.size, b.size])
+		if (int(data.b_facing[plants[0]]) - int(data.b_facing[plants[1]]) + 4) % 4 != 2:
+			_fail("the plants are not turned half a turn from each other (facing %d and %d)" % [
+					data.b_facing[plants[0]], data.b_facing[plants[1]]])
+		if data.b_seed[plants[0]] != data.b_seed[plants[1]]:
+			_fail("the two plants do not draw the same model")
+		if a.intersects(b):
+			_fail("the plants overlap: %s %s" % [a, b])
+	var on_island := 0
 	for b in data.building_count():
 		var r := data.building_rect(b)
 		var k: int = data.b_kind[b]
-		if r.position.x >= MapLayout.cells("urban_columns") or r.position.y > MapLayout.cells("urban_south_end"):
+		if k == Kind.EMPTY or not MapLayout.on_urban_island(r.get_center()) 				or data.terrain[data.idx(r.get_center().x, r.get_center().y)] != CityTypes.Terrain.LAND:
 			continue
-		if airport.size.x > 0 and k != Kind.AIRPORT and r.position.y <= airport.end.y and _in_front(airport, r.position) \
-				and _in_front(airport, r.end - Vector2i.ONE):
-			_fail("%s (B-%05d) at %s stands in front of the airport" % [CityTypes.Kind.keys()[k], b, r])
-		if plant.size.x > 0 and _in_front(plant, r.get_center()) and [Kind.URBAN_BLDG, Kind.FUTURE_BLDG,
-				Kind.URBAN_CLUSTER, Kind.SKYSCRAPER].has(k):
-			_fail("tower B-%05d at %s stands in front of the plant" % [b, r])
-		if plant.size.x > 0 and r.position.y < MapLayout.cells("nuclear_end") \
-				and r.position.x < MapLayout.cells("urban_columns") \
-				and [Kind.URBAN_BLDG, Kind.FUTURE_BLDG].has(k):
-			_fail("%s B-%05d at %s is in the nuclear rows" % [CityTypes.Kind.keys()[k], b, r])
-	if by_kind.get(Kind.NUCLEAR_PLANT, []).size() < 2:
-		_fail("fewer than 2 nuclear plants")
-	if not by_kind.has(Kind.COOLING_HALL):
-		_fail("no cooling hall")
+		on_island += 1
+		if k != Kind.FUTURE_BLDG and k != Kind.NUCLEAR_PLANT:
+			_fail("%s B-%05d at %s on the urban island: only towers and the plants belong there" % [
+					CityTypes.Kind.keys()[k], b, r])
+		if k == Kind.FUTURE_BLDG:
+			for p in plants:
+				if data.building_rect(p).grow(1).intersects(r):
+					_fail("tower B-%05d at %s touches a plant (%s)" % [b, r, data.building_rect(p)])
+	var roads := 0
+	var fences := 0
+	for y in data.size:
+		for x in MapLayout.cells("urban_columns"):
+			if not MapLayout.on_urban_island(Vector2i(x, y)):
+				continue
+			var i := data.idx(x, y)
+			if data.terrain[i] == CityTypes.Terrain.LAND and data.road[i] != 0:
+				roads += 1
+			if data.deco[i] == AmenitiesPlanner.FENCE_X or data.deco[i] == AmenitiesPlanner.FENCE_Z:
+				fences += 1
+	if roads > 0:
+		_fail("%d road cells on the urban island" % roads)
+	if fences > 0:
+		_fail("%d fence pieces on the urban island" % fences)
+	# No vehicle of the catalog stands on the island.
+	var cars := 0
+	for v in VehicleSites.plan(data):
+		if MapLayout.on_urban_island(Vector2i(v["at"] as Vector2)):
+			cars += 1
+			_fail("vehicle %s (%s) stands on the urban island" % [v["id"], v["why"]])
+	# The south end: the lots are filled, not left empty (the airport is gone).
+	var urban_tip := int(Vector2(MapLayout.blob("urban")["at"]).y)
+	var south := 0
+	for b in by_kind.get(Kind.FUTURE_BLDG, []):
+		if data.building_rect(b).position.y > urban_tip + 30:
+			south += 1
+	if south < 20:
+		_fail("only %d towers on the south end of the island" % south)
 	var bt := _rect(data, Kind.BT_TOWER, by_kind)
 	var islet := MapLayout.blob("tower_islet")["at"] as Vector2
 	var dishes := 0
@@ -95,7 +125,8 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 		_fail("expected 3 satellite dishes round the BT tower, found %d" % dishes)
 	if bt.size.x > 0 and data.zone_at(bt.position.x, bt.position.y) != Zone.INDUSTRIAL:
 		_fail("the BT islet is not an industrial zone")
-	print("[Test] airport %s  plant %s  BT %s  dishes %d" % [airport, plant, bt, dishes])
+	print("[Test] urban island: %d buildings, %d towers in the south end, plants %s, %d vehicles; BT %s dishes %d" % [
+			on_island, south, plants.map(func(p): return data.building_rect(p)), cars, bt, dishes])
 
 
 func _check_towers(data: CityData, by_kind: Dictionary) -> void:
@@ -109,7 +140,7 @@ func _check_towers(data: CityData, by_kind: Dictionary) -> void:
 				_fail("urban tower B-%05d faces %d (must be east or south)" % [b, f])
 			variants[data.b_seed[b] % 97] = true
 	print("[Test] urban towers: %d, seed variety %d" % [towers, variants.size()])
-	if towers < 10:
+	if towers < 400:
 		_fail("too few towers on the urban island: %d" % towers)
 
 
@@ -212,12 +243,31 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 				tallest_club = maxf(tallest_club, h)
 			elif lib.cats[pick["id"]] < 0 and name == "box":
 				_fail("%s B-%05d is drawn as a grey box" % [CityTypes.Kind.keys()[k], b])
+			if k == Kind.FUTURE_BLDG:
+				_check_sight(data, by_kind, lib, b, h)
 			if not seen.has(name):
 				seen[name] = true
 				print("[Test] %-14s %-34s height %.1f" % [CityTypes.Kind.keys()[k], name, h])
 	print("[Test] tallest Vegas club: %.1f" % tallest_club)
 	if tallest_club > 4.0:
 		_fail("a Vegas club is %.1f tall (limit 4.0)" % tallest_club)
+
+
+## A tower on the line of sight of a plant is no taller than what the camera (30 degrees down)
+## still sees the plant over: the towers rise like seats in a stadium.
+func _check_sight(data: CityData, by_kind: Dictionary, lib: ModelLibrary, b: int, h: float) -> void:
+	var r := data.building_rect(b)
+	for p in by_kind.get(Kind.NUCLEAR_PLANT, []):
+		var pr := data.building_rect(p)
+		var pick := BuildingPlacer.pick_for(data, lib, p)
+		var top: float = lib.bounds[pick["id"]].size.y * (pick["xform"] as Transform3D).basis.get_scale().y
+		for c: Vector2i in [r.position, r.end - Vector2i.ONE]:
+			if _in_front(pr, c):
+				var k := maxi(maxi(r.position.x - (pr.end.x - 1), r.position.y - (pr.end.y - 1)), 0)
+				var limit := top + 1.0 + 0.5774 * float(k) * 1.4142
+				if h > limit:
+					_fail("tower B-%05d at %s is %.1f tall, hides the plant at %s (limit %.1f)" % [b, r, h, pr, limit])
+				return
 
 
 ## The neon signs are drawn on their buildings: the wall sign on the south face, the roof sign
@@ -253,14 +303,14 @@ func _print_map(data: CityData) -> void:
 	for b in data.building_count():
 		var r := data.building_rect(b)
 		var g: String = glyph.get(int(data.b_kind[b]), "")
-		if g == "" or r.position.x >= 60:
+		if g == "" or r.position.x >= MapLayout.cells("urban_columns"):
 			continue
 		for y in range(r.position.y, r.end.y):
 			for x in range(r.position.x, r.end.x):
 				layer[Vector2i(x, y)] = g
-	for y in range(78, 214):
+	for y in range(108, 290, 2):
 		var line := ""
-		for x in range(0, 56):
+		for x in range(0, MapLayout.cells("urban_columns")):
 			var i := data.idx(x, y)
 			var c := " "
 			if data.terrain[i] >= CityTypes.Terrain.BEACH:

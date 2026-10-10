@@ -216,7 +216,7 @@ static func overlapping_buildings(data: CityData) -> PackedInt32Array:
 
 
 ## Buildings of the street zones with no road within `reach` cells of their lot: [building id].
-## The compound of the nuclear plant, at the north end of the urban island, is left out.
+## The urban island is left out: it has no streets on purpose (UrbanIslandRebuild).
 static func lots_without_road(data: CityData, reach: int = 2) -> PackedInt32Array:
 	var names := CityTypes.Kind.keys()
 	var out := PackedInt32Array()
@@ -226,8 +226,7 @@ static func lots_without_road(data: CityData, reach: int = 2) -> PackedInt32Arra
 		var r := data.building_rect(b)
 		if not STREET_ZONES.has(data.zone_at(r.position.x, r.position.y)):
 			continue
-		# The compound of the nuclear plant has no streets on purpose (UrbanIslandPlanner).
-		if r.position.x < MapLayout.cells("urban_columns") and r.end.y <= MapLayout.cells("nuclear_end"):
+		if MapLayout.on_urban_island(r.get_center()):
 			continue
 		var found := false
 		for y in range(r.position.y - reach, r.end.y + reach):

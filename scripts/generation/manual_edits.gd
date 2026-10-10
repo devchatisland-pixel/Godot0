@@ -47,7 +47,6 @@ const EDITS := [
 	{"kind": "BURGER_JOINT", "near": Vector2i(110, 153), "scale_abs": 1.0},
 	{"kind": "QUARTER_BLDG", "near": Vector2i(165, 208), "replace": "HOSPITAL"},
 	{"kind": "LIGHTHOUSE", "near": Vector2i(93, 202), "clear_quay": 6},
-	{"kind": "URBAN_BLDG", "near": Vector2i(37, 182), "scale": 1.6},
 	{"kind": "OUTPOST", "near": Vector2i(80, 134), "shift": Vector2i(0, -33)},
 	{"kind": "FIRE_STATION", "near": Vector2i(150, 140), "scale": 1.12},
 	{"kind": "POST_OFFICE", "near": Vector2i(133, 152), "scale": 1.12},

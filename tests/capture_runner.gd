@@ -8,7 +8,7 @@ const SHOTS := [
 	{"zoom": 230.0, "at": "center"},
 	{"zoom": 230.0, "at": "center", "night": true},
 	{"zoom": 40.0, "at": "bridge"},
-	{"zoom": 70.0, "at": "urban"},
+	{"zoom": 110.0, "at": "urban"},
 	{"zoom": 50.0, "at": "port"},
 	{"zoom": 26.0, "at": Kind.MCDONALDS},
 	{"zoom": 40.0, "at": Kind.PRISON},
@@ -43,7 +43,14 @@ func _run() -> void:
 		await _single(main, int(args[bi + 1]))
 		return
 	var base := cam.target
+	# `--shots 4,10` takes only these shots (numbers of SHOTS).
+	var only := PackedStringArray()
+	var si := args.find("--shots")
+	if si >= 0 and si + 1 < args.size():
+		only = args[si + 1].split(",")
 	for s in SHOTS.size():
+		if not only.is_empty() and not only.has(str(s)):
+			continue
 		var shot: Dictionary = SHOTS[s]
 		cam.target = _place(data, shot["at"], base)
 		cam.zoom = shot["zoom"]
@@ -78,7 +85,8 @@ func _place(data: CityData, at, base: Vector3) -> Vector3:
 		"west_bridge":
 			return Vector3(data.west_bridge.x - 6, 0, data.west_bridge.z)
 		"urban":
-			return Vector3(28, 0, 138)
+			var u := MapLayout.blob("urban")["at"] as Vector2
+			return Vector3(u.x + 6.0, 0, u.y - 22.0)
 		"port":
 			return Vector3(84, 0, 182)
 	return _find(data, at, base)
