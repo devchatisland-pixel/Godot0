@@ -29,7 +29,7 @@ enum Cat {
 	# Sixth wave: nuclear plant, new cinema, airport, burger joints, villas, roadblocks
 	NUCLEAR, CINEMA2, AIRPORT, BURGER_JOINT, VILLA, ROADBLOCK_A, ROADBLOCK_B,
 	# Seventh wave: more urban towers, cooling towers, the BT tower, the watchtower
-	URBAN2, NIGHT_TOWER, COOLING, COOLING_HALL, BT_TOWER, WATCHTOWER,
+	URBAN2, NIGHT_TOWER, COOLING, COOLING_HALL, WATCHTOWER,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

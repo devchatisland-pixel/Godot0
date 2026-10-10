@@ -135,6 +135,8 @@ func _check_edits(data: CityData) -> void:
 			_fail("edit B-%05d: facing %d, wanted %d" % [id, data.b_facing[id], e["facing"]])
 		if e.has("scale") and not is_equal_approx(data.b_scale[id], e["scale"]):
 			_fail("edit B-%05d: scale %.2f, wanted %.2f" % [id, data.b_scale[id], e["scale"]])
+		if e.has("scale_abs") and not is_equal_approx(data.b_scale[id], -float(e["scale_abs"])):
+			_fail("edit B-%05d: absolute scale not set" % id)
 	print("[Test] %d hand edits checked" % ManualEdits.EDITS.size())
 
 
@@ -150,7 +152,7 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 	NatureMeshes.build_all(lib)
 	CivicMeshes.build_all(lib)
 	for cat in [ModelCatalog.Cat.URBAN2, ModelCatalog.Cat.NIGHT_TOWER, ModelCatalog.Cat.COOLING,
-			ModelCatalog.Cat.COOLING_HALL, ModelCatalog.Cat.BT_TOWER, ModelCatalog.Cat.WATCHTOWER]:
+			ModelCatalog.Cat.COOLING_HALL, ModelCatalog.Cat.WATCHTOWER]:
 		if not lib.has_cat(cat):
 			_fail("model category %s is empty" % ModelCatalog.Cat.keys()[cat])
 	var seen := {}

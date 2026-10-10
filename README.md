@@ -197,6 +197,7 @@ Everything the kits do not have is modelled in code (`scripts/procedural/`) in t
 * **Public buildings**: hospital (red H on the helipad), school, fire station, church, city hall, the bank with its "$" signs, the United Nations, the prison. Fallbacks are kept for the police station, the stadium, the bank, the church and the hotels.
 * **Las Vegas**: casinos, neon clubs, ferris wheel, drive-in. The neon is drawn unshaded, with no post effect.
 * **Desert and coast**: telecom tower, satellite dishes, mesa, cactus, lighthouse, palm tree, park lake.
+* **BT tower** (`LandmarkMeshes.bt_tower`): concrete shaft, two tiers of aerial horns and a lit cabin, 12 cells high, alone on its islet.
 
 > If your local `FREEMODELS` also contains the `FBX format` / `OBJ format` / `Previews` folders from the zips,
 > put an empty `.gdignore` file in each of them. Godot then skips importing duplicates (faster import, smaller export).
@@ -232,7 +233,6 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `city_night` | Low-poly City Night (keeps its light map; 17 of its buildings) | URBAN2 | more towers of the urban island |
 | `night_towers` | city at night low poly skyscrapers (9 towers, keeps its light map) | NIGHT_TOWER | the tallest towers of the urban island |
 | `cooling` | Cooling Tower (Background) | COOLING, COOLING_HALL | the cooling towers and hall of the nuclear plant |
-| `bt_tower` | BT TOWER (cut out of its town by a world rectangle) | BT_TOWER | the lone tower of its islet |
 | `watchtower` | low poly Watchtower (without fences, rails, lamps and trees) | WATCHTOWER | the two forest lookouts |
 | `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |
 | `hungry` | Hungry Jack's restaurant | BURGER_KING | the Burger King of the red district |

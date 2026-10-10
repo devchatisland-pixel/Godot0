@@ -84,8 +84,6 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.COOLING)
 		Kind.COOLING_HALL:
 			return lib.ids(Cat.COOLING_HALL)
-		Kind.BT_TOWER:
-			return lib.ids(Cat.BT_TOWER)
 		Kind.WATCHTOWER:
 			return lib.ids(Cat.WATCHTOWER)
 		Kind.FUTURE_BLDG:

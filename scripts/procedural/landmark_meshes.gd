@@ -26,6 +26,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("tree", fallback_tree())
 	lib.add_named("stadium_lights", stadium_lights())
 	lib.add_named("helipad_h", helipad_h())
+	lib.add_named("bt_tower", bt_tower())
 
 
 # --- Stadium: oval stands, pitch and floodlights (5x4 cells) --------------------------------
@@ -128,6 +129,39 @@ static func helipad_h() -> ArrayMesh:
 		var a := TAU * i / 10.0
 		k.block(Vector3(cos(a) * 0.47, 0.0, sin(a) * 0.47), Vector3(0.05, 0.03, 0.05), Color.WHITE)
 	k.glow(false)
+	return k.commit()
+
+
+## The BT tower: a tall concrete shaft on a plinth, two tiers of white aerial horns, a glass
+## cabin whose windows light up at night, and a mast with a red light (about 12 cells high).
+static func bt_tower() -> ArrayMesh:
+	var k := MeshKit.new()
+	var concrete := Color("d6d2c8")
+	k.box(Vector3(-0.75, 0, -0.75), Vector3(1.5, 0.25, 1.5), Color("9d9a92"), Color("b9b6ad"))
+	k.cylinder(Vector3(0, 0.25, 0), 0.5, 0.36, 7.4, 16, concrete, concrete)
+	# Lower platform with a ring of white aerial horns.
+	k.cylinder(Vector3(0, 7.6, 0), 0.62, 0.62, 0.18, 16, Color("a8a59d"), Color("c9c6bd"))
+	for i in 10:
+		var a := TAU * i / 10.0
+		k.block(Vector3(cos(a) * 0.68, 7.95, sin(a) * 0.68), Vector3(0.2, 0.2, 0.3), WHITE)
+	# Upper tier: a second, smaller ring.
+	k.cylinder(Vector3(0, 8.3, 0), 0.5, 0.5, 0.14, 16, Color("a8a59d"), Color("c9c6bd"))
+	for i in 8:
+		var a := TAU * (i + 0.5) / 8.0
+		k.block(Vector3(cos(a) * 0.56, 8.62, sin(a) * 0.56), Vector3(0.16, 0.16, 0.24), WHITE)
+	# Glass cabin with a ring of lit windows.
+	k.cylinder(Vector3(0, 8.8, 0), 0.58, 0.58, 0.7, 18, Color("5d7391"), Color("8f929e"))
+	k.glow(true)
+	for i in 18:
+		var a := TAU * i / 18.0
+		k.block(Vector3(cos(a) * 0.59, 9.15, sin(a) * 0.59), Vector3(0.1, 0.18, 0.1), Color.WHITE)
+	k.glow(false)
+	# Roof, mast and the red light on top.
+	k.cylinder(Vector3(0, 9.5, 0), 0.62, 0.45, 0.12, 18, Color("a8a59d"), Color("c9c6bd"))
+	k.cylinder(Vector3(0, 9.62, 0), 0.07, 0.025, 2.6, 8, Color("8f929e"))
+	k.neon(true)
+	k.block(Vector3(0, 12.25, 0), Vector3(0.1, 0.1, 0.1), Color("ff2a3a"))
+	k.neon(false)
 	return k.commit()
 
 

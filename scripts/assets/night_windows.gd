@@ -29,7 +29,7 @@ const PACK_GLOW := {
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
 	ModelCat.METAL_BRIDGE: 0.4, ModelCat.PIRATE_SHIP: 0.3, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
-	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.BT_TOWER: 0.45, ModelCat.WATCHTOWER: 0.2,
+	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
 }
 ## Night packs keep the lights painted in their emission map (a lit facade where they have none).
 const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]

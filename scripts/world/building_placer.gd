@@ -54,7 +54,7 @@ const NAMED := {
 	Kind.BURGER_KING: ["box"], Kind.URBAN_BLDG: ["box"], Kind.URBAN_CLUSTER: ["box"],
 	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.GRAVE: ["grave"],
 	Kind.NUCLEAR_PLANT: ["box"], Kind.CINEMA_MAIN: ["box"], Kind.AIRPORT: ["box"], Kind.BURGER_JOINT: ["box"],
-	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["box"], Kind.WATCHTOWER: ["box"],
+	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -67,7 +67,7 @@ const SEED_VARIANTS: Array[int] = [Kind.MUSEUM, Kind.HOTEL]
 ## Small props that keep their modelled size instead of filling the lot.
 const FIXED_SIZE: Array[int] = [
 	Kind.LIGHTHOUSE, Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
-	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE,
+	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE, Kind.BT_TOWER,
 ]
 ## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
 const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6}
@@ -86,6 +86,9 @@ const UN_SCALE := 1.5
 const FUTURE_STRETCH := 1.5
 ## The futuristic tower (model name ends with this) that always shows its south face.
 const TOWER_FACING_SOUTH := "tower_e"
+## Futuristic towers that look bad: drawn as this model of the night city instead (stretched like it).
+const BAD_FUTURE_TOWERS := ["tower_g", "tower_k"]
+const FUTURE_REPLACEMENT := "city_night.glb: city_night_02_b"
 ## Las Vegas buildings by the short side of their lot: small bars and chapels,
 ## clubs, then neon towers and resorts that fill bigger lots.
 const VEGAS_BY_SIZE := {
@@ -160,7 +163,7 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 		fill *= KIND_SCALE.get(kind, 1.0)
 		if kind == Kind.MOUNTAIN and seed == BIG_MOUNTAIN_SEED:
 			fill *= 1.4
-		fill *= data.b_scale[i]
+		fill = _sized(fill, data.b_scale[i])
 		return {"id": nid, "xform": _fit(lib, nid, r, facing, fill, 1.0, 0.0, true)}
 	if candidates.is_empty():
 		var bid := lib.named_id("box")
@@ -171,8 +174,16 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	if kind == Kind.FIELD:
 		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r)}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
-	if kind == Kind.FUTURE_BLDG and lib.model_name(id).ends_with(TOWER_FACING_SOUTH):
-		facing = 2 # this tower is only good looking from the south
+	var swapped := false
+	if kind == Kind.FUTURE_BLDG:
+		var model := lib.model_name(id)
+		if model.ends_with(TOWER_FACING_SOUTH):
+			facing = 2 # this tower is only good looking from the south
+		for bad in BAD_FUTURE_TOWERS:
+			var good := lib.names.find(FUTURE_REPLACEMENT)
+			if model.ends_with(bad) and good >= 0:
+				id = good
+				swapped = true
 	var scale := 1.0
 	var stretch := 1.0
 	var room := _room(lib, id, r, facing)
@@ -202,13 +213,11 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 			scale = minf(room, UN_SCALE)
 		Kind.COOLING_TOWER, Kind.COOLING_HALL:
 			scale = minf(room, COOLING_SCALE)
-		Kind.BT_TOWER:
-			scale = minf(room, 1.0)
 		Kind.WATCHTOWER:
 			scale = minf(room, WATCHTOWER_SCALE)
 		Kind.FUTURE_BLDG:
-			scale = minf(room, 1.15)
-			stretch = FUTURE_STRETCH
+			scale = minf(room, 1.0 if swapped else 1.15)
+			stretch = 1.0 if swapped else FUTURE_STRETCH
 		Kind.URBAN_CLUSTER:
 			scale = minf(room, 1.0)
 			stretch = 1.6
@@ -220,11 +229,16 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	if ModelPools.is_new_york(lib, id):
 		# The New York street buildings stand taller than the Kenney kit.
 		stretch = 1.5
-	scale *= data.b_scale[i]
+	scale = _sized(scale, data.b_scale[i])
 	var push := 0.25 if kind == Kind.HOUSE else 0.85
 	if CityTypes.is_service(kind):
 		push = 0.0
 	return {"id": id, "xform": _fit(lib, id, r, facing, scale, stretch, push, false)}
+
+
+## `base` times the building's size factor; a negative factor is an absolute scale (ManualEdits).
+static func _sized(base: float, factor: float) -> float:
+	return -factor if factor < 0.0 else base * factor
 
 
 ## Prefers models that fill the lot well; falls back to the smallest one.

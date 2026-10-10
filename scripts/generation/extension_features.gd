@@ -187,12 +187,13 @@ func build_mountains() -> void:
 			i += 1
 
 
-## The pirate grave on the smallest islet, and the pirate ship anchored just off its coast.
+## The pirate grave on the smallest islet, and the pirate ship anchored off its coast: far
+## enough west to be at the edge of the fog of the fog island, not in the thick of it.
 func build_pirate_islet() -> void:
 	var grave := _spots.find_spot(PIRATE_ISLET, Vector2i.ONE, Zone.ISLET, 3, 0)
 	if grave.size.x > 0:
 		_spots.claim(grave, Kind.GRAVE, 2)
-	var ship := _spots.find_water(PIRATE_ISLET + Vector2i(-9, 4), Vector2i(7, 3), 8)
+	var ship := _spots.find_water(PIRATE_ISLET + Vector2i(-14, 4), Vector2i(7, 3), 8)
 	if ship.size.x > 0:
 		_spots.claim(ship, Kind.PIRATE_SHIP, 2)
 
