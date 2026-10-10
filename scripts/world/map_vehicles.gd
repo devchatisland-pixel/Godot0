@@ -3,6 +3,8 @@ extends Node3D
 ## The vehicles of res://vehicles (see vehicles/CATALOG.md) put on the island at the spots
 ## chosen by VehicleSites. Static props, like the roadblocks: one MeshInstance3D each.
 
+## Police cars are drawn 15 % bigger than the other vehicles.
+const POLICE_SCALE := {"police_jp_black": 1.15, "police_jp_patrol": 1.15, "police_us_cruiser": 1.15}
 const CATALOG_PATH := "res://vehicles/catalog.json"
 
 ## Catalog id -> {"file": path, "length": metres, "name", "category"}; read once.
@@ -53,7 +55,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		if mid < 0:
 			continue
 		var at: Vector2 = p["at"]
-		var s := VehicleSites.CELLS_PER_METRE
+		var s := VehicleSites.CELLS_PER_METRE * POLICE_SCALE.get(String(p["id"]), 1.0)
 		var mi := MeshInstance3D.new()
 		mi.mesh = lib.meshes[mid]
 		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * s),

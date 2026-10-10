@@ -79,6 +79,9 @@ const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
 const MODEL_BOOST := {}
+## Schools are drawn this much taller; tanks this much smaller.
+const SCHOOL_STRETCH := 1.1
+const TANK_SHRINK := 0.9
 ## Las Vegas buildings are drawn at most this much bigger than modelled (they were skyscraper size).
 const VEGAS_MAX_FILL := 1.2
 ## Cooling towers beside the nuclear plant, the BT tower and the watchtowers: largest scale.
@@ -215,6 +218,11 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 			stretch = clampf(LANDMARK_HEIGHT / h, 1.0, 1.5)
 		Kind.CRANE:
 			scale = 1.0
+		Kind.SCHOOL, Kind.MAIN_SCHOOL:
+			scale = minf(room, MAX_FILL)
+			stretch = SCHOOL_STRETCH
+		Kind.TANK:
+			scale = minf(room, 1.0) * TANK_SHRINK
 		Kind.STALL:
 			# Kiosks are big enough to see; the three vehicles (ice cream truck, food truck, caravan)
 			# are half that size.
