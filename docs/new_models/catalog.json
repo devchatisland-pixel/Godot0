@@ -1,0 +1,99 @@
+{
+ "version": 1,
+ "note": "Raw sizes as authored (glTF Y up). Models are NOT yet imported into the project.",
+ "models": [
+  {
+   "id": "silo-low-poly",
+   "category": "Props / industrial",
+   "name": "Low Poly Silo",
+   "source_file": "low_poly_silo.glb",
+   "size_m": {
+    "width": 2.41,
+    "height": 7.31,
+    "depth": 2.41
+   },
+   "bbox_min": [
+    -1.205,
+    -0.006,
+    -1.205
+   ],
+   "bbox_max": [
+    1.205,
+    7.305,
+    1.205
+   ],
+   "triangles": 6982,
+   "materials": 3,
+   "textures": 0,
+   "credit": {
+    "title": "Low Poly Silo",
+    "author": "CevoCreative",
+    "url": "https://sketchfab.com/3d-models/low-poly-silo-a7814afddf2b4736a65e551a4e8ff1ed",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Red/grey striped grain silo with ladder, railing and legs. Origin on the ground at the footprint centre, Y up. 3 materials, no textures."
+  },
+  {
+   "id": "waldo-nes",
+   "category": "Props / sprite",
+   "name": "NES - Wheres Waldo - Waldo",
+   "source_file": "nes_-_wheres_waldo_-waldo.glb",
+   "size_m": {
+    "width": 6.2,
+    "height": 4.8,
+    "depth": 0.1
+   },
+   "bbox_min": [
+    -3.1,
+    -0.0,
+    0.0
+   ],
+   "bbox_max": [
+    3.1,
+    4.8,
+    0.1
+   ],
+   "triangles": 2392,
+   "materials": 1,
+   "textures": 1,
+   "credit": {
+    "title": "NES - Wheres Waldo -Waldo",
+    "author": "Carl.Kirsch",
+    "url": "https://sketchfab.com/3d-models/nes-wheres-waldo-waldo-a8dab891322a49058a2c114cce793a7a",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Pixel-art Waldo head extruded to a 0.1 m slab (palette texture). Flat sign-like prop, front face +Z, origin at bottom centre (x -3.1..3.1, y 0..4.8). Needs scale for use."
+  },
+  {
+   "id": "windows-logo-2001-2012",
+   "category": "Props / logo",
+   "name": "Windows Logo (2001-2012) in 3D",
+   "source_file": "windows_logo_2001-2012_in_3d.glb",
+   "size_m": {
+    "width": 1.13,
+    "height": 1.01,
+    "depth": 0.17
+   },
+   "bbox_min": [
+    -0.564,
+    -0.506,
+    -0.12
+   ],
+   "bbox_max": [
+    0.566,
+    0.503,
+    0.053
+   ],
+   "triangles": 1136,
+   "materials": 4,
+   "textures": 0,
+   "credit": {
+    "title": "Windows Logo (2001-2012) in 3D",
+    "author": "ZoeError Remakes",
+    "url": "https://sketchfab.com/3d-models/windows-logo-2001-2012-in-3d-3debae58dd9f49baaa2bc4bb1dc24aeb",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Four coloured curved panes (red, green, blue, yellow); 4 separate meshes, 4 plain-colour materials. Origin at the centre of the logo, not on the ground; tiny (about 1 m) so scale up."
+  }
+ ]
+}

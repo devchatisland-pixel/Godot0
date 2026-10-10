@@ -1,0 +1,114 @@
+{
+ "version": 1,
+ "note": "Beach props. Raw sizes as authored; suggested_scale brings them to real-world metres. Not imported into the project.",
+ "models": [
+  {
+   "id": "beach-deck-chair",
+   "category": "Furniture",
+   "name": "Deck chair",
+   "source_file": "deck_chair.glb",
+   "raw_size": {
+    "width": 0.61,
+    "height": 0.54,
+    "depth": 0.38
+   },
+   "suggested_scale": 1.8,
+   "suggested_size_m": {
+    "width": 1.09,
+    "height": 0.97,
+    "depth": 0.69
+   },
+   "triangles": 1576,
+   "materials": 1,
+   "animated": false,
+   "credit": {
+    "title": "deck chair",
+    "author": "MaX3Dd",
+    "url": "https://sketchfab.com/3d-models/deck-chair-38de6171cbeb41c5bdc49c07df76ede9",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Striped navy/cream folding deck chair, wooden frame. Raw size is about 0.6 m wide, so it is small for a real chair (about 1.1 m long): scale about x1.8. Two meshes, one texture material."
+  },
+  {
+   "id": "beach-umbrella-yellow",
+   "category": "Shade",
+   "name": "Yellow beach umbrella",
+   "source_file": "yellow_beach_umbrella.glb",
+   "raw_size": {
+    "width": 1081.16,
+    "height": 920.8,
+    "depth": 1081.16
+   },
+   "suggested_scale": 0.002,
+   "suggested_size_m": {
+    "width": 2.16,
+    "height": 1.84,
+    "depth": 2.16
+   },
+   "triangles": 3996,
+   "materials": 1,
+   "animated": true,
+   "credit": {
+    "title": "Yellow beach umbrella",
+    "author": "assetfactory",
+    "url": "https://sketchfab.com/3d-models/yellow-beach-umbrella-8f86d785422c4c9dbe43d42da486098b",
+    "license": "SKETCHFAB Standard"
+   },
+   "notes": "Yellow/white ringed parasol on a metal pole with base disc and 8 ribs. The file is skinned and animated (opening animation, 33 joints, 16 channels); the preview is the static rest shape. Raw units are not metres: about 1081 x 921 x 1081, so a real-size 2.2 m umbrella needs scale about 0.002. Pole is the lowest part (origin around mid-pole, not on the ground)."
+  },
+  {
+   "id": "beach-umbrella-red",
+   "category": "Shade",
+   "name": "Red beach umbrella",
+   "source_file": "red_beach_umbrella.glb",
+   "raw_size": {
+    "width": 1081.16,
+    "height": 920.8,
+    "depth": 1081.16
+   },
+   "suggested_scale": 0.002,
+   "suggested_size_m": {
+    "width": 2.16,
+    "height": 1.84,
+    "depth": 2.16
+   },
+   "triangles": 3996,
+   "materials": 1,
+   "animated": true,
+   "credit": {
+    "title": "Red beach umbrella",
+    "author": "assetfactory",
+    "url": "https://sketchfab.com/3d-models/red-beach-umbrella-86f58a6d1b434b11a4830c4c43d1f52d",
+    "license": "SKETCHFAB Standard"
+   },
+   "notes": "Same model as the yellow umbrella with a red/white texture. Skinned and animated; same scale note (about 0.002)."
+  },
+  {
+   "id": "beach-ball",
+   "category": "Toy",
+   "name": "Beach ball (low poly)",
+   "source_file": "beach_ball_-_low_poly.glb",
+   "raw_size": {
+    "width": 0.4,
+    "height": 0.4,
+    "depth": 0.4
+   },
+   "suggested_scale": 1.0,
+   "suggested_size_m": {
+    "width": 0.4,
+    "height": 0.4,
+    "depth": 0.4
+   },
+   "triangles": 216,
+   "materials": 1,
+   "animated": false,
+   "credit": {
+    "title": "Beach Ball - Low Poly",
+    "author": "raduursache9",
+    "url": "https://sketchfab.com/3d-models/beach-ball-low-poly-40949184dcbc4d5cba5f115b1c0dcf6f",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Blue/white/red segmented ball, 216 triangles, 0.4 m diameter, centred on origin (needs to be lifted by 0.2 m to sit on the ground). Real size already."
+  }
+ ]
+}

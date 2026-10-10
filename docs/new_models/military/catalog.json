@@ -1,0 +1,1180 @@
+{
+ "version": 1,
+ "note": "Military vehicles and radars. Raw units as authored; suggested_scale gives approximate metres (pack models: 1 unit = 0.1 m). Not imported into the project.",
+ "models": [
+  {
+   "id": "tank-centurion8",
+   "category": "Tanks",
+   "name": "Centurion Mk 8 (UK main battle tank)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "Centurion8",
+   "raw_size": [
+    34.3,
+    34.69,
+    92.27
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.43,
+    "height": 3.47,
+    "length": 9.23
+   },
+   "triangles": 5673,
+   "materials": 4,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-ee-9",
+   "category": "Tanks",
+   "name": "EE-9 Cascavel (Brazilian armoured car)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "EE-9.001",
+   "raw_size": [
+    26.21,
+    27.93,
+    63.35
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.62,
+    "height": 2.79,
+    "length": 6.33
+   },
+   "triangles": 1563,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-leopard1a4",
+   "category": "Tanks",
+   "name": "Leopard 1A4 (West German MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "Leopard1A4",
+   "raw_size": [
+    35.19,
+    29.09,
+    95.97
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.52,
+    "height": 2.91,
+    "length": 9.6
+   },
+   "triangles": 2307,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-m1a1",
+   "category": "Tanks",
+   "name": "M1A1 Abrams (US MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "M1A1",
+   "raw_size": [
+    35.38,
+    42.57,
+    106.13
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.54,
+    "height": 4.26,
+    "length": 10.61
+   },
+   "triangles": 2181,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-m48a2",
+   "category": "Tanks",
+   "name": "M48A2 Patton (US MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "M48A2",
+   "raw_size": [
+    35.71,
+    39.56,
+    85.59
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.57,
+    "height": 3.96,
+    "length": 8.56
+   },
+   "triangles": 1600,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-m48a3",
+   "category": "Tanks",
+   "name": "M48A3 Patton (US MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "M48A3",
+   "raw_size": [
+    35.71,
+    39.56,
+    85.59
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.57,
+    "height": 3.96,
+    "length": 8.56
+   },
+   "triangles": 1676,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-m4a3e8",
+   "category": "Tanks",
+   "name": "M4A3E8 Sherman (US WWII medium tank)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "M4A3E8",
+   "raw_size": [
+    29.3,
+    29.72,
+    69.53
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.93,
+    "height": 2.97,
+    "length": 6.95
+   },
+   "triangles": 6559,
+   "materials": 5,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-m60",
+   "category": "Tanks",
+   "name": "M60 (US MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "M60",
+   "raw_size": [
+    36.03,
+    38.79,
+    91.13
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.6,
+    "height": 3.88,
+    "length": 9.11
+   },
+   "triangles": 1207,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-pt-76",
+   "category": "Tanks",
+   "name": "PT-76 (Soviet amphibious light tank)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "PT-76",
+   "raw_size": [
+    31.33,
+    33.26,
+    78.66
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.13,
+    "height": 3.33,
+    "length": 7.87
+   },
+   "triangles": 797,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-t-34-85",
+   "category": "Tanks",
+   "name": "T-34-85 (Soviet WWII medium tank)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "T-34-85",
+   "raw_size": [
+    30.1,
+    27.08,
+    82.89
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.01,
+    "height": 2.71,
+    "length": 8.29
+   },
+   "triangles": 2875,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-t-55",
+   "category": "Tanks",
+   "name": "T-55 (Soviet MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "T-55",
+   "raw_size": [
+    32.09,
+    27.33,
+    88.82
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.21,
+    "height": 2.73,
+    "length": 8.88
+   },
+   "triangles": 1739,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-t-62",
+   "category": "Tanks",
+   "name": "T-62 (Soviet MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "T-62",
+   "raw_size": [
+    32.09,
+    27.41,
+    93.97
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.21,
+    "height": 2.74,
+    "length": 9.4
+   },
+   "triangles": 1950,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-t-72",
+   "category": "Tanks",
+   "name": "T-72 (Soviet MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "T-72",
+   "raw_size": [
+    37.62,
+    51.49,
+    94.9
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.76,
+    "height": 5.15,
+    "length": 9.49
+   },
+   "triangles": 2578,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-t-80",
+   "category": "Tanks",
+   "name": "T-80 (Soviet MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "T-80",
+   "raw_size": [
+    36.63,
+    27.02,
+    90.15
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.66,
+    "height": 2.7,
+    "length": 9.02
+   },
+   "triangles": 992,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-t-90",
+   "category": "Tanks",
+   "name": "T-90 (Russian MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "T-90",
+   "raw_size": [
+    37.89,
+    27.62,
+    103.9
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.79,
+    "height": 2.76,
+    "length": 10.39
+   },
+   "triangles": 1654,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "tank-type99-tank",
+   "category": "Tanks",
+   "name": "Type 99 (Chinese MBT)",
+   "source_file": "strike_fighters_tanks_pack.glb",
+   "source_node": "Type99_tank",
+   "raw_size": [
+    36.83,
+    22.68,
+    108.77
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.68,
+    "height": 2.27,
+    "length": 10.88
+   },
+   "triangles": 1624,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters tanks pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-tanks-pack-09d9e877167d4124adff9eb7b0410956",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-bmp-1",
+   "category": "APC / IFV",
+   "name": "BMP-1 (Soviet IFV)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "BMP-1",
+   "raw_size": [
+    31.16,
+    22.52,
+    67.24
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.12,
+    "height": 2.25,
+    "length": 6.72
+   },
+   "triangles": 1040,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-bmp-2",
+   "category": "APC / IFV",
+   "name": "BMP-2 (Soviet IFV)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "BMP-2",
+   "raw_size": [
+    31.16,
+    25.99,
+    67.24
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.12,
+    "height": 2.6,
+    "length": 6.72
+   },
+   "triangles": 1298,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-bmp-3",
+   "category": "APC / IFV",
+   "name": "BMP-3 (Russian IFV)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "BMP-3",
+   "raw_size": [
+    31.79,
+    27.3,
+    71.66
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.18,
+    "height": 2.73,
+    "length": 7.17
+   },
+   "triangles": 1450,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-brdm",
+   "category": "APC / IFV",
+   "name": "BRDM-2 (Soviet amphibious scout car)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "BRDM",
+   "raw_size": [
+    22.4,
+    28.36,
+    57.23
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.24,
+    "height": 2.84,
+    "length": 5.72
+   },
+   "triangles": 616,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-btr-152",
+   "category": "APC / IFV",
+   "name": "BTR-152 (Soviet 6x6 APC)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "BTR-152",
+   "raw_size": [
+    23.36,
+    20.29,
+    64.02
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.34,
+    "height": 2.03,
+    "length": 6.4
+   },
+   "triangles": 896,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-btr-50pk",
+   "category": "APC / IFV",
+   "name": "BTR-50PK (Soviet tracked amphibious APC)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "BTR-50PK",
+   "raw_size": [
+    31.33,
+    31.76,
+    70.79
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.13,
+    "height": 3.18,
+    "length": 7.08
+   },
+   "triangles": 565,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-btr-80a",
+   "category": "APC / IFV",
+   "name": "BTR-80A (Soviet 8x8 APC)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "BTR-80A",
+   "raw_size": [
+    29.88,
+    35.5,
+    76.21
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.99,
+    "height": 3.55,
+    "length": 7.62
+   },
+   "triangles": 1425,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-ee-11",
+   "category": "APC / IFV",
+   "name": "EE-11 Urutu (Brazilian 6x6 APC)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "EE-11",
+   "raw_size": [
+    27.01,
+    26.82,
+    63.04
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.7,
+    "height": 2.68,
+    "length": 6.3
+   },
+   "triangles": 1441,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-ee-11-aa",
+   "category": "APC / IFV",
+   "name": "EE-11 Urutu anti-aircraft variant",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "EE-11_AA",
+   "raw_size": [
+    27.01,
+    27.77,
+    63.24
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.7,
+    "height": 2.78,
+    "length": 6.32
+   },
+   "triangles": 1608,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-lav-25",
+   "category": "APC / IFV",
+   "name": "LAV-25 (US 8x8 light armoured vehicle)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "LAV-25",
+   "raw_size": [
+    28.63,
+    37.76,
+    63.69
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.86,
+    "height": 3.78,
+    "length": 6.37
+   },
+   "triangles": 3173,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-m113",
+   "category": "APC / IFV",
+   "name": "M113 (US tracked APC)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "M113",
+   "raw_size": [
+    27.35,
+    40.87,
+    48.72
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.74,
+    "height": 4.09,
+    "length": 4.87
+   },
+   "triangles": 887,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "apc-m2a2",
+   "category": "APC / IFV",
+   "name": "M2A2 Bradley (US IFV)",
+   "source_file": "strike_fighters_apcifv_pack.glb",
+   "source_node": "M2A2",
+   "raw_size": [
+    37.65,
+    60.56,
+    74.54
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.76,
+    "height": 6.06,
+    "length": 7.45
+   },
+   "triangles": 1875,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters APC/IFV pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-apcifv-pack-39cf28eb6cb546e49605398ab789b8e8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-dogear",
+   "category": "Radars",
+   "name": "Dog Ear radar (Soviet, tracked carrier)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "DogEar",
+   "raw_size": [
+    28.59,
+    38.78,
+    68.29
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.86,
+    "height": 3.88,
+    "length": 6.83
+   },
+   "triangles": 1578,
+   "materials": 5,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-fm-90-radar",
+   "category": "Radars",
+   "name": "FM-90 radar (French Crotale-type)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "FM-90_Radar",
+   "raw_size": [
+    29.56,
+    40.85,
+    77.52
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.96,
+    "height": 4.09,
+    "length": 7.75
+   },
+   "triangles": 596,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-fansong",
+   "category": "Radars",
+   "name": "Fan Song radar (SA-2 guidance)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "FanSong",
+   "raw_size": [
+    107.67,
+    79.37,
+    62.02
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 10.77,
+    "height": 7.94,
+    "length": 6.2
+   },
+   "triangles": 1326,
+   "materials": 5,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-flaplid",
+   "category": "Radars",
+   "name": "Flap Lid radar (SA-10 launcher engagement radar)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "FlapLid",
+   "raw_size": [
+    30.6,
+    68.65,
+    143.81
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.06,
+    "height": 6.86,
+    "length": 14.38
+   },
+   "triangles": 2098,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-grillpan",
+   "category": "Radars",
+   "name": "Grill Pan radar (Soviet SAM)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "GrillPan",
+   "raw_size": [
+    32.93,
+    62.94,
+    85.67
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.29,
+    "height": 6.29,
+    "length": 8.57
+   },
+   "triangles": 424,
+   "materials": 4,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-grillscreen",
+   "category": "Radars",
+   "name": "Grill Screen radar (Soviet SAM)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "GrillScreen",
+   "raw_size": [
+    32.93,
+    79.94,
+    85.67
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.29,
+    "height": 7.99,
+    "length": 8.57
+   },
+   "triangles": 557,
+   "materials": 4,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-hawk-radar",
+   "category": "Radars",
+   "name": "Hawk radar (US MIM-23 Hawk)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "Hawk_Radar",
+   "raw_size": [
+    29.09,
+    34.09,
+    45.4
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 2.91,
+    "height": 3.41,
+    "length": 4.54
+   },
+   "triangles": 1478,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-lowblow",
+   "category": "Radars",
+   "name": "Low Blow radar (SA-3 guidance)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "LowBlow",
+   "raw_size": [
+    62.79,
+    81.06,
+    63.91
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 6.28,
+    "height": 8.11,
+    "length": 6.39
+   },
+   "triangles": 1452,
+   "materials": 4,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-patriot-radar",
+   "category": "Radars",
+   "name": "Patriot radar (US)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "Patriot_Radar",
+   "raw_size": [
+    53.22,
+    58.5,
+    80.54
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 5.32,
+    "height": 5.85,
+    "length": 8.05
+   },
+   "triangles": 906,
+   "materials": 2,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-snowdrifte",
+   "category": "Radars",
+   "name": "Snow Drift radar (Soviet, on MZKT chassis)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "SnowDriftE",
+   "raw_size": [
+    31.0,
+    86.51,
+    101.75
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.1,
+    "height": 8.65,
+    "length": 10.17
+   },
+   "triangles": 1546,
+   "materials": 5,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-straightflush",
+   "category": "Radars",
+   "name": "Straight Flush radar (SA-6)",
+   "source_file": "strike_fighters_radar_pack.glb",
+   "source_node": "StraightFlush",
+   "raw_size": [
+    33.74,
+    58.11,
+    71.51
+   ],
+   "suggested_scale": 0.1,
+   "approx_size_m": {
+    "width": 3.37,
+    "height": 5.81,
+    "length": 7.15
+   },
+   "triangles": 2303,
+   "materials": 3,
+   "credit": {
+    "title": "Strike Fighters radar pack",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/strike-fighters-radar-pack-26e4fa5a2f354c42a01f9ccf177479b8",
+    "license": "CC-BY-NC-4.0"
+   }
+  },
+  {
+   "id": "radar-dish-low-poly",
+   "category": "Radars",
+   "name": "Low-poly radar dish",
+   "source_file": "low-poly_radar_dish.glb",
+   "source_node": "low-poly_radar_dish",
+   "raw_size": [
+    1.65,
+    2.0,
+    1.53
+   ],
+   "suggested_scale": 1.0,
+   "approx_size_m": {
+    "width": 1.65,
+    "height": 2.0,
+    "length": 1.53
+   },
+   "triangles": 2514,
+   "materials": 1,
+   "credit": {
+    "title": "Low-Poly Radar Dish",
+    "author": "joe_carrot",
+    "url": "https://sketchfab.com/3d-models/low-poly-radar-dish-ed6850e61792430581c8f9851fb7b4c5",
+    "license": "CC-BY-4.0"
+   }
+  },
+  {
+   "id": "radar-fixed-station",
+   "category": "Radars",
+   "name": "Radar (fixed station, with ground mesh)",
+   "source_file": "radar.glb",
+   "source_node": "radar",
+   "raw_size": [
+    266.41,
+    185.5,
+    164.07
+   ],
+   "suggested_scale": 0.01,
+   "approx_size_m": {
+    "width": 2.66,
+    "height": 1.86,
+    "length": 1.64
+   },
+   "triangles": 264,
+   "materials": 1,
+   "credit": {
+    "title": "Radar",
+    "author": "Calibians",
+    "url": "https://sketchfab.com/3d-models/radar-a83d58a8bd6746d692dcf0d444e13b76",
+    "license": "CC-BY-4.0"
+   }
+  },
+  {
+   "id": "sam-nasams",
+   "category": "Air defence",
+   "name": "NASAMS surface-to-air missile launcher",
+   "source_file": "nasams_1_surface-to-air_missile_system.glb",
+   "source_node": "nasams_1_surface-to-air_missile_system.glb",
+   "raw_size": [
+    12.82,
+    14.2,
+    17.79
+   ],
+   "suggested_scale": 0.5,
+   "approx_size_m": {
+    "width": 6.4,
+    "height": 7.1,
+    "length": 8.9
+   },
+   "triangles": 3114,
+   "materials": 1,
+   "credit": {
+    "title": "Nasams 1 Surface-to-Air Missile System",
+    "author": "Muhamad Mirza Arrafi",
+    "url": "https://sketchfab.com/3d-models/nasams-1-surface-to-air-missile-system-5fb34fab137c430988fd5642a3b87db3",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Launcher with raised missile canisters on a camouflage trailer. Single mesh/material. Scale is a guess (a launcher is roughly 8 m long)."
+  },
+  {
+   "id": "jet-f14-tomcat",
+   "category": "Aircraft",
+   "name": "F-14 Tomcat (low poly)",
+   "source_file": "low_poly_f14_tomcat.glb",
+   "source_node": "low_poly_f14_tomcat.glb",
+   "raw_size": [
+    4.08,
+    1.04,
+    4.04
+   ],
+   "suggested_scale": 4.7,
+   "approx_size_m": {
+    "width": 19.2,
+    "height": 4.9,
+    "length": 19.0
+   },
+   "triangles": 6985,
+   "materials": 1,
+   "credit": {
+    "title": "Low poly F14 Tomcat",
+    "author": "SIpriv",
+    "url": "https://sketchfab.com/3d-models/low-poly-f14-tomcat-e99d03987b574e80971c1c8cc2b75925",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Has an animation (wing sweep). 81 mesh parts, swept-wing pose in the rest state. Raw length ~4 u is far too small for a jet; x4.7 gives roughly 19 m."
+  },
+  {
+   "id": "radar-ibis150",
+   "category": "Radars",
+   "name": "IBIS150 air defence radar (very high poly)",
+   "source_file": "ibis150_air_defense_radar.glb",
+   "source_node": "ibis150_air_defense_radar.glb",
+   "raw_size": [
+    0.35,
+    0.5,
+    1.0
+   ],
+   "suggested_scale": 9.0,
+   "approx_size_m": {
+    "width": 3.1,
+    "height": 4.5,
+    "length": 9.0
+   },
+   "triangles": 369115,
+   "materials": 1,
+   "credit": {
+    "title": "IBIS150 air defense radar",
+    "author": "42manako",
+    "url": "https://sketchfab.com/3d-models/ibis150-air-defense-radar-ffd78c2b016943f7b60252e94d3bc8ad",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Truck-mounted radar, 4 meshes with one texture material and 369,115 triangles: a scan/AI-generated mesh, far too heavy for a game; decimate it first. Raw size is normalised to about 1 u long, so x9 gives roughly 9 m."
+  },
+  {
+   "id": "ship-carrier",
+   "category": "Ships",
+   "name": "Aircraft carrier",
+   "source_file": "carrier.glb",
+   "source_node": "carrier.glb",
+   "raw_size": [
+    78.16,
+    68.25,
+    302.16
+   ],
+   "suggested_scale": 1.1,
+   "approx_size_m": {
+    "width": 86.0,
+    "height": 75.1,
+    "length": 332.4
+   },
+   "triangles": 1318,
+   "materials": 1,
+   "credit": {
+    "title": "Carrier",
+    "author": "victorberdugo1",
+    "url": "https://sketchfab.com/3d-models/carrier-494f375042bb4133915a51e079557f4b",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Aircraft carrier hull and island, 4 meshes, 1,318 triangles, light enough to use. Origin is not at the keel centre (bbox y -15..53, z -178..124); x1.1 gives about 330 m."
+  }
+ ]
+}
