@@ -30,7 +30,7 @@ const SPECS := [
 		"zones": [Zone.SUBURBAN, Zone.APARTMENT, Zone.COMMERCIAL], "same_gap": 30.0},
 	{"kind": Kind.CHURCH, "size": Vector2i(4, 5), "count": 1, "near": "church",
 		"zones": [Zone.SUBURBAN]},
-	# Nine different hotels in all: four here, five in the red quarter (ExtensionPlanner).
+	# Nine hotel lots in all (one model for every one): four here, five in the red quarter (ExtensionPlanner).
 	# The two big ones (variants 0 and 1, from the accommodations pack) get a wide lot for their little houses.
 	{"kind": Kind.HOTEL, "size": Vector2i(7, 4), "near": ["hotels", "hotels_b"], "variants": true, "same_gap": 14.0,
 		"zones": [Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN], "force_facing": 1},

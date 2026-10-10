@@ -46,7 +46,7 @@ const NAMED := {
 	Kind.HOSPITAL: ["hospital"], Kind.SCHOOL: ["school"], Kind.FIRE_STATION: ["fire_station"],
 	Kind.POLICE: ["police"], Kind.CITY_HALL: ["museum_history"], Kind.STADIUM: ["stadium"],
 	Kind.POLICE_HQ: ["police"], Kind.MAIN_HOSPITAL: ["hospital"], Kind.MAIN_SCHOOL: ["school"],
-	Kind.MUSEUM: ["museum_art", "museum_history"], Kind.HOTEL: ["hotel_a", "hotel_b"],
+	Kind.MUSEUM: ["museum_art", "museum_history"],
 	Kind.POST_OFFICE: ["post_office"], Kind.CEMETERY: ["cemetery"], Kind.BUNKER: ["bunker"],
 	Kind.AIRBASE: ["airbase"],
 	Kind.FIELD: ["field_wheat", "field_corn", "field_plowed", "field_green"],
@@ -66,8 +66,8 @@ const NAMED := {
 	Kind.SAT_DISH: ["sat_dish"], Kind.MESA: ["mesa"], Kind.POND: ["pond"],
 	Kind.UN_HQ: ["un_hq"], Kind.PRISON: ["prison"],
 }
-## Kinds whose variant is the seed itself (museums, hotels: one of each).
-const SEED_VARIANTS: Array[int] = [Kind.MUSEUM, Kind.HOTEL]
+## Kinds whose variant is the seed itself (museums: one of each).
+const SEED_VARIANTS: Array[int] = [Kind.MUSEUM]
 ## Small props that keep their modelled size instead of filling the lot.
 const FIXED_SIZE: Array[int] = [
 	Kind.LIGHTHOUSE, Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
@@ -118,6 +118,9 @@ static func place(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatc
 	var kind: int = data.b_kind[i]
 	if kind == Kind.EMPTY:
 		return
+	if kind == Kind.CONCERT:
+		BuildingExtras.place_concert(data, lib, i, batch, far)
+		return
 	if kind == Kind.PLAZA or kind == Kind.GARDEN or kind == Kind.INDUSTRIAL_YARD:
 		if not far:
 			BuildingExtras.place_filler(data, lib, i, kind, batch)
@@ -144,6 +147,8 @@ static func pick_for(data: CityData, lib: ModelLibrary, i: int, facing: int = -1
 	var kind: int = data.b_kind[i]
 	if kind == Kind.PLAZA or kind == Kind.GARDEN or kind == Kind.INDUSTRIAL_YARD or kind == Kind.EMPTY:
 		return {}
+	if kind == Kind.CONCERT:
+		return BuildingExtras.concert_stage(data, lib, i) # the stage stands for the whole camp
 	return _pick_model(data, lib, i, facing)
 
 

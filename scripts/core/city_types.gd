@@ -116,6 +116,7 @@ enum Kind {
 	UFO,              # the flying saucer on the ground near the secret base
 	TANK,             # tank at the gates of the secret base
 	BUS_STOP,         # bus shelter beside a road (BusStops)
+	CONCERT,          # the concert camp near the north-east beach (ConcertSite): stage, lights, stands
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -131,7 +132,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.FACTORY_BLDG, Kind.MCDONALDS, Kind.BURGER_KING, Kind.URBAN_CLUSTER,
 	Kind.PIRATE_SHIP, Kind.GRAVE,
 	Kind.NUCLEAR_PLANT, Kind.CINEMA_MAIN, Kind.AIRPORT, Kind.BURGER_JOINT,
-	Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER, Kind.WATCHTOWER, Kind.BEACH_HUT, Kind.PIER, Kind.BOAT, Kind.FIRE_TRUCK, Kind.BALLOON, Kind.BILLBOARD, Kind.UFO, Kind.TANK, Kind.BUS_STOP,
+	Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER, Kind.WATCHTOWER, Kind.BEACH_HUT, Kind.PIER, Kind.BOAT, Kind.FIRE_TRUCK, Kind.BALLOON, Kind.BILLBOARD, Kind.UFO, Kind.TANK, Kind.BUS_STOP, Kind.CONCERT,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

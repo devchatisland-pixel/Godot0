@@ -25,7 +25,7 @@ const SAND_BAND := 6
 const SPECS := [
 	{"kind": Kind.RUSSIAN, "size": Vector2i(4, 4), "count": 1, "near": "poor_center",
 		"zones": [Zone.POOR]},
-	# The red district: the two burger restaurants and the other five hotels (variants 4..8).
+	# The red district: the two burger restaurants and the other five hotels.
 	{"kind": Kind.MCDONALDS, "size": Vector2i(3, 3), "count": 1, "near": "quarter_south_center",
 		"zones": [Zone.QUARTER]},
 	{"kind": Kind.BURGER_KING, "size": Vector2i(4, 4), "count": 1, "near": "quarter_south_center",

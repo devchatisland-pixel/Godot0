@@ -83,23 +83,7 @@
 		},
 		{
 			"cat": "HOTEL_SMALL",
-			"node": "hotel0"
-		},
-		{
-			"cat": "HOTEL_SMALL",
 			"node": "hotel1"
-		},
-		{
-			"cat": "HOTEL_SMALL",
-			"node": "hotel2"
-		},
-		{
-			"cat": "HOTEL_SMALL",
-			"node": "hotel3"
-		},
-		{
-			"cat": "HOTEL_SMALL",
-			"node": "hotel4"
 		},
 		{
 			"cat": "CONTAINER",

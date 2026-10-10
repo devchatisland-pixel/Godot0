@@ -14,16 +14,8 @@
 			"node": "m3"
 		},
 		{
-			"cat": "HOTEL_SMALL",
-			"node": "m4"
-		},
-		{
 			"cat": "SHOP2",
 			"node": "m5"
-		},
-		{
-			"cat": "HOTEL_SMALL",
-			"node": "m6"
 		},
 		{
 			"cat": "SHOP2",

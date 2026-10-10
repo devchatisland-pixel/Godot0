@@ -248,3 +248,129 @@ static func _roof(lib: ModelLibrary, id: int, xform: Transform3D) -> Dictionary:
 		var b := xform * lib.bounds[id]
 		return {"y": b.end.y, "rect": Rect2(b.position.x, b.position.z, b.size.x, b.size.z)}
 	return {"y": level, "rect": Rect2(lo, hi - lo)}
+
+
+# --- Concert camp (ConcertSite) ---------------------------------------------------------------
+## The stage stands at the back of the camp (its back to the sea), the crowd in front of it.
+## Distances are in cells, along the camp: u across it, v from its back edge to its gate.
+## Inset of the crowd barriers from the edge of the camp, and the width of the gate.
+const CONCERT_FENCE_INSET := 0.3
+const CONCERT_GATE := 2.0
+## Gap between the stage and the front-of-stage barrier.
+const CONCERT_PIT := 0.6
+## The barrier model is as tall as a man on the stage: drawn at half its size.
+const CONCERT_BARRIER_SCALE := 0.5
+## Floodlight heads look along the model's local +X, bleacher seats along its local -X.
+const CONCERT_SIDE_TURN := -PI * 0.5
+const CONCERT_SEAT_TURN := PI
+
+
+## Axes of the camp of building `i`: {"back": centre of its back edge, "right", "front",
+## "width", "depth"}.
+static func _camp_axes(data: CityData, i: int) -> Dictionary:
+	var r := data.building_rect(i)
+	var o := CityTypes.FACING_OFFSETS[int(data.b_facing[i]) % 4]
+	var front := Vector3(o.x, 0, o.y)
+	var depth := float(r.size.y if o.y != 0 else r.size.x)
+	var center := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
+	return {"back": center - front * depth * 0.5, "right": Vector3(-o.y, 0, o.x), "front": front,
+			"width": float(r.size.x if o.y != 0 else r.size.y), "depth": depth}
+
+
+static func _camp_at(ax: Dictionary, u: float, v: float) -> Vector3:
+	return ax["back"] + ax["right"] * u + ax["front"] * v
+
+
+## Turned by `yaw`, the bottom centre of the model's box on `p`.
+static func _standing(lib: ModelLibrary, id: int, p: Vector3, yaw: float, scale: float = 1.0) -> Transform3D:
+	var basis := Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3.ONE * scale)
+	var box := lib.bounds[id]
+	return Transform3D(basis, p - basis * Vector3(box.get_center().x, box.position.y, box.get_center().z))
+
+
+## Yaw that turns the model's local +X towards `dir`.
+static func _side_to(dir: Vector3) -> float:
+	return atan2(dir.x, dir.z) + CONCERT_SIDE_TURN
+
+
+## The stage of the camp: {"id", "xform"}, or {} when the model is missing.
+static func concert_stage(data: CityData, lib: ModelLibrary, i: int) -> Dictionary:
+	var ids := lib.ids(Cat.CONCERT_STAGE)
+	if ids.is_empty():
+		return {}
+	var ax := _camp_axes(data, i)
+	var depth := lib.bounds[ids[0]].size.z
+	var yaw := CityTypes.facing_yaw(int(data.b_facing[i]) % 4)
+	return {"id": ids[0], "xform": _standing(lib, ids[0], _camp_at(ax, 0.0, depth * 0.5 + 0.4), yaw)}
+
+
+## Stage, floodlights, bleachers and crowd barriers; only a box for the stage when far.
+static func place_concert(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatch, far: bool) -> void:
+	var stage := concert_stage(data, lib, i)
+	if stage.is_empty():
+		return
+	var sid: int = stage["id"]
+	if far:
+		var box: AABB = stage["xform"] * lib.bounds[sid]
+		batch.add_box(Transform3D(Basis.from_scale(box.size), box.get_center() - Vector3(0, box.size.y * 0.5, 0)),
+				Color("4a3a5c"))
+		return
+	batch.add(sid, stage["xform"])
+	var ax := _camp_axes(data, i)
+	var w: float = ax["width"]
+	var d: float = ax["depth"]
+	var front: Vector3 = ax["front"]
+	var right: Vector3 = ax["right"]
+	var sw := lib.bounds[sid].size.x
+	var sd := lib.bounds[sid].size.z
+	var stage_mid := _camp_at(ax, 0.0, sd * 0.5 + 0.4)
+
+	# Crowd barriers: round the whole camp (a gate in the middle of the front side) and a
+	# line in front of the stage.
+	var barriers := lib.ids(Cat.CROWD_BARRIER)
+	if not barriers.is_empty():
+		var s := CONCERT_FENCE_INSET
+		var l := -w * 0.5 + s
+		var rr := w * 0.5 - s
+		var g := CONCERT_GATE * 0.5
+		for seg in [[l, s, rr, s], [l, s, l, d - s], [rr, s, rr, d - s],
+				[l, d - s, -g, d - s], [g, d - s, rr, d - s],
+				[-sw * 0.5, sd + 0.4 + CONCERT_PIT, sw * 0.5, sd + 0.4 + CONCERT_PIT]]:
+			_barrier_line(lib, barriers[0], _camp_at(ax, seg[0], seg[1]), _camp_at(ax, seg[2], seg[3]), batch)
+
+	# Floodlights: two beside the stage, two at the back corners of the crowd, all aimed at it.
+	var lights := lib.ids(Cat.FLOODLIGHT)
+	if not lights.is_empty():
+		for p: Vector3 in [_camp_at(ax, -sw * 0.5 - 0.7, 0.8), _camp_at(ax, sw * 0.5 + 0.7, 0.8),
+				_camp_at(ax, -w * 0.5 + 1.0, d - 2.0), _camp_at(ax, w * 0.5 - 1.0, d - 2.0)]:
+			var to := stage_mid - p
+			to.y = 0.0
+			batch.add(lights[0], _standing(lib, lights[0], p, _side_to(to.normalized())))
+
+	# Bleachers: a row at the back of the crowd and two on each side, all looking at the stage.
+	var stands := lib.ids(Cat.BLEACHER)
+	if not stands.is_empty():
+		var bl := lib.bounds[stands[0]].size.z + 0.15
+		var row := mini(4, int((w - 4.0) / bl))
+		for k in row:
+			var u := (float(k) - (row - 1) * 0.5) * bl
+			batch.add(stands[0], _standing(lib, stands[0], _camp_at(ax, u, d - 1.3),
+					_side_to(-front) + CONCERT_SEAT_TURN))
+		for side in [-1.0, 1.0]:
+			for k in 2:
+				var p := _camp_at(ax, side * (w * 0.5 - 1.1), d * 0.45 + k * bl)
+				batch.add(stands[0], _standing(lib, stands[0], p, _side_to(-right * side) + CONCERT_SEAT_TURN))
+
+
+## Barriers end to end from `a` to `b` (the model is long along its local Z).
+static func _barrier_line(lib: ModelLibrary, id: int, a: Vector3, b: Vector3, batch: InstanceBatch) -> void:
+	var piece := lib.bounds[id].size.z * CONCERT_BARRIER_SCALE
+	var dist := a.distance_to(b)
+	if piece <= 0.0 or dist < piece:
+		return
+	var dir := (b - a) / dist
+	var n := int(dist / piece)
+	var start := a + dir * (dist - n * piece) * 0.5
+	var yaw := atan2(dir.x, dir.z)
+	for k in n:
+		batch.add(id, _standing(lib, id, start + dir * (k + 0.5) * piece, yaw, CONCERT_BARRIER_SCALE))

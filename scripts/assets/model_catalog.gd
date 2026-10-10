@@ -40,6 +40,8 @@ enum Cat {
 	TRUCK_CCF, TANK, BILLBOARD, BALLOON, JET_F111,
 	# Twelfth wave: UFO, bus shelter
 	UFO, BUS_SHELTER,
+	# Thirteenth wave: the concert camp (festival stage, floodlight, bleacher, crowd barrier)
+	CONCERT_STAGE, FLOODLIGHT, BLEACHER, CROWD_BARRIER,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
