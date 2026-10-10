@@ -53,12 +53,15 @@ func _run() -> void:
 	_farm_machines()
 	_industrial_zones()
 	_hospital_ambulance()
+	_city_hall_cars()
 	_fire_station_truck()
 	_container_tanker()
 	_nuclear_plant_convoy()
 	_desert()
 	_airport()
 	_bus_stops()
+	_prison_helicopters()
+	_cinema_parking()
 
 
 # --- Streets -----------------------------------------------------------------------------
@@ -396,14 +399,33 @@ func _container_tanker() -> void:
 
 # --- Public buildings -------------------------------------------------------------------------
 
-## In front of the main hospital (the biggest one when the city has two): on the side its
-## front looks at.
+## In front of every hospital (main hospitals and clinics): on the side its front looks at.
 func _hospital_ambulance() -> void:
-	var b := _biggest(Kind.MAIN_HOSPITAL)
-	if b >= 0:
-		_in_front("p54_11_ambulance", b, "in front of the main hospital")
-	else:
-		push_warning("[Vehicles] no main hospital")
+	var n := 0
+	for b in _d.building_count():
+		if _d.b_kind[b] == Kind.MAIN_HOSPITAL or _d.b_kind[b] == Kind.HOSPITAL:
+			_in_front("p54_11_ambulance", b, "in front of a hospital")
+			n += 1
+	if n == 0:
+		push_warning("[Vehicles] no hospital")
+
+
+## Two Japanese cars and a police car in a row in front of the city hall.
+func _city_hall_cars() -> void:
+	var b := _biggest(Kind.CITY_HALL)
+	if b < 0:
+		push_warning("[Vehicles] no city hall")
+		return
+	var ids := ["police_jp_black", "police_jp_patrol", "police_us_cruiser"]
+	var r := _d.building_rect(b)
+	var o := CityTypes.FACING_OFFSETS[_d.b_facing[b]]
+	var c := Vector2(r.position) + Vector2(r.size) * 0.5
+	var half := Vector2(r.size) * 0.5
+	var front := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + 0.55)
+	var head := Vector2(1, 0) if o.y != 0 else Vector2(0, 1)
+	for k in ids.size():
+		var p := front + head * (float(k) - 1.0) * 1.15
+		_add(ids[k], p, head, "in front of the city hall")
 
 
 ## Building of `kind` with the biggest lot (-1 when there is none).
@@ -536,3 +558,98 @@ func _bus_stops() -> void:
 		k += 1
 	if k < ids.size():
 		push_warning("[Vehicles] only %d bus stops" % k)
+
+
+# --- Prison island, cinema -----------------------------------------------------------------------
+
+## Two military helicopters on the north shore of the prison island (the Alcatraz-like one).
+func _prison_helicopters() -> void:
+	var b := _biggest(Kind.PRISON)
+	if b < 0:
+		push_warning("[Vehicles] no prison island")
+		return
+	var seen := {}
+	var stack: Array[Vector2i] = [_d.building_rect(b).position]
+	var land: Array[Vector2i] = []
+	while not stack.is_empty() and land.size() < 20000:
+		var c: Vector2i = stack.pop_back()
+		if seen.has(c) or not _d.is_land(c.x, c.y):
+			continue
+		seen[c] = true
+		land.append(c)
+		for o in CityTypes.FACING_OFFSETS:
+			stack.append(c + o)
+	if land.is_empty():
+		return
+	var top := land[0].y
+	for c in land:
+		top = mini(top, c.y)
+	var id := "p54_46_helicopter_military"
+	var len := _length(id)
+	var placed: Array[Vector2] = []
+	for pass_n in 2:
+		# Pass 0 wants free ground; pass 1 takes the northernmost land cells whatever is there.
+		for reach in range(2, 9):
+			if placed.size() >= 2:
+				break
+			var cands := land.filter(func(c: Vector2i) -> bool: return c.y <= top + reach)
+			cands.sort_custom(func(a: Vector2i, c: Vector2i) -> bool:
+				if a.y != c.y:
+					return a.y < c.y
+				return CityTypes.hash2(a.x, a.y, 91) < CityTypes.hash2(c.x, c.y, 91))
+			for c: Vector2i in cands:
+				var p := Vector2(c) + Vector2(0.5, 0.5)
+				var apart := true
+				for q in placed:
+					if q.distance_to(p) < 6.0:
+						apart = false
+				if not apart or (pass_n == 0 and not _fits(p, Vector2(1, 0), len)):
+					continue
+				placed.append(p)
+				_add(id, p, Vector2(1, 0), "on the north shore of the prison island")
+				if placed.size() >= 2:
+					break
+		if placed.size() >= 2:
+			break
+	if placed.size() < 2:
+		push_warning("[Vehicles] only %d helicopter(s) on the prison island" % placed.size())
+
+
+const PARKING_CARS: Array[String] = [
+	"m8_sedan_black", "m8_sedan_dark_red", "m8_sedan_mustard", "m8_wagon_mustard", "m8_wagon_blue",
+	"m8_wagon_teal", "m8_wagon_sloped_red", "m8_wagon_sloped_black", "m8_wagon_sloped_burgundy",
+	"m8_pickup_blue", "m8_pickup_mustard", "m8_pickup_olive", "m8_long_sedan_silver",
+	"p54_03_sedan_classic_maroon", "p54_04_sedan_modern_silver", "p54_05_sedan_90s_teal",
+	"p54_24_sedan_hardtop_teal", "p54_02_van_conversion_white",
+]
+
+
+## Parking lot: cars of random models on the free ground within 6 cells of the main cinema,
+## their noses towards the building.
+func _cinema_parking() -> void:
+	var b := _biggest(Kind.CINEMA_MAIN)
+	if b < 0:
+		push_warning("[Vehicles] no main cinema")
+		return
+	var r := _d.building_rect(b)
+	var n := 0
+	for y in range(r.position.y - 6, r.end.y + 6):
+		for x in range(r.position.x - 6, r.end.x + 6):
+			var dx := maxi(maxi(r.position.x - x, x - (r.end.x - 1)), 0)
+			var dy := maxi(maxi(r.position.y - y, y - (r.end.y - 1)), 0)
+			if maxi(dx, dy) < 1 or maxi(dx, dy) > 6 or not _free(x, y):
+				continue
+			var h := CityTypes.hash2(x, y, 313)
+			if h % 100 >= 78:
+				continue
+			# Nose towards the cinema along the axis it is furthest on.
+			var head := Vector2(0, 1 if y < r.position.y else -1) if dy >= dx else Vector2(1 if x < r.position.x else -1, 0)
+			if dx == dy and dx > 0 and (h >> 8) & 1 == 1:
+				head = Vector2(1 if x < r.position.x else -1, 0)
+			var id: String = PARKING_CARS[(h >> 12) % PARKING_CARS.size()]
+			out.append({"id": id, "at": Vector2(x, y) + Vector2(0.5, 0.5),
+					"yaw": atan2(-head.x, -head.y), "why": "parking lot of the cinema"})
+			_taken[_d.idx(x, y)] = 1
+			n += 1
+	if n == 0:
+		push_warning("[Vehicles] no room for the cinema parking")

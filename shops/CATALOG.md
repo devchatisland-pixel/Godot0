@@ -1,6 +1,6 @@
 # Shop catalog
 
-13 shops, one of each, in a row on the development island (north-east of the map, `Zone.DEV`),
+13 shops and 16 shipping containers, one of each, in rows on the development island (north-east of the map, `Zone.DEV`),
 placed by `scripts/generation/shop_sites.gd` (data: `shops/catalog.json`).
 
 ![Shop catalog](CATALOG.png)
@@ -24,6 +24,32 @@ Rebuild with `python tools/build_shop_catalog.py <raw dir> shops`. Preview all o
 | `shop-steel-glass` | General | Shop (steel & glass) | 4.9 x 3.91 x 3.42 | bystryakov.yuriy | CC-BY-4.0 |
 | `shop-coffee-b` | Coffee | Shop - Free model (coffee shop) | 8.05 x 8.91 x 6.86 | Astro0960 | CC-BY-4.0 |
 | `shop-building-multi` | Building | Building (multi-part cubes) | 4.5 x 6.84 x 6.75 | Codracer13 | CC-BY-4.0 |
+
+### Shipping containers
+
+Split from the "Low-poly Container" pack by `python tools/build_container_shops.py <pack.glb> shops`
+(16 boxes of 12 triangles in 8 textures with 2 UV layouts, textures halved to 512 px). They stand in
+rows south of the shops. "Low-poly Container" by Muhammad Awais Gul, CC-BY-4.0,
+<https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7>
+
+| ID | W x D x H (m) |
+|---|---|
+| `container-01` | 6.1 x 2.44 x 2.65 |
+| `container-02` | 6.1 x 2.44 x 2.65 |
+| `container-03` | 6.1 x 2.44 x 2.65 |
+| `container-04` | 6.1 x 2.44 x 2.65 |
+| `container-05` | 6.1 x 2.44 x 2.65 |
+| `container-06` | 6.1 x 2.44 x 2.65 |
+| `container-07` | 6.1 x 2.44 x 2.65 |
+| `container-08` | 6.1 x 2.44 x 2.65 |
+| `container-09` | 6.1 x 2.44 x 2.65 |
+| `container-10` | 6.1 x 2.44 x 2.65 |
+| `container-11` | 6.1 x 2.44 x 2.65 |
+| `container-12` | 6.1 x 2.44 x 2.65 |
+| `container-13` | 6.1 x 2.44 x 2.65 |
+| `container-14` | 6.1 x 2.44 x 2.65 |
+| `container-15` | 6.1 x 2.44 x 2.65 |
+| `container-16` | 6.1 x 2.44 x 2.65 |
 
 ## Notes and credits
 

@@ -220,7 +220,14 @@ const LATE := [
 	{"kind": "BILLBOARD", "at": Vector2i(199, 179)},
 	{"kind": "BILLBOARD", "at": Vector2i(150, 255)},
 	{"kind": "BEACH_HUT", "at": Vector2i(215, 122)},
+	{"kind": "BILLBOARD", "at": Vector2i(182, 59)},
 ]
+
+## Hot air balloons added at the end of the building list (no number moves): over the stadium,
+## over the north-east corner of the central park and over the mountain B-01102.
+const BALLOONS := [Vector2i(113, 162), Vector2i(169, 120), Vector2i(177, 101)]
+## Buildings moved by place: the beach hut B-01132 goes into the forest next to the desert.
+const HUT_FROM := Vector2i(191, 65)
 
 
 static func apply_late(data: CityData) -> void:
@@ -233,3 +240,60 @@ static func apply_late(data: CityData) -> void:
 		var id := _find(data, e["kind"], e["at"])
 		if id >= 0:
 			data.b_kind[id] = CityTypes.Kind.EMPTY
+	_move_hut(data)
+	for c: Vector2i in BALLOONS:
+		data.add_building(Rect2i(c - Vector2i(1, 1), Vector2i(3, 3)), CityTypes.Kind.BALLOON, 2, 1, 0.5)
+
+
+## The beach hut at HUT_FROM moves to the densest free 2x2 forest spot of the map that has
+## desert within 6 cells, the nearest one to where it was on a tie (the pier, if any, stays on
+## the beach). The desert is in the west, far from the east beach the hut stood on.
+static func _move_hut(data: CityData) -> void:
+	var id := _find(data, "BEACH_HUT", HUT_FROM)
+	if id < 0:
+		return
+	var taken := {}
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.EMPTY or b == id:
+			continue
+		var r := data.building_rect(b)
+		for y in range(r.position.y, r.end.y):
+			for x in range(r.position.x, r.end.x):
+				taken[Vector2i(x, y)] = true
+	var best := Vector2i(-1, -1)
+	var best_key := -1.0
+	for y in range(2, data.size - 3):
+		for x in range(2, data.size - 3):
+			var forest := 0
+			var ok := true
+			for dy in 2:
+				for dx in 2:
+					var cx := x + dx
+					var cy := y + dy
+					if not data.in_bounds(cx, cy):
+						ok = false
+						break
+					var i := data.idx(cx, cy)
+					if data.terrain[i] != CityTypes.Terrain.LAND or data.zone[i] != CityTypes.Zone.NATURE 							or data.road[i] != 0 or taken.has(Vector2i(cx, cy)):
+						ok = false
+						break
+					forest += data.forest[i]
+				if not ok:
+					break
+			if not ok or forest < 4 * 120:
+				continue
+			var desert := false
+			for dy in range(-6, 8):
+				for dx in range(-6, 8):
+					if data.zone_at(x + dx, y + dy) == CityTypes.Zone.DESERT:
+						desert = true
+			if not desert:
+				continue
+			var key := float(forest) - Vector2(x - HUT_FROM.x, y - HUT_FROM.y).length() * 2.0
+			if key > best_key:
+				best_key = key
+				best = Vector2i(x, y)
+	if best.x < 0:
+		push_warning("[Edits] no forest spot near the desert for the beach hut")
+		return
+	data.set_building_rect(id, Rect2i(best, Vector2i(2, 2)))

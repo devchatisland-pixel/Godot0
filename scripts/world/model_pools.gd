@@ -257,6 +257,10 @@ static func _poor(lib: ModelLibrary, roll: float, r: Rect2i) -> PackedInt32Array
 		return lib.ids(Cat.WAREHOUSE)
 	if lib.has_cat(Cat.POOR_BLOCK):
 		return lib.ids(Cat.POOR_BLOCK)
+	if lib.has_cat(Cat.POOR_SLAB):
+		return lib.ids(Cat.POOR_SLAB)
+	if lib.has_cat(Cat.WAREHOUSE):
+		return lib.ids(Cat.WAREHOUSE)
 	return lib.ids(Cat.PANEL)
 
 

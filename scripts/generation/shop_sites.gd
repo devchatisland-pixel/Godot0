@@ -47,7 +47,14 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 			x0 = mini(x0, x)
 			x1 = maxi(x1, x)
 
-	var order := shops.duplicate()
+	# Shipping containers (ids "container-NN") stand in rows south of the shops.
+	var containers := []
+	var order := []
+	for s in shops:
+		if String(s["id"]).begins_with("container-"):
+			containers.append(s)
+		else:
+			order.append(s)
 	order.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		if not is_equal_approx(a["height"], b["height"]):
 			return a["height"] < b["height"]
@@ -69,4 +76,23 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 			"yaw": PI, "height": float(s["height"]), "scale": k,
 		})
 		x += w + GAP
+
+	containers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return String(a["id"]) < String(b["id"]))
+	var cx := float(x0) + 1.5
+	var row_front := front + 1.2
+	var row_dep := 0.0
+	for s in containers:
+		var k := CELLS_PER_METRE * float(SCALE.get(s["id"], 1.0))
+		var w := float(s["width"]) * k
+		var dep := float(s["depth"]) * k
+		if cx + w > float(x0) + avail - 1.5 and cx > float(x0) + 1.5:
+			cx = float(x0) + 1.5
+			row_front += row_dep + 0.8
+			row_dep = 0.0
+		row_dep = maxf(row_dep, dep)
+		out.append({
+			"id": s["id"], "at": Vector2(cx + w * 0.5, row_front + dep * 0.5),
+			"yaw": PI, "height": float(s["height"]), "scale": k,
+		})
+		cx += w + 0.6
 	return out

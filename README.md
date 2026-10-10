@@ -251,7 +251,6 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `ny_buildings` | New York buildings | LANDMARK, TOWER_PHOTO, NY_MIDRISE | 7 landmarks, glass towers, brick buildings |
 | `ny_street` | buildings | NY_STREET | shop and office buildings in commercial streets |
 | `towers_a`, `towers_b` | city pack 7 / 8 | TOWER_PHOTO | 16 towers for the middle of downtown |
-| `panel_block` | 12-storey panel block | PANEL | some apartment lots |
 | `quarter` | 100 low-poly buildings | QUARTER_LOW / MID / TALL | the colourful quarter (87 buildings) |
 | `business` | low-poly business pack | BIZ_SHOP, CINEMA, MALL | diners and shops, the cinema, the shopping center |
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
@@ -299,6 +298,7 @@ Not used:
 
 ### Credits of the latest models
 
+* "Low-poly Container" by Muhammad Awais Gul, CC BY 4.0 (shops/, development island)
 * "building 3" by geniusrahman155, CC BY 4.0
 * "Low Poly Night City Building Skyline" by 99.Miles, CC BY 4.0
 * "Building Crane (low poly)" by jmarco2000, CC BY 4.0

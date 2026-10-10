@@ -189,20 +189,6 @@
       "texture_max": 256
     },
     {
-      "src": "res://FREEMODELS/_incoming/detailed_12_storey_panel_apartment_building.glb",
-      "out": "panel_block",
-      "footprint": 1.95,
-      "items": [
-        {
-          "id": "panel_block",
-          "nodes": [
-            "12stbuilding1_LOD1"
-          ],
-          "cat": "PANEL"
-        }
-      ]
-    },
-    {
       "src": "res://FREEMODELS/_incoming/100_lowpoly_buildings__buildings_pack.glb",
       "out": "quarter",
       "max_height": 5.5,
