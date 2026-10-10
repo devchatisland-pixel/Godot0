@@ -14,6 +14,8 @@ const Terrain := CityTypes.Terrain
 ## Where the search for the fire truck starts, and the forest density it needs.
 const TRUCK_AT := Vector2i(172, 70)
 const FOREST_MIN := 150
+## The flying saucer: far from the city and from the secret base, in the south of the desert.
+const UFO_AT := Vector2i(64, 152)
 ## The balloon (cell of its centre; it floats, see BuildingPlacer.KIND_LIFT).
 const BALLOON_AT := Vector2i(206, 44)
 ## Zones with fewer cells than this get no billboard.
@@ -256,7 +258,7 @@ func _ufo_and_tanks() -> int:
 	if base.size.x <= 0:
 		return 0
 	var placed := 0
-	var ufo := _near_in_zone(base.get_center() + Vector2i(15, 6), Vector2i(3, 3), Zone.DESERT)
+	var ufo := _near_in_zone(UFO_AT, Vector2i(3, 3), Zone.DESERT)
 	if ufo.size.x > 0:
 		_add(ufo, Kind.UFO, 2, 1)
 		placed += 1

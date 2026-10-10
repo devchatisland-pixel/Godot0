@@ -79,9 +79,9 @@ const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
 const MODEL_BOOST := {
-	"france.glb: red0": 1.5, "france.glb: red1": 1.5, "france.glb: red2": 1.5, "france.glb: red3": 1.5,
+	"france.glb: red0": 2.0, "france.glb: red1": 2.0, "france.glb: red2": 2.0, "france.glb: red3": 2.0,
 	"france.glb: red4": 1.5, "france.glb: red5": 1.5, "france.glb: red6": 1.5,
-	"france.glb: blue0": 1.5, "france.glb: blue1": 1.5, "france.glb: blue2": 2.0,
+	"france.glb: blue0": 2.0, "france.glb: blue1": 2.0, "france.glb: blue2": 2.0, "france.glb: blue3": 2.0,
 }
 ## Las Vegas buildings are drawn at most this much bigger than modelled (they were skyscraper size).
 const VEGAS_MAX_FILL := 1.2
@@ -233,6 +233,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 			scale = minf(room, WATCHTOWER_SCALE)
 		Kind.BUS_STOP:
 			scale = minf(room, 0.7)
+		Kind.UFO:
+			scale = minf(room, 0.3) # a little saucer
 		Kind.BURGER_JOINT:
 			scale = minf(room, 1.0) # regular size (they used to be drawn up to 3 times bigger)
 		Kind.FUTURE_BLDG:
@@ -251,7 +253,7 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 		stretch = 1.5
 	var boost: float = MODEL_BOOST.get(lib.model_name(id), 1.0)
 	if boost != 1.0:
-		scale = minf(room, maxf(scale, 1.0) * boost)
+		scale = maxf(scale, 1.0) * boost # not limited by the lot: the house may overhang
 	scale = _sized(scale, data.b_scale[i])
 	var push := 0.25 if kind == Kind.HOUSE else 0.85
 	if CityTypes.is_service(kind):

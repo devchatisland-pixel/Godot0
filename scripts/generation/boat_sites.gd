@@ -80,6 +80,11 @@ static func apply(data: CityData) -> int:
 	for t in [Vector2i(60, 252), Vector2i(130, 266), Vector2i(262, 70), Vector2i(170, 12)]:
 		plan.append([0, t, Vector2i(7, 3), 2, FAR_FROM_LAND, Kind.PIRATE_SHIP])
 	plan.append([0, GRAVEYARD_SEA, Vector2i(7, 3), 2, 0, Kind.PIRATE_SHIP])
+	# Three more pirate ships and two more submarines.
+	for t in [Vector2i(80, 20), Vector2i(200, 250), Vector2i(24, 250)]:
+		plan.append([0, t, Vector2i(7, 3), 2, FAR_FROM_LAND, Kind.PIRATE_SHIP])
+	for t in [Vector2i(216, 28), Vector2i(120, 242)]:
+		plan.append([SUB, t, Vector2i(4, 9), 2])
 	var placed := 0
 	for p in plan:
 		var far: int = p[4] if p.size() > 4 else 0
