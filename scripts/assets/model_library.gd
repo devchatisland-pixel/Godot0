@@ -21,7 +21,12 @@ var named := {}
 var names := PackedStringArray()
 var cats := PackedInt32Array()
 
+## The shipping containers of the yards (shops/models, from the "Low-poly Container" pack),
+## loaded as named meshes "yardbox:NN" when the packs are done.
+const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "container-09", "container-10"]
+
 var _pending: Array[Dictionary] = []
+var _yard_loaded := false
 var _total := 0
 # Curated pack currently open (packs hold many buildings, opened once each).
 var _pack_path := ""
@@ -56,6 +61,10 @@ func load_next(count: int) -> float:
 		by_cat[cat].append(id)
 	if _pending.is_empty():
 		_close_pack()
+		if not _yard_loaded:
+			_yard_loaded = true
+			for c: String in YARD_CONTAINERS:
+				load_named("yardbox:" + c.trim_prefix("container-"), "res://shops/models/%s.glb" % c)
 	return 1.0 - float(_pending.size()) / float(_total)
 
 

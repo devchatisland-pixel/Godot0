@@ -44,7 +44,7 @@ func _init() -> void:
 	print("[Test] clickable: %d vehicles, %d shops, %d roadblock pieces (%d meshes)" % [nv, ns, nr, meshes])
 	if nv + ns + nr != meshes:
 		_fail("some meshes are not clickable")
-	if nv == 0 or ns != 15 or nr == 0:
+	if nv == 0 or ns != MapShops.catalog().size() or nr == 0:
 		_fail("missing clickable things")
 
 	# Tap on the first shop, through the camera.
