@@ -1,18 +1,19 @@
 class_name BeachSites
 extends RefCounted
-## A few huts on the beaches of the main island, most of them with a pier running out
-## into the sea. Added at the end of the building list, so no number moves.
-## A site is a hut on dry land, the beach in front of it and open water beyond.
+## A few piers running out into the sea from the beaches of the main island. Added at the
+## end of the building list, so no number moves.
+## A site is a free 2x2 spot on dry land (where a beach hut used to stand; the hut pack is
+## gone, the spot stays empty), the beach in front of it and open water beyond.
 
 const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 const Terrain := CityTypes.Terrain
 
-## How many huts, how far apart (cells), and how many of them get a pier.
+## How many sites, how far apart (cells), and how many of them get a pier.
 const SITES := 5
 const MIN_GAP := 50.0
 const PIERS := 3
-## Minimum distance of the two extra piers from the other huts.
+## Minimum distance of the two extra piers from the other sites.
 const EXTRA_GAP := 9.0
 ## Cells of a pier over the sea, and its width.
 const PIER_WATER := 3
@@ -22,7 +23,7 @@ const ZONES := [Zone.NATURE, Zone.SAND]
 const SEED := 4711
 
 
-## Adds the sites; returns how many huts.
+## Adds the piers; returns how many.
 static func apply(data: CityData) -> int:
 	var taken := PackedByteArray()
 	taken.resize(data.size * data.size)
@@ -72,12 +73,13 @@ static func apply(data: CityData) -> int:
 				extra += 1
 				if extra >= 2:
 					break
+	var piers := 0
 	for k in chosen.size():
 		var s: Dictionary = chosen[k]
-		data.add_building(s["hut"], Kind.BEACH_HUT, s["facing"], CityTypes.hash2(k, 17, SEED), 0.5)
 		if k < PIERS or k >= SITES:
 			data.add_building(s["pier"], Kind.PIER, s["facing"], CityTypes.hash2(k, 23, SEED), 0.5)
-	return chosen.size()
+			piers += 1
+	return piers
 
 
 ## The site whose sea side is the beach cell `b` looking towards `facing`, or {}.
@@ -100,7 +102,7 @@ static func _site(data: CityData, taken: PackedByteArray, b: Vector2i, facing: i
 				or taken[data.idx(p.x, p.y)] == 1:
 			return {}
 		p += d
-	# Hut: 2x2 on the land behind the beach; pier: 2 wide from the beach into the water.
+	# Site: 2x2 on the land behind the beach; pier: 2 wide from the beach into the water.
 	var side := Vector2i(-d.y, d.x)
 	var hut_cells := [behind, behind + side, behind - d, behind - d + side]
 	for c in hut_cells:

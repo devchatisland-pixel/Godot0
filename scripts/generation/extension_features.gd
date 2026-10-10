@@ -181,15 +181,11 @@ func build_mountains() -> void:
 			i += 1
 
 
-## The pirate grave on the smallest islet, and the pirate ship in the open sea of the
-## south-east, off the palm islet there: far from the fog of the fog island.
+## The pirate grave on the smallest islet.
 func build_pirate_islet() -> void:
 	var grave := _spots.find_spot(MapLayout.point("pirate_islet"), Vector2i.ONE, Zone.ISLET, 3, 0)
 	if grave.size.x > 0:
 		_spots.claim(grave, Kind.GRAVE, 2)
-	var ship := _spots.find_water(MapLayout.point("pirate_sea"), Vector2i(7, 3), 10)
-	if ship.size.x > 0:
-		_spots.claim(ship, Kind.PIRATE_SHIP, 2)
 
 
 ## The prison compound: a big cellhouse, stone wings, a villa and lighthouses.

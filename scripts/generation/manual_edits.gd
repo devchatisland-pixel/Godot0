@@ -55,12 +55,9 @@ const EDITS := [
 		"old_ground": "PARK"},
 ]
 
-## Kinds taken away everywhere: the pirate ships (the ones at sea are only made after the
-## other edits), the airport, the urban ghetto block and the wings of the prison.
-const DELETED_KINDS := ["PIRATE_SHIP", "AIRPORT", "RUSSIAN", "PRISON_WING"]
+## Kinds taken away everywhere: the airport, the urban ghetto block and the wings of the prison.
+const DELETED_KINDS := ["AIRPORT", "RUSSIAN", "PRISON_WING"]
 
-## The beach hut nearest to this cell of the first map goes into the forest next to the desert.
-const HUT_FROM := Vector2i(191, 65)
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
 const BALLOON_MOUNTAIN := Vector2i(177, 101)
@@ -175,15 +172,14 @@ static func _clear_quay(data: CityData, lot: Rect2i, radius: int) -> void:
 
 
 # --- After the props ----------------------------------------------------------------------------
-## What only exists once the props are placed: the kinds taken away, the hut in the forest
-## and the balloons (added at the end of the building list).
+## What only exists once the props are placed: the kinds taken away and the balloons
+## (added at the end of the building list).
 static func apply_late(data: CityData) -> void:
 	for kind_name in DELETED_KINDS:
 		var kind: int = CityTypes.Kind[kind_name]
 		for b in data.building_count():
 			if data.b_kind[b] == kind:
 				data.b_kind[b] = CityTypes.Kind.EMPTY
-	_move_hut(data)
 	for c in _balloon_cells(data):
 		data.add_building(Rect2i(c - Vector2i(1, 1), Vector2i(3, 3)), CityTypes.Kind.BALLOON, 2, 1, 0.5)
 
@@ -211,56 +207,3 @@ static func _balloon_cells(data: CityData) -> Array[Vector2i]:
 	if mountain >= 0:
 		out.append(data.building_rect(mountain).get_center())
 	return out
-
-
-## The beach hut nearest to HUT_FROM moves to the densest free 2x2 forest spot of the map that
-## has desert within 6 cells, the nearest one to where it was on a tie (the pier, if any, stays
-## on the beach). The desert is in the west, far from the east beach the hut stood on.
-static func _move_hut(data: CityData) -> void:
-	var from := MapLayout.scaled(HUT_FROM)
-	var id := _nearest(data, "BEACH_HUT", from)
-	if id < 0:
-		return
-	var taken := {}
-	for b in data.building_count():
-		if data.b_kind[b] == CityTypes.Kind.EMPTY or b == id:
-			continue
-		var r := data.building_rect(b)
-		for y in range(r.position.y, r.end.y):
-			for x in range(r.position.x, r.end.x):
-				taken[Vector2i(x, y)] = true
-	var best := Vector2i(-1, -1)
-	var best_key := -INF
-	for y in range(2, data.size - 3):
-		for x in range(2, data.size - 3):
-			var forest := 0
-			var ok := true
-			for dy in 2:
-				for dx in 2:
-					var cx := x + dx
-					var cy := y + dy
-					var i := data.idx(cx, cy)
-					if data.terrain[i] != CityTypes.Terrain.LAND or data.zone[i] != CityTypes.Zone.NATURE \
-							or data.road[i] != 0 or taken.has(Vector2i(cx, cy)):
-						ok = false
-						break
-					forest += data.forest[i]
-				if not ok:
-					break
-			if not ok or forest < 4 * 120:
-				continue
-			var desert := false
-			for dy in range(-6, 8):
-				for dx in range(-6, 8):
-					if data.zone_at(x + dx, y + dy) == CityTypes.Zone.DESERT:
-						desert = true
-			if not desert:
-				continue
-			var key := float(forest) - Vector2(x - from.x, y - from.y).length() * 2.0
-			if key > best_key:
-				best_key = key
-				best = Vector2i(x, y)
-	if best.x < 0:
-		push_warning("[Edits] no forest spot near the desert for the beach hut")
-		return
-	data.set_building_rect(id, Rect2i(best, Vector2i(2, 2)))

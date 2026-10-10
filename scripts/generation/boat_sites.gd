@@ -20,8 +20,6 @@ const SUB_OFFSET := Vector2i(14, -17)
 const BRIDGE_CLEAR := 6
 ## How far a search for sea goes, in cells.
 const REACH := 14
-## Cells of open sea all round a pirate ship at sea, and the sea beside the graveyard islet.
-const FAR_FROM_LAND := 10
 
 
 static func apply(data: CityData) -> int:
@@ -71,24 +69,16 @@ static func apply(data: CityData) -> int:
 	# Four more submarines all round the seas, far from each other.
 	for t in MapLayout.points("submarines_a"):
 		plan.append([SUB, t, Vector2i(4, 9), 2])
-	# Four more pirate ships, always far from any beach, and one beside the graveyard islet.
-	for t in MapLayout.points("pirate_ships_a"):
-		plan.append([0, t, Vector2i(7, 3), 2, FAR_FROM_LAND, Kind.PIRATE_SHIP])
-	plan.append([0, MapLayout.point("graveyard_sea"), Vector2i(7, 3), 2, 0, Kind.PIRATE_SHIP])
-	# Three more pirate ships and two more submarines.
-	for t in MapLayout.points("pirate_ships_b"):
-		plan.append([0, t, Vector2i(7, 3), 2, FAR_FROM_LAND, Kind.PIRATE_SHIP])
+	# Two more submarines.
 	for t in MapLayout.points("submarines_b"):
 		plan.append([SUB, t, Vector2i(4, 9), 2])
 	var placed := 0
 	for p in plan:
-		var far: int = p[4] if p.size() > 4 else 0
-		var kind: int = p[5] if p.size() > 5 else Kind.BOAT
-		var spot := _water(data, taken, p[1], p[2], forbid, far)
+		var spot := _water(data, taken, p[1], p[2], forbid)
 		if spot.size.x <= 0:
 			push_warning("[Boats] no sea found for boat %d near %s" % [p[0], p[1]])
 			continue
-		data.add_building(spot, kind, p[3], p[0] if kind == Kind.BOAT else CityTypes.hash2(spot.position.x, spot.position.y, 66), 0.5)
+		data.add_building(spot, Kind.BOAT, p[3], p[0], 0.5)
 		for y in range(spot.position.y - 1, spot.end.y + 1):
 			for x in range(spot.position.x - 1, spot.end.x + 1):
 				if data.in_bounds(x, y):
@@ -99,14 +89,14 @@ static func apply(data: CityData) -> int:
 
 ## The free rectangle of open sea closest to `target`, or an empty one.
 static func _water(data: CityData, taken: PackedByteArray, target: Vector2i, size: Vector2i,
-		forbid: Array[Rect2i], far: int = 0) -> Rect2i:
+		forbid: Array[Rect2i]) -> Rect2i:
 	for radius in REACH + 1:
 		for dy in range(-radius, radius + 1):
 			for dx in range(-radius, radius + 1):
 				if maxi(absi(dx), absi(dy)) != radius:
 					continue
 				var r := Rect2i(target + Vector2i(dx, dy) - size / 2, size)
-				if _sea(data, taken, r, forbid) and (far <= 0 or _open_sea(data, r, far)):
+				if _sea(data, taken, r, forbid):
 					return r
 	return Rect2i()
 
@@ -121,16 +111,5 @@ static func _sea(data: CityData, taken: PackedByteArray, r: Rect2i, forbid: Arra
 				return false
 			var i := data.idx(x, y)
 			if data.terrain[i] >= Terrain.BEACH or taken[i] == 1:
-				return false
-	return true
-
-
-## True when no land lies within `reach` cells of the rectangle (sampled every 3 cells).
-static func _open_sea(data: CityData, r: Rect2i, reach: int) -> bool:
-	for dy in range(-reach, reach + 1, 3):
-		for dx in range(-reach, reach + 1, 3):
-			var x := r.get_center().x + dx
-			var y := r.get_center().y + dy
-			if data.in_bounds(x, y) and data.terrain[data.idx(x, y)] >= Terrain.BEACH:
 				return false
 	return true

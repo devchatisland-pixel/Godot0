@@ -104,8 +104,6 @@ const VEGAS_BY_SIZE := {
 	2: ["club_a", "club_b", "club_c", "club_bar", "club_tower"],
 	3: ["club_tower", "club_tower_b", "resort", "club_tower"],
 }
-## Cartoon shops (burger, pizza, diner) are drawn up to this much bigger so they stay visible.
-const SHOP_BOOST := 1.7
 ## Big buildings from the packs grow to fill their (big) lot, up to this scale.
 const MAX_FILL := 3.0
 ## Famous New York towers: wider lots and this height at least (stretched a bit).
@@ -227,8 +225,6 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 			scale = minf(room, COOLING_SCALE)
 		Kind.WATCHTOWER:
 			scale = minf(room, WATCHTOWER_SCALE)
-		Kind.BUS_STOP:
-			scale = minf(room, 0.7)
 		Kind.UFO:
 			scale = minf(room, 0.3) # a little saucer
 		Kind.BURGER_JOINT:
@@ -239,9 +235,6 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 		Kind.URBAN_CLUSTER:
 			scale = minf(room, 1.0)
 			stretch = 1.6
-		Kind.SHOP:
-			var biz := lib.ids(Cat.BIZ_SHOP).has(id) or lib.ids(Cat.BIZ_PIZZA).has(id)
-			scale = minf(room, SHOP_BOOST if biz else 1.0)
 		_:
 			scale = minf(room, MAX_FILL if CityTypes.is_service(kind) else 1.0)
 	if ModelPools.is_new_york(lib, id):

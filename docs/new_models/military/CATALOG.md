@@ -78,7 +78,7 @@ Sizes: the pack models use roughly 1 unit = 0.1 m (a tank is about 9 m long), so
 
 Standalone radars: `radar-dish-low-poly` is about 1.7 x 2 x 1.5 raw (already near metres, small); `radar-fixed-station` is 266 x 185 x 164 raw (about 2.7 x 1.9 x 1.6 m at scale 0.01), includes a ground mesh and an animation.
 
-## Added later: air defence, aircraft, ship (4)
+## Added later: air defence, aircraft, ship (3)
 
 ![](sheet_added.png)
 
@@ -86,12 +86,10 @@ Standalone radars: `radar-dish-low-poly` is about 1.7 x 2 x 1.5 raw (already nea
 |---|---|---|---|---|---|---|---|
 | ![](thumbs/sam-nasams.png) | `sam-nasams` | NASAMS surface-to-air missile launcher | 12.82 x 14.2 x 17.79 | x0.5 | 6.4 x 7.1 x 8.9 | 3114 | CC-BY-4.0 |
 | ![](thumbs/jet-f14-tomcat.png) | `jet-f14-tomcat` | F-14 Tomcat (low poly) | 4.08 x 1.04 x 4.04 | x4.7 | 19.2 x 4.9 x 19.0 | 6985 | CC-BY-4.0 |
-| ![](thumbs/radar-ibis150.png) | `radar-ibis150` | IBIS150 air defence radar (very high poly) | 0.35 x 0.5 x 1.0 | x9.0 | 3.1 x 4.5 x 9.0 | 369115 | CC-BY-4.0 |
 | ![](thumbs/ship-carrier.png) | `ship-carrier` | Aircraft carrier | 78.16 x 68.25 x 302.16 | x1.1 | 86.0 x 75.1 x 332.4 | 1318 | CC-BY-4.0 |
 
 Notes (all four are CC-BY-4.0, so usable commercially with credit; scales are estimates):
 
 - **sam-nasams** - Launcher with raised missile canisters on a camouflage trailer. Single mesh/material. Scale is a guess (a launcher is roughly 8 m long). Source `nasams_1_surface-to-air_missile_system.glb`, "Nasams 1 Surface-to-Air Missile System" by Muhamad Mirza Arrafi, <https://sketchfab.com/3d-models/nasams-1-surface-to-air-missile-system-5fb34fab137c430988fd5642a3b87db3>
 - **jet-f14-tomcat** - Has an animation (wing sweep). 81 mesh parts, swept-wing pose in the rest state. Raw length ~4 u is far too small for a jet; x4.7 gives roughly 19 m. Source `low_poly_f14_tomcat.glb`, "Low poly F14 Tomcat" by SIpriv, <https://sketchfab.com/3d-models/low-poly-f14-tomcat-e99d03987b574e80971c1c8cc2b75925>
-- **radar-ibis150** - Truck-mounted radar, 4 meshes with one texture material and 369,115 triangles: a scan/AI-generated mesh, far too heavy for a game; decimate it first. Raw size is normalised to about 1 u long, so x9 gives roughly 9 m. Source `ibis150_air_defense_radar.glb`, "IBIS150 air defense radar" by 42manako, <https://sketchfab.com/3d-models/ibis150-air-defense-radar-ffd78c2b016943f7b60252e94d3bc8ad>
 - **ship-carrier** - Aircraft carrier hull and island, 4 meshes, 1,318 triangles, light enough to use. Origin is not at the keel centre (bbox y -15..53, z -178..124); x1.1 gives about 330 m. Source `carrier.glb`, "Carrier" by victorberdugo1, <https://sketchfab.com/3d-models/carrier-494f375042bb4133915a51e079557f4b>

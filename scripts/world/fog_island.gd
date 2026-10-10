@@ -3,7 +3,6 @@ extends Node3D
 ## Draws the island hidden in the fog east of Chat City and the metal
 ## bridge that leads to it:
 ##   - its buildings and palms (a few MultiMeshes, always loaded, small),
-##   - the night skyline model in its two downtowns (city lights in the fog),
 ##   - a fog bank made of painted cloud textures: drifting sheets plus big
 ##     billows and smoke plumes on camera-facing quads (no 3D volumes),
 ##   - the "ZONE UNLOCKED ON SEASON 2, COMING SOON" title above it.
@@ -39,10 +38,7 @@ func build(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
 	var fog := data.fog
 	if fog == null:
 		return
-	var skyline := lib.ids(Cat.SKYLINE)
-	_build_buildings(fog, lib, not skyline.is_empty())
-	if not skyline.is_empty():
-		_build_skylines(fog, lib, skyline[0])
+	_build_buildings(fog, lib)
 	_build_bridge(data, lib)
 	_build_layers(fog)
 	_build_puffs(fog, 60 if cfg.is_mobile else 120)
@@ -55,7 +51,7 @@ func set_night(amount: float) -> void:
 
 
 # --- Buildings and trees -------------------------------------------------------------------
-func _build_buildings(fog: FogIslandShaper, lib: ModelLibrary, has_skyline: bool) -> void:
+func _build_buildings(fog: FogIslandShaper, lib: ModelLibrary) -> void:
 	var pools := [_union(lib, [Cat.TOWER_PHOTO, Cat.SKYSCRAPER]),
 			_union(lib, [Cat.COMMERCIAL, Cat.NY_MIDRISE]), lib.ids(Cat.HOUSE)]
 	var groups := {}
@@ -63,8 +59,6 @@ func _build_buildings(fog: FogIslandShaper, lib: ModelLibrary, has_skyline: bool
 		var p: Vector2 = b[0]
 		var kind: int = b[1]
 		var h: int = b[2]
-		if has_skyline and kind < 2 and _near_downtown(fog, p, 13.0):
-			continue # the skyline model stands there
 		var pool: PackedInt32Array = pools[kind]
 		if pool.is_empty():
 			continue
@@ -84,31 +78,6 @@ func _build_buildings(fog: FogIslandShaper, lib: ModelLibrary, has_skyline: bool
 				Vector3(p.x, 0, p.y)))
 	for id in groups:
 		_multimesh(lib.meshes[id], groups[id])
-
-
-func _near_downtown(fog: FogIslandShaper, p: Vector2, r: float) -> bool:
-	for cl in FogIslandShaper.CLUSTERS:
-		if cl["towers"] and p.distance_to(fog.origin + FogIslandShaper.cluster_at(cl)) < r:
-			return true
-	return false
-
-
-## The night skyline model in both downtowns, turned differently.
-func _build_skylines(fog: FogIslandShaper, lib: ModelLibrary, id: int) -> void:
-	var box := lib.bounds[id]
-	var k := 0
-	for cl in FogIslandShaper.CLUSTERS:
-		if not cl["towers"]:
-			continue
-		var at: Vector2 = fog.origin + FogIslandShaper.cluster_at(cl)
-		var basis := Basis(Vector3.UP, PI * 0.5 * k)
-		var center := Vector3(box.get_center().x, 0, box.get_center().z)
-		var mi := MeshInstance3D.new()
-		mi.mesh = lib.meshes[id]
-		mi.transform = Transform3D(basis, Vector3(at.x, 0, at.y) - basis * center)
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		add_child(mi)
-		k += 1
 
 
 # --- Bridge to the fog island ------------------------------------------------------------------

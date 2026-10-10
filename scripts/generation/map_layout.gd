@@ -49,8 +49,6 @@ const PALM_ISLETS := [
 const POINTS := {
 	# The smallest palm islet: the pirate grave stands on it.
 	"pirate_islet": Vector2i(250, 92),
-	# Where the search for the sea of the pirate ship starts.
-	"pirate_sea": Vector2i(255, 208),
 	# Where the ferris wheel stands (6x6 plot, at the south beach).
 	"ferris": Vector2i(146, 221),
 	# Where the search for the plot of the nuclear plant starts.
@@ -67,17 +65,12 @@ const POINTS := {
 	"tanker": Vector2i(40, 76),
 	# Sea north of the main island, where the wooden boat lies.
 	"north_sea": Vector2i(150, 30),
-	# The sea beside the graveyard islet.
-	"graveyard_sea": Vector2i(139, 252),
 }
 
 const POINT_LISTS := {
 	# Submarines all round the seas, far from each other.
 	"submarines_a": [Vector2i(100, 16), Vector2i(16, 215), Vector2i(190, 262), Vector2i(250, 16)],
 	"submarines_b": [Vector2i(216, 28), Vector2i(120, 242)],
-	# Pirate ships, always far from any beach.
-	"pirate_ships_a": [Vector2i(60, 252), Vector2i(130, 266), Vector2i(262, 70), Vector2i(170, 12)],
-	"pirate_ships_b": [Vector2i(80, 20), Vector2i(200, 250), Vector2i(24, 250)],
 }
 
 const CELLS := {

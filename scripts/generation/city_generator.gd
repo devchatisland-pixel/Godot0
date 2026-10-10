@@ -43,16 +43,14 @@ func generate() -> CityData:
 	print("[City] %d towers added south of the airport" % fill)
 	var edits := ManualEdits.apply(data)
 	print("[City] %d hand edits applied" % edits)
-	var huts := BeachSites.apply(data)
-	print("[City] %d beach huts" % huts)
+	var piers := BeachSites.apply(data)
+	print("[City] %d piers" % piers)
 	var boats := BoatSites.apply(data)
 	print("[City] %d boats" % boats)
 	var props := PropSites.apply(data)
 	print("[City] props: ", props)
 	# Once every building and prop stands: the roads are made one clean network.
 	print("[City] road network: ", RoadNetwork.apply(data))
-	var stops := BusStops.apply(data)
-	print("[City] %d bus stops" % stops)
 	ManualEdits.apply_late(data)
 	print("[City] building budget: ", BuildingBudget.apply(data))
 	# The urban island is rebuilt last, so that nothing else of the map depends on it.

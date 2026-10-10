@@ -13,33 +13,33 @@ enum Cat {
 	BRIDGE_PILLAR, STREET_LIGHT,
 	# Curated packs
 	TOWER_PHOTO, LANDMARK, NY_STREET, NY_MIDRISE, PANEL,
-	QUARTER_LOW, QUARTER_MID, QUARTER_TALL, BIZ_SHOP, BIZ_PIZZA, CINEMA, MALL, OUTPOST,
+	QUARTER_LOW, QUARTER_MID, QUARTER_TALL, OUTPOST,
 	POLICE, STADIUM,
-	# Main public buildings (one of each), U.N. tower, crane, bridge, night skyline
+	# Main public buildings (one of each), U.N. tower, crane, bridge
 	POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, PHARMACY, GAS_STATION,
-	UN_TOWER, CRANE, BRIDGE, SKYLINE,
+	UN_TOWER, CRANE, BRIDGE,
 	# Second and third wave of packs
 	BANK_PACK, POLICE_CAR, BARRIER, CONE, TRUCK, CONTAINER, BARREL,
 	HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, HOTEL_PACK, MUSEUM_PACK, CHURCH_PACK, GAS_PACK,
 	WAREHOUSE, FACTORY, RUIN, MANSION, PRISON_BLOCK, POOR_SLAB, POOR_BLOCK, RUSSIAN, FIELD, STALL,
 	# Fourth wave: the urban island, burger restaurants, the west bridge
 	URBAN, MCDONALDS, BURGER_KING, SKYLINE2, METAL_BRIDGE,
-	# Fifth wave: futuristic towers, pirate ship
-	FUTURE, PIRATE_SHIP,
+	# Fifth wave: futuristic towers
+	FUTURE,
 	# Sixth wave: nuclear plant, new cinema, airport, burger joints, villas, roadblocks
 	NUCLEAR, CINEMA2, AIRPORT, BURGER_JOINT, VILLA, ROADBLOCK_A, ROADBLOCK_B,
 	# Seventh wave: more urban towers, cooling towers, the BT tower, the watchtower
 	URBAN2, NIGHT_TOWER, COOLING, COOLING_HALL, WATCHTOWER,
 	# Eighth wave: neon roof signs
 	NEON_CONTROLLER, NEON_PACMAN,
-	# Ninth wave: beach huts and piers
-	BEACH_HUT, PIER,
+	# Ninth wave: piers
+	PIER,
 	# Tenth wave: boats
 	BOAT_SIMPLE, BOAT_WOODEN, BOAT_FISHING, BOAT_CARGO, BOAT_SUB,
 	# Eleventh wave: forest fire truck, tank, billboard, hot air balloon, F-111 jets
 	TRUCK_CCF, TANK, BILLBOARD, BALLOON, JET_F111,
-	# Twelfth wave: UFO, bus shelter
-	UFO, BUS_SHELTER,
+	# Twelfth wave: UFO
+	UFO,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
