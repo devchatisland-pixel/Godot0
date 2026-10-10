@@ -3,8 +3,8 @@ extends RefCounted
 ## Decides which family of models a building is drawn from, so the districts
 ## mix the kits without looking random:
 ##   downtown   Kenney towers outside, photo towers in the dense middle
-##   commercial Kenney mid-rise, New York street buildings, cartoon shops
-##   Las Vegas  neon clubs, cartoon diners and cafes
+##   commercial Kenney mid-rise, New York street buildings
+##   Las Vegas  neon clubs
 ##   apartments Kenney blocks, New York brick buildings, a panel block
 ##   quarter    the white and red low-poly town, with colourful houses mixed in
 ##   suburbs    Kenney houses, colourful cartoon houses
@@ -22,17 +22,12 @@ const BOAT_CATS := [Cat.BOAT_SIMPLE, Cat.BOAT_WOODEN, Cat.BOAT_FISHING, Cat.BOAT
 ## Kenney commercial models taller than this are offices, lower ones shops.
 const OFFICE_MIN_HEIGHT := 1.6
 
-## Share of the cartoon shops that are pizzerias.
-const PIZZA_SHARE := 0.01
-
 ## Share of lots drawn from the extra house and town packs (HOUSE2, TOWN2), per zone.
 const HOUSE2_SHARE := {Zone.SUBURBAN: 0.5, Zone.APARTMENT: 0.4, Zone.QUARTER: 0.45}
 const SHOP2_SHARE := {Zone.SUBURBAN: 0.45, Zone.APARTMENT: 0.35, Zone.COMMERCIAL: 0.2, Zone.POOR: 0.6}
 
-## Share of shops drawn from the cartoon business pack, per zone.
-const BIZ_SHOP_SHARE := {
-	Zone.ENTERTAINMENT: 0.45, Zone.COMMERCIAL: 0.25, Zone.SUBURBAN: 0.35, Zone.APARTMENT: 0.2,
-}
+## Shops of the commercial zone whose roll falls in this range are New York street buildings.
+const NY_SHOP_ROLL := Vector2(0.25, 0.4)
 
 
 static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> PackedInt32Array:
@@ -58,16 +53,7 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.SHOP:
 			if roll > 0.5 and lib.has_cat(Cat.SHOP2) and float((seed >> 22) & 255) / 256.0 < SHOP2_SHARE.get(zone, 0.0):
 				return lib.ids(Cat.SHOP2)
-			var share: float = BIZ_SHOP_SHARE.get(zone, 0.0)
-			if roll < share and lib.has_cat(Cat.BIZ_SHOP):
-				# Half of the cartoon restaurants and shops are replaced by normal (Kenney) shops.
-				if (seed >> 9) & 1 == 0:
-					return _kenney_commercial(lib, kind)
-				# Pizzerias stay rare: about one cartoon shop in a hundred.
-				if roll < share * PIZZA_SHARE and lib.has_cat(Cat.BIZ_PIZZA):
-					return lib.ids(Cat.BIZ_PIZZA)
-				return lib.ids(Cat.BIZ_SHOP)
-			if zone == Zone.COMMERCIAL and roll < share + 0.15 and lib.has_cat(Cat.NY_STREET):
+			if zone == Zone.COMMERCIAL and roll >= NY_SHOP_ROLL.x and roll < NY_SHOP_ROLL.y and lib.has_cat(Cat.NY_STREET):
 				return lib.ids(Cat.NY_STREET)
 			return _kenney_commercial(lib, kind)
 		Kind.APARTMENT:
@@ -94,8 +80,6 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.COOLING_HALL)
 		Kind.WATCHTOWER:
 			return lib.ids(Cat.WATCHTOWER)
-		Kind.BEACH_HUT:
-			return _variant(lib, Cat.BEACH_HUT, seed)
 		Kind.PIER:
 			return _variant(lib, Cat.PIER, seed)
 		Kind.FIRE_TRUCK:
@@ -108,8 +92,6 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.UFO)
 		Kind.TANK:
 			return lib.ids(Cat.TANK)
-		Kind.BUS_STOP:
-			return lib.ids(Cat.BUS_SHELTER)
 		Kind.BOAT:
 			return lib.ids(BOAT_CATS[absi(seed) % BOAT_CATS.size()])
 		Kind.FUTURE_BLDG:
@@ -125,7 +107,7 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.BURGER_JOINT:
 			return lib.ids(Cat.BURGER_JOINT)
 		Kind.URBAN_CLUSTER:
-			return _variant_of(_union(lib, [Cat.SKYLINE, Cat.SKYLINE2]), seed)
+			return _variant(lib, Cat.SKYLINE2, seed)
 		Kind.MCDONALDS:
 			return lib.ids(Cat.MCDONALDS)
 		Kind.BURGER_KING:
@@ -152,10 +134,6 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return _variant(lib, Cat.LANDMARK, seed)
 		Kind.OUTPOST:
 			return _variant(lib, Cat.OUTPOST, seed)
-		Kind.SHOPPING_CENTER:
-			return lib.ids(Cat.MALL)
-		Kind.CINEMA:
-			return lib.ids(Cat.CINEMA)
 		# Models from the packs replace the procedural ones when present.
 		Kind.POLICE_HQ:
 			return lib.ids(Cat.POLICE_MAIN)

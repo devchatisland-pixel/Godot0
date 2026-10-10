@@ -115,7 +115,7 @@ enum Kind {
 	BILLBOARD,        # one per zone (PropSites)
 	UFO,              # the flying saucer on the ground near the secret base
 	TANK,             # tank at the gates of the secret base
-	BUS_STOP,         # bus shelter beside a road (BusStops)
+	BUS_STOP,         # no longer placed (the bus shelter pack is gone)
 }
 
 const SERVICE_KINDS: Array[int] = [

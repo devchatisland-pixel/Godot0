@@ -1123,33 +1123,6 @@
    "notes": "Has an animation (wing sweep). 81 mesh parts, swept-wing pose in the rest state. Raw length ~4 u is far too small for a jet; x4.7 gives roughly 19 m."
   },
   {
-   "id": "radar-ibis150",
-   "category": "Radars",
-   "name": "IBIS150 air defence radar (very high poly)",
-   "source_file": "ibis150_air_defense_radar.glb",
-   "source_node": "ibis150_air_defense_radar.glb",
-   "raw_size": [
-    0.35,
-    0.5,
-    1.0
-   ],
-   "suggested_scale": 9.0,
-   "approx_size_m": {
-    "width": 3.1,
-    "height": 4.5,
-    "length": 9.0
-   },
-   "triangles": 369115,
-   "materials": 1,
-   "credit": {
-    "title": "IBIS150 air defense radar",
-    "author": "42manako",
-    "url": "https://sketchfab.com/3d-models/ibis150-air-defense-radar-ffd78c2b016943f7b60252e94d3bc8ad",
-    "license": "CC-BY-4.0"
-   },
-   "notes": "Truck-mounted radar, 4 meshes with one texture material and 369,115 triangles: a scan/AI-generated mesh, far too heavy for a game; decimate it first. Raw size is normalised to about 1 u long, so x9 gives roughly 9 m."
-  },
-  {
    "id": "ship-carrier",
    "category": "Ships",
    "name": "Aircraft carrier",

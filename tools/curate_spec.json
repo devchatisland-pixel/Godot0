@@ -171,24 +171,6 @@
       "texture_max": 256
     },
     {
-      "src": "res://FREEMODELS/_incoming/city_pack_8.glb",
-      "out": "towers_b",
-      "footprint": 1.3,
-      "max_height": 6.0,
-      "auto": {
-        "cat": "TOWER_PHOTO",
-        "max": 10,
-        "min_ratio": 1.8,
-        "min_depth_ratio": 0.4,
-        "min_tris": 40
-      },
-      "exclude": [
-        "towers_b_36",
-        "towers_b_63"
-      ],
-      "texture_max": 256
-    },
-    {
       "src": "res://FREEMODELS/_incoming/100_lowpoly_buildings__buildings_pack.glb",
       "out": "quarter",
       "max_height": 5.5,
@@ -213,46 +195,6 @@
       "scale_ref": {
         "node": "Building 18",
         "footprint": 0.81
-      }
-    },
-    {
-      "src": "res://FREEMODELS/_incoming/low_poly_business_buildings_pack.glb",
-      "out": "business",
-      "items": [
-        {
-          "id": "shop",
-          "nodes": [
-            "ShopBuilding"
-          ],
-          "cat": "BIZ_SHOP"
-        },
-        {
-          "id": "pizzeria",
-          "nodes": [
-            "PizzaBuilding",
-            "PizzaTables",
-            "PizzaBoard"
-          ],
-          "cat": "BIZ_PIZZA"
-        },
-        {
-          "id": "burger",
-          "nodes": [
-            "BurgerBuilding"
-          ],
-          "cat": "BURGER_JOINT"
-        },
-        {
-          "id": "cinema",
-          "nodes": [
-            "Cinema"
-          ],
-          "cat": "CINEMA"
-        }
-      ],
-      "scale_ref": {
-        "node": "ShopBuilding",
-        "footprint": 1.1
       }
     },
     {
@@ -473,22 +415,6 @@
           ],
           "cat": "CRANE",
           "height": 7.0
-        }
-      ]
-    },
-    {
-      "src": "res://FREEMODELS/_incoming/night_city_skyline.glb",
-      "out": "night_skyline",
-      "keep_emission": true,
-      "texture_max": 1024,
-      "footprint": 26.0,
-      "items": [
-        {
-          "id": "night_skyline",
-          "nodes": [
-            "Cube.001"
-          ],
-          "cat": "SKYLINE"
         }
       ]
     },

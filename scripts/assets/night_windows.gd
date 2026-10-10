@@ -17,8 +17,7 @@ const MASK_SIZE := 128
 const PACK_GLOW := {
 	ModelCat.TOWER_PHOTO: 0.45, ModelCat.LANDMARK: 0.55, ModelCat.NY_STREET: 0.45,
 	ModelCat.NY_MIDRISE: 0.45, ModelCat.PANEL: 0.4, ModelCat.QUARTER_LOW: 0.35,
-	ModelCat.QUARTER_MID: 0.35, ModelCat.QUARTER_TALL: 0.35, ModelCat.BIZ_SHOP: 0.45,
-	ModelCat.BIZ_PIZZA: 0.45, ModelCat.CINEMA: 0.6, ModelCat.MALL: 0.5, ModelCat.POLICE: 0.5,
+	ModelCat.QUARTER_MID: 0.35, ModelCat.QUARTER_TALL: 0.35, ModelCat.POLICE: 0.5,
 	ModelCat.STADIUM: 0.75, ModelCat.OUTPOST: 0.25,
 	ModelCat.POLICE_MAIN: 0.55, ModelCat.CITY_HALL_MAIN: 0.6, ModelCat.HOSPITAL_MAIN: 0.6,
 	ModelCat.SCHOOL_MAIN: 0.45, ModelCat.PHARMACY: 0.55, ModelCat.GAS_STATION: 0.7,
@@ -47,7 +46,7 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in PACK_GLOW:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
-	for cat in [ModelCat.SKYLINE, ModelCat.SKYLINE2, ModelCat.FUTURE]:
+	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
 	for cat in NEON_PACKS:

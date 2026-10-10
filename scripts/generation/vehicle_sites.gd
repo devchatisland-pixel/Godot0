@@ -59,7 +59,6 @@ func _run() -> void:
 	_nuclear_plant_convoy()
 	_desert()
 	_airport()
-	_bus_stops()
 	_prison_helicopters()
 	_cinema_parking()
 
@@ -526,38 +525,6 @@ func _airport() -> void:
 	var r := _d.building_rect(b)
 	_beside("police_jp_black", r, "at the airport", 201, 1.0, 5.0)
 	_beside("p54_08_tow_truck_yellow", r, "at the airport", 207, 1.0, 5.0)
-
-
-## A coach and an intercity bus on the road in front of two different stops of the city.
-func _bus_stops() -> void:
-	var middle := Vector2(_d.size, _d.size) * 0.5
-	var stops: Array[int] = []
-	for b in _d.building_count():
-		if _d.b_kind[b] == Kind.BUS_STOP:
-			stops.append(b)
-	stops.sort_custom(func(a: int, b: int) -> bool:
-		return Vector2(_d.building_rect(a).get_center()).distance_to(middle) \
-				< Vector2(_d.building_rect(b).get_center()).distance_to(middle))
-	var ids := ["p54_32_bus_coach_white", "p54_34_bus_intercity_dark"]
-	var k := 0
-	var first := Vector2.ZERO
-	for b in stops:
-		if k >= ids.size():
-			break
-		var r := _d.building_rect(b)
-		var c := Vector2(r.get_center())
-		if k > 0 and c.distance_to(first) < 10.0:
-			continue
-		var o := CityTypes.FACING_OFFSETS[_d.b_facing[b]]
-		var half := Vector2(r.size) * 0.5
-		var p := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + 0.5)
-		var head := Vector2(1, 0) if o.y != 0 else Vector2(0, 1)
-		_add(ids[k], p, head, "at a city bus stop")
-		if k == 0:
-			first = c
-		k += 1
-	if k < ids.size():
-		push_warning("[Vehicles] only %d bus stops" % k)
 
 
 # --- Prison island, cinema -----------------------------------------------------------------------

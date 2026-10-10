@@ -189,46 +189,6 @@
 			]
 		},
 		{
-			"src": "res://FREEMODELS/_incoming/stylized_pirate_island_pack__low_poly_3d_assets.glb",
-			"out": "pirate_huts",
-			"texture_max": 256,
-			"comment": "Huts and pavilions of the pirate island pack (its boats, barrels and crates are not used). Fronts towards +Z.",
-			"items": [
-				{
-					"id": "hut_house",
-					"nodes": [
-						"084"
-					],
-					"cat": "BEACH_HUT",
-					"footprint": 1.9
-				},
-				{
-					"id": "hut_stilts",
-					"nodes": [
-						"071"
-					],
-					"cat": "BEACH_HUT",
-					"footprint": 1.9
-				},
-				{
-					"id": "hut_pavilion_a",
-					"nodes": [
-						"079"
-					],
-					"cat": "BEACH_HUT",
-					"footprint": 1.9
-				},
-				{
-					"id": "hut_pavilion_b",
-					"nodes": [
-						"080"
-					],
-					"cat": "BEACH_HUT",
-					"footprint": 1.9
-				}
-			]
-		},
-		{
 			"src": "res://FREEMODELS/_incoming/old_pier.glb",
 			"out": "pier_old",
 			"texture_max": 512,
@@ -419,22 +379,6 @@
 					],
 					"cat": "UFO",
 					"footprint": 2.4
-				}
-			]
-		},
-		{
-			"src": "res://FREEMODELS/_incoming/bus_stop_shelters__sign_pack__brisbane.glb",
-			"out": "bus_shelter",
-			"texture_max": 256,
-			"comment": "Only the second shelter (the green one) of the 20 MB pack.",
-			"items": [
-				{
-					"id": "bus_shelter",
-					"nodes": [
-						"bus_shelter02"
-					],
-					"cat": "BUS_SHELTER",
-					"footprint": 2.0
 				}
 			]
 		}

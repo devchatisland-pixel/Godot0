@@ -70,7 +70,7 @@ not squares. On screen north-west is up. Special buildings are kept far from eac
 | north-east | **Mountain forest** | a forest with three snow-capped mountains standing together far from the city (the one of the core is the biggest), and a wide sand beach on its coast; the forest thins to meadow at its edge |
 | below the park | **Civic center** | the main city hall and the police headquarters (each on its own plot), the bank, fire station, post office |
 | right of the park | **United Nations** | the U.N. tower (half the size it was) with a small emblem, on its own plot where everyone sees it |
-| left of the park | **Shopping streets** | the main hospital, the shopping center, hotels, New York street buildings, mini hotels, cartoon shops and restaurants (half of them replaced by normal shops, burgers and pizzerias drawn extra big, pizzerias rare); three pharmacies and many more shops, all facing the camera |
+| left of the park | **Shopping streets** | the main hospital, the shopping center, hotels, New York street buildings, mini hotels; three pharmacies and many more shops, all facing the camera |
 | right / bottom | **Residential** | houses with gardens (Kenney, cartoon), the main school with its sports ground, the big church (far from the U.N.), the cemetery, gas stations |
 | south | **Red district** | white and red low-rise town, bigger than before, mixed with colourful houses; the drive-in cinema, a crane, McDonald's and Burger King, the big ferris wheel at the beach, and one of each food stall (ice cream kiosks, and half-size food trucks) |
 | left | **Sports corner** | the big stadium (own plot, floodlit at night) |
@@ -81,7 +81,7 @@ not squares. On screen north-west is up. Special buildings are kept far from eac
 | the two forests | **Watchtowers** | two simplified wooden lookouts, one in the north-east forest and one in the forest of the old city |
 | far north-west, at sea | **Prison island** | a long rocky island far from the coast: a very big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses |
 | east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke (twice the area of before, same buildings). A three-lane highway leads to the Golden Gate (no roadblocks, the deck is level with the road; the fog stays clear only over the bridge itself and covers the island from its coast). "SEASON 2" floats over it |
-| coast | **Beaches, rocky shores, islets** | six lighthouses, each on a real coast cell (four round the main island, two on the prison island), and palm islets; on the smallest one a pirate grave, with the pirate ship anchored off its coast |
+| coast | **Beaches, rocky shores, islets** | six lighthouses, each on a real coast cell (four round the main island, two on the prison island), and palm islets; on the smallest one a pirate grave |
 
 How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same map on every device):
 
@@ -101,7 +101,7 @@ How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same 
 9. **`extension_planner.gd`** works only on free land, with round blobs, and calls its helpers: `extension_roads.gd` (the two highways, east to the Golden Gate and west to the metal bridge, and the shortest-road links), `extension_spots.gd` (free plots and spots), `urban_island_planner.gd` (the urban island, with its own random numbers), `extension_features.gd` (the desert with the base, the industrial zone and port, the farmland, two more mountains, the watchtowers, the prison compound, the lighthouses). The poor and red districts get BSP streets and lots with round shapes. Everything is linked to the old city by the shortest road.
 10. **`fog_island_shaper.gd`**: the island in the fog, placed right after the end of the east highway.
 
-Which family of models a building uses (Kenney, photo towers, New York, cartoon shops, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
+Which family of models a building uses (Kenney, photo towers, New York, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
 
 To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA`, `PLOTS` or `HINTS` in `district_planner.gd` (core city), or the blobs at the top of `extension_planner.gd` and `extension_features.gd`, and `MAIN` / `URBAN` / `URBAN_NORTH` / `TOWER_ISLET` / `PRISON` in `extension_island.gd` (everything around). The plots of the airport and the nuclear plant are at the top of `urban_island_planner.gd`. The size of the fog island is `FogIslandShaper.SIZE`.
 
@@ -116,12 +116,12 @@ The fog is made of pictures, not 3D volumes:
 * the "SEASON 2" title, always on top.
 
 The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
-At night the fog turns dark blue-grey and the night skyline model shows its city lights through it.
+At night the fog turns dark blue-grey.
 
 ## Beaches, park and borders
 
-* **Beach huts and piers** (`beach_sites.gd`): five thatched huts on sandy beaches of the main island,
-  three of them with a wooden pier running into the sea (`pirate_huts`, `pier_old` packs).
+* **Piers** (`beach_sites.gd`): wooden piers running into the sea from sandy beaches of the main island
+  (`pier_old` pack). The beach huts that stood behind them were removed with their pack.
 * **Central park** (`amenities_planner.gd`): wide paths from the streets through the lake, a ring path round
   it, diagonal paths to the corners, benches along the arms, flowerbeds and a playground.
 * **Boardwalk** along the beach of the red district, with lamps that glow at night.
@@ -137,7 +137,7 @@ kind): the cargo ship west of the industrial port, the submarine north of the Go
 away from the highway, a fishing boat and a wooden boat beside the piers, a simple boat off the red district.
 The sea around each boat must be free, and the corridors of both bridges are kept clear.
 
-## Props, fences, bus stops
+## Props and fences
 
 * **`prop_sites.gd`** (end of the building list): the forest fire truck (CCF), one billboard in every zone, the
   hot air balloon over the north-east, buildings behind the main cinema and a fountain in front of it, many
@@ -146,8 +146,6 @@ The sea around each boat must be free, and the corridors of both bridges are kep
   Kenney commercial buildings in Las Vegas.
 * **Fences** (`amenities_planner.gd`, `deco` layer): round the secret base (two gates, a tank outside each) and
   round the facility of the BT tower islet.
-* **Bus stops** (`bus_stops.gd`): the second (green) shelter of the Brisbane pack, mostly along the two
-  highways, a few on the avenues of the country and in the city.
 * **Highway asphalt** (`highway_surface.gd`): a 75 KB texture (lanes, double yellow line) laid over the
   three-lane highways only. The 4.6 MB `highway_road.glb` (18,000 triangles) is not used: too heavy.
 * The map starts at night; the city name is no longer shown.
@@ -250,32 +248,28 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | --- | --- | --- | --- |
 | `ny_buildings` | New York buildings | LANDMARK, TOWER_PHOTO, NY_MIDRISE | 7 landmarks, glass towers, brick buildings |
 | `ny_street` | buildings | NY_STREET | shop and office buildings in commercial streets |
-| `towers_a`, `towers_b` | city pack 7 / 8 | TOWER_PHOTO | 16 towers for the middle of downtown |
+| `towers_a` | city pack 7 | TOWER_PHOTO | 8 towers for the middle of downtown |
 | `quarter` | 100 low-poly buildings | QUARTER_LOW / MID / TALL | the colourful quarter (87 buildings) |
-| `business` | low-poly business pack | BIZ_SHOP, CINEMA, MALL | diners and shops, the cinema, the shopping center |
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
 | `police` | low-poly police station | POLICE | (kept; the same model as the main police station) |
 | `stadium` | low-poly stadium (+ its pitch) | STADIUM | the stadium |
 | `public_main` | low-poly public buildings pack | POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, PHARMACY, GAS_STATION | the main public buildings, one of each, drawn big |
 | `un_tower` | building 3 | UN_TOWER | the United Nations tower |
 | `crane` | building crane | CRANE | one crane in the colourful quarter |
-| `night_skyline` | low-poly night city skyline (keeps its light map) | SKYLINE | the hidden city of the fog island, a block of the urban island |
-| `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the second skyline block of the urban island |
+| `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the skyline blocks of the urban island |
 | `urban` | City Buildings - BlackThornProd | URBAN | the towers of the urban island |
 | `city_night` | Low-poly City Night (keeps its light map; 17 of its buildings) | URBAN2 | more towers of the urban island |
 | `night_towers` | city at night low poly skyscrapers (9 towers, keeps its light map) | NIGHT_TOWER | the tallest towers of the urban island |
 | `cooling` | Cooling Tower (Background) | COOLING, COOLING_HALL | the cooling towers and hall of the nuclear plant |
 | `neon_controller` | Neon game controller | NEON_CONTROLLER | a neon roof sign, very bright at night (on shop B-00257) |
 | `neon_pacman` | Neon Pac-Man (rest pose, no animation) | NEON_PACMAN | a neon roof sign (on the police station B-00685) |
-| `pirate_huts` | Stylized Pirate Island Pack (huts and pavilions only, no boats) | BEACH_HUT | huts on the beaches |
-| `pier_old` | Old pier | PIER | piers beside the huts |
+| `pier_old` | Old pier | PIER | piers on the beaches |
 | `boat_simple`, `boat_wooden`, `boat_fishing`, `boat_cargo`, `boat_sub` | the five boat files | BOAT_* | one boat of each at sea |
 | `watchtower` | low poly Watchtower (without fences, rails, lamps and trees) | WATCHTOWER | the two forest lookouts |
 | `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |
 | `hungry` | Hungry Jack's restaurant | BURGER_KING | the Burger King of the red district |
 | `metal_bridge` | stylised metal bridge | METAL_BRIDGE | the bridge to the urban island |
 | `future` | night skyline pack, cut into 11 towers | FUTURE | the futuristic towers of the urban island |
-| `pirate` | pirate ship | PIRATE_SHIP | anchored beside the smallest islet |
 | `carto` | CartoCity pack | BANK_PACK, HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, BARRIER, CONE, TRUCK, CONTAINER, BARREL | the bank, colourful houses and shops, mini hotels, the orange barriers and cones of the bridge, industrial props |
 | `accommodations` | low poly accommodations buildings | HOTEL_PACK, HOUSE2, TOWN2 | the two big hotels, villas, small apartment blocks |
 | `free_mini` | free low-poly buildings (cut by position) | CHURCH_PACK, GAS_PACK, SHOP2, HOTEL_SMALL, TOWN2 | the big church, a gas station, bars, boutiques, mini hotels |
@@ -286,13 +280,11 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `industrial` | low-poly industrial building | FACTORY, RUIN | the concrete factory (industrial zone) |
 
 Two packs (`free_mini`, `poor`) store one object per material for the whole town, so `curate_models.gd` can cut them with a `"region": [x0, z0, x1, z1]` rectangle (world space, optional `ymin` / `ymax`) instead of a node name.
-Pizzerias of the business pack are their own category (BIZ_PIZZA) and stay rare.
 
 Not used:
 
-* **Kit parts, not whole buildings**: buildings pack, European asset pack, European facades, `building.glb`.
+* **Kit parts, not whole buildings**: buildings pack, European asset pack, `building.glb`.
 * **Duplicate**: the school (the procedural school is used).
-* **Licence not confirmed**: Half-Life 2 buildings.
 * **Skipped on request**: the neon woman sign.
 * **Not placed**: the train station and the gym of the CartoCity pack, the police car and solid roadblocks (removed on request), the museums of the European pack (the museum was replaced by the U.N.).
 
@@ -300,21 +292,18 @@ Not used:
 
 * "Low-poly Container" by Muhammad Awais Gul, CC BY 4.0 (shops/, development island)
 * "building 3" by geniusrahman155, CC BY 4.0
-* "Low Poly Night City Building Skyline" by 99.Miles, CC BY 4.0
 * "Building Crane (low poly)" by jmarco2000, CC BY 4.0
 * "Low Poly City | CartoCity Pack | Cartoonsih City" by DevPoly3D, CC BY 4.0
 * "City Buildings - BlackThornProd Video" by Tiko, CC BY 4.0
 * "Low Poly Game Ready McDonalds Building" by costoWRLD, CC BY 4.0
 * "Low-poly-night-city-building-skyline" by willis123, CC BY 4.0
 * "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
-* "Pirate Ship" by Oleg Muzyka, CC BY 4.0
 * "Simple Low poly Boat" by Jewel John, "Wooden Boat" by sumitmangela, "Low Poly Cargo Ship" by Javier_Fernandez and "The Project 941 / Akula / Typhoon submarine" by yakudami, CC BY 4.0; "Fishing Boat (low poly style)" by liborv, Sketchfab Standard licence (raw file kept out of git)
-* "Low Poly UFO Scene" by EdwinRC (CC BY 4.0), "Highway" by Genkidonky (CC BY 4.0), "Bus Stop Shelters & Sign Pack | Brisbane" by Jotrain Models (Sketchfab Standard licence: raw file kept out of git)
-* "Pier (Game ready model)" by BlackBox613, "Old pier" by smitecraft.swe and "Stylized Pirate Island Pack" by CG Lads, CC BY 4.0
+* "Low Poly UFO Scene" by EdwinRC (CC BY 4.0), "Highway" by Genkidonky (CC BY 4.0)
+* "Pier (Game ready model)" by BlackBox613 and "Old pier" by smitecraft.swe, CC BY 4.0
 * "neon game controller" by alina_dreiman and "Neon Pac-Man" by patrakeevasveta, CC BY 4.0
 * "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)
 * "XXX Neon Sign" by Jimmy Johansson, CC BY 4.0 (only a front render of it is used, as the XXX texture of the sign atlas)
-* "Pack - Low Poly - 15 Building" by Islide, CC BY 4.0
 * "[Free] Buildings Low Poly" by GraphOrigin, CC BY 4.0
 * "Somewhat Low-poly Buildings" by Calne, CC BY 4.0
 * "Low-Poly City Street Buildings Asset Pack" by treasureimpact, CC BY 4.0
