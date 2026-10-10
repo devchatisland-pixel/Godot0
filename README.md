@@ -378,6 +378,11 @@ textures/     signs.png, fog_noise.png, fog_puffs.png, season2.png
 
 ## Tests and tools
 
+**Polygon heatmap:** `godot --path . --rendering-driver opengl3 --script res://tools/poly_heatmap.gd`
+(not `--headless`: MultiMesh transforms need a renderer) then `python3 tools/poly_heatmap.py`
+writes `poly_heatmap.png`: every parcel coloured by its triangles, chunk totals, heaviest
+parcels and kinds.
+
 ```
 godot --headless --import                                         # first import of the models
 godot --headless --script res://tests/test_generation.gd          # generation smoke test
