@@ -1,0 +1,233 @@
+[gd_scene load_steps=24 format=3]
+
+[ext_resource type="PackedScene" path="res://shops/models/shop-general-mini.glb" id="1_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-general-brick.glb" id="2_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-flower-a.glb" id="3_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-townhouse-gabled.glb" id="4_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-general-generic.glb" id="5_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-general-orange-b.glb" id="6_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-general-orange-a.glb" id="7_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-steel-glass.glb" id="8_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-candy-a.glb" id="9_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-candy-b.glb" id="10_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-coffee-a.glb" id="11_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-convenience-quickstop.glb" id="12_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-building-multi.glb" id="13_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-coffee-b.glb" id="14_s"]
+[ext_resource type="PackedScene" path="res://shops/models/shop-townhouse-belgium.glb" id="15_s"]
+[ext_resource type="Script" path="res://shops/preview/shop_island_camera.gd" id="cam_script"]
+
+[sub_resource type="StandardMaterial3D" id="g"]
+albedo_color = Color(0.45, 0.72, 0.38, 1)
+
+[sub_resource type="StandardMaterial3D" id="sd"]
+albedo_color = Color(0.9, 0.82, 0.6, 1)
+
+[sub_resource type="StandardMaterial3D" id="rl"]
+albedo_color = Color(0.9, 0.2, 0.2, 1)
+
+[sub_resource type="BoxMesh" id="m_isl"]
+material = SubResource("g")
+size = Vector3(190.5, 2, 80.3)
+
+[sub_resource type="BoxMesh" id="m_sand"]
+material = SubResource("sd")
+size = Vector3(200.5, 1.5, 90.3)
+
+[sub_resource type="BoxMesh" id="m_rl"]
+material = SubResource("rl")
+size = Vector3(10, 0.1, 0.3)
+
+[sub_resource type="Environment" id="env"]
+background_mode = 1
+background_color = Color(0.55, 0.75, 0.95, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.6
+
+[node name="ShopIsland" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2000, 0, 2000)
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.9, -0.2, 0.39, 0, 0.89, 0.46, -0.44, -0.41, 0.8, 89.2, 40, -10.1)
+shadow_enabled = true
+directional_shadow_max_distance = 400.0
+
+[node name="IslandSand" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 89.23, -2.75, -10.13)
+mesh = SubResource("m_sand")
+
+[node name="IslandGrass" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 89.23, -1.00, -10.13)
+mesh = SubResource("m_isl")
+
+[node name="Ruler10" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.00, 0.05, 5.00)
+mesh = SubResource("m_rl")
+
+[node name="Ruler10_label" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.00, 0.80, 5.00)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "10 m"
+
+[node name="shop-general-mini" parent="." instance=ExtResource("1_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 18.13, 0, 0)
+
+[node name="Label_shop-general-mini" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.13, 0.90, 5.88)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-general-mini\n4.3 x 2.0 x 3.8"
+
+[node name="shop-general-brick" parent="." instance=ExtResource("2_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 26.20, 0, 0)
+
+[node name="Label_shop-general-brick" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.20, 0.90, 6.62)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-general-brick\n3.9 x 2.1 x 5.2"
+
+[node name="shop-flower-a" parent="." instance=ExtResource("3_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 35.28, 0, 0)
+
+[node name="Label_shop-flower-a" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.28, 0.90, 6.03)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-flower-a\n6.3 x 2.5 x 4.0"
+
+[node name="shop-townhouse-gabled" parent="." instance=ExtResource("4_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 43.57, 0, 0)
+
+[node name="Label_shop-townhouse-gabled" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.57, 0.90, 5.37)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-townhouse-gabled\n2.3 x 2.5 x 2.7"
+
+[node name="shop-general-generic" parent="." instance=ExtResource("5_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 50.56, 0, 0)
+
+[node name="Label_shop-general-generic" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.56, 0.90, 5.24)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-general-generic\n3.7 x 2.6 x 2.5"
+
+[node name="shop-general-orange-b" parent="." instance=ExtResource("6_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 59.35, 0, 0)
+
+[node name="Label_shop-general-orange-b" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59.35, 0.90, 6.19)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-general-orange-b\n5.9 x 3.3 x 4.4"
+
+[node name="shop-general-orange-a" parent="." instance=ExtResource("7_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 70.13, 0, 0)
+
+[node name="Label_shop-general-orange-a" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.13, 0.90, 5.95)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-general-orange-a\n7.7 x 3.3 x 3.9"
+
+[node name="shop-steel-glass" parent="." instance=ExtResource("8_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 80.42, 0, 0)
+
+[node name="Label_shop-steel-glass" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80.42, 0.90, 5.96)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-steel-glass\n4.9 x 3.4 x 3.9"
+
+[node name="shop-candy-a" parent="." instance=ExtResource("9_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 89.08, 0, 0)
+
+[node name="Label_shop-candy-a" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 89.08, 0.90, 6.52)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-candy-a\n4.4 x 5.5 x 5.0"
+
+[node name="shop-candy-b" parent="." instance=ExtResource("10_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 98.33, 0, 0)
+
+[node name="Label_shop-candy-b" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 98.33, 0.90, 6.12)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-candy-b\n6.1 x 5.5 x 4.2"
+
+[node name="shop-coffee-a" parent="." instance=ExtResource("11_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 115.63, 0, 0)
+
+[node name="Label_shop-coffee-a" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.63, 0.90, 8.80)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-coffee-a\n20.5 x 6.0 x 9.6"
+
+[node name="shop-convenience-quickstop" parent="." instance=ExtResource("12_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 135.89, 0, 0)
+
+[node name="Label_shop-convenience-quickstop" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.89, 0.90, 9.13)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-convenience-quickstop\n12.0 x 6.2 x 10.3"
+
+[node name="shop-building-multi" parent="." instance=ExtResource("13_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 148.15, 0, 0)
+
+[node name="Label_shop-building-multi" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 148.15, 0.90, 7.42)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-building-multi\n4.5 x 6.8 x 6.8"
+
+[node name="shop-coffee-b" parent="." instance=ExtResource("14_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 158.43, 0, 0)
+
+[node name="Label_shop-coffee-b" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 158.43, 0.90, 8.46)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-coffee-b\n8.1 x 6.9 x 8.9"
+
+[node name="shop-townhouse-belgium" parent="." instance=ExtResource("15_s")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 170.45, 0, 0)
+
+[node name="Label_shop-townhouse-belgium" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 170.45, 0.90, 8.65)
+pixel_size = 0.012
+font_size = 72
+outline_size = 24
+text = "shop-townhouse-belgium\n8.0 x 12.5 x 9.3"
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9703, 0.2419, 0, -0.2419, 0.9703, 95.23, 70.78, 267.12)
+fov = 40.0
+far = 2000.0
+current = true
+script = ExtResource("cam_script")
