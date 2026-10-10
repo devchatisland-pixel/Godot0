@@ -125,6 +125,15 @@ ground, an arrow bobs above it and an information bubble shows its ID (`B0042`),
 click elsewhere clears it. `BuildingPicker.building_selected(info)` is the hook for a
 database or game logic later.
 
+**Developer inspector:** right click (or right tap, without dragging) anywhere shows a cyan
+square on the cell, a lighter one on its parcel, and a card with cell, world position, chunk,
+terrain, zone, road, elevation and the parcel's building id (`scripts/world/dev_inspector.gd`).
+The line is also printed in the console and can be copied.
+
+Vehicles and props are selectable too: yard trucks, containers and barrels (an industrial yard
+is described by what stands on it) and the roadblock barriers, cones and police car
+(`BuildingPicker.add_prop`, ids `P-00001`...).
+
 Other additions: burger joints (one per district), nuclear plant and airport on the urban
 island, cinema in place of the east museum, highway roadblocks (`scripts/world/roadblocks.gd`).
 

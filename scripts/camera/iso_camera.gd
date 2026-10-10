@@ -5,6 +5,8 @@ extends Camera3D
 
 ## Emitted on a click or tap that was not a drag (screen position).
 signal tapped(screen_pos: Vector2)
+## Right click or tap that was not a drag (developer inspector).
+signal right_tapped(screen_pos: Vector2)
 
 const KEY_PAN_SPEED := 1.2      # screens per second
 const ZOOM_SMOOTH := 14.0
@@ -34,6 +36,7 @@ func setup(cfg: CityConfig, map_size: int, start: Vector3, start_zoom: float) ->
 	_zoom_goal = zoom
 	_input = CameraInput.new(self)
 	_input.tapped.connect(func(p: Vector2) -> void: tapped.emit(p))
+	_input.right_tapped.connect(func(p: Vector2) -> void: right_tapped.emit(p))
 	_apply()
 
 

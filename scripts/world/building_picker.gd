@@ -18,8 +18,16 @@ const RING := preload("res://shaders/selection_ring.gdshader")
 const COARSE_HEIGHT := 45.0
 ## Height of fillers without a model (plazas, gardens, yards).
 const FLAT_HEIGHT := 0.6
+## Props are small and thin: their hit box is a little fatter than the model (cells), and
+## they win over the building under them by this much (cells of distance).
+const PROP_MARGIN := 0.12
+const PROP_BIAS := 2.0
 
+## Building id of the selection (-1 when none, or when a prop is selected).
 var selected := -1
+## Selectable things that are not city buildings (vehicles, barriers...), added with `add_prop`.
+var props: Array[Dictionary] = []
+var _has_selection := false
 
 var _cam: IsoCamera
 var _data: CityData
@@ -29,6 +37,7 @@ var _fx := Node3D.new()
 var _overlay: MeshInstance3D
 var _ring: MeshInstance3D
 var _arrow: MeshInstance3D
+var _entry := {}
 var _box := AABB()
 var _footprint := Vector2.ONE
 
@@ -48,64 +57,102 @@ func setup(cam: IsoCamera, data: CityData, lib: ModelLibrary) -> void:
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and selected >= 0:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and _has_selection:
 		clear()
 
 
 func _on_tap(screen_pos: Vector2) -> void:
 	var hit := pick(screen_pos)
-	if hit < 0:
+	if hit.is_empty():
 		clear()
 	else:
 		select(hit)
 
 
 # --- Picking ---------------------------------------------------------------------------------
-## The building under a screen position, or -1.
-func pick(screen_pos: Vector2) -> int:
+## Makes a loose model selectable (vehicle, barrier...). `info` follows BuildingInfo, plus
+## `box` (world AABB), `mesh` and `xform` (to make it glow).
+func add_prop(info: Dictionary) -> void:
+	info["id"] = 100000 + props.size()
+	info["uid"] = "P-%05d" % (props.size() + 1)
+	props.append(info)
+
+
+## The thing under a screen position: an entry {info, box, mesh, xform, footprint}, or {}.
+func pick(screen_pos: Vector2) -> Dictionary:
 	var from := _cam.project_ray_origin(screen_pos)
 	var dir := _cam.project_ray_normal(screen_pos)
-	var best := -1
+	var best := {}
 	var best_t := INF
 	for i in _data.building_count():
 		var r := _data.building_rect(i)
 		var coarse := AABB(Vector3(r.position.x, 0.0, r.position.y), Vector3(r.size.x, COARSE_HEIGHT, r.size.y))
 		if coarse.intersects_ray(from, dir) == null:
 			continue
-		var hit = _box_of(i).intersects_ray(from, dir)
+		var e := _building_entry(i)
+		var hit = (e["box"] as AABB).intersects_ray(from, dir)
 		if hit != null:
 			var t := from.distance_to(hit)
 			if t < best_t:
 				best_t = t
-				best = i
+				best = e
+	for p in props:
+		# Props are small: they win over the building they stand on when they are hit.
+		var hit = (p["box"] as AABB).grow(PROP_MARGIN).intersects_ray(from, dir)
+		if hit != null:
+			var t := from.distance_to(hit) - PROP_BIAS
+			if t < best_t:
+				best_t = t
+				best = {"info": p, "box": p["box"], "mesh": p.get("mesh"), "xform": p.get("xform", Transform3D()),
+						"footprint": Vector2(p["size"])}
 	return best
 
 
-## World box of building `i` (its real model when it has one).
-func _box_of(i: int) -> AABB:
-	var pick := BuildingPlacer.pick_for(_data, _lib, i)
-	if not pick.is_empty():
-		var xform: Transform3D = pick["xform"]
-		return xform * _lib.bounds[pick["id"]]
+## Entry of building `i`: its info, world box and the mesh that glows.
+func _building_entry(i: int) -> Dictionary:
 	var r := _data.building_rect(i)
-	return AABB(Vector3(r.position.x, 0.0, r.position.y), Vector3(r.size.x, FLAT_HEIGHT, r.size.y))
+	var e := {"footprint": Vector2(r.size), "mesh": null, "xform": Transform3D()}
+	var box := AABB(Vector3(r.position.x, 0.0, r.position.y), Vector3(r.size.x, FLAT_HEIGHT, r.size.y))
+	if _data.b_kind[i] == CityTypes.Kind.INDUSTRIAL_YARD:
+		var yard := BuildingPlacer.yard_content(_lib, r, _data.b_seed[i])
+		if not yard.is_empty():
+			box.size.y = maxf(FLAT_HEIGHT, float(yard["height"]))
+			if yard.has("xform"):
+				e["mesh"] = _lib.meshes[yard["id"]]
+				e["xform"] = yard["xform"]
+	else:
+		var pk := BuildingPlacer.pick_for(_data, _lib, i)
+		if not pk.is_empty():
+			var xform: Transform3D = pk["xform"]
+			box = xform * _lib.bounds[pk["id"]]
+			e["mesh"] = _lib.meshes[pk["id"]]
+			e["xform"] = xform
+	e["box"] = box
+	e["building"] = i
+	return e
 
 
 # --- Selection ---------------------------------------------------------------------------------
-func select(i: int) -> void:
-	selected = i
-	_box = _box_of(i)
-	var r := _data.building_rect(i)
-	_footprint = Vector2(r.size)
-	var info := BuildingInfo.describe(_data, _lib, i)
-	_show_fx(i)
+func select(e: Dictionary) -> void:
+	_has_selection = true
+	_entry = e
+	selected = e.get("building", -1)
+	_box = e["box"]
+	_footprint = e["footprint"]
+	var info: Dictionary
+	if selected >= 0:
+		info = BuildingInfo.describe(_data, _lib, selected)
+	else:
+		info = e["info"]
+	_show_fx(e)
 	_popup.show_info(info)
 	building_selected.emit(info)
 
 
 func clear() -> void:
-	if selected < 0:
+	if not _has_selection:
 		return
+	_has_selection = false
 	selected = -1
 	_fx.visible = false
 	_popup.hide_popup()
@@ -113,7 +160,7 @@ func clear() -> void:
 
 
 func _process(_delta: float) -> void:
-	if selected < 0:
+	if not _has_selection:
 		return
 	var zs := _zoom_scale()
 	var c := _box.get_center()
@@ -137,15 +184,14 @@ func _zoom_scale() -> float:
 	return clampf(_cam.zoom / 55.0, 1.0, 6.0)
 
 
-func _show_fx(i: int) -> void:
+func _show_fx(e: Dictionary) -> void:
 	_fx.visible = true
-	var pick := BuildingPlacer.pick_for(_data, _lib, i)
-	if pick.is_empty():
+	if e["mesh"] == null:
 		_overlay.visible = false
 	else:
 		_overlay.visible = true
-		_overlay.mesh = _lib.meshes[pick["id"]]
-		_overlay.transform = pick["xform"]
+		_overlay.mesh = e["mesh"]
+		_overlay.transform = e["xform"]
 	var c := _box.get_center()
 	_ring.position = Vector3(c.x, 0.07, c.z)
 

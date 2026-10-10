@@ -13,6 +13,12 @@ const WEST_BACK := 11
 const BARRIER_LEN := 1.05
 const CAR_LEN := 0.85
 const CONE_LEN := 0.3
+const LABELS := {"ROADBLOCK_A": "Road barrier (white stand)", "ROADBLOCK_B": "Road barrier (jersey)",
+	"CONE": "Traffic cone", "POLICE_CAR": "Police car"}
+
+
+## Called for every placed model, so that the picker can select it: {info for BuildingInfo}.
+signal prop_placed(info: Dictionary)
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
@@ -64,3 +70,11 @@ func _put(lib: ModelLibrary, id: int, at: Vector3, yaw: float, length: float) ->
 	mi.transform = Transform3D(basis, at - basis * center)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
+	var cat := lib.cats[id]
+	var cat_name: String = ModelCatalog.Cat.keys()[cat]
+	var world_box := mi.transform * lib.bounds[id]
+	prop_placed.emit({
+		"name": LABELS.get(cat_name, cat_name.capitalize()), "kind": "ROADBLOCK_PROP", "category": cat_name,
+		"model": lib.model_name(id), "model_id": id, "cell": Vector2i(int(at.x), int(at.z)),
+		"size": Vector2i(1, 1), "world": Vector3(at.x, 0.0, at.z), "facing": "-",
+		"zone": "HIGHWAY", "seed": 0, "box": world_box, "mesh": lib.meshes[id], "xform": mi.transform})

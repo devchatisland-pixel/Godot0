@@ -12,6 +12,8 @@ const TAP_TIME := 0.45
 
 ## Emitted when the user taps / clicks without dragging (screen position).
 signal tapped(position: Vector2)
+## Same for the right button (developer inspector: which cell / parcel is under the cursor).
+signal right_tapped(position: Vector2)
 
 var _cam: IsoCamera
 var _touches := {}          # index -> position
@@ -67,8 +69,11 @@ func _on_mouse_button(e: InputEventMouseButton) -> bool:
 				_last_time = Time.get_ticks_usec()
 				_press_moved = 0.0
 				_press_time = Time.get_ticks_msec()
-			elif e.button_index == MOUSE_BUTTON_LEFT and _is_tap():
-				tapped.emit(e.position)
+			elif _is_tap():
+				if e.button_index == MOUSE_BUTTON_LEFT:
+					tapped.emit(e.position)
+				elif e.button_index == MOUSE_BUTTON_RIGHT:
+					right_tapped.emit(e.position)
 			return true
 	return false
 

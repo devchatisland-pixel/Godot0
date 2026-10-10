@@ -389,6 +389,37 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 		batch.add(props[seed % props.size()], Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c))
 
 
+## What `_place_yard` puts on a yard, for the selection: {name, id, height, xform?}.
+## `xform` is only given when it is a single model (truck, prop), so that it can glow.
+## Keep in step with `_place_yard`.
+static func yard_content(lib: ModelLibrary, r: Rect2i, seed: int) -> Dictionary:
+	var c := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
+	var turn := Basis(Vector3.UP, (seed & 1) * PI * 0.5)
+	match seed % 3:
+		0:
+			var boxes := lib.ids(Cat.CONTAINER)
+			if not boxes.is_empty():
+				var id := boxes[(seed >> 3) % boxes.size()]
+				return {"name": "Stacked containers", "id": id, "height": lib.bounds[id].size.y * 1.5 * 2.0}
+		1:
+			var barrels := lib.ids(Cat.BARREL)
+			if not barrels.is_empty():
+				var id := barrels[(seed >> 3) % barrels.size()]
+				return {"name": "Oil barrels", "id": id, "height": lib.bounds[id].size.y * 1.8}
+		_:
+			var trucks := lib.ids(Cat.TRUCK)
+			if not trucks.is_empty():
+				var id := trucks[0]
+				return {"name": "Truck", "id": id, "height": lib.bounds[id].size.y * 1.3,
+						"xform": Transform3D(turn * Basis.from_scale(Vector3.ONE * 1.3), c)}
+	var props := lib.ids(Cat.INDUSTRIAL_PROP)
+	if props.is_empty():
+		return {}
+	var pid := props[seed % props.size()]
+	return {"name": "Industrial prop", "id": pid, "height": lib.bounds[pid].size.y,
+			"xform": Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c)}
+
+
 static func _tree_xform(p: Vector3, seed: int) -> Transform3D:
 	var s := 1.1 + float((seed >> 5) & 15) / 15.0 * 0.6
 	return Transform3D(Basis(Vector3.UP, float(seed & 63) * 0.1).scaled(Vector3(s, s, s)), p)

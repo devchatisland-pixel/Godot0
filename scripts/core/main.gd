@@ -115,16 +115,23 @@ func _start_city() -> void:
 	add_child(west_bridge)
 	west_bridge.build(data, library)
 
-	var roadblocks := Roadblocks.new()
-	roadblocks.name = "Roadblocks"
-	add_child(roadblocks)
-	roadblocks.build(data, library)
-
 	# Every building can be clicked: glow and information bubble.
 	picker = BuildingPicker.new()
 	picker.name = "BuildingPicker"
 	add_child(picker)
 	picker.setup(camera, data, library)
+
+	# Developer tool: right click shows the cell / parcel under the cursor.
+	var inspector := DevInspector.new()
+	inspector.name = "DevInspector"
+	add_child(inspector)
+	inspector.setup(camera, data)
+
+	var roadblocks := Roadblocks.new()
+	roadblocks.name = "Roadblocks"
+	add_child(roadblocks)
+	roadblocks.prop_placed.connect(picker.add_prop)
+	roadblocks.build(data, library)
 
 	# Start on the centre of the city (zoom out to see the islands).
 	var c := Vector2(data.size, data.size) * 0.5

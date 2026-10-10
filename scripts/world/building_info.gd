@@ -44,10 +44,18 @@ static func describe(data: CityData, lib: ModelLibrary, i: int) -> Dictionary:
 	if model_id >= 0 and lib.cats[model_id] >= 0:
 		cat = ModelCatalog.Cat.keys()[lib.cats[model_id]]
 	var zone: int = data.zone_at(rect.position.x, rect.position.y)
+	var label: String = NAMES.get(kind_name, kind_name.capitalize())
+	if kind == CityTypes.Kind.INDUSTRIAL_YARD:
+		# A yard is its content: a truck, containers, barrels...
+		var yard := BuildingPlacer.yard_content(lib, rect, data.b_seed[i])
+		if not yard.is_empty():
+			model_id = yard["id"]
+			label = yard["name"]
+			cat = ModelCatalog.Cat.keys()[lib.cats[model_id]] if lib.cats[model_id] >= 0 else ""
 	return {
 		"id": i,
 		"uid": "B-%05d" % i,
-		"name": NAMES.get(kind_name, kind_name.capitalize()),
+		"name": label,
 		"kind": kind_name,
 		"category": cat,
 		"model": lib.model_name(model_id) if model_id >= 0 else "(no model: ground detail)",
