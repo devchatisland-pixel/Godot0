@@ -49,21 +49,34 @@ func _block(lib: ModelLibrary, cat: int, x: int, row: int, with_cones: bool, sam
 ## A police car beside the road, `side` rows from the middle lane (the text of the model is
 ## readable from the south, so the car is turned the way the road runs).
 func _police_car(lib: ModelLibrary, x: int, row: int, side: float = 2.7) -> void:
-	var ids := lib.ids(Cat.POLICE_CAR)
-	if ids.is_empty():
+	var car := _cruiser(lib)
+	if car.is_empty():
 		return
-	_put(lib, ids[0], Vector3(float(x) - 1.6, 0.0, float(row) + 0.5 + side), PI, CAR_LEN)
+	_put(lib, car["id"], Vector3(float(x) - 1.6, 0.0, float(row) + 0.5 + side), PI + car["turn"], CAR_LEN)
 
 
 ## The two police cars stand on the highway just beyond the barriers, slanted across the
 ## lanes like a real roadblock, noses together: they wait for what comes from the bridge.
 func _roadblock_cars(lib: ModelLibrary, x: int, row: int) -> void:
-	var ids := lib.ids(Cat.POLICE_CAR)
-	if ids.is_empty():
+	var car := _cruiser(lib)
+	if car.is_empty():
 		return
 	var z := float(row) + 0.5
-	_put(lib, ids[0], Vector3(float(x) + 2.6, 0.0, z - 0.9), PI * 0.5 + 0.5, CAR_LEN)
-	_put(lib, ids[0], Vector3(float(x) + 2.6, 0.0, z + 0.9), PI * 0.5 - 0.5, CAR_LEN)
+	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z - 0.9), PI * 0.5 + 0.5 + car["turn"], CAR_LEN)
+	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z + 0.9), PI * 0.5 - 0.5 + car["turn"], CAR_LEN)
+
+
+## The police car of the roadblocks: the US cruiser of the vehicle catalog (its nose is -Z,
+## the yaws below were made for the old model whose nose is +Z, hence the half turn).
+## Falls back to the old model when the catalog vehicle cannot be loaded.
+func _cruiser(lib: ModelLibrary) -> Dictionary:
+	var id := MapVehicles.mesh_id(lib, "police_us_cruiser")
+	if id >= 0:
+		return {"id": id, "turn": PI}
+	var ids := lib.ids(Cat.POLICE_CAR)
+	if ids.is_empty():
+		return {}
+	return {"id": ids[0], "turn": 0.0}
 
 
 ## Five tanks on both verges beyond the roadblock, their guns towards the bridge (east).

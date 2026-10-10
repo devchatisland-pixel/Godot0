@@ -1,0 +1,1643 @@
+{
+ "version": 1,
+ "orientation": "front=-Z, up=+Y, origin at ground centre, approx. metres",
+ "credits": {
+  "jpcar": {
+   "title": "Japanese Police Car low poly",
+   "author": "SPixy01",
+   "url": "https://sketchfab.com/3d-models/japanese-police-car-low-poly-07bc7b73bf4541d1bb4683af771bf2f2",
+   "license": "CC-BY-4.0"
+  },
+  "uspolice": {
+   "title": "POLICE CAR - LOW POLY",
+   "author": "Jasmin Daniel",
+   "url": "https://sketchfab.com/3d-models/police-car-low-poly-0f5b12ea1f474887b9664fd7a171c17a",
+   "license": "CC-BY-4.0"
+  },
+  "rosomak": {
+   "title": "KTO Rosomak (old version)",
+   "author": "Stachwel",
+   "url": "https://sketchfab.com/3d-models/kto-rosomak-old-version-779d15dada5e4b0eb174a98b2ca03fd4",
+   "license": "CC-BY-4.0"
+  },
+  "pack54": {
+   "title": "54 Vehicle Pack",
+   "author": "PorscheAaron (HotWheelsA)",
+   "url": "https://sketchfab.com/3d-models/54-vehicle-pack-10575d5318f244e5987d45239dbc6247",
+   "license": "CC-BY-4.0"
+  },
+  "mini8": {
+   "title": "Low Poly Vehicle Mini Pack 8",
+   "author": "Vladek",
+   "url": "https://sketchfab.com/3d-models/low-poly-vehicle-mini-pack-8-52ee24ff6eb2479891fe68e6ce46af28",
+   "license": "CC-BY-4.0"
+  }
+ },
+ "vehicles": [
+  {
+   "id": "p54_47_aircraft_attack",
+   "name": "Attack aircraft (Twin-tail, blue-grey)",
+   "category": "Aircraft",
+   "model": "Attack aircraft",
+   "sub_model": "Twin-tail, blue-grey",
+   "pack": "pack54",
+   "source": "st_47",
+   "file": "res://vehicles/models/aircraft/p54_47_aircraft_attack.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_47_aircraft_attack.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 757,
+   "size_m": {
+    "width": 7.64,
+    "height": 4.48,
+    "length": 11.25
+   }
+  },
+  {
+   "id": "p54_45_biplane_yellow",
+   "name": "Biplane (Crop duster, yellow)",
+   "category": "Aircraft",
+   "model": "Biplane",
+   "sub_model": "Crop duster, yellow",
+   "pack": "pack54",
+   "source": "st_45",
+   "file": "res://vehicles/models/aircraft/p54_45_biplane_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_45_biplane_yellow.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1435,
+   "size_m": {
+    "width": 12.36,
+    "height": 3.7,
+    "length": 8.15
+   }
+  },
+  {
+   "id": "p54_46_helicopter_military",
+   "name": "Helicopter (Military, olive)",
+   "category": "Aircraft",
+   "model": "Helicopter",
+   "sub_model": "Military, olive",
+   "pack": "pack54",
+   "source": "st_46",
+   "file": "res://vehicles/models/aircraft/p54_46_helicopter_military.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_46_helicopter_military.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 625,
+   "size_m": {
+    "width": 9.41,
+    "height": 4.08,
+    "length": 13.9
+   }
+  },
+  {
+   "id": "p54_32_bus_coach_white",
+   "name": "Coach bus (White/blue stripe)",
+   "category": "Buses & RVs",
+   "model": "Coach bus",
+   "sub_model": "White/blue stripe",
+   "pack": "pack54",
+   "source": "st_32",
+   "file": "res://vehicles/models/buses_rvs/p54_32_bus_coach_white.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_32_bus_coach_white.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1091,
+   "size_m": {
+    "width": 2.65,
+    "height": 3.02,
+    "length": 12.26
+   }
+  },
+  {
+   "id": "p54_34_bus_intercity_dark",
+   "name": "Intercity bus (Dark grey)",
+   "category": "Buses & RVs",
+   "model": "Intercity bus",
+   "sub_model": "Dark grey",
+   "pack": "pack54",
+   "source": "st_34",
+   "file": "res://vehicles/models/buses_rvs/p54_34_bus_intercity_dark.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_34_bus_intercity_dark.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1410,
+   "size_m": {
+    "width": 2.78,
+    "height": 2.93,
+    "length": 11.14
+   }
+  },
+  {
+   "id": "p54_31_rv_class_a_beige",
+   "name": "Motorhome (Class A, beige)",
+   "category": "Buses & RVs",
+   "model": "Motorhome",
+   "sub_model": "Class A, beige",
+   "pack": "pack54",
+   "source": "st_31",
+   "file": "res://vehicles/models/buses_rvs/p54_31_rv_class_a_beige.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_31_rv_class_a_beige.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 702,
+   "size_m": {
+    "width": 2.95,
+    "height": 2.91,
+    "length": 7.33
+   }
+  },
+  {
+   "id": "p54_36_rv_class_c_white",
+   "name": "Motorhome (Class C, white/blue)",
+   "category": "Buses & RVs",
+   "model": "Motorhome",
+   "sub_model": "Class C, white/blue",
+   "pack": "pack54",
+   "source": "st_36",
+   "file": "res://vehicles/models/buses_rvs/p54_36_rv_class_c_white.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_36_rv_class_c_white.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 626,
+   "size_m": {
+    "width": 3.45,
+    "height": 2.94,
+    "length": 7.02
+   }
+  },
+  {
+   "id": "m8_long_sedan_black",
+   "name": "Long sedan (Black)",
+   "category": "Cars",
+   "model": "Long sedan",
+   "sub_model": "Black",
+   "pack": "mini8",
+   "source": "node 4",
+   "file": "res://vehicles/models/cars/m8_long_sedan_black.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_long_sedan_black.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5616,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 5.41
+   }
+  },
+  {
+   "id": "m8_long_sedan_silver",
+   "name": "Long sedan (Silver)",
+   "category": "Cars",
+   "model": "Long sedan",
+   "sub_model": "Silver",
+   "pack": "mini8",
+   "source": "node 4.001",
+   "file": "res://vehicles/models/cars/m8_long_sedan_silver.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_long_sedan_silver.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5616,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 5.41
+   }
+  },
+  {
+   "id": "m8_long_sedan_charcoal",
+   "name": "Long sedan (Charcoal)",
+   "category": "Cars",
+   "model": "Long sedan",
+   "sub_model": "Charcoal",
+   "pack": "mini8",
+   "source": "node 4.002",
+   "file": "res://vehicles/models/cars/m8_long_sedan_charcoal.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_long_sedan_charcoal.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5616,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 5.41
+   }
+  },
+  {
+   "id": "p54_01_suv_offroad_navy",
+   "name": "SUV (Off-road 4x4, navy)",
+   "category": "Cars",
+   "model": "SUV",
+   "sub_model": "Off-road 4x4, navy",
+   "pack": "pack54",
+   "source": "st_1",
+   "file": "res://vehicles/models/cars/p54_01_suv_offroad_navy.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_01_suv_offroad_navy.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 548,
+   "size_m": {
+    "width": 2.04,
+    "height": 1.89,
+    "length": 4.22
+   }
+  },
+  {
+   "id": "p54_03_sedan_classic_maroon",
+   "name": "Sedan (Classic 70s, maroon)",
+   "category": "Cars",
+   "model": "Sedan",
+   "sub_model": "Classic 70s, maroon",
+   "pack": "pack54",
+   "source": "st_3",
+   "file": "res://vehicles/models/cars/p54_03_sedan_classic_maroon.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_03_sedan_classic_maroon.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 710,
+   "size_m": {
+    "width": 2.19,
+    "height": 1.35,
+    "length": 5.1
+   }
+  },
+  {
+   "id": "p54_04_sedan_modern_silver",
+   "name": "Sedan (Modern, silver)",
+   "category": "Cars",
+   "model": "Sedan",
+   "sub_model": "Modern, silver",
+   "pack": "pack54",
+   "source": "st_4",
+   "file": "res://vehicles/models/cars/p54_04_sedan_modern_silver.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_04_sedan_modern_silver.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 719,
+   "size_m": {
+    "width": 1.98,
+    "height": 1.48,
+    "length": 4.76
+   }
+  },
+  {
+   "id": "p54_05_sedan_90s_teal",
+   "name": "Sedan (90s, teal)",
+   "category": "Cars",
+   "model": "Sedan",
+   "sub_model": "90s, teal",
+   "pack": "pack54",
+   "source": "st_5",
+   "file": "res://vehicles/models/cars/p54_05_sedan_90s_teal.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_05_sedan_90s_teal.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 801,
+   "size_m": {
+    "width": 2.0,
+    "height": 1.53,
+    "length": 5.34
+   }
+  },
+  {
+   "id": "p54_24_sedan_hardtop_teal",
+   "name": "Sedan (Classic hardtop, teal)",
+   "category": "Cars",
+   "model": "Sedan",
+   "sub_model": "Classic hardtop, teal",
+   "pack": "pack54",
+   "source": "st_24",
+   "file": "res://vehicles/models/cars/p54_24_sedan_hardtop_teal.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_24_sedan_hardtop_teal.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 678,
+   "size_m": {
+    "width": 2.25,
+    "height": 1.33,
+    "length": 5.15
+   }
+  },
+  {
+   "id": "p54_30_sedan_modern_damaged_grey",
+   "name": "Sedan (Modern, damaged, grey)",
+   "category": "Cars",
+   "model": "Sedan",
+   "sub_model": "Modern, damaged, grey",
+   "pack": "pack54",
+   "source": "st_30",
+   "file": "res://vehicles/models/cars/p54_30_sedan_modern_damaged_grey.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_30_sedan_modern_damaged_grey.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 931,
+   "size_m": {
+    "width": 2.78,
+    "height": 1.58,
+    "length": 4.82
+   }
+  },
+  {
+   "id": "m8_sedan_black",
+   "name": "Sedan (Black)",
+   "category": "Cars",
+   "model": "Sedan",
+   "sub_model": "Black",
+   "pack": "mini8",
+   "source": "node 1",
+   "file": "res://vehicles/models/cars/m8_sedan_black.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_sedan_black.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5340,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.39,
+    "length": 4.78
+   }
+  },
+  {
+   "id": "m8_sedan_dark_red",
+   "name": "Sedan (Dark red)",
+   "category": "Cars",
+   "model": "Sedan",
+   "sub_model": "Dark red",
+   "pack": "mini8",
+   "source": "node 1.001",
+   "file": "res://vehicles/models/cars/m8_sedan_dark_red.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_sedan_dark_red.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5340,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.39,
+    "length": 4.78
+   }
+  },
+  {
+   "id": "m8_sedan_mustard",
+   "name": "Sedan (Mustard)",
+   "category": "Cars",
+   "model": "Sedan",
+   "sub_model": "Mustard",
+   "pack": "mini8",
+   "source": "node 1.002",
+   "file": "res://vehicles/models/cars/m8_sedan_mustard.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_sedan_mustard.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5340,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.39,
+    "length": 4.78
+   }
+  },
+  {
+   "id": "m8_wagon_mustard",
+   "name": "Station wagon (Mustard)",
+   "category": "Cars",
+   "model": "Station wagon",
+   "sub_model": "Mustard",
+   "pack": "mini8",
+   "source": "node 2",
+   "file": "res://vehicles/models/cars/m8_wagon_mustard.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_wagon_mustard.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5524,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 4.54
+   }
+  },
+  {
+   "id": "m8_wagon_blue",
+   "name": "Station wagon (Blue)",
+   "category": "Cars",
+   "model": "Station wagon",
+   "sub_model": "Blue",
+   "pack": "mini8",
+   "source": "node 2.001",
+   "file": "res://vehicles/models/cars/m8_wagon_blue.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_wagon_blue.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5524,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 4.54
+   }
+  },
+  {
+   "id": "m8_wagon_teal",
+   "name": "Station wagon (Teal)",
+   "category": "Cars",
+   "model": "Station wagon",
+   "sub_model": "Teal",
+   "pack": "mini8",
+   "source": "node 2.002",
+   "file": "res://vehicles/models/cars/m8_wagon_teal.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_wagon_teal.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5524,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 4.54
+   }
+  },
+  {
+   "id": "m8_wagon_sloped_red",
+   "name": "Wagon, sloped rear (Red)",
+   "category": "Cars",
+   "model": "Wagon, sloped rear",
+   "sub_model": "Red",
+   "pack": "mini8",
+   "source": "node 3",
+   "file": "res://vehicles/models/cars/m8_wagon_sloped_red.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_wagon_sloped_red.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5698,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 4.64
+   }
+  },
+  {
+   "id": "m8_wagon_sloped_black",
+   "name": "Wagon, sloped rear (Black)",
+   "category": "Cars",
+   "model": "Wagon, sloped rear",
+   "sub_model": "Black",
+   "pack": "mini8",
+   "source": "node 3.001",
+   "file": "res://vehicles/models/cars/m8_wagon_sloped_black.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_wagon_sloped_black.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5698,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 4.64
+   }
+  },
+  {
+   "id": "m8_wagon_sloped_burgundy",
+   "name": "Wagon, sloped rear (Burgundy)",
+   "category": "Cars",
+   "model": "Wagon, sloped rear",
+   "sub_model": "Burgundy",
+   "pack": "mini8",
+   "source": "node 3.002",
+   "file": "res://vehicles/models/cars/m8_wagon_sloped_burgundy.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_wagon_sloped_burgundy.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5698,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.36,
+    "length": 4.64
+   }
+  },
+  {
+   "id": "p54_40_crane_crawler",
+   "name": "Crawler crane (Dragline, black boom)",
+   "category": "Construction & Industrial",
+   "model": "Crawler crane",
+   "sub_model": "Dragline, black boom",
+   "pack": "pack54",
+   "source": "st_40",
+   "file": "res://vehicles/models/construction_industrial/p54_40_crane_crawler.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_40_crane_crawler.png",
+   "parts": [
+    "Body_1",
+    "Body_2",
+    "Glass"
+   ],
+   "triangles": 949,
+   "size_m": {
+    "width": 3.96,
+    "height": 17.75,
+    "length": 18.23
+   }
+  },
+  {
+   "id": "p54_17_excavator_yellow",
+   "name": "Excavator (Tracked, yellow)",
+   "category": "Construction & Industrial",
+   "model": "Excavator",
+   "sub_model": "Tracked, yellow",
+   "pack": "pack54",
+   "source": "st_17",
+   "file": "res://vehicles/models/construction_industrial/p54_17_excavator_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_17_excavator_yellow.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 862,
+   "size_m": {
+    "width": 4.89,
+    "height": 5.85,
+    "length": 7.25
+   }
+  },
+  {
+   "id": "p54_39_forklift",
+   "name": "Forklift (Orange/black)",
+   "category": "Construction & Industrial",
+   "model": "Forklift",
+   "sub_model": "Orange/black",
+   "pack": "pack54",
+   "source": "st_39",
+   "file": "res://vehicles/models/construction_industrial/p54_39_forklift.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_39_forklift.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 516,
+   "size_m": {
+    "width": 1.64,
+    "height": 2.91,
+    "length": 4.11
+   }
+  },
+  {
+   "id": "p54_35_crane_truck_mobile",
+   "name": "Mobile crane (Truck-mounted, red/yellow)",
+   "category": "Construction & Industrial",
+   "model": "Mobile crane",
+   "sub_model": "Truck-mounted, red/yellow",
+   "pack": "pack54",
+   "source": "st_35",
+   "file": "res://vehicles/models/construction_industrial/p54_35_crane_truck_mobile.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_35_crane_truck_mobile.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1368,
+   "size_m": {
+    "width": 4.08,
+    "height": 4.3,
+    "length": 13.36
+   }
+  },
+  {
+   "id": "p54_53_road_roller_yellow",
+   "name": "Road roller (Yellow)",
+   "category": "Construction & Industrial",
+   "model": "Road roller",
+   "sub_model": "Yellow",
+   "pack": "pack54",
+   "source": "st_53",
+   "file": "res://vehicles/models/construction_industrial/p54_53_road_roller_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_53_road_roller_yellow.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 650,
+   "size_m": {
+    "width": 1.37,
+    "height": 1.91,
+    "length": 2.44
+   }
+  },
+  {
+   "id": "p54_54_scissor_lift",
+   "name": "Scissor lift (Orange)",
+   "category": "Construction & Industrial",
+   "model": "Scissor lift",
+   "sub_model": "Orange",
+   "pack": "pack54",
+   "source": "st_54",
+   "file": "res://vehicles/models/construction_industrial/p54_54_scissor_lift.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_54_scissor_lift.png",
+   "parts": [
+    "Body_1",
+    "Body_2"
+   ],
+   "triangles": 563,
+   "size_m": {
+    "width": 2.11,
+    "height": 5.0,
+    "length": 3.18
+   }
+  },
+  {
+   "id": "p54_38_loader_grapple_yellow",
+   "name": "Wheel loader (Grapple, yellow)",
+   "category": "Construction & Industrial",
+   "model": "Wheel loader",
+   "sub_model": "Grapple, yellow",
+   "pack": "pack54",
+   "source": "st_38",
+   "file": "res://vehicles/models/construction_industrial/p54_38_loader_grapple_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_38_loader_grapple_yellow.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 806,
+   "size_m": {
+    "width": 2.54,
+    "height": 4.84,
+    "length": 7.6
+   }
+  },
+  {
+   "id": "p54_41_loader_claw_yellow",
+   "name": "Wheel loader (Claw bucket, yellow)",
+   "category": "Construction & Industrial",
+   "model": "Wheel loader",
+   "sub_model": "Claw bucket, yellow",
+   "pack": "pack54",
+   "source": "st_41",
+   "file": "res://vehicles/models/construction_industrial/p54_41_loader_claw_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_41_loader_claw_yellow.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1045,
+   "size_m": {
+    "width": 2.28,
+    "height": 3.02,
+    "length": 6.68
+   }
+  },
+  {
+   "id": "p54_42_forwarder_green",
+   "name": "Forwarder (Timber, green)",
+   "category": "Farm & Forestry",
+   "model": "Forwarder",
+   "sub_model": "Timber, green",
+   "pack": "pack54",
+   "source": "st_42",
+   "file": "res://vehicles/models/farm_forestry/p54_42_forwarder_green.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_42_forwarder_green.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1132,
+   "size_m": {
+    "width": 3.26,
+    "height": 8.81,
+    "length": 12.19
+   }
+  },
+  {
+   "id": "p54_21_harvester_olive",
+   "name": "Harvester (Olive green)",
+   "category": "Farm & Forestry",
+   "model": "Harvester",
+   "sub_model": "Olive green",
+   "pack": "pack54",
+   "source": "st_21",
+   "file": "res://vehicles/models/farm_forestry/p54_21_harvester_olive.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_21_harvester_olive.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 2361,
+   "size_m": {
+    "width": 6.21,
+    "height": 3.75,
+    "length": 9.96
+   }
+  },
+  {
+   "id": "p54_43_tractor_vintage_trailer",
+   "name": "Tractor (Vintage with trailer)",
+   "category": "Farm & Forestry",
+   "model": "Tractor",
+   "sub_model": "Vintage with trailer",
+   "pack": "pack54",
+   "source": "st_43",
+   "file": "res://vehicles/models/farm_forestry/p54_43_tractor_vintage_trailer.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_43_tractor_vintage_trailer.png",
+   "parts": [
+    "Body_1",
+    "Body_2"
+   ],
+   "triangles": 1761,
+   "size_m": {
+    "width": 3.58,
+    "height": 2.56,
+    "length": 9.27
+   }
+  },
+  {
+   "id": "rosomak_apc",
+   "name": "Rosomak APC (Old version, camo green)",
+   "category": "Military",
+   "model": "Rosomak APC",
+   "sub_model": "Old version, camo green",
+   "pack": "rosomak",
+   "source": "8x8 APC",
+   "file": "res://vehicles/models/military/rosomak_apc.glb",
+   "thumbnail": "res://vehicles/thumbs/rosomak_apc.png",
+   "parts": [
+    "Wheel_R_5",
+    "Wheel_R_3",
+    "Wheel_R_2",
+    "Wheel_R_1",
+    "Object_44",
+    "Object_46",
+    "Wheel_L_5",
+    "Wheel_L_3",
+    "Wheel_L_2",
+    "Wheel_L_1",
+    "Object_56",
+    "Object_57"
+   ],
+   "triangles": 14194,
+   "size_m": {
+    "width": 3.22,
+    "height": 3.28,
+    "length": 7.77
+   }
+  },
+  {
+   "id": "p54_22_motorcycle_cruiser_red",
+   "name": "Cruiser (Red)",
+   "category": "Motorcycles",
+   "model": "Cruiser",
+   "sub_model": "Red",
+   "pack": "pack54",
+   "source": "st_22",
+   "file": "res://vehicles/models/motorcycles/p54_22_motorcycle_cruiser_red.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_22_motorcycle_cruiser_red.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 450,
+   "size_m": {
+    "width": 0.98,
+    "height": 1.39,
+    "length": 2.49
+   }
+  },
+  {
+   "id": "p54_28_dirtbike_yellow",
+   "name": "Dirt bike (Yellow)",
+   "category": "Motorcycles",
+   "model": "Dirt bike",
+   "sub_model": "Yellow",
+   "pack": "pack54",
+   "source": "st_28",
+   "file": "res://vehicles/models/motorcycles/p54_28_dirtbike_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_28_dirtbike_yellow.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 672,
+   "size_m": {
+    "width": 0.86,
+    "height": 1.4,
+    "length": 2.39
+   }
+  },
+  {
+   "id": "p54_11_ambulance",
+   "name": "Ambulance (Box ambulance)",
+   "category": "Municipal & Emergency",
+   "model": "Ambulance",
+   "sub_model": "Box ambulance",
+   "pack": "pack54",
+   "source": "st_11",
+   "file": "res://vehicles/models/municipal_emergency/p54_11_ambulance.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_11_ambulance.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 862,
+   "size_m": {
+    "width": 2.77,
+    "height": 2.62,
+    "length": 6.6
+   }
+  },
+  {
+   "id": "p54_33_fire_truck",
+   "name": "Fire truck (Red pumper)",
+   "category": "Municipal & Emergency",
+   "model": "Fire truck",
+   "sub_model": "Red pumper",
+   "pack": "pack54",
+   "source": "st_33",
+   "file": "res://vehicles/models/municipal_emergency/p54_33_fire_truck.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_33_fire_truck.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1019,
+   "size_m": {
+    "width": 3.65,
+    "height": 3.17,
+    "length": 10.69
+   }
+  },
+  {
+   "id": "p54_06_garbage_truck",
+   "name": "Garbage truck (Rear loader)",
+   "category": "Municipal & Emergency",
+   "model": "Garbage truck",
+   "sub_model": "Rear loader",
+   "pack": "pack54",
+   "source": "st_6",
+   "file": "res://vehicles/models/municipal_emergency/p54_06_garbage_truck.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_06_garbage_truck.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 904,
+   "size_m": {
+    "width": 3.06,
+    "height": 3.15,
+    "length": 8.54
+   }
+  },
+  {
+   "id": "police_jp_black",
+   "name": "Police car (JP) (Black, unmarked)",
+   "category": "Municipal & Emergency",
+   "model": "Police car (JP)",
+   "sub_model": "Black, unmarked",
+   "pack": "jpcar",
+   "source": "x<0",
+   "file": "res://vehicles/models/municipal_emergency/police_jp_black.glb",
+   "thumbnail": "res://vehicles/thumbs/police_jp_black.png",
+   "parts": [
+    "Vert_002",
+    "Cylinder_005",
+    "Wheel_RF",
+    "Wheel_RB",
+    "Wheel_LF",
+    "Wheel_LB",
+    "Cube",
+    "Vert_003"
+   ],
+   "triangles": 4044,
+   "size_m": {
+    "width": 2.04,
+    "height": 1.58,
+    "length": 4.81
+   }
+  },
+  {
+   "id": "police_jp_patrol",
+   "name": "Police car (JP) (Black and white patrol)",
+   "category": "Municipal & Emergency",
+   "model": "Police car (JP)",
+   "sub_model": "Black and white patrol",
+   "pack": "jpcar",
+   "source": "x>0",
+   "file": "res://vehicles/models/municipal_emergency/police_jp_patrol.glb",
+   "thumbnail": "res://vehicles/thumbs/police_jp_patrol.png",
+   "parts": [
+    "Vert_001",
+    "Vert_005",
+    "Wheel_RB",
+    "Wheel_RF",
+    "Cylinder_007",
+    "Wheel_LB",
+    "Wheel_LF",
+    "Cube_001",
+    "Cube_002",
+    "Vert"
+   ],
+   "triangles": 4402,
+   "size_m": {
+    "width": 2.04,
+    "height": 1.77,
+    "length": 4.81
+   }
+  },
+  {
+   "id": "police_us_cruiser",
+   "name": "Police car (US) (Black and white)",
+   "category": "Municipal & Emergency",
+   "model": "Police car (US)",
+   "sub_model": "Black and white",
+   "pack": "uspolice",
+   "source": "single mesh",
+   "file": "res://vehicles/models/municipal_emergency/police_us_cruiser.glb",
+   "thumbnail": "res://vehicles/thumbs/police_us_cruiser.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 3942,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.62,
+    "length": 5.12
+   }
+  },
+  {
+   "id": "p54_08_tow_truck_yellow",
+   "name": "Tow truck (Yellow)",
+   "category": "Municipal & Emergency",
+   "model": "Tow truck",
+   "sub_model": "Yellow",
+   "pack": "pack54",
+   "source": "st_8",
+   "file": "res://vehicles/models/municipal_emergency/p54_08_tow_truck_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_08_tow_truck_yellow.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 918,
+   "size_m": {
+    "width": 2.35,
+    "height": 2.48,
+    "length": 6.4
+   }
+  },
+  {
+   "id": "p54_25_pickup_vintage_blue",
+   "name": "Pickup (Vintage, blue)",
+   "category": "Pickups",
+   "model": "Pickup",
+   "sub_model": "Vintage, blue",
+   "pack": "pack54",
+   "source": "st_25",
+   "file": "res://vehicles/models/pickups/p54_25_pickup_vintage_blue.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_25_pickup_vintage_blue.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 817,
+   "size_m": {
+    "width": 1.93,
+    "height": 1.94,
+    "length": 4.84
+   }
+  },
+  {
+   "id": "p54_26_pickup_40s_red",
+   "name": "Pickup (1940s style, red)",
+   "category": "Pickups",
+   "model": "Pickup",
+   "sub_model": "1940s style, red",
+   "pack": "pack54",
+   "source": "st_26",
+   "file": "res://vehicles/models/pickups/p54_26_pickup_40s_red.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_26_pickup_40s_red.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 2012,
+   "size_m": {
+    "width": 2.01,
+    "height": 1.86,
+    "length": 4.89
+   }
+  },
+  {
+   "id": "m8_pickup_blue",
+   "name": "Pickup (Blue)",
+   "category": "Pickups",
+   "model": "Pickup",
+   "sub_model": "Blue",
+   "pack": "mini8",
+   "source": "node 5",
+   "file": "res://vehicles/models/pickups/m8_pickup_blue.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_pickup_blue.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5206,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.34,
+    "length": 4.54
+   }
+  },
+  {
+   "id": "m8_pickup_mustard",
+   "name": "Pickup (Mustard)",
+   "category": "Pickups",
+   "model": "Pickup",
+   "sub_model": "Mustard",
+   "pack": "mini8",
+   "source": "node 5.001",
+   "file": "res://vehicles/models/pickups/m8_pickup_mustard.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_pickup_mustard.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5206,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.34,
+    "length": 4.54
+   }
+  },
+  {
+   "id": "m8_pickup_olive",
+   "name": "Pickup (Olive)",
+   "category": "Pickups",
+   "model": "Pickup",
+   "sub_model": "Olive",
+   "pack": "mini8",
+   "source": "node 5.002",
+   "file": "res://vehicles/models/pickups/m8_pickup_olive.glb",
+   "thumbnail": "res://vehicles/thumbs/m8_pickup_olive.png",
+   "parts": [
+    "Body",
+    "Interior",
+    "Wheel_FR",
+    "Wheel_FL",
+    "Wheel_RL",
+    "Wheel_RR"
+   ],
+   "triangles": 5206,
+   "size_m": {
+    "width": 2.13,
+    "height": 1.34,
+    "length": 4.54
+   }
+  },
+  {
+   "id": "p54_20_semi_cabover_yellow",
+   "name": "Cab-over (Yellow/brown)",
+   "category": "Semi tractors",
+   "model": "Cab-over",
+   "sub_model": "Yellow/brown",
+   "pack": "pack54",
+   "source": "st_20",
+   "file": "res://vehicles/models/semi_tractors/p54_20_semi_cabover_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_20_semi_cabover_yellow.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1056,
+   "size_m": {
+    "width": 2.83,
+    "height": 3.94,
+    "length": 8.29
+   }
+  },
+  {
+   "id": "p54_29_semi_daycab_red",
+   "name": "Day cab (Red)",
+   "category": "Semi tractors",
+   "model": "Day cab",
+   "sub_model": "Red",
+   "pack": "pack54",
+   "source": "st_29",
+   "file": "res://vehicles/models/semi_tractors/p54_29_semi_daycab_red.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_29_semi_daycab_red.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 831,
+   "size_m": {
+    "width": 2.74,
+    "height": 3.57,
+    "length": 8.69
+   }
+  },
+  {
+   "id": "p54_14_semi_longnose_red",
+   "name": "Long-nose (Red)",
+   "category": "Semi tractors",
+   "model": "Long-nose",
+   "sub_model": "Red",
+   "pack": "pack54",
+   "source": "st_14",
+   "file": "res://vehicles/models/semi_tractors/p54_14_semi_longnose_red.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_14_semi_longnose_red.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1052,
+   "size_m": {
+    "width": 3.05,
+    "height": 4.19,
+    "length": 8.86
+   }
+  },
+  {
+   "id": "p54_27_semi_longnose_black",
+   "name": "Long-nose (Black)",
+   "category": "Semi tractors",
+   "model": "Long-nose",
+   "sub_model": "Black",
+   "pack": "pack54",
+   "source": "st_27",
+   "file": "res://vehicles/models/semi_tractors/p54_27_semi_longnose_black.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_27_semi_longnose_black.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 961,
+   "size_m": {
+    "width": 3.19,
+    "height": 3.57,
+    "length": 7.73
+   }
+  },
+  {
+   "id": "p54_19_semi_sleeper_blue",
+   "name": "Sleeper cab (Blue)",
+   "category": "Semi tractors",
+   "model": "Sleeper cab",
+   "sub_model": "Blue",
+   "pack": "pack54",
+   "source": "st_19",
+   "file": "res://vehicles/models/semi_tractors/p54_19_semi_sleeper_blue.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_19_semi_sleeper_blue.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1255,
+   "size_m": {
+    "width": 2.76,
+    "height": 3.95,
+    "length": 9.16
+   }
+  },
+  {
+   "id": "p54_50_trailer_box_silver",
+   "name": "Box trailer (Silver)",
+   "category": "Trailers",
+   "model": "Box trailer",
+   "sub_model": "Silver",
+   "pack": "pack54",
+   "source": "st_50",
+   "file": "res://vehicles/models/trailers/p54_50_trailer_box_silver.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_50_trailer_box_silver.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 360,
+   "size_m": {
+    "width": 3.05,
+    "height": 4.37,
+    "length": 16.75
+   }
+  },
+  {
+   "id": "p54_51_trailer_crane",
+   "name": "Crane trailer (Flatbed with crane)",
+   "category": "Trailers",
+   "model": "Crane trailer",
+   "sub_model": "Flatbed with crane",
+   "pack": "pack54",
+   "source": "st_51",
+   "file": "res://vehicles/models/trailers/p54_51_trailer_crane.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_51_trailer_crane.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 710,
+   "size_m": {
+    "width": 9.79,
+    "height": 7.62,
+    "length": 13.18
+   }
+  },
+  {
+   "id": "p54_48_trailer_flatbed_rust",
+   "name": "Flatbed trailer (Log/stake, rust)",
+   "category": "Trailers",
+   "model": "Flatbed trailer",
+   "sub_model": "Log/stake, rust",
+   "pack": "pack54",
+   "source": "st_48",
+   "file": "res://vehicles/models/trailers/p54_48_trailer_flatbed_rust.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_48_trailer_flatbed_rust.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 674,
+   "size_m": {
+    "width": 3.36,
+    "height": 4.1,
+    "length": 14.21
+   }
+  },
+  {
+   "id": "p54_52_trailer_semi_brown",
+   "name": "Semi trailer (Box, brown)",
+   "category": "Trailers",
+   "model": "Semi trailer",
+   "sub_model": "Box, brown",
+   "pack": "pack54",
+   "source": "st_52",
+   "file": "res://vehicles/models/trailers/p54_52_trailer_semi_brown.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_52_trailer_semi_brown.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 636,
+   "size_m": {
+    "width": 3.02,
+    "height": 4.3,
+    "length": 12.91
+   }
+  },
+  {
+   "id": "p54_49_trailer_site_cabin",
+   "name": "Site cabin (Construction office trailer)",
+   "category": "Trailers",
+   "model": "Site cabin",
+   "sub_model": "Construction office trailer",
+   "pack": "pack54",
+   "source": "st_49",
+   "file": "res://vehicles/models/trailers/p54_49_trailer_site_cabin.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_49_trailer_site_cabin.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 288,
+   "size_m": {
+    "width": 3.0,
+    "height": 3.77,
+    "length": 7.98
+   }
+  },
+  {
+   "id": "p54_07_box_truck_delivery_yellow",
+   "name": "Box truck (Delivery, yellow)",
+   "category": "Trucks",
+   "model": "Box truck",
+   "sub_model": "Delivery, yellow",
+   "pack": "pack54",
+   "source": "st_7",
+   "file": "res://vehicles/models/trucks/p54_07_box_truck_delivery_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_07_box_truck_delivery_yellow.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 953,
+   "size_m": {
+    "width": 3.32,
+    "height": 3.82,
+    "length": 10.33
+   }
+  },
+  {
+   "id": "p54_15_dump_truck_yellow",
+   "name": "Dump truck (6x4, yellow/grey)",
+   "category": "Trucks",
+   "model": "Dump truck",
+   "sub_model": "6x4, yellow/grey",
+   "pack": "pack54",
+   "source": "st_15",
+   "file": "res://vehicles/models/trucks/p54_15_dump_truck_yellow.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_15_dump_truck_yellow.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1159,
+   "size_m": {
+    "width": 2.66,
+    "height": 2.91,
+    "length": 7.06
+   }
+  },
+  {
+   "id": "p54_16_dump_truck_brown",
+   "name": "Dump truck (6x4, brown)",
+   "category": "Trucks",
+   "model": "Dump truck",
+   "sub_model": "6x4, brown",
+   "pack": "pack54",
+   "source": "st_16",
+   "file": "res://vehicles/models/trucks/p54_16_dump_truck_brown.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_16_dump_truck_brown.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 799,
+   "size_m": {
+    "width": 2.84,
+    "height": 3.04,
+    "length": 6.95
+   }
+  },
+  {
+   "id": "p54_09_flatbed_crane_orange",
+   "name": "Flatbed truck (With loader crane, orange)",
+   "category": "Trucks",
+   "model": "Flatbed truck",
+   "sub_model": "With loader crane, orange",
+   "pack": "pack54",
+   "source": "st_9",
+   "file": "res://vehicles/models/trucks/p54_09_flatbed_crane_orange.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_09_flatbed_crane_orange.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1145,
+   "size_m": {
+    "width": 2.74,
+    "height": 3.58,
+    "length": 7.07
+   }
+  },
+  {
+   "id": "p54_44_flatbed_boom_orange",
+   "name": "Flatbed truck (With boom, orange)",
+   "category": "Trucks",
+   "model": "Flatbed truck",
+   "sub_model": "With boom, orange",
+   "pack": "pack54",
+   "source": "st_44",
+   "file": "res://vehicles/models/trucks/p54_44_flatbed_boom_orange.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_44_flatbed_boom_orange.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 834,
+   "size_m": {
+    "width": 3.25,
+    "height": 3.56,
+    "length": 6.97
+   }
+  },
+  {
+   "id": "p54_13_stake_truck_blue",
+   "name": "Stake truck (Open bed, blue)",
+   "category": "Trucks",
+   "model": "Stake truck",
+   "sub_model": "Open bed, blue",
+   "pack": "pack54",
+   "source": "st_13",
+   "file": "res://vehicles/models/trucks/p54_13_stake_truck_blue.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_13_stake_truck_blue.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 888,
+   "size_m": {
+    "width": 3.63,
+    "height": 2.82,
+    "length": 8.37
+   }
+  },
+  {
+   "id": "p54_10_tanker_water",
+   "name": "Tanker (Water tanker)",
+   "category": "Trucks",
+   "model": "Tanker",
+   "sub_model": "Water tanker",
+   "pack": "pack54",
+   "source": "st_10",
+   "file": "res://vehicles/models/trucks/p54_10_tanker_water.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_10_tanker_water.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1908,
+   "size_m": {
+    "width": 2.76,
+    "height": 3.04,
+    "length": 7.3
+   }
+  },
+  {
+   "id": "p54_18_tanker_fuel",
+   "name": "Tanker (Fuel tanker)",
+   "category": "Trucks",
+   "model": "Tanker",
+   "sub_model": "Fuel tanker",
+   "pack": "pack54",
+   "source": "st_18",
+   "file": "res://vehicles/models/trucks/p54_18_tanker_fuel.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_18_tanker_fuel.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 1798,
+   "size_m": {
+    "width": 2.19,
+    "height": 2.85,
+    "length": 7.95
+   }
+  },
+  {
+   "id": "p54_02_van_conversion_white",
+   "name": "Van (Conversion van, white)",
+   "category": "Vans",
+   "model": "Van",
+   "sub_model": "Conversion van, white",
+   "pack": "pack54",
+   "source": "st_2",
+   "file": "res://vehicles/models/vans/p54_02_van_conversion_white.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_02_van_conversion_white.png",
+   "parts": [
+    "Body",
+    "Glass"
+   ],
+   "triangles": 584,
+   "size_m": {
+    "width": 2.23,
+    "height": 2.08,
+    "length": 4.9
+   }
+  },
+  {
+   "id": "p54_37_wreck_car_shell",
+   "name": "Car shell (Olive body shell)",
+   "category": "Wrecks",
+   "model": "Car shell",
+   "sub_model": "Olive body shell",
+   "pack": "pack54",
+   "source": "st_37",
+   "file": "res://vehicles/models/wrecks/p54_37_wreck_car_shell.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_37_wreck_car_shell.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 678,
+   "size_m": {
+    "width": 2.0,
+    "height": 1.31,
+    "length": 5.35
+   }
+  },
+  {
+   "id": "p54_12_wreck_chassis",
+   "name": "Chassis wreck (Rusted frame)",
+   "category": "Wrecks",
+   "model": "Chassis wreck",
+   "sub_model": "Rusted frame",
+   "pack": "pack54",
+   "source": "st_12",
+   "file": "res://vehicles/models/wrecks/p54_12_wreck_chassis.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_12_wreck_chassis.png",
+   "parts": [
+    "Body_1",
+    "Body_2"
+   ],
+   "triangles": 2898,
+   "size_m": {
+    "width": 5.89,
+    "height": 1.55,
+    "length": 5.77
+   }
+  },
+  {
+   "id": "p54_23_wreck_hatchback",
+   "name": "Hatchback wreck (Rusty)",
+   "category": "Wrecks",
+   "model": "Hatchback wreck",
+   "sub_model": "Rusty",
+   "pack": "pack54",
+   "source": "st_23",
+   "file": "res://vehicles/models/wrecks/p54_23_wreck_hatchback.glb",
+   "thumbnail": "res://vehicles/thumbs/p54_23_wreck_hatchback.png",
+   "parts": [
+    "Body"
+   ],
+   "triangles": 682,
+   "size_m": {
+    "width": 2.02,
+    "height": 1.27,
+    "length": 4.24
+   }
+  }
+ ]
+}
