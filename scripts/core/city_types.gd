@@ -96,7 +96,7 @@ enum Kind {
 	URBAN_BLDG,       # tower of the urban island
 	URBAN_CLUSTER,    # night skyline block of the urban island
 	FUTURE_BLDG,      # futuristic tower of the urban island (night skyline pack)
-	PIRATE_SHIP,
+	PIRATE_SHIP,      # no longer placed (the pirate ship pack is gone)
 	GRAVE,            # pirate grave on the little islet
 	NUCLEAR_PLANT,    # on the urban island
 	CINEMA_MAIN,      # the big cinema (replaces the old city hall plot)
@@ -107,7 +107,7 @@ enum Kind {
 	BT_TOWER,         # the lone tower on its own islet
 	WATCHTOWER,       # wooden lookout in the forests
 	EMPTY,            # a building taken away by hand (ManualEdits): nothing is drawn, the id stays
-	BEACH_HUT,        # hut or pavilion on a beach (BeachSites)
+	BEACH_HUT,        # no longer placed (the beach hut pack is gone)
 	PIER,             # wooden pier into the sea (BeachSites)
 	BOAT,             # a boat at sea (BoatSites); the seed is the kind of boat
 	FIRE_TRUCK,       # the forest fire truck (PropSites)

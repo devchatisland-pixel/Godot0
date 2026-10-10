@@ -121,7 +121,7 @@ At night the fog turns dark blue-grey.
 ## Beaches, park and borders
 
 * **Piers** (`beach_sites.gd`): wooden piers running into the sea from sandy beaches of the main island
-  (`pier_old` pack). The beach huts that stood behind them were removed with their pack.
+  (`pier_old` pack). No beach huts: their pack was removed.
 * **Central park** (`amenities_planner.gd`): wide paths from the streets through the lake, a ring path round
   it, diagonal paths to the corners, benches along the arms, flowerbeds and a playground.
 * **Boardwalk** along the beach of the red district, with lamps that glow at night.

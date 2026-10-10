@@ -103,10 +103,8 @@ const EDITS := [
 	{"id": 401, "kind": "QUARTER_BLDG", "at": Vector2i(129, 178), "delete": true},
 ]
 
-## Kinds taken away everywhere, whatever their number: the pirate ships (the ones at sea are
-## only made after the other edits), the airport, the urban ghetto block and the beach huts
-## (their piers stay).
-const DELETED_KINDS := ["PIRATE_SHIP", "AIRPORT", "RUSSIAN", "BEACH_HUT"]
+## Kinds taken away everywhere, whatever their number: the airport and the urban ghetto block.
+const DELETED_KINDS := ["AIRPORT", "RUSSIAN"]
 
 
 ## Applies every entry; returns how many were applied.

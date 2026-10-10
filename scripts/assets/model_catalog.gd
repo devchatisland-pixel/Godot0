@@ -24,8 +24,8 @@ enum Cat {
 	WAREHOUSE, FACTORY, RUIN, MANSION, PRISON_BLOCK, POOR_SLAB, POOR_BLOCK, RUSSIAN, FIELD, STALL,
 	# Fourth wave: the urban island, burger restaurants, the west bridge
 	URBAN, MCDONALDS, BURGER_KING, SKYLINE2, METAL_BRIDGE,
-	# Fifth wave: futuristic towers, pirate ship
-	FUTURE, PIRATE_SHIP,
+	# Fifth wave: futuristic towers
+	FUTURE,
 	# Sixth wave: nuclear plant, new cinema, airport, burger joints, villas, roadblocks
 	NUCLEAR, CINEMA2, AIRPORT, BURGER_JOINT, VILLA, ROADBLOCK_A, ROADBLOCK_B,
 	# Seventh wave: more urban towers, cooling towers, the BT tower, the watchtower
