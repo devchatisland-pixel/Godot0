@@ -1,11 +1,12 @@
 class_name MapShops
 extends Node3D
-## The shops of res://shops (see shops/CATALOG.md) put on the island at the spots chosen
-## by ShopSites. Static props, like the vehicles: one MeshInstance3D each.
+## The shops of res://shops (see shops/CATALOG.md): one of each in a row on the development
+## island (ShopSites), each with a name label. Static props like the vehicles: one
+## MeshInstance3D each.
 
 const CATALOG_PATH := "res://shops/catalog.json"
 
-## Catalog id -> {"file", "width", "depth", "zones", "copies"}; read once.
+## Catalog id -> {"id", "file", "width", "depth", "height"}; read once.
 static var _entries := {}
 
 
@@ -17,15 +18,10 @@ static func _ensure_catalog() -> void:
 		push_warning("[Shops] cannot read " + CATALOG_PATH)
 		return
 	for s in data.get("shops", []):
-		var zones: Array[int] = []
-		for name in s.get("zones", []):
-			var z: int = CityTypes.Zone.get(name, -1)
-			if z >= 0:
-				zones.append(z)
+		var size: Dictionary = s["size_m"]
 		_entries[s["id"]] = {
 			"id": s["id"], "file": s["file"],
-			"width": float(s["size_m"]["width"]), "depth": float(s["size_m"]["depth"]),
-			"zones": zones, "copies": int(s.get("copies", 1)),
+			"width": float(size["width"]), "depth": float(size["depth"]), "height": float(size["height"]),
 		}
 
 
@@ -57,7 +53,17 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * s),
 				Vector3(at.x, 0.0, at.y))
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.name = "%s_%d" % [p["id"], placed]
+		mi.name = String(p["id"])
 		add_child(mi)
+		var label := Label3D.new()
+		label.text = String(p["id"]).trim_prefix("shop-")
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		label.no_depth_test = true
+		label.pixel_size = 0.012
+		label.font_size = 40
+		label.outline_size = 12
+		label.position = Vector3(at.x, p["height"] * s + 0.6, at.y)
+		label.name = "Label_" + String(p["id"])
+		add_child(label)
 		placed += 1
 	print("[Shops] %d shops placed" % placed)

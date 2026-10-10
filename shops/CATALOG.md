@@ -1,6 +1,7 @@
 # Shop catalog
 
-15 shops placed on the island by `scripts/generation/shop_sites.gd` (data: `shops/catalog.json`).
+15 shops, one of each, in a row on the development island (north-east of the map, `Zone.DEV`),
+placed by `scripts/generation/shop_sites.gd` (data: `shops/catalog.json`).
 
 ![Shop catalog](CATALOG.png)
 
@@ -8,23 +9,23 @@ Models face -Z, origin at the centre of the footprint on the ground, 1 unit = 1 
 Rebuild with `python tools/build_shop_catalog.py <raw dir> shops`. Preview all of them in a row:
 `shops/preview/shop_island.tscn` (wheel = zoom, WASD = pan, F = reset).
 
-| ID | Category | Name | W x D x H (m) | Zones | Copies | Author | License |
-|---|---|---|---|---|---:|---|---|
-| `shop-candy-a` | Candy | Candy Shop (canopy) | 4.41 x 5.04 x 5.47 | QUARTER, ENTERTAINMENT | 3 | Ivan Norman | CC-BY-4.0 |
-| `shop-candy-b` | Candy | Low Poly Candy Shop | 6.1 x 4.24 x 5.47 | QUARTER, ENTERTAINMENT | 3 | Anggo Ari Wibowo | CC-BY-4.0 |
-| `shop-coffee-a` | Coffee | Coffee Shop (stall) | 20.5 x 9.6 x 6.02 | DOWNTOWN, COMMERCIAL | 2 | mohdrafey2207 | CC-BY-4.0 |
-| `shop-flower-a` | Flower | Flower Shop (game asset) | 6.27 x 4.05 x 2.46 | SUBURBAN, APARTMENT | 3 | maloy02 | CC-BY-4.0 |
-| `shop-convenience-quickstop` | Convenience | Jay and Silent Bob Quick Stop | 12.02 x 10.26 x 6.21 | INDUSTRIAL, POOR | 1 | Kris Kovac | CC-BY-4.0 |
-| `shop-general-orange-a` | General | Low Poly Shop (orange awning) | 7.67 x 3.89 x 3.33 | COMMERCIAL, QUARTER | 3 | Virginia Vidonis | CC-BY-4.0 |
-| `shop-general-orange-b` | General | 2nd Low Poly Shop (orange awning) | 5.89 x 4.37 x 3.31 | COMMERCIAL, QUARTER | 3 | Virginia Vidonis | CC-BY-4.0 |
-| `shop-general-generic` | General | Low Poly Generic Shop | 3.69 x 2.48 x 2.64 | COMMERCIAL, APARTMENT, SUBURBAN | 3 | assetfactory | SKETCHFAB Standard |
-| `shop-general-brick` | General | Low Poly Shop (brick, balcony) | 3.89 x 5.23 x 2.1 | COMMERCIAL, APARTMENT, SUBURBAN | 3 | Natisis94 | CC-BY-4.0 |
-| `shop-general-mini` | General | Low-Poly Shop (mini) | 4.26 x 3.77 x 1.96 | QUARTER, POOR | 3 | reginald7 | CC-BY-4.0 |
-| `shop-townhouse-gabled` | Townhouse | Shop (gabled townhouse) | 2.3 x 2.74 x 2.48 | QUARTER, SUBURBAN | 3 | linus1178 | CC-BY-4.0 |
-| `shop-steel-glass` | General | Shop (steel & glass) | 4.9 x 3.91 x 3.42 | COMMERCIAL, INDUSTRIAL | 3 | bystryakov.yuriy | CC-BY-4.0 |
-| `shop-coffee-b` | Coffee | Shop - Free model (coffee shop) | 8.05 x 8.91 x 6.86 | DOWNTOWN, COMMERCIAL | 3 | Astro0960 | CC-BY-4.0 |
-| `shop-townhouse-belgium` | Townhouse | Nivelles Shop 1 (Belgium) | 8 x 9.3 x 12.51 | DOWNTOWN, COMMERCIAL, APARTMENT | 3 | Lost Gecko | CC-BY-4.0 |
-| `shop-building-multi` | Building | Building (multi-part cubes) | 4.5 x 6.84 x 6.75 | DOWNTOWN, APARTMENT | 3 | Codracer13 | CC-BY-4.0 |
+| ID | Category | Name | W x D x H (m) | Author | License |
+|---|---|---|---|---|---|
+| `shop-candy-a` | Candy | Candy Shop (canopy) | 4.41 x 5.04 x 5.47 | Ivan Norman | CC-BY-4.0 |
+| `shop-candy-b` | Candy | Low Poly Candy Shop | 6.1 x 4.24 x 5.47 | Anggo Ari Wibowo | CC-BY-4.0 |
+| `shop-coffee-a` | Coffee | Coffee Shop (stall) | 20.5 x 9.6 x 6.02 | mohdrafey2207 | CC-BY-4.0 |
+| `shop-flower-a` | Flower | Flower Shop (game asset) | 6.27 x 4.05 x 2.46 | maloy02 | CC-BY-4.0 |
+| `shop-convenience-quickstop` | Convenience | Jay and Silent Bob Quick Stop | 12.02 x 10.26 x 6.21 | Kris Kovac | CC-BY-4.0 |
+| `shop-general-orange-a` | General | Low Poly Shop (orange awning) | 7.67 x 3.89 x 3.33 | Virginia Vidonis | CC-BY-4.0 |
+| `shop-general-orange-b` | General | 2nd Low Poly Shop (orange awning) | 5.89 x 4.37 x 3.31 | Virginia Vidonis | CC-BY-4.0 |
+| `shop-general-generic` | General | Low Poly Generic Shop | 3.69 x 2.48 x 2.64 | assetfactory | SKETCHFAB Standard |
+| `shop-general-brick` | General | Low Poly Shop (brick, balcony) | 3.89 x 5.23 x 2.1 | Natisis94 | CC-BY-4.0 |
+| `shop-general-mini` | General | Low-Poly Shop (mini) | 4.26 x 3.77 x 1.96 | reginald7 | CC-BY-4.0 |
+| `shop-townhouse-gabled` | Townhouse | Shop (gabled townhouse) | 2.3 x 2.74 x 2.48 | linus1178 | CC-BY-4.0 |
+| `shop-steel-glass` | General | Shop (steel & glass) | 4.9 x 3.91 x 3.42 | bystryakov.yuriy | CC-BY-4.0 |
+| `shop-coffee-b` | Coffee | Shop - Free model (coffee shop) | 8.05 x 8.91 x 6.86 | Astro0960 | CC-BY-4.0 |
+| `shop-townhouse-belgium` | Townhouse | Nivelles Shop 1 (Belgium) | 8 x 9.3 x 12.51 | Lost Gecko | CC-BY-4.0 |
+| `shop-building-multi` | Building | Building (multi-part cubes) | 4.5 x 6.84 x 6.75 | Codracer13 | CC-BY-4.0 |
 
 ## Notes and credits
 

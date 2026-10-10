@@ -24,6 +24,9 @@ const PALM_ISLETS := [
 	{"at": Vector2(70, 252), "r": 4.5}, {"at": Vector2(150, 259), "r": 5.0},
 	{"at": Vector2(236, 246), "r": 4.0}, {"at": Vector2(250, 92), "r": 3.5},
 ]
+## The development island, in the empty sea north-east: one of each shop in a row
+## (see shops/CATALOG.md). Flat, no trees, nothing else is built there.
+const DEV_ISLAND := {"at": Vector2(232, 38), "r": Vector2(24, 10)}
 ## The prison island: centre, radii (long and short side) and turn in radians.
 ## Far out in the north-west, well away from the coast of the main island.
 const PRISON := {"at": Vector2(34, 38), "r": Vector2(15.0, 10.0), "turn": 0.45}
@@ -54,6 +57,10 @@ func is_urban_island(x: int, y: int) -> bool:
 
 func is_tower_islet(x: int, y: int) -> bool:
 	return _ellipse_t(Vector2(x, y), TOWER_ISLET["at"], TOWER_ISLET["r"], 0.0) < 1.15
+
+
+func is_dev_island(x: int, y: int) -> bool:
+	return _ellipse_t(Vector2(x, y), DEV_ISLAND["at"], DEV_ISLAND["r"], 0.0) < 1.15
 
 
 func is_prison_island(x: int, y: int) -> bool:
@@ -88,7 +95,7 @@ func _build_extended_elevation() -> void:
 		for x in size:
 			var t := _ellipse_t(Vector2(x, y), main_at, main_r, 0.0)
 			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x, y) * _cfg.coast_noise * COAST_ROUGHNESS)
-	for lobe in [URBAN, URBAN_NORTH, TOWER_ISLET]:
+	for lobe in [URBAN, URBAN_NORTH, TOWER_ISLET, DEV_ISLAND]:
 		_raise_lobe(coast, lobe["at"], lobe["r"])
 	for it in PALM_ISLETS:
 		_islet(coast, it["at"], Vector2(it["r"], it["r"]), 0.0, 0.3, 0.05, 3.0)
@@ -156,6 +163,9 @@ func _build_forest() -> void:
 			var i := y * size + x
 			if core_land_at(x, y):
 				continue # keep the forest of the core
+			if is_dev_island(x, y):
+				_data.forest[i] = 0
+				continue
 			if _data.terrain[i] != CityTypes.Terrain.LAND:
 				_data.forest[i] = 0
 				continue

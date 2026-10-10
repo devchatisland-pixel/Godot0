@@ -28,6 +28,7 @@ const ZONE_COLORS := {
 	CityTypes.Zone.FARM: Color("a6b45c"),
 	CityTypes.Zone.URBAN: Color("8f929c"),
 	CityTypes.Zone.SAND: Color("ead9a4"),
+	CityTypes.Zone.DEV: Color("d8e2c4"),
 }
 
 ## Paths of the park, the boardwalk, and the dry grass where the desert blends into the meadows.

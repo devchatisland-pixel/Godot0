@@ -5,19 +5,19 @@ import math
 def write_markdown(data, path):
     rows = [
         "# Shop catalog", "",
-        "15 shops placed on the island by `scripts/generation/shop_sites.gd` (data: `shops/catalog.json`).", "",
+        "15 shops, one of each, in a row on the development island (north-east of the map, `Zone.DEV`),", "placed by `scripts/generation/shop_sites.gd` (data: `shops/catalog.json`).", "",
         "![Shop catalog](CATALOG.png)", "",
         "Models face -Z, origin at the centre of the footprint on the ground, 1 unit = 1 m.",
         "Rebuild with `python tools/build_shop_catalog.py <raw dir> shops`. Preview all of them in a row:",
         "`shops/preview/shop_island.tscn` (wheel = zoom, WASD = pan, F = reset).", "",
-        "| ID | Category | Name | W x D x H (m) | Zones | Copies | Author | License |",
-        "|---|---|---|---|---|---:|---|---|",
+        "| ID | Category | Name | W x D x H (m) | Author | License |",
+        "|---|---|---|---|---|---|",
     ]
     for s in data["shops"]:
         z = s["size_m"]
-        rows.append("| `%s` | %s | %s | %g x %g x %g | %s | %d | %s | %s |" % (
+        rows.append("| `%s` | %s | %s | %g x %g x %g | %s | %s |" % (
             s["id"], s["category"], s["name"], z["width"], z["depth"], z["height"],
-            ", ".join(s["zones"]), s["copies"], s["credit"]["author"], s["credit"]["license"]))
+            s["credit"]["author"], s["credit"]["license"]))
     rows += ["", "## Notes and credits", ""]
     for s in data["shops"]:
         rows.append("- **%s** - %s Source: <%s>" % (s["id"], s["notes"], s["credit"]["url"]))
