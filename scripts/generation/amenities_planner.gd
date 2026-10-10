@@ -262,20 +262,6 @@ func _fences() -> void:
 			any = true
 	if any:
 		_fence_ring(islet.grow(1), [])
-	# The nuclear plant of the urban island, with its second plant, hall, yards and the fire truck.
-	var plant := Rect2i()
-	var has := false
-	for b in _data.building_count():
-		var k: int = _data.b_kind[b]
-		var r2 := _data.building_rect(b)
-		var part := k == Kind.NUCLEAR_PLANT or k == Kind.COOLING_HALL or k == Kind.INDUSTRIAL_YARD \
-				or k == Kind.FIRE_TRUCK or k == Kind.INDUSTRIAL
-		if part and r2.position.y >= MapLayout.cells("plant_yard_from") and r2.end.y <= MapLayout.cells("plant_yard_to") \
-				and r2.position.x < MapLayout.cells("urban_columns"):
-			plant = r2 if not has else plant.merge(r2)
-			has = true
-	if has:
-		_fence_ring(plant.grow(1), [Vector2i(plant.get_center().x, plant.end.y), Vector2i(plant.get_center().x + 1, plant.end.y)])
 
 
 ## Fence cells along the border of `ring` on dry, free cells, except the `gaps`.

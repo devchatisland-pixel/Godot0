@@ -140,7 +140,7 @@ func zone_at(x: float, y: float) -> int:
 
 
 func block_limits(x: float, y: float) -> Vector2i:
-	return BLOCK_LIMITS.get(zone_at(x, y), Vector2i(5, 10))
+	return MapLayout.block_limits(BLOCK_LIMITS.get(zone_at(x, y), Vector2i(5, 10)))
 
 
 ## 0..1, how central a point is in downtown (towers grow towards the middle).

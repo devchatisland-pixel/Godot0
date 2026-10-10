@@ -84,7 +84,7 @@ func plan_roads() -> void:
 	var reserved: Array[Rect2i] = [nuclear_rect()]
 	if airport.size.x > 0:
 		reserved.append(airport)
-	planner.build_region(area, LIMITS, reserved)
+	planner.build_region(area, MapLayout.block_limits(LIMITS), reserved)
 	for b in planner.blocks:
 		if _spots.mostly_free(b, mask):
 			_blocks.append(b)

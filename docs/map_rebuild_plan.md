@@ -34,12 +34,22 @@ Baseline of the old map: 4 road groups (544 cells off the main one: the urban is
 joined by road cells), 138 dead ends, 57 fat road squares, 3 diagonal gaps, 18 street lots
 without a road, 3 highway ends that just stop.
 
-## Phases (one pull request each)
+## Phases
 
 0. Audit, baseline and this plan. (done)
-1. `MapLayout` at scale 1: the same map as before, coordinates in one place. (done; `test_map_audit.gd -- --same` proves it)
-2. `RoadNetwork` at scale 1: the road problems go to zero. (done; building counts drift by a
-   few until the budgets of phase 3)
-3. Scale 1.41 with the budgets.
-4. Anchors for props, vehicles and hand edits.
-5. Tuning, polygon heatmap and streaming checks on the bigger map.
+1. `MapLayout` at scale 1: the same map as before, coordinates in one place. (done)
+2. `RoadNetwork` at scale 1: the road problems go to zero. (done)
+3. Scale 1.41 with the budgets. (done) `CityConfig.map_scale` = 384 / 272: map 384 cells, city
+   180 cells, blocks and lots 1.41 times longer, `tree_share` 0.47. `BuildingBudget` clears the
+   surplus of each kind and adds the few missing ones: the counts are exactly the baseline.
+4. Anchors. (done) `ManualEdits` names a kind near a place; the farm machines, the balloons and
+   the hut find their building by kind. Deletions of ordinary lots are gone: the budget
+   decides the counts.
+5. Checks on the bigger map. (done) All tests pass; screenshots and the polygon heatmap were
+   made in Docker.
+
+## What is not done
+
+- The city is still planned on its own grid and embedded (`core_embed.gd`), and the roads are
+  cleaned after the planners rather than generated from a graph.
+- The 14 cul-de-sacs are kept.

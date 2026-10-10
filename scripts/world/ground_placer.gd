@@ -34,6 +34,7 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 	var cactus := lib.named_id("cactus")
 	var bridge := _bridge_clearing(data)
 	var checkpoint := Roadblocks.clearing(data)
+	var ts := data.tree_share
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var i := y * data.size + x
@@ -51,18 +52,18 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 			match z:
 				Zone.NATURE:
 					if beach:
-						_scatter(x, y, 0.06, 0.15, palm, batch)
+						_scatter(x, y, 0.06 * ts, 0.15, palm, batch)
 					else:
 						_place_forest(data, x, y, trees, batch)
 				Zone.ISLET:
-					_scatter(x, y, 0.12 if beach else 0.45, 0.2, palm, batch)
+					_scatter(x, y, (0.12 if beach else 0.45) * ts, 0.2, palm, batch)
 				Zone.PARK:
 					_place_park_tree(data, x, y, trees, batch)
 				Zone.DESERT:
-					_scatter(x, y, 0.035, 0.1, cactus, batch)
+					_scatter(x, y, 0.035 * ts, 0.1, cactus, batch)
 				Zone.PRISON:
 					if data.terrain[i] == CityTypes.Terrain.LAND:
-						_scatter(x, y, 0.12, 0.2, trees[(x + y) % trees.size()], batch)
+						_scatter(x, y, 0.12 * ts, 0.2, trees[(x + y) % trees.size()], batch)
 			if data.edge[i] != 0:
 				_place_edge(lib, x, y, data.edge[i], batch)
 
@@ -164,7 +165,7 @@ static func _place_forest(data: CityData, x: int, y: int, trees: PackedInt32Arra
 		return
 	var h := CityTypes.hash2(x, y, 911)
 	var count := 0
-	if float(h & 1023) / 1024.0 < f * 0.9:
+	if float(h & 1023) / 1024.0 < f * 0.9 * data.tree_share:
 		count = 1 + int(f > 0.6 and (h >> 10) & 1 == 1)
 	for t in count:
 		var hh := CityTypes.hash2(x, y, 31 + t)
@@ -188,7 +189,7 @@ static func _place_park_tree(data: CityData, x: int, y: int, trees: PackedInt32A
 	# The central park is a dense wood: up to two big trees per cell.
 	for t in 2:
 		var h := CityTypes.hash2(x, y, 517 + t)
-		if h % 100 >= 55:
+		if h % 100 >= int(55.0 * data.tree_share):
 			continue
 		var p := Vector3(x + 0.15 + float(h & 255) / 255.0 * 0.7, 0, y + 0.15 + float((h >> 8) & 255) / 255.0 * 0.7)
 		var xf := BuildingExtras.tree_xform(p, h)

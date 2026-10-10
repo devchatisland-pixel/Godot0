@@ -6,7 +6,7 @@ extends RefCounted
 const Zone := CityTypes.Zone
 const Kind := CityTypes.Kind
 
-## Lot size range (min, max) in cells per zone.
+## Lot size range (min, max) in cells per zone, on the first map (see MapLayout.lot_range).
 const LOT_SIZES := {
 	Zone.DOWNTOWN: Vector2i(2, 3),
 	Zone.COMMERCIAL: Vector2i(1, 2),
@@ -50,9 +50,9 @@ func build(blocks: Array[Rect2i], zones: PackedByteArray, rng: RandomNumberGener
 		var z: int = zones[b]
 		if LOT_SIZES.has(z):
 			var lots: Array[Rect2i] = []
-			var range_: Vector2i = LOT_SIZES[z]
+			var range_: Vector2i = MapLayout.lot_range(LOT_SIZES[z])
 			if z == Zone.URBAN and _urban_core(blocks[b].get_center()):
-				range_ = Vector2i(3, 3) # big lots for the futuristic towers in the middle
+				range_ = MapLayout.lot_range(Vector2i(3, 3)) # big lots for the futuristic towers in the middle
 			_split_lots(blocks[b], range_, lots)
 			for lot in lots:
 				_add_lot(lot, z)

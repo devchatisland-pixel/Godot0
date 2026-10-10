@@ -45,6 +45,8 @@ var chunk_buildings: Array[PackedInt32Array] = []
 var centers: Array[Vector2] = []
 var center_weights: PackedFloat32Array = PackedFloat32Array()
 var city_name := "Chat City"
+## Share of the trees, palms and cacti that GroundPlacer grows (CityConfig.tree_share).
+var tree_share := 1.0
 ## Cell (x, row) where the Golden Gate bridge leaves the east coast; x < 0 = none.
 var bridge := Vector2i(-1, -1)
 ## West bridge: (x of the main island's west-most land, x of the urban island's east-most land,

@@ -10,7 +10,9 @@ extends RefCounted
 ##   - no loose pieces: groups of roads that are not joined to the main network are joined
 ##     or removed,
 ##   - a highway (three lanes) ends at a bridge or at a road that crosses its whole width,
-##     and that crossing road is an avenue.
+##     and that crossing road is an avenue: lanes that stop short of such a road are drawn
+##     on to it,
+##   - no road under a building (a prop placed after the roads).
 ## Only free land is used for new road cells (no building, no park, no beach).
 ## `apply` returns what it did, for the log.
 
@@ -31,7 +33,7 @@ var _d: CityData
 var _built := PackedByteArray()
 ## 1 on the highways and on the column of road that closes each of their ends.
 var _highway := PackedByteArray()
-var stats := {"thinned": 0, "corners": 0, "joined": 0, "trimmed": 0, "groups_removed": 0,
+var stats := {"under_buildings": 0, "highway_ends": 0, "thinned": 0, "corners": 0, "joined": 0, "trimmed": 0, "groups_removed": 0,
 		"groups_joined": 0, "promoted": 0}
 
 
@@ -39,6 +41,8 @@ static func apply(data: CityData) -> Dictionary:
 	var n := RoadNetwork.new()
 	n._d = data
 	n._mark_buildings()
+	n._clear_under_buildings()
+	n._close_highway_ends()
 	n._promote_highway_crossings()
 	n._mark_highways()
 	n._thin()
@@ -46,6 +50,8 @@ static func apply(data: CityData) -> Dictionary:
 	n._join_groups()
 	n._close_dead_ends()
 	n._thin()
+	n._close_dead_ends()
+	n._promote_highway_crossings()
 	return n.stats
 
 
@@ -59,6 +65,14 @@ func _mark_buildings() -> void:
 			for x in range(r.position.x, r.end.x):
 				if _d.in_bounds(x, y):
 					_built[_d.idx(x, y)] = 1
+
+
+## Road cells under a building are removed (the joins below mend what that cuts).
+func _clear_under_buildings() -> void:
+	for i in _built.size():
+		if _built[i] == 1 and _d.road[i] != 0 and (_d.road[i] & CityTypes.ROAD_BRIDGE_FLAG) == 0:
+			_d.road[i] = 0
+			stats["under_buildings"] += 1
 
 
 # --- Helpers -------------------------------------------------------------------------------------
@@ -177,24 +191,9 @@ func _removable(x: int, y: int) -> bool:
 	for k in [0, 2, 4, 6]:
 		if on[k] == 1:
 			side_groups[group[k]] = true
-	if side_groups.size() != 1:
-		return false
-	for k in [0, 2, 4, 6]:
-		if on[k] == 1 and _degree(x + ring[k].x, y + ring[k].y) <= 2 \
-				and not _in_square_without(x + ring[k].x, y + ring[k].y, x, y):
-			# The neighbour would be left with one way only: only fine inside the fat part.
-			return false
-	return true
-
-
-## (x, y) keeps at least two road neighbours once (rx, ry) is gone.
-func _in_square_without(x: int, y: int, rx: int, ry: int) -> bool:
-	var n := 0
-	for o in CityTypes.FACING_OFFSETS:
-		var c := Vector2i(x + o.x, y + o.y)
-		if (c.x != rx or c.y != ry) and _road(c.x, c.y):
-			n += 1
-	return n >= 2
+	# A neighbour left with one way only becomes a stub: the dead end pass that follows
+	# removes it or keeps it as a cul-de-sac.
+	return side_groups.size() == 1
 
 
 # --- Roads touching by a corner ------------------------------------------------------------------
@@ -432,6 +431,50 @@ func _closes_square_with(q: Vector2i, prev: Dictionary, cur: Vector2i) -> bool:
 
 
 # --- Highways ------------------------------------------------------------------------------------
+## How far (columns) the lanes of a highway are drawn on to reach a road that crosses them.
+const HIGHWAY_REACH := 10
+
+
+## True when the road of column x crosses the three lanes of row y and goes on beyond them.
+func _crossing(x: int, y: int) -> bool:
+	return _road(x, y - 1) and _road(x, y) and _road(x, y + 1) and (_road(x, y - 2) or _road(x, y + 2))
+
+
+## The lanes of a highway that stop in the open are drawn on, over free land, to the first
+## road that crosses them.
+func _close_highway_ends() -> void:
+	for h in MapAudit.highways(_d):
+		for side: String in ["west", "east"]:
+			if h[side] != "open":
+				continue
+			var y: int = h["row"]
+			var dir := -1 if side == "west" else 1
+			var x: int = (h["from"] if side == "west" else h["to"]) + dir
+			var cols: Array[int] = []
+			var found := false
+			for k in HIGHWAY_REACH:
+				var cx := x + dir * k
+				if not _d.in_bounds(cx, y):
+					break
+				if _crossing(cx, y):
+					found = true
+					break
+				var ok := true
+				for dy in range(-1, 2):
+					if not _road(cx, y + dy) and not _free(cx, y + dy):
+						ok = false
+				if not ok:
+					break
+				cols.append(cx)
+			if not found:
+				push_warning("[Roads] the highway of row %d has no road to end on at its %s end" % [y, side])
+				continue
+			for cx in cols:
+				for dy in range(-1, 2):
+					_d.road[_d.idx(cx, y + dy)] = CityTypes.ROAD_AVENUE
+			stats["highway_ends"] += 1
+
+
 ## The road that crosses the end of a highway becomes an avenue along its straight run.
 func _promote_highway_crossings() -> void:
 	for h in MapAudit.highways(_d):

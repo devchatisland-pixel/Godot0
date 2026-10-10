@@ -20,10 +20,10 @@ const PROBLEMS: Array[String] = [
 	"lots_without_road", "stubs", "diagonal_gaps", "fat_roads",
 ]
 
-## Buildings of a kind may differ from the baseline by this many, or this share, until the
-## budgets of phase 3 set the counts (docs/map_rebuild_plan.md).
-const KIND_SLACK := 4
-const KIND_SLACK_SHARE := 0.08
+## Buildings of a kind may differ from the baseline by this many, or this share: none, since
+## BuildingBudget sets the counts.
+const KIND_SLACK := 0
+const KIND_SLACK_SHARE := 0.0
 
 var _fails := 0
 

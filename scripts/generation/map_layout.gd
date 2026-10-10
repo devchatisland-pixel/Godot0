@@ -18,10 +18,11 @@ static var scale := 1.0
 const BLOBS := {
 	# Islands.
 	"main": {"at": Vector2(141, 133), "r": Vector2(80, 94)},
-	# The urban island (third island) west of the main one, joined by the metal bridge.
-	"urban": {"at": Vector2(30, 138), "r": Vector2(23, 52)},
+	# The urban island (third island) west of the main one, joined by the metal bridge. Small
+	# (30 % of the area it had) and packed with towers (UrbanIslandRebuild).
+	"urban": {"at": Vector2(37, 138), "r": Vector2(12, 26)},
 	# A lobe of land at its north end, wide enough for the nuclear plant and its cooling towers.
-	"urban_north": {"at": Vector2(34, 96), "r": Vector2(21, 13)},
+	"urban_north": {"at": Vector2(39, 105), "r": Vector2(15, 9)},
 	# The tiny islet of the BT tower, in the sea north of the urban island.
 	"tower_islet": {"at": Vector2(24, 64), "r": Vector2(10, 6.5)},
 	# The development island, alone in the empty south-west corner of the sea, far from the
@@ -51,7 +52,7 @@ const POINTS := {
 	# Where the ferris wheel stands (6x6 plot, at the south beach).
 	"ferris": Vector2i(146, 221),
 	# Where the search for the plot of the nuclear plant starts.
-	"plant": Vector2i(30, 96),
+	"plant": Vector2i(39, 105),
 	# Where the search for the forest fire truck starts.
 	"fire_truck": Vector2i(172, 70),
 	# The flying saucer: far from the city and from the secret base, in the south of the desert.
@@ -82,9 +83,6 @@ const CELLS := {
 	# Rows tried for the west highway (from, to).
 	"west_highway_from": 112,
 	"west_highway_to": 156,
-	# The yards round the nuclear plant that get the fence: rows (from, to) and columns below.
-	"plant_yard_from": 84,
-	"plant_yard_to": 108,
 	# South end of the urban island checked by the tests.
 	"urban_south_end": 215,
 }
@@ -120,13 +118,13 @@ static func palm_islets() -> Array:
 
 
 static func point(name: String) -> Vector2i:
-	return _scaled(POINTS[name])
+	return scaled(POINTS[name])
 
 
 static func points(name: String) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
 	for p: Vector2i in POINT_LISTS[name]:
-		out.append(_scaled(p))
+		out.append(scaled(p))
 	return out
 
 
@@ -134,5 +132,38 @@ static func cells(name: String) -> int:
 	return roundi(float(CELLS[name]) * scale)
 
 
-static func _scaled(p: Vector2i) -> Vector2i:
+## A length of the first map (cells) on this map.
+static func span(n: int) -> int:
+	return maxi(1, roundi(float(n) * scale))
+
+
+## Block limits (short side, long side) of the first map on this map.
+static func block_limits(v: Vector2i) -> Vector2i:
+	return Vector2i(span(v.x), span(v.y))
+
+
+## Lot size range (min, max) of the first map on this map. The smallest lot grows less than
+## the biggest one, so that there are a few lots too many rather than too few: BuildingBudget
+## then clears the surplus.
+static func lot_range(v: Vector2i) -> Vector2i:
+	return Vector2i(maxi(1, roundi(float(v.x) * scale)), maxi(1, roundi(float(v.y) * scale)))
+
+
+## True when the cell lies on the urban island (its two ellipses, as ExtensionIsland draws it:
+## the coast is the same, the sea round it within 15 % of the radius counts as well).
+static func on_urban_island(cell: Vector2i) -> bool:
+	if cell.x >= cells("urban_columns"):
+		return false
+	var p := Vector2(cell) + Vector2(0.5, 0.5)
+	for name in ["urban", "urban_north"]:
+		var b := blob(name)
+		var d := p - (b["at"] as Vector2)
+		var r := b["r"] as Vector2
+		if Vector2(d.x / r.x, d.y / r.y).length() < 1.15:
+			return true
+	return false
+
+
+## A cell (or a shift in cells) of the first map on this map.
+static func scaled(p: Vector2i) -> Vector2i:
 	return Vector2i(roundi(p.x * scale), roundi(p.y * scale))

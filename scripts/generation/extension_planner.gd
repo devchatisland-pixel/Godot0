@@ -89,8 +89,8 @@ func build() -> void:
 	var road_planner := RoadPlanner.new(_cfg, _data, _island, _districts, _rng)
 	var zones := PackedByteArray()
 	var plans := [
-		{"mask": _spots.blob_mask(MapLayout.blob("poor")), "zone": Zone.POOR, "limits": Vector2i(4, 8), "reserved": [] as Array[Rect2i]},
-		{"mask": _spots.blob_mask(MapLayout.blob("quarter")), "zone": Zone.QUARTER, "limits": Vector2i(4, 9),
+		{"mask": _spots.blob_mask(MapLayout.blob("poor")), "zone": Zone.POOR, "limits": MapLayout.block_limits(Vector2i(4, 8)), "reserved": [] as Array[Rect2i]},
+		{"mask": _spots.blob_mask(MapLayout.blob("quarter")), "zone": Zone.QUARTER, "limits": MapLayout.block_limits(Vector2i(4, 9)),
 				"reserved": [_ferris] as Array[Rect2i]},
 	]
 	for d in plans:
