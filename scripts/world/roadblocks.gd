@@ -37,13 +37,13 @@ func _block(lib: ModelLibrary, cat: int, x: int, row: int, with_cones: bool, sam
 	for k in 3:
 		var id := ids[0 if same_model else k % ids.size()]
 		var z := float(row) + 0.5 + float(k - 1)
-		_put(lib, id, Vector3(float(x) + 0.5, 0.0, z), PI * 0.5, BARRIER_LEN)
+		_put(lib, id, Vector3(float(x) + 0.5, 0.0, z), PI * 0.5, BARRIER_LEN, "Roadblock barrier")
 	if with_cones:
 		var cones := lib.ids(Cat.CONE)
 		if not cones.is_empty():
 			for k in 4:
 				var z := float(row) + 0.5 + (float(k) - 1.5) * 1.0
-				_put(lib, cones[0], Vector3(float(x) - 1.4, 0.0, z), 0.0, CONE_LEN)
+				_put(lib, cones[0], Vector3(float(x) - 1.4, 0.0, z), 0.0, CONE_LEN, "Traffic cone")
 
 
 ## A police car beside the road, `side` rows from the middle lane (the text of the model is
@@ -52,7 +52,7 @@ func _police_car(lib: ModelLibrary, x: int, row: int, side: float = 2.7) -> void
 	var car := _cruiser(lib)
 	if car.is_empty():
 		return
-	_put(lib, car["id"], Vector3(float(x) - 1.6, 0.0, float(row) + 0.5 + side), PI + car["turn"], CAR_LEN)
+	_put(lib, car["id"], Vector3(float(x) - 1.6, 0.0, float(row) + 0.5 + side), PI + car["turn"], CAR_LEN, "Police car (roadblock)")
 
 
 ## The two police cars stand on the highway just beyond the barriers, slanted across the
@@ -62,8 +62,8 @@ func _roadblock_cars(lib: ModelLibrary, x: int, row: int) -> void:
 	if car.is_empty():
 		return
 	var z := float(row) + 0.5
-	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z - 0.9), PI * 0.5 + 0.5 + car["turn"], CAR_LEN)
-	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z + 0.9), PI * 0.5 - 0.5 + car["turn"], CAR_LEN)
+	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z - 0.9), PI * 0.5 + 0.5 + car["turn"], CAR_LEN, "Police car (roadblock)")
+	_put(lib, car["id"], Vector3(float(x) + 2.6, 0.0, z + 0.9), PI * 0.5 - 0.5 + car["turn"], CAR_LEN, "Police car (roadblock)")
 
 
 ## The police car of the roadblocks: the US cruiser of the vehicle catalog (its nose is -Z,
@@ -86,7 +86,7 @@ func _tanks_facing_bridge(lib: ModelLibrary, x: int, row: int) -> void:
 		return
 	var z := float(row) + 0.5
 	for spot in [Vector2(4.5, 4.6), Vector2(7.2, 4.6), Vector2(9.9, 4.6), Vector2(5.8, -4.2), Vector2(8.5, -4.2)]:
-		_put(lib, ids[0], Vector3(float(x) + spot.x, 0.0, z + spot.y), PI * 0.5, TANK_LEN)
+		_put(lib, ids[0], Vector3(float(x) + spot.x, 0.0, z + spot.y), PI * 0.5, TANK_LEN, "Tank (roadblock)")
 
 
 ## Rectangle (cells) round the Golden Gate checkpoint where no tree grows.
@@ -98,7 +98,7 @@ static func clearing(data: CityData) -> Rect2i:
 
 
 ## Puts model `id` on the ground at `at`, scaled so that its longest side is `length`.
-func _put(lib: ModelLibrary, id: int, at: Vector3, yaw: float, length: float) -> void:
+func _put(lib: ModelLibrary, id: int, at: Vector3, yaw: float, length: float, title: String = "Roadblock piece") -> void:
 	var box := lib.bounds[id]
 	var longest := maxf(box.size.x, box.size.z)
 	if longest <= 0.0:
@@ -110,4 +110,9 @@ func _put(lib: ModelLibrary, id: int, at: Vector3, yaw: float, length: float) ->
 	mi.mesh = lib.meshes[id]
 	mi.transform = Transform3D(basis, at - basis * center)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.name = "%s_%d" % [title.replace(" ", ""), get_child_count()]
 	add_child(mi)
+	mi.set_meta("pick", {
+		"uid": "R-%02d" % get_child_count(), "number": get_child_count(), "title": title,
+		"kind": "ROADBLOCK", "model": lib.model_name(id), "category": "Roadblock", "note": "checkpoint",
+	})

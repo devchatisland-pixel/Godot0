@@ -63,10 +63,40 @@ static func describe(data: CityData, lib: ModelLibrary, i: int) -> Dictionary:
 	}
 
 
+## Info of something that is not a numbered building but is placed on the map (a vehicle, a
+## shop, a roadblock piece), in the same format so that the popup shows it too.
+## `note` says why it stands there; `mi` is the MeshInstance3D that draws it.
+static func for_prop(data: CityData, uid: String, number: int, title: String, kind: String,
+		model: String, category: String, mi: MeshInstance3D, note: String) -> Dictionary:
+	var box: AABB = mi.transform * mi.mesh.get_aabb()
+	var c := box.get_center()
+	# The models face -Z: the front is where -Z of the instance points (a yaw and a scale).
+	var nose := -mi.transform.basis.z
+	var front := Vector2(nose.x, nose.z).normalized()
+	var facing := 0
+	var best := -2.0
+	for k in 4:
+		var o := Vector2(CityTypes.FACING_OFFSETS[k])
+		if o.dot(front) > best:
+			best = o.dot(front)
+			facing = k
+	var cell := Vector2i(floori(c.x), floori(c.z))
+	return {
+		"id": number, "uid": uid, "name": title, "kind": kind, "category": category,
+		"model": model, "model_id": -1,
+		"cell": cell, "size": Vector2i(maxi(1, ceili(box.size.x)), maxi(1, ceili(box.size.z))),
+		"world": Vector3(c.x, 0.0, c.z), "facing": FACINGS[facing],
+		"zone": CityTypes.Zone.keys()[data.zone_at(cell.x, cell.y)], "seed": 0, "note": note,
+	}
+
+
 ## The info as plain text (copied by the "Copy" button).
 static func to_text(info: Dictionary) -> String:
 	var cell: Vector2i = info["cell"]
 	var size: Vector2i = info["size"]
-	return "%s | %s | kind %s | model %s | cell %d,%d size %dx%d | facing %s | zone %s | seed %d" % [
+	var text := "%s | %s | kind %s | model %s | cell %d,%d size %dx%d | facing %s | zone %s | seed %d" % [
 			info["uid"], info["name"], info["kind"], info["model"], cell.x, cell.y, size.x, size.y,
 			info["facing"], info["zone"], info["seed"]]
+	if info.has("note"):
+		text += " | " + String(info["note"])
+	return text

@@ -8,10 +8,10 @@ extends RefCounted
 
 const Zone := CityTypes.Zone
 
-## Cells per metre, like the vehicles (a 6 m wide shop is one cell).
-const CELLS_PER_METRE := 0.17
+## Cells per metre: twice the scale of the vehicles (0.17), so that the shops are easy to see.
+const CELLS_PER_METRE := 0.34
 ## Empty cells between two neighbours in the row.
-const GAP := 1.2
+const GAP := 1.5
 ## Distance of the front line of the row south of the middle of the island (cells).
 const FRONT_OFFSET := 1.5
 

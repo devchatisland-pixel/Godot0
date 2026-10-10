@@ -20,7 +20,7 @@ static func _ensure_catalog() -> void:
 	for s in data.get("shops", []):
 		var size: Dictionary = s["size_m"]
 		_entries[s["id"]] = {
-			"id": s["id"], "file": s["file"],
+			"id": s["id"], "file": s["file"], "name": s.get("name", s["id"]), "category": s.get("category", ""),
 			"width": float(size["width"]), "depth": float(size["depth"]), "height": float(size["height"]),
 		}
 
@@ -55,6 +55,11 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
 		add_child(mi)
+		var e: Dictionary = _entries.get(p["id"], {})
+		mi.set_meta("pick", {
+			"uid": "S-%02d" % placed, "number": placed, "title": e.get("name", p["id"]), "kind": "SHOP",
+			"model": String(p["id"]), "category": e.get("category", ""), "note": "development island",
+		})
 		var label := Label3D.new()
 		label.text = String(p["id"]).trim_prefix("shop-")
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
