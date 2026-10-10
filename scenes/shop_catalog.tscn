@@ -10,9 +10,9 @@
 [ext_resource type="PackedScene" path="res://models/shops/shop-general-generic.glb" id="8_m"]
 [ext_resource type="PackedScene" path="res://models/shops/shop-general-brick.glb" id="9_m"]
 [ext_resource type="PackedScene" path="res://models/shops/shop-general-mini.glb" id="10_m"]
-[ext_resource type="PackedScene" path="res://models/shops/shop-kiosk-small.glb" id="11_m"]
+[ext_resource type="PackedScene" path="res://models/shops/shop-townhouse-gabled.glb" id="11_m"]
 [ext_resource type="PackedScene" path="res://models/shops/shop-steel-glass.glb" id="12_m"]
-[ext_resource type="PackedScene" path="res://models/shops/shop-signage-large.glb" id="13_m"]
+[ext_resource type="PackedScene" path="res://models/shops/shop-coffee-b.glb" id="13_m"]
 [ext_resource type="PackedScene" path="res://models/shops/shop-townhouse-belgium.glb" id="14_m"]
 [ext_resource type="PackedScene" path="res://models/shops/shop-building-multi.glb" id="15_m"]
 [node name="ShopCatalog" type="Node3D"]
@@ -116,13 +116,13 @@ pixel_size = 0.004
 text = "shop-general-mini"
 font_size = 48
 
-[node name="shop-kiosk-small" parent="." instance=ExtResource("11_m")]
+[node name="shop-townhouse-gabled" parent="." instance=ExtResource("11_m")]
 transform = Transform3D(0.3648, 0, 0, 0, 0.3648, 0, 0, 0, 0.3648, 0.0000, -0.0000, 4.8648)
 
-[node name="Label_shop-kiosk-small" type="Label3D" parent="."]
+[node name="Label_shop-townhouse-gabled" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 0.0, 0.02, 5.9)
 pixel_size = 0.004
-text = "shop-kiosk-small"
+text = "shop-townhouse-gabled"
 font_size = 48
 
 [node name="shop-steel-glass" parent="." instance=ExtResource("12_m")]
@@ -134,13 +134,13 @@ pixel_size = 0.004
 text = "shop-steel-glass"
 font_size = 48
 
-[node name="shop-signage-large" parent="." instance=ExtResource("13_m")]
+[node name="shop-coffee-b" parent="." instance=ExtResource("13_m")]
 transform = Transform3D(0.1122, 0, 0, 0, 0.1122, 0, 0, 0, 0.1122, 3.9874, -0.0760, 4.9377)
 
-[node name="Label_shop-signage-large" type="Label3D" parent="."]
+[node name="Label_shop-coffee-b" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 4.0, 0.02, 5.9)
 pixel_size = 0.004
-text = "shop-signage-large"
+text = "shop-coffee-b"
 font_size = 48
 
 [node name="shop-townhouse-belgium" parent="." instance=ExtResource("14_m")]

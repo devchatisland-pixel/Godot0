@@ -108,7 +108,7 @@
   {
     "id": "shop-coffee-a",
     "category": "Coffee",
-    "name": "Coffee Shop",
+    "name": "Coffee Shop (stall)",
     "source_file": "coffee_shop.glb",
     "model": "res://models/shops/shop-coffee-a.glb",
     "structure": "res://structures/shops/shop-coffee-a.tres",
@@ -135,7 +135,7 @@
       35.3
     ],
     "one_tile_scale": 0.0142,
-    "notes": "Highest detail of the set (17k tris). Bbox is 70x70 -> includes a large ground plane; strip it or scale hard.",
+    "notes": "Tiny coffee stall/cart sitting on a huge 70x70 grey ground plane (17k tris). Delete the plane before use or it will cover ~70 tiles.",
     "sub_models": [
       "Cube",
       "Object",
@@ -275,7 +275,7 @@
       6.022
     ],
     "one_tile_scale": 0.0832,
-    "notes": "Biggest file (6.3 MB, 65k tris). Includes asphalt + Car; origin far from 0 (x 2..12). Heavy for a city tile.",
+    "notes": "Biggest file (6.3 MB, 65k tris). Includes asphalt slab + parked car; origin far from 0 (x 2..12). Heavy for a city tile.",
     "sub_models": [
       "asfalt",
       "Object",
@@ -626,7 +626,7 @@
       3.626
     ],
     "one_tile_scale": 0.1379,
-    "notes": "Brick shop with balcony; contains Camera, Sun, Plane, Text nodes.",
+    "notes": "Brick shop with balcony on a large white ground plane (remove it); contains Camera, Sun, Plane, Text nodes.",
     "sub_models": [
       "Object",
       "Cube",
@@ -692,7 +692,7 @@
       0.084
     ],
     "one_tile_scale": 5.8824,
-    "notes": "Authored tiny: 0.17 units wide, needs ~6x scale-up just to be 1 tile.",
+    "notes": "Corner shop with blue awning and glass front. Authored tiny: 0.17 units wide, needs ~6x scale-up just to be 1 tile.",
     "sub_models": [
       "pCube1",
       "pCube1_lambert6",
@@ -738,12 +738,12 @@
     ]
   },
   {
-    "id": "shop-kiosk-small",
-    "category": "Kiosk",
-    "name": "Shop (tiny kiosk)",
+    "id": "shop-townhouse-gabled",
+    "category": "Townhouse",
+    "name": "Shop (gabled townhouse)",
     "source_file": "shop (1).glb",
-    "model": "res://models/shops/shop-kiosk-small.glb",
-    "structure": "res://structures/shops/shop-kiosk-small.tres",
+    "model": "res://models/shops/shop-townhouse-gabled.glb",
+    "structure": "res://structures/shops/shop-townhouse-gabled.tres",
     "title": "shop",
     "author": "linus1178",
     "license": "CC-BY-4.0",
@@ -767,7 +767,7 @@
       1.741
     ],
     "one_tile_scale": 0.3648,
-    "notes": "170 tris, single material. Smallest/cheapest model.",
+    "notes": "Step-gabled house with red roof and hanging SHOP sign. 170 tris, single material - cheapest model.",
     "sub_models": [
       "shop",
       "Object"
@@ -806,7 +806,7 @@
       2.552
     ],
     "one_tile_scale": 0.2041,
-    "notes": "Pivot is centred vertically (y -1.6..1.8): needs lifting to sit on ground.",
+    "notes": "Grey flat roof, glass front, red louvres/shutters. Pivot is centred vertically (y -1.6..1.8): needs lifting to sit on ground.",
     "sub_models": [
       "SHOP",
       "Object"
@@ -821,12 +821,12 @@
     ]
   },
   {
-    "id": "shop-signage-large",
-    "category": "General",
-    "name": "Shop - Free model (signage)",
+    "id": "shop-coffee-b",
+    "category": "Coffee",
+    "name": "Shop - Free model (coffee shop)",
     "source_file": "shop_-_free_model.glb",
-    "model": "res://models/shops/shop-signage-large.glb",
-    "structure": "res://structures/shops/shop-signage-large.tres",
+    "model": "res://models/shops/shop-coffee-b.glb",
+    "structure": "res://structures/shops/shop-coffee-b.tres",
     "title": "Shop - Free model",
     "author": "Astro0960",
     "license": "CC-BY-4.0",
@@ -850,7 +850,7 @@
       5.012
     ],
     "one_tile_scale": 0.1122,
-    "notes": "12k tris, several text signs; floating at y 0.68 min.",
+    "notes": "Coffee shop with cup + COFFEE sign on roof, lamp post, fence, on a dark base slab. 12k tris; floats at y 0.68 min.",
     "sub_models": [
       "Plane",
       "Object",
@@ -922,7 +922,7 @@
       7.2
     ],
     "one_tile_scale": 0.1075,
-    "notes": "Tall real-world townhouse, 543 tris, 1 material, 12.5 tall.",
+    "notes": "Tall grey townhouse, untextured single material, 543 tris, 12.5 tall.",
     "sub_models": [
       "MAIN",
       "MAIN_main"
@@ -961,7 +961,7 @@
       2.136
     ],
     "one_tile_scale": 0.1462,
-    "notes": "36 Cube meshes, 19 materials; pivot centred (y -2.85..3.9). Not clearly a shop, kept per request.",
+    "notes": "Pink/grey multi-storey building with striped awning and green base. 36 Cube meshes, 19 materials; pivot centred (y -2.85..3.9).",
     "sub_models": [
       "Cube",
       "Lamp"
