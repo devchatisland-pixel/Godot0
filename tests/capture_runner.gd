@@ -13,7 +13,7 @@ const SHOTS := [
 	{"zoom": 26.0, "at": Kind.MCDONALDS},
 	{"zoom": 40.0, "at": Kind.PRISON},
 	{"zoom": 40.0, "at": Kind.MOUNTAIN},
-	{"zoom": 60.0, "at": Kind.AIRPORT},
+	{"zoom": 30.0, "at": Kind.CASINO},
 	{"zoom": 45.0, "at": Kind.NUCLEAR_PLANT},
 	{"zoom": 30.0, "at": Kind.BT_TOWER, "night": true},
 	{"zoom": 22.0, "at": Kind.WATCHTOWER},

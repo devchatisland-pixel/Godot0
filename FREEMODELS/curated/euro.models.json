@@ -26,10 +26,6 @@
 			"node": "garage"
 		},
 		{
-			"cat": "FACTORY",
-			"node": "brick_works"
-		},
-		{
 			"cat": "FIELD",
 			"node": "field"
 		}
