@@ -37,6 +37,8 @@ func generate() -> CityData:
 	data.fog = FogIslandShaper.new(_cfg, data)
 	data.fog.shape(FogIslandShaper.SIZE / 2)
 
+	var fill := UrbanFill.apply(data)
+	print("[City] %d towers added south of the airport" % fill)
 	var edits := ManualEdits.apply(data)
 	print("[City] %d hand edits applied" % edits)
 	data.build_chunk_index()

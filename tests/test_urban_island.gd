@@ -24,6 +24,10 @@ func _init() -> void:
 	_check_towers(data, by_kind)
 	_check_watchtowers(data, by_kind)
 	_check_edits(data)
+	var fill: int = by_kind.get(Kind.URBAN_BLDG, []).filter(func(b): return data.building_rect(b).position.y > 181 and data.building_rect(b).position.x < 60).size()
+	print("[Test] towers south of the airport: %d" % fill)
+	if fill < 3:
+		_fail("fewer than 3 towers south of the airport")
 	_check_models(cfg, data, by_kind)
 	print("[Test] %s" % ("FAILED: %d" % _fails if _fails > 0 else "all urban island checks passed"))
 	quit(1 if _fails > 0 else 0)
@@ -67,7 +71,7 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 		var k: int = data.b_kind[b]
 		if r.position.x >= ExtensionIsland.URBAN_COLUMNS or r.position.y > 215:
 			continue
-		if airport.size.x > 0 and k != Kind.AIRPORT and _in_front(airport, r.position) \
+		if airport.size.x > 0 and k != Kind.AIRPORT and r.position.y <= airport.end.y and _in_front(airport, r.position) \
 				and _in_front(airport, r.end - Vector2i.ONE):
 			_fail("%s (B-%05d) at %s stands in front of the airport" % [CityTypes.Kind.keys()[k], b, r])
 		if plant.size.x > 0 and _in_front(plant, r.get_center()) and [Kind.URBAN_BLDG, Kind.FUTURE_BLDG,
@@ -135,6 +139,10 @@ func _check_edits(data: CityData) -> void:
 			_fail("edit B-%05d: facing %d, wanted %d" % [id, data.b_facing[id], e["facing"]])
 		if e.has("scale") and not is_equal_approx(data.b_scale[id], e["scale"]):
 			_fail("edit B-%05d: scale %.2f, wanted %.2f" % [id, data.b_scale[id], e["scale"]])
+		if e.has("rect") and data.building_rect(id) != Rect2i(e["rect"][0], e["rect"][1], e["rect"][2], e["rect"][3]):
+			_fail("edit B-%05d: lot is %s, not the wanted rect" % [id, data.building_rect(id)])
+		if e.has("move_to") and data.building_rect(id).position != e["move_to"]:
+			_fail("edit B-%05d: not moved to %s" % [id, e["move_to"]])
 		if e.has("sign") and data.b_sign[id] != ModelCatalog.Cat[e["sign"]]:
 			_fail("edit B-%05d: sign not set" % id)
 		if e.has("scale_abs") and not is_equal_approx(data.b_scale[id], -float(e["scale_abs"])):
@@ -158,6 +166,17 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 		if not lib.has_cat(cat):
 			_fail("model category %s is empty" % ModelCatalog.Cat.keys()[cat])
 	NightWindows.apply(lib)
+	for cat in LitWindows.CATS:
+		var lit := 0
+		var total := 0
+		for id in lib.ids(cat):
+			for s in lib.meshes[id].get_surface_count():
+				var m := lib.meshes[id].surface_get_material(s) as BaseMaterial3D
+				total += 1
+				lit += int(m != null and m.emission_enabled and (m.emission_texture != null or m.emission != Color.BLACK))
+		print("[Test] lit windows %-16s %d of %d surfaces" % [ModelCatalog.Cat.keys()[cat], lit, total])
+		if lit == 0:
+			_fail("no lit windows for %s" % ModelCatalog.Cat.keys()[cat])
 	_check_signs(data, lib)
 	for cat in [ModelCatalog.Cat.NEON_CONTROLLER, ModelCatalog.Cat.NEON_PACMAN]:
 		var b := lib.bounds[lib.ids(cat)[0]]

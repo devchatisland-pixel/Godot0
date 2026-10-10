@@ -121,8 +121,8 @@ At night the fog turns dark blue-grey and the night skyline model shows its city
 ## Hand edits
 
 `scripts/generation/manual_edits.gd` lists single-building corrections made after the map is generated:
-a facing, a size factor, a replacement kind (a hotel becomes a city hall, a shop a Burger King) or a
-deletion. The number is the one shown in the information bubble. A deleted building stays in the list
+a facing, a size factor, a replacement kind (a hotel becomes a city hall, a shop a Burger King), a new
+lot (`rect`, `move_to`), a neon `sign` or a deletion. The number is the one shown in the information bubble. A deleted building stays in the list
 as `Kind.EMPTY`, so no number ever moves. Each entry also names the kind and the lot it expects: if the
 generation changes and the numbers move, the entry is skipped with a warning instead of touching
 another building. The test `tests/test_urban_island.gd` checks that all entries were applied.
@@ -153,6 +153,9 @@ At night:
 * Street lamps get bulbs.
 * Signs shine, and the neon stays bright.
 
+* The windows of the city hall, police headquarters, main hospital, main school, pharmacy, cinema, shopping
+  center and the hotels glow warm (cool for blue glass, green for the pharmacy cross): `scripts/assets/lit_windows.gd`
+  finds them by colour in the textures and writes an emission map.
 No real lights are added, so night costs the same as day, on phones too.
 
 ## Signs

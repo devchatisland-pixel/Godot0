@@ -109,6 +109,13 @@ func add_building(r: Rect2i, kind: int, facing: int, seed: int, height: float) -
 	return b_kind.size() - 1
 
 
+func set_building_rect(i: int, r: Rect2i) -> void:
+	b_rect[i * 4] = r.position.x
+	b_rect[i * 4 + 1] = r.position.y
+	b_rect[i * 4 + 2] = r.size.x
+	b_rect[i * 4 + 3] = r.size.y
+
+
 func building_rect(i: int) -> Rect2i:
 	var o := i * 4
 	return Rect2i(b_rect[o], b_rect[o + 1], b_rect[o + 2], b_rect[o + 3])

@@ -70,7 +70,9 @@ const FIXED_SIZE: Array[int] = [
 	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE, Kind.BT_TOWER,
 ]
 ## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
-const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6}
+const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6, Kind.LIGHTHOUSE: 1.65}
+## Models drawn bigger than modelled (by model name), as far as the lot allows.
+const MODEL_BOOST := {"france.glb: blue2": 2.0}
 ## Las Vegas buildings are drawn at most this much bigger than modelled (they were skyscraper size).
 const VEGAS_MAX_FILL := 1.2
 ## Cooling towers beside the nuclear plant, the BT tower and the watchtowers: largest scale.
@@ -229,6 +231,9 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	if ModelPools.is_new_york(lib, id):
 		# The New York street buildings stand taller than the Kenney kit.
 		stretch = 1.5
+	var boost: float = MODEL_BOOST.get(lib.model_name(id), 1.0)
+	if boost != 1.0:
+		scale = minf(room, maxf(scale, 1.0) * boost)
 	scale = _sized(scale, data.b_scale[i])
 	var push := 0.25 if kind == Kind.HOUSE else 0.85
 	if CityTypes.is_service(kind):

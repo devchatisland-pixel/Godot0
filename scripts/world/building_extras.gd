@@ -126,7 +126,7 @@ static func tree_xform(p: Vector3, seed: int) -> Transform3D:
 const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
-	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.68, "halo": 1.15},
+	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.58, "halo": 1.15, "yaw": PI},
 }
 
 
@@ -149,13 +149,14 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 	else:
 		at.z = body.end.z - ROOF_EDGE_INSET # at the south edge of the roof, like a parapet sign
 		at.y = _roof_height(lib, pid, xform, Vector2(at.x, at.z), model.size.x * s * 0.5)
-	batch.add(ids[0], Transform3D(Basis.from_scale(Vector3(s, s, s)), at - local_center * s))
+	var turn := Basis(Vector3.UP, float(spec.get("yaw", 0.0)))
+	batch.add(ids[0], Transform3D(turn * Basis.from_scale(Vector3(s, s, s)), at - turn * (local_center * s)))
 	var halo := lib.named_id("neon_halo_%d" % cat)
 	if halo >= 0:
 		var h: float = s * float(spec["halo"])
 		var back := Vector3(0, 0, -0.03)
-		batch.add(halo, Transform3D(Basis.from_scale(Vector3(h, h, s)), at + back - local_center * h
-				+ Vector3(0, 0, local_center.z * (h - s))))
+		batch.add(halo, Transform3D(turn * Basis.from_scale(Vector3(h, h, s)),
+				at + back - turn * (local_center * Vector3(h, h, s))))
 
 
 ## Height of the highest point of the model under a square window of half-width `half`

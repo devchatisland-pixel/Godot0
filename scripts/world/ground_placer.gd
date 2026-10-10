@@ -32,6 +32,7 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 	var lights := lib.ids(Cat.STREET_LIGHT)
 	var palm := lib.named_id("palm")
 	var cactus := lib.named_id("cactus")
+	var bridge := _bridge_clearing(data)
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var i := y * data.size + x
@@ -39,7 +40,7 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 			if road != 0:
 				_place_road(data, lib, x, y, road, road_rot, lights, batch)
 				continue
-			if data.occupied[i] == 1:
+			if data.occupied[i] == 1 or bridge.has_point(Vector2i(x, y)):
 				continue
 			var z: int = data.zone[i]
 			var beach: bool = data.terrain[i] == CityTypes.Terrain.BEACH and data.rocky[i] == 0
@@ -58,6 +59,19 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 				Zone.PRISON:
 					if data.terrain[i] == CityTypes.Terrain.LAND:
 						_scatter(x, y, 0.12, 0.2, trees[(x + y) % trees.size()], batch)
+
+
+## Where no tree or palm grows: round both ends of the metal bridge to the urban island.
+const BRIDGE_CLEAR_X := Vector2i(5, 9)
+const BRIDGE_CLEAR_Y := 7
+
+
+static func _bridge_clearing(data: CityData) -> Rect2i:
+	var wb := data.west_bridge
+	if wb.x < 0:
+		return Rect2i()
+	var x0 := wb.y - BRIDGE_CLEAR_X.x
+	return Rect2i(x0, wb.z - BRIDGE_CLEAR_Y, wb.x + BRIDGE_CLEAR_X.y - x0, BRIDGE_CLEAR_Y * 2 + 1)
 
 
 # --- Roads --------------------------------------------------------------------------------
