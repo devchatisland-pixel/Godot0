@@ -1,0 +1,1492 @@
+{
+ "version": 1,
+ "credit": {
+  "title": "LOWPOLY CITY STREET PACK BUILDINGS STYLIZED",
+  "author": "haykel-shaba",
+  "url": "https://sketchfab.com/3d-models/lowpoly-city-street-pack-buildings-stylized-8e1ba8a437c4460eaaa643953eaf79d0",
+  "license": "CC-BY-4.0"
+ },
+ "note": "One scene, not separate files. Units: raw/100 = scene units; vehicles come out about 2x real size, a factor of about 0.45 gives real-world metres. Not imported into the project.",
+ "models": [
+  {
+   "id": "neon-tower-01",
+   "category": "Neon downtown (night skyline)",
+   "name": "Glass tower, blue gradient",
+   "source_nodes": [
+    "Cube.034"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1375.0,
+    3366.1,
+    757.7
+   ],
+   "size_scene_units": {
+    "width": 13.7,
+    "height": 33.7,
+    "depth": 7.6
+   },
+   "triangles": 20,
+   "notes": ""
+  },
+  {
+   "id": "neon-tower-02",
+   "category": "Neon downtown (night skyline)",
+   "name": "Slim tower, cyan edges",
+   "source_nodes": [
+    "Cube.032"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    583.8,
+    1914.0,
+    393.9
+   ],
+   "size_scene_units": {
+    "width": 5.8,
+    "height": 19.1,
+    "depth": 3.9
+   },
+   "triangles": 44,
+   "notes": ""
+  },
+  {
+   "id": "neon-tower-03",
+   "category": "Neon downtown (night skyline)",
+   "name": "Slanted slim tower",
+   "source_nodes": [
+    "Cube.013"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    413.7,
+    2313.5,
+    391.2
+   ],
+   "size_scene_units": {
+    "width": 4.1,
+    "height": 23.1,
+    "depth": 3.9
+   },
+   "triangles": 36,
+   "notes": ""
+  },
+  {
+   "id": "neon-tower-04",
+   "category": "Neon downtown (night skyline)",
+   "name": "Dark tower",
+   "source_nodes": [
+    "Cube.012"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    562.4,
+    2040.4,
+    393.3
+   ],
+   "size_scene_units": {
+    "width": 5.6,
+    "height": 20.4,
+    "depth": 3.9
+   },
+   "triangles": 24,
+   "notes": ""
+  },
+  {
+   "id": "neon-tower-05",
+   "category": "Neon downtown (night skyline)",
+   "name": "Tower, cyan roof",
+   "source_nodes": [
+    "Cube.015"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    485.4,
+    2358.9,
+    485.4
+   ],
+   "size_scene_units": {
+    "width": 4.9,
+    "height": 23.6,
+    "depth": 4.9
+   },
+   "triangles": 44,
+   "notes": ""
+  },
+  {
+   "id": "neon-clock-tower",
+   "category": "Neon downtown (night skyline)",
+   "name": "Clock tower (Big Ben style)",
+   "source_nodes": [
+    "Cube.016"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    287.2,
+    1223.0,
+    265.3
+   ],
+   "size_scene_units": {
+    "width": 2.9,
+    "height": 12.2,
+    "depth": 2.7
+   },
+   "triangles": 124,
+   "notes": ""
+  },
+  {
+   "id": "neon-lowrise-wide",
+   "category": "Neon downtown (night skyline)",
+   "name": "Wide low-rise with slanted ramp",
+   "source_nodes": [
+    "Cube.017"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1510.8,
+    465.0,
+    405.7
+   ],
+   "size_scene_units": {
+    "width": 15.1,
+    "height": 4.6,
+    "depth": 4.1
+   },
+   "triangles": 40,
+   "notes": ""
+  },
+  {
+   "id": "neon-domed-tower",
+   "category": "Neon downtown (night skyline)",
+   "name": "Domed tower",
+   "source_nodes": [
+    "Cube.018"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    889.2,
+    1454.2,
+    537.5
+   ],
+   "size_scene_units": {
+    "width": 8.9,
+    "height": 14.5,
+    "depth": 5.4
+   },
+   "triangles": 106,
+   "notes": ""
+  },
+  {
+   "id": "neon-tower-06",
+   "category": "Neon downtown (night skyline)",
+   "name": "Violet tower",
+   "source_nodes": [
+    "Cube.019"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    628.2,
+    2137.3,
+    567.4
+   ],
+   "size_scene_units": {
+    "width": 6.3,
+    "height": 21.4,
+    "depth": 5.7
+   },
+   "triangles": 112,
+   "notes": ""
+  },
+  {
+   "id": "neon-lowrise-block",
+   "category": "Neon downtown (night skyline)",
+   "name": "Low neon block building",
+   "source_nodes": [
+    "Cube.021"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1200.6,
+    659.9,
+    289.1
+   ],
+   "size_scene_units": {
+    "width": 12.0,
+    "height": 6.6,
+    "depth": 2.9
+   },
+   "triangles": 48,
+   "notes": ""
+  },
+  {
+   "id": "neon-tower-07",
+   "category": "Neon downtown (night skyline)",
+   "name": "Dark tower",
+   "source_nodes": [
+    "Cube.023"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    673.3,
+    1805.5,
+    348.0
+   ],
+   "size_scene_units": {
+    "width": 6.7,
+    "height": 18.1,
+    "depth": 3.5
+   },
+   "triangles": 24,
+   "notes": ""
+  },
+  {
+   "id": "neon-tower-08",
+   "category": "Neon downtown (night skyline)",
+   "name": "Violet tower, wide",
+   "source_nodes": [
+    "Cube.010"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    675.2,
+    1492.0,
+    567.4
+   ],
+   "size_scene_units": {
+    "width": 6.8,
+    "height": 14.9,
+    "depth": 5.7
+   },
+   "triangles": 112,
+   "notes": ""
+  },
+  {
+   "id": "neon-tv-tower",
+   "category": "Neon downtown (night skyline)",
+   "name": "TV tower (Skytree style)",
+   "source_nodes": [
+    "Cylinder.002"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    388.6,
+    3743.2,
+    378.8
+   ],
+   "size_scene_units": {
+    "width": 3.9,
+    "height": 37.4,
+    "depth": 3.8
+   },
+   "triangles": 412,
+   "notes": ""
+  },
+  {
+   "id": "neon-spire-tower",
+   "category": "Neon downtown (night skyline)",
+   "name": "Spire tower",
+   "source_nodes": [
+    "Cylinder.003"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    389.5,
+    3165.9,
+    379.7
+   ],
+   "size_scene_units": {
+    "width": 3.9,
+    "height": 31.7,
+    "depth": 3.8
+   },
+   "triangles": 80,
+   "notes": ""
+  },
+  {
+   "id": "neon-moon",
+   "category": "Neon downtown (night skyline)",
+   "name": "Moon disc (flat, backdrop)",
+   "source_nodes": [
+    "Circle"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1095.5,
+    1101.3,
+    0.0
+   ],
+   "size_scene_units": {
+    "width": 11.0,
+    "height": 11.0,
+    "depth": 0.0
+   },
+   "triangles": 30,
+   "notes": "Flat, zero depth."
+  },
+  {
+   "id": "street-shop-sign",
+   "category": "Street buildings",
+   "name": "Corner shop with sign (pink/orange)",
+   "source_nodes": [
+    "Cube.045"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    989.6,
+    1083.5,
+    874.5
+   ],
+   "size_scene_units": {
+    "width": 9.9,
+    "height": 10.8,
+    "depth": 8.7
+   },
+   "triangles": 256,
+   "notes": ""
+  },
+  {
+   "id": "street-brick-narrow",
+   "category": "Street buildings",
+   "name": "Tall narrow brick building",
+   "source_nodes": [
+    "Cube.046"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    995.0,
+    2324.3,
+    1315.0
+   ],
+   "size_scene_units": {
+    "width": 10.0,
+    "height": 23.2,
+    "depth": 13.1
+   },
+   "triangles": 3736,
+   "notes": ""
+  },
+  {
+   "id": "street-brick-apartment",
+   "category": "Street buildings",
+   "name": "Brick apartment building",
+   "source_nodes": [
+    "Cube.047"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    860.7,
+    1553.7,
+    1054.1
+   ],
+   "size_scene_units": {
+    "width": 8.6,
+    "height": 15.5,
+    "depth": 10.5
+   },
+   "triangles": 544,
+   "notes": ""
+  },
+  {
+   "id": "street-small-shop",
+   "category": "Street buildings",
+   "name": "Small orange shop",
+   "source_nodes": [
+    "Cube.044"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1079.6,
+    585.3,
+    1101.1
+   ],
+   "size_scene_units": {
+    "width": 10.8,
+    "height": 5.9,
+    "depth": 11.0
+   },
+   "triangles": 268,
+   "notes": ""
+  },
+  {
+   "id": "street-purple-block-a",
+   "category": "Street buildings",
+   "name": "Purple block with balconies",
+   "source_nodes": [
+    "Cube.002"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    960.5,
+    1857.6,
+    960.5
+   ],
+   "size_scene_units": {
+    "width": 9.6,
+    "height": 18.6,
+    "depth": 9.6
+   },
+   "triangles": 220,
+   "notes": "Flat purple look."
+  },
+  {
+   "id": "street-purple-block-b",
+   "category": "Street buildings",
+   "name": "Purple tower block",
+   "source_nodes": [
+    "Cube.003"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1266.3,
+    1873.2,
+    1090.0
+   ],
+   "size_scene_units": {
+    "width": 12.7,
+    "height": 18.7,
+    "depth": 10.9
+   },
+   "triangles": 396,
+   "notes": ""
+  },
+  {
+   "id": "street-apartment-big",
+   "category": "Street buildings",
+   "name": "Large brick apartment block with garden",
+   "source_nodes": [
+    "Cube"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    2117.0,
+    2372.3,
+    1767.9
+   ],
+   "size_scene_units": {
+    "width": 21.2,
+    "height": 23.7,
+    "depth": 17.7
+   },
+   "triangles": 984,
+   "notes": ""
+  },
+  {
+   "id": "fut-tower-a",
+   "category": "Futuristic district",
+   "name": "Blue glass tower, stepped base",
+   "source_nodes": [
+    "Cube.100"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1318.9,
+    2811.8,
+    702.9
+   ],
+   "size_scene_units": {
+    "width": 13.2,
+    "height": 28.1,
+    "depth": 7.0
+   },
+   "triangles": 182,
+   "notes": ""
+  },
+  {
+   "id": "fut-tower-b",
+   "category": "Futuristic district",
+   "name": "Tall silver/blue tower",
+   "source_nodes": [
+    "Cube.099"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1252.6,
+    4516.1,
+    1854.7
+   ],
+   "size_scene_units": {
+    "width": 12.5,
+    "height": 45.2,
+    "depth": 18.5
+   },
+   "triangles": 231,
+   "notes": ""
+  },
+  {
+   "id": "fut-office-a",
+   "category": "Futuristic district",
+   "name": "Blue glass office block (short)",
+   "source_nodes": [
+    "Cube.098"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    673.7,
+    1203.4,
+    688.0
+   ],
+   "size_scene_units": {
+    "width": 6.7,
+    "height": 12.0,
+    "depth": 6.9
+   },
+   "triangles": 146,
+   "notes": ""
+  },
+  {
+   "id": "fut-office-b",
+   "category": "Futuristic district",
+   "name": "Blue glass office block (tall)",
+   "source_nodes": [
+    "Cube.097"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    884.1,
+    1826.7,
+    902.8
+   ],
+   "size_scene_units": {
+    "width": 8.8,
+    "height": 18.3,
+    "depth": 9.0
+   },
+   "triangles": 218,
+   "notes": ""
+  },
+  {
+   "id": "fut-tower-c",
+   "category": "Futuristic district",
+   "name": "Slender angular tower",
+   "source_nodes": [
+    "Cube.096"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1062.3,
+    3103.6,
+    664.5
+   ],
+   "size_scene_units": {
+    "width": 10.6,
+    "height": 31.0,
+    "depth": 6.6
+   },
+   "triangles": 168,
+   "notes": ""
+  },
+  {
+   "id": "fut-tower-d",
+   "category": "Futuristic district",
+   "name": "Blue glass tower",
+   "source_nodes": [
+    "Cube.095"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    814.5,
+    2283.4,
+    831.1
+   ],
+   "size_scene_units": {
+    "width": 8.1,
+    "height": 22.8,
+    "depth": 8.3
+   },
+   "triangles": 97,
+   "notes": ""
+  },
+  {
+   "id": "fut-complex",
+   "category": "Futuristic district",
+   "name": "Low glass complex",
+   "source_nodes": [
+    "Cube.093"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    735.0,
+    544.1,
+    721.8
+   ],
+   "size_scene_units": {
+    "width": 7.3,
+    "height": 5.4,
+    "depth": 7.2
+   },
+   "triangles": 76,
+   "notes": ""
+  },
+  {
+   "id": "fut-arch-tower",
+   "category": "Futuristic district",
+   "name": "Arch-shaped tower (Gherkin style)",
+   "source_nodes": [
+    "Cube.043"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1365.6,
+    4592.3,
+    1723.3
+   ],
+   "size_scene_units": {
+    "width": 13.7,
+    "height": 45.9,
+    "depth": 17.2
+   },
+   "triangles": 273,
+   "notes": ""
+  },
+  {
+   "id": "fut-dome-top",
+   "category": "Futuristic district",
+   "name": "Green dome roof piece",
+   "source_nodes": [
+    "g pSphere1.002"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    319.7,
+    304.9,
+    331.3
+   ],
+   "size_scene_units": {
+    "width": 3.2,
+    "height": 3.0,
+    "depth": 3.3
+   },
+   "triangles": 252,
+   "notes": "Rooftop dome."
+  },
+  {
+   "id": "fut-needle-tower",
+   "category": "Futuristic district",
+   "name": "Needle tower with pod (CN Tower style)",
+   "source_nodes": [
+    "Sphere.002"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    528.6,
+    3824.5,
+    520.6
+   ],
+   "size_scene_units": {
+    "width": 5.3,
+    "height": 38.2,
+    "depth": 5.2
+   },
+   "triangles": 137,
+   "notes": ""
+  },
+  {
+   "id": "veh-van-blue",
+   "category": "Vehicles",
+   "name": "Van, blue",
+   "source_nodes": [
+    "Cube.014"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    971.5,
+    395.9,
+    447.6
+   ],
+   "size_scene_units": {
+    "width": 9.7,
+    "height": 4.0,
+    "depth": 4.5
+   },
+   "triangles": 4930,
+   "notes": ""
+  },
+  {
+   "id": "veh-wagon-red",
+   "category": "Vehicles",
+   "name": "Station wagon, red",
+   "source_nodes": [
+    "PROPS_INTERIOR_2_1.002"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1164.0,
+    295.4,
+    437.7
+   ],
+   "size_scene_units": {
+    "width": 11.6,
+    "height": 3.0,
+    "depth": 4.4
+   },
+   "triangles": 4158,
+   "notes": ""
+  },
+  {
+   "id": "veh-wagon-yellow",
+   "category": "Vehicles",
+   "name": "Station wagon, yellow (taxi)",
+   "source_nodes": [
+    "PROPS_INTERIOR_2_1"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1164.8,
+    317.6,
+    438.1
+   ],
+   "size_scene_units": {
+    "width": 11.6,
+    "height": 3.2,
+    "depth": 4.4
+   },
+   "triangles": 4158,
+   "notes": ""
+  },
+  {
+   "id": "veh-scooter-red",
+   "category": "Vehicles",
+   "name": "Scooter, red",
+   "source_nodes": [
+    "mainframe.007"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    476.7,
+    362.8,
+    241.8
+   ],
+   "size_scene_units": {
+    "width": 4.8,
+    "height": 3.6,
+    "depth": 2.4
+   },
+   "triangles": 2617,
+   "notes": ""
+  },
+  {
+   "id": "veh-scooter-delivery",
+   "category": "Vehicles",
+   "name": "Delivery scooter, yellow (pizza box)",
+   "source_nodes": [
+    "mainframe.002"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    495.3,
+    363.1,
+    241.8
+   ],
+   "size_scene_units": {
+    "width": 5.0,
+    "height": 3.6,
+    "depth": 2.4
+   },
+   "triangles": 3409,
+   "notes": ""
+  },
+  {
+   "id": "prop-bleacher-a",
+   "category": "Street furniture",
+   "name": "Bleacher / bench stand (A)",
+   "source_nodes": [
+    "Cube.029"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    279.5,
+    191.1,
+    543.5
+   ],
+   "size_scene_units": {
+    "width": 2.8,
+    "height": 1.9,
+    "depth": 5.4
+   },
+   "triangles": 624,
+   "notes": ""
+  },
+  {
+   "id": "prop-bleacher-b",
+   "category": "Street furniture",
+   "name": "Bleacher / bench stand (B)",
+   "source_nodes": [
+    "Cube.001"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    279.5,
+    191.1,
+    543.5
+   ],
+   "size_scene_units": {
+    "width": 2.8,
+    "height": 1.9,
+    "depth": 5.4
+   },
+   "triangles": 624,
+   "notes": ""
+  },
+  {
+   "id": "prop-bleacher-c",
+   "category": "Street furniture",
+   "name": "Bleacher / bench stand (C)",
+   "source_nodes": [
+    "Cube.004"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    279.5,
+    191.1,
+    543.5
+   ],
+   "size_scene_units": {
+    "width": 2.8,
+    "height": 1.9,
+    "depth": 5.4
+   },
+   "triangles": 624,
+   "notes": ""
+  },
+  {
+   "id": "prop-bleacher-d",
+   "category": "Street furniture",
+   "name": "Bleacher / bench stand (D)",
+   "source_nodes": [
+    "Cube.005"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    279.5,
+    191.1,
+    543.5
+   ],
+   "size_scene_units": {
+    "width": 2.8,
+    "height": 1.9,
+    "depth": 5.4
+   },
+   "triangles": 624,
+   "notes": ""
+  },
+  {
+   "id": "prop-floodlight-a",
+   "category": "Street furniture",
+   "name": "Floodlight pole",
+   "source_nodes": [
+    "Cube.189"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    104.0,
+    803.6,
+    166.8
+   ],
+   "size_scene_units": {
+    "width": 1.0,
+    "height": 8.0,
+    "depth": 1.7
+   },
+   "triangles": 388,
+   "notes": ""
+  },
+  {
+   "id": "prop-floodlight-b",
+   "category": "Street furniture",
+   "name": "Floodlight pole",
+   "source_nodes": [
+    "Cube.006"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    104.0,
+    803.6,
+    166.8
+   ],
+   "size_scene_units": {
+    "width": 1.0,
+    "height": 8.0,
+    "depth": 1.7
+   },
+   "triangles": 388,
+   "notes": ""
+  },
+  {
+   "id": "prop-floodlight-c",
+   "category": "Street furniture",
+   "name": "Floodlight pole",
+   "source_nodes": [
+    "Cube.007"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    104.0,
+    803.6,
+    166.8
+   ],
+   "size_scene_units": {
+    "width": 1.0,
+    "height": 8.0,
+    "depth": 1.7
+   },
+   "triangles": 388,
+   "notes": ""
+  },
+  {
+   "id": "prop-floodlight-d",
+   "category": "Street furniture",
+   "name": "Floodlight pole",
+   "source_nodes": [
+    "Cube.008"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    104.0,
+    803.6,
+    166.8
+   ],
+   "size_scene_units": {
+    "width": 1.0,
+    "height": 8.0,
+    "depth": 1.7
+   },
+   "triangles": 388,
+   "notes": ""
+  },
+  {
+   "id": "prop-planter-a",
+   "category": "Street furniture",
+   "name": "Octagonal basket / planter",
+   "source_nodes": [
+    "Cube.191"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    91.7,
+    80.4,
+    96.4
+   ],
+   "size_scene_units": {
+    "width": 0.9,
+    "height": 0.8,
+    "depth": 1.0
+   },
+   "triangles": 80,
+   "notes": ""
+  },
+  {
+   "id": "prop-planter-b",
+   "category": "Street furniture",
+   "name": "Octagonal basket / planter",
+   "source_nodes": [
+    "Cube.224"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    91.7,
+    80.4,
+    96.4
+   ],
+   "size_scene_units": {
+    "width": 0.9,
+    "height": 0.8,
+    "depth": 1.0
+   },
+   "triangles": 80,
+   "notes": ""
+  },
+  {
+   "id": "prop-bench-a",
+   "category": "Street furniture",
+   "name": "Park bench",
+   "source_nodes": [
+    "banca_01.004"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    146.8,
+    164.6,
+    328.9
+   ],
+   "size_scene_units": {
+    "width": 1.5,
+    "height": 1.6,
+    "depth": 3.3
+   },
+   "triangles": 6114,
+   "notes": ""
+  },
+  {
+   "id": "prop-bench-b",
+   "category": "Street furniture",
+   "name": "Park bench",
+   "source_nodes": [
+    "banca_01.005"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    146.8,
+    164.6,
+    328.9
+   ],
+   "size_scene_units": {
+    "width": 1.5,
+    "height": 1.6,
+    "depth": 3.3
+   },
+   "triangles": 6114,
+   "notes": ""
+  },
+  {
+   "id": "prop-bin-yellow",
+   "category": "Street furniture",
+   "name": "Street bin, yellow",
+   "source_nodes": [
+    "Cube.028"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    83.6,
+    187.8,
+    154.4
+   ],
+   "size_scene_units": {
+    "width": 0.8,
+    "height": 1.9,
+    "depth": 1.5
+   },
+   "triangles": 164,
+   "notes": ""
+  },
+  {
+   "id": "prop-bin-green",
+   "category": "Street furniture",
+   "name": "Wheelie bin, green (body + lid)",
+   "source_nodes": [
+    "Can",
+    "Can.001"
+   ],
+   "node_count": 2,
+   "raw_size": [
+    167.8,
+    260.5,
+    158.7
+   ],
+   "size_scene_units": {
+    "width": 1.7,
+    "height": 2.6,
+    "depth": 1.6
+   },
+   "triangles": 630,
+   "notes": ""
+  },
+  {
+   "id": "prop-barrier",
+   "category": "Street furniture",
+   "name": "Crowd barrier, red",
+   "source_nodes": [
+    "Cube.026"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    90.4,
+    251.9,
+    391.2
+   ],
+   "size_scene_units": {
+    "width": 0.9,
+    "height": 2.5,
+    "depth": 3.9
+   },
+   "triangles": 188,
+   "notes": ""
+  },
+  {
+   "id": "court-hoop-a",
+   "category": "Sports court and road",
+   "name": "Basketball hoop (A)",
+   "source_nodes": [
+    "Cube.209"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    255.1,
+    555.7,
+    317.4
+   ],
+   "size_scene_units": {
+    "width": 2.6,
+    "height": 5.6,
+    "depth": 3.2
+   },
+   "triangles": 904,
+   "notes": ""
+  },
+  {
+   "id": "court-hoop-b",
+   "category": "Sports court and road",
+   "name": "Basketball hoop (B)",
+   "source_nodes": [
+    "Cube.223"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    255.1,
+    555.7,
+    317.4
+   ],
+   "size_scene_units": {
+    "width": 2.6,
+    "height": 5.6,
+    "depth": 3.2
+   },
+   "triangles": 904,
+   "notes": ""
+  },
+  {
+   "id": "court-ground",
+   "category": "Sports court and road",
+   "name": "Basketball court ground",
+   "source_nodes": [
+    "terrain textures 1.004"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1229.0,
+    6.6,
+    2281.1
+   ],
+   "size_scene_units": {
+    "width": 12.3,
+    "height": 0.1,
+    "depth": 22.8
+   },
+   "triangles": 12,
+   "notes": ""
+  },
+  {
+   "id": "court-ground-large",
+   "category": "Sports court and road",
+   "name": "Large plaza ground plate",
+   "source_nodes": [
+    "Plane.016"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    2600.2,
+    12.4,
+    2600.3
+   ],
+   "size_scene_units": {
+    "width": 26.0,
+    "height": 0.1,
+    "depth": 26.0
+   },
+   "triangles": 252,
+   "notes": ""
+  },
+  {
+   "id": "road-crossing",
+   "category": "Sports court and road",
+   "name": "Road section with sidewalk ends",
+   "source_nodes": [
+    "Plane.020"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    1248.1,
+    12.4,
+    676.1
+   ],
+   "size_scene_units": {
+    "width": 12.5,
+    "height": 0.1,
+    "depth": 6.8
+   },
+   "triangles": 34,
+   "notes": ""
+  },
+  {
+   "id": "tree-a",
+   "category": "Trees",
+   "name": "Low-poly tree in planter (A)",
+   "source_nodes": [
+    "Tree_6A.007"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    662.1,
+    1153.3,
+    683.4
+   ],
+   "size_scene_units": {
+    "width": 6.6,
+    "height": 11.5,
+    "depth": 6.8
+   },
+   "triangles": 1143,
+   "notes": ""
+  },
+  {
+   "id": "tree-b",
+   "category": "Trees",
+   "name": "Low-poly tree in planter (B)",
+   "source_nodes": [
+    "Tree_6A.010"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    775.2,
+    1400.1,
+    774.2
+   ],
+   "size_scene_units": {
+    "width": 7.8,
+    "height": 14.0,
+    "depth": 7.7
+   },
+   "triangles": 1143,
+   "notes": ""
+  },
+  {
+   "id": "rail-a",
+   "category": "Transit (rails, platforms)",
+   "name": "Track / rail line",
+   "source_nodes": [
+    "Cube.103"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    145.0,
+    88.2,
+    2240.5
+   ],
+   "size_scene_units": {
+    "width": 1.4,
+    "height": 0.9,
+    "depth": 22.4
+   },
+   "triangles": 60,
+   "notes": ""
+  },
+  {
+   "id": "rail-b",
+   "category": "Transit (rails, platforms)",
+   "name": "Track / rail line",
+   "source_nodes": [
+    "Cube.101"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    45.7,
+    44.7,
+    1967.1
+   ],
+   "size_scene_units": {
+    "width": 0.5,
+    "height": 0.4,
+    "depth": 19.7
+   },
+   "triangles": 120,
+   "notes": ""
+  },
+  {
+   "id": "rail-c",
+   "category": "Transit (rails, platforms)",
+   "name": "Track / rail line",
+   "source_nodes": [
+    "Cube.102"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    45.7,
+    44.7,
+    1967.1
+   ],
+   "size_scene_units": {
+    "width": 0.5,
+    "height": 0.4,
+    "depth": 19.7
+   },
+   "triangles": 120,
+   "notes": ""
+  },
+  {
+   "id": "rail-d",
+   "category": "Transit (rails, platforms)",
+   "name": "Track / rail line",
+   "source_nodes": [
+    "Cube.104"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    45.7,
+    44.7,
+    1967.1
+   ],
+   "size_scene_units": {
+    "width": 0.5,
+    "height": 0.4,
+    "depth": 19.7
+   },
+   "triangles": 120,
+   "notes": ""
+  },
+  {
+   "id": "platform-roof",
+   "category": "Transit (rails, platforms)",
+   "name": "Station platform roof",
+   "source_nodes": [
+    "Cube.039"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    333.6,
+    81.7,
+    313.3
+   ],
+   "size_scene_units": {
+    "width": 3.3,
+    "height": 0.8,
+    "depth": 3.1
+   },
+   "triangles": 82,
+   "notes": ""
+  },
+  {
+   "id": "platform-ring-a",
+   "category": "Transit (rails, platforms)",
+   "name": "Ring platform",
+   "source_nodes": [
+    "Cylinder.010"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    570.3,
+    23.6,
+    556.0
+   ],
+   "size_scene_units": {
+    "width": 5.7,
+    "height": 0.2,
+    "depth": 5.6
+   },
+   "triangles": 32,
+   "notes": ""
+  },
+  {
+   "id": "platform-ring-b",
+   "category": "Transit (rails, platforms)",
+   "name": "Ring platform",
+   "source_nodes": [
+    "Cylinder.009"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    523.6,
+    36.2,
+    521.2
+   ],
+   "size_scene_units": {
+    "width": 5.2,
+    "height": 0.4,
+    "depth": 5.2
+   },
+   "triangles": 44,
+   "notes": ""
+  },
+  {
+   "id": "train-car-a",
+   "category": "Transit (rails, platforms)",
+   "name": "Train / tube car",
+   "source_nodes": [
+    "Cylinder.019"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    270.9,
+    257.6,
+    1067.1
+   ],
+   "size_scene_units": {
+    "width": 2.7,
+    "height": 2.6,
+    "depth": 10.7
+   },
+   "triangles": 33,
+   "notes": ""
+  },
+  {
+   "id": "train-car-b",
+   "category": "Transit (rails, platforms)",
+   "name": "Train / tube car",
+   "source_nodes": [
+    "Cylinder.013"
+   ],
+   "node_count": 1,
+   "raw_size": [
+    270.9,
+    257.6,
+    1067.1
+   ],
+   "size_scene_units": {
+    "width": 2.7,
+    "height": 2.6,
+    "depth": 10.7
+   },
+   "triangles": 33,
+   "notes": ""
+  },
+  {
+   "id": "set-music-stage",
+   "category": "Sets (multi-piece)",
+   "name": "Music festival stage (86 pieces: truss, speakers, drums, floor tiles)",
+   "source_nodes": [
+    "Cube.094",
+    "Cube.092",
+    "Cube.091",
+    "Cube.090",
+    "Cube.089",
+    "Cube.088",
+    "..."
+   ],
+   "node_count": 86,
+   "raw_size": [
+    2670.8,
+    878.2,
+    1654.0
+   ],
+   "size_scene_units": {
+    "width": 26.7,
+    "height": 8.8,
+    "depth": 16.5
+   },
+   "triangles": 11527,
+   "notes": "One scene set; split by node name if needed."
+  },
+  {
+   "id": "set-elevated-road",
+   "category": "Sets (multi-piece)",
+   "name": "Long elevated purple highway with lamps (4 pieces)",
+   "source_nodes": [
+    "Cube.052",
+    "Cube.053",
+    "Plane.034",
+    "Plane.037"
+   ],
+   "node_count": 4,
+   "raw_size": [
+    5386.5,
+    427.3,
+    848.7
+   ],
+   "size_scene_units": {
+    "width": 53.9,
+    "height": 4.3,
+    "depth": 8.5
+   },
+   "triangles": 2536,
+   "notes": ""
+  }
+ ]
+}
