@@ -72,9 +72,9 @@
 		"URBAN_BLDG": 69.0,
 		"WATCHTOWER": 2.0
 	},
-	"map_hash": "9d0c6a7068850eb7c9c53d4d9f6b21fb3b1444c2b54b2b0ba1ca9e8c69ebc2f8:4c412b0bc9e6c96adf10ef7e5e3ab9413ba19a2d4a392a183dd391154c2f5791",
+	"map_hash": "918eec671973c8d94f51799e75f1cf3dde75a6eb171dcd04de86ceb6e221b888:4c412b0bc9e6c96adf10ef7e5e3ab9413ba19a2d4a392a183dd391154c2f5791",
 	"roads": {
-		"cells": 4140,
+		"cells": 6085,
 		"cells_off_network": 0,
 		"components": 1,
 		"cul_de_sacs": 14,
@@ -87,23 +87,23 @@
 		"highways": [
 			{
 				"east": "bridge",
-				"from": 41,
-				"row": 130,
-				"to": 51,
+				"from": 55,
+				"row": 165,
+				"to": 70,
 				"west": "avenue"
 			},
 			{
 				"east": "avenue",
-				"from": 62,
-				"row": 130,
-				"to": 84,
+				"from": 91,
+				"row": 165,
+				"to": 127,
 				"west": "bridge"
 			},
 			{
 				"east": "bridge",
-				"from": 174,
-				"row": 135,
-				"to": 222,
+				"from": 252,
+				"row": 191,
+				"to": 314,
 				"west": "avenue"
 			}
 		],
@@ -113,7 +113,7 @@
 		"stubs": 0,
 		"under_buildings": 0
 	},
-	"size": 272,
+	"size": 384,
 	"zone_adjacency": {
 		"APARTMENT|CIVIC": 34.0,
 		"APARTMENT|DESERT": 3.0,

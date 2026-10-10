@@ -8,13 +8,18 @@ extends RefCounted
 var city_name := "Chat City"
 ## Seed of the whole city. Same seed = same city on every device.
 var seed: int = 20240611
-## Island grid size in cells (1 cell = 1 Kenney road tile ~ 12 m).
-var map_size: int = 272
-## The original city is generated on a grid of this size and embedded in the
-## middle of the bigger map; the rounded island and its new districts grow around it.
-var core_size: int = 128
-## Size factor of the layout of the big map (MapLayout): 1 = the 272-cell map.
-var map_scale := 1.0
+## Size factor of the whole layout (MapLayout): 1 is the first map (272 cells, a 128-cell
+## city). At 384 / 272 = 1.41 every side is 1.41 times longer: the islands have twice the
+## area, with the same buildings and trees (BuildingBudget, tree_share).
+var map_scale := 384.0 / 272.0
+## Island grid size in cells (1 cell = 1 Kenney road tile ~ 12 m): 272 x map_scale.
+var map_size: int = 384
+## The city is generated on a grid of this size and embedded in the middle of the bigger
+## map; the rounded island and its districts grow around it. 128 x map_scale.
+var core_size: int = 180
+## Share of the trees, palms and cacti that grow, so that their number stays the one of the
+## first map on twice the ground.
+var tree_share := 0.47
 ## Cells per streaming chunk (the unit of loading / unloading).
 var chunk_size: int = 32
 ## Folder scanned recursively for .glb / .gltf models.

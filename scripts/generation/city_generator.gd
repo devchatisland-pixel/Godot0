@@ -20,6 +20,7 @@ func generate() -> CityData:
 	var core_data: CityData = core["data"]
 	var data := CityData.new(_cfg.map_size, _cfg.chunk_size)
 	data.city_name = _cfg.city_name
+	data.tree_share = _cfg.tree_share
 	var offset := (_cfg.map_size - _cfg.core_size) / 2
 	CoreEmbed.copy(core_data, data, offset)
 
@@ -40,7 +41,6 @@ func generate() -> CityData:
 
 	var fill := UrbanFill.apply(data)
 	print("[City] %d towers added south of the airport" % fill)
-	print("[City] road network: ", RoadNetwork.apply(data))
 	var edits := ManualEdits.apply(data)
 	print("[City] %d hand edits applied" % edits)
 	var huts := BeachSites.apply(data)
@@ -49,9 +49,12 @@ func generate() -> CityData:
 	print("[City] %d boats" % boats)
 	var props := PropSites.apply(data)
 	print("[City] props: ", props)
+	# Once every building and prop stands: the roads are made one clean network.
+	print("[City] road network: ", RoadNetwork.apply(data))
 	var stops := BusStops.apply(data)
 	print("[City] %d bus stops" % stops)
 	ManualEdits.apply_late(data)
+	print("[City] building budget: ", BuildingBudget.apply(data))
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")

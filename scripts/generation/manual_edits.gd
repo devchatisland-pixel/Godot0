@@ -1,150 +1,97 @@
 class_name ManualEdits
 extends RefCounted
 ## Hand-made corrections to single buildings, applied once the whole map is generated
-## (CityGenerator). The building number is the one shown in the information bubble
-## (B-00676 is id 676). Nothing is renumbered: a deleted building stays in the list as
-## Kind.EMPTY, so the numbers of all the others never move.
-##
-## Every entry names the `kind` and the lot `at` (top-left cell) that must be there: when
-## a change of the generation moves the numbers, the entry is skipped with a warning
-## instead of altering some other building.
-##   "id": -1 looks the building up by `kind` and `at` (for buildings added late, whose
-##            numbers move when something before them changes).
+## (CityGenerator). An entry does not name a cell or a building number, which change with
+## every rebuild of the map: it names a `kind` and a place `near` (a cell of the first map,
+## 272 cells; MapLayout scales it), and applies to the nearest building of that kind that no
+## other entry took. How many buildings of each kind there are is not decided here:
+## BuildingBudget clears the surplus afterwards (and never one that an entry changed).
 ##   facing   0 north, 1 east, 2 south, 3 west (the side of the front)
 ##   scale    size factor of the model, 1 = as placed
 ##   scale_abs  absolute scale of the model, 1 = its own size (ignores the lot)
 ##   replace  name of the Kind the building becomes (it keeps its lot and its facing)
 ##   delete   true = nothing is drawn any more
 ##   park     true = the cells of the lot become park ground (trees grow there; use with delete)
-##   rect     [x, y, w, h] the new lot (it must be free: take the buildings away first)
-##   move_to  new top-left cell of the lot, same size (must be free)
+##   size     [w, h] the new size of the lot, from the same top-left cell (when the ground is free)
+##   shift    cells the lot moves by, on the first map (when the ground is free)
 ##   old_ground  zone name given back to the cells the building leaves when its lot changes
 ##            (the cells it enters take the ground of the building)
 ##   model    name of the model to draw, as the library names it (e.g. "building-type-n.glb")
 ##   clear_quay  radius: sand instead of quay ground (rocky = 2) within that many cells of the building
 ##   sign     name of a ModelCatalog.Cat (a neon sign); BuildingExtras.SIGNS says where it goes
 
-## Edit index -> building number it was applied to (filled by `apply`; read by the tests).
+## Edit index -> building number it was applied to (filled by `apply`; read by the tests
+## and by BuildingBudget).
 static var resolved := {}
 
 const EDITS := [
-	{"id": 676, "kind": "CRANE", "at": Vector2i(132, 165), "facing": 1},
-	{"id": 646, "kind": "CINEMA_MAIN", "at": Vector2i(139, 143), "scale": 0.45},
-	{"id": 652, "kind": "BANK", "at": Vector2i(139, 157), "scale": 0.6},
-	{"id": 662, "kind": "HOTEL", "at": Vector2i(164, 129), "delete": true, "park": true},
-	{"id": 661, "kind": "HOTEL", "at": Vector2i(100, 166), "facing": 3},
-	{"id": 214, "kind": "SHOP", "at": Vector2i(120, 132), "delete": true},
-	{"id": 215, "kind": "SHOP", "at": Vector2i(121, 132), "delete": true},
-	{"id": 663, "kind": "HOTEL", "at": Vector2i(120, 129), "replace": "CITY_HALL", "rect": [120, 129, 3, 5]},
-	{"id": 664, "kind": "HOTEL", "at": Vector2i(170, 164), "scale_abs": 1.0},
-	{"id": 901, "kind": "HOTEL", "at": Vector2i(123, 210), "facing": 2},
-	{"id": 903, "kind": "HOTEL", "at": Vector2i(154, 214), "facing": 2},
-	{"id": 902, "kind": "HOTEL", "at": Vector2i(151, 199), "delete": true},
-	{"id": -1, "kind": "OIL_PUMP", "at": Vector2i(73, 109), "delete": true},
-	{"id": 1047, "kind": "AIRBASE", "at": Vector2i(69, 113), "rect": [75, 108, 5, 16], "facing": 1,
+	{"kind": "CRANE", "near": Vector2i(132, 165), "facing": 1},
+	{"kind": "CINEMA_MAIN", "near": Vector2i(139, 143), "scale": 0.45},
+	{"kind": "BANK", "near": Vector2i(139, 157), "scale": 0.6},
+	# A hotel becomes a park with trees, another one the city hall.
+	{"kind": "HOTEL", "near": Vector2i(164, 129), "delete": true, "park": true},
+	{"kind": "HOTEL", "near": Vector2i(120, 129), "replace": "CITY_HALL", "size": [3, 5]},
+	{"kind": "HOTEL", "near": Vector2i(100, 166), "facing": 3},
+	{"kind": "HOTEL", "near": Vector2i(170, 164), "scale_abs": 1.0},
+	{"kind": "HOTEL", "near": Vector2i(123, 210), "facing": 2},
+	{"kind": "HOTEL", "near": Vector2i(154, 214), "facing": 2},
+	{"kind": "AIRBASE", "near": Vector2i(69, 113), "shift": Vector2i(6, -5), "size": [5, 16], "facing": 1,
 		"old_ground": "DESERT"},
-	{"id": 657, "kind": "PHARMACY", "at": Vector2i(150, 166), "facing": 2},
-	{"id": 699, "kind": "SHOP", "at": Vector2i(110, 71), "replace": "BURGER_KING"},
-	{"id": 741, "kind": "POOR_BLDG", "at": Vector2i(122, 82), "delete": true},
-	{"id": 667, "kind": "BURGER_JOINT", "at": Vector2i(92, 136), "delete": true},
-	{"id": 693, "kind": "HOSPITAL", "at": Vector2i(160, 139), "replace": "MAIN_HOSPITAL", "scale_abs": 1.0},
-	{"id": 995, "kind": "FUTURE_BLDG", "at": Vector2i(36, 137), "delete": true},
-	{"id": 927, "kind": "FUTURE_BLDG", "at": Vector2i(11, 142), "delete": true},
-	{"id": 985, "kind": "FUTURE_BLDG", "at": Vector2i(23, 143), "delete": true},
-	{"id": 257, "kind": "SHOP", "at": Vector2i(137, 102), "facing": 1, "replace": "HOUSE",
+	{"kind": "PHARMACY", "near": Vector2i(150, 166), "facing": 2},
+	{"kind": "SHOP", "near": Vector2i(110, 71), "replace": "BURGER_KING"},
+	{"kind": "HOSPITAL", "near": Vector2i(160, 139), "replace": "MAIN_HOSPITAL", "scale_abs": 1.0},
+	{"kind": "SHOP", "near": Vector2i(137, 102), "facing": 1, "replace": "HOUSE",
 		"model": "building-type-n.glb", "sign": "NEON_CONTROLLER"},
-	{"id": 907, "kind": "FUTURE_BLDG", "at": Vector2i(11, 114), "delete": true},
-	{"id": 1120, "kind": "URBAN_BLDG", "at": Vector2i(23, 182), "delete": true},
-	{"id": 1121, "kind": "URBAN_BLDG", "at": Vector2i(29, 182), "delete": true},
-	{"id": 1122, "kind": "URBAN_BLDG", "at": Vector2i(33, 182), "delete": true},
-	{"id": 1123, "kind": "URBAN_BLDG", "at": Vector2i(29, 186), "delete": true},
-	{"id": 685, "kind": "POLICE", "at": Vector2i(171, 154), "sign": "NEON_PACMAN"},
-	{"id": 647, "kind": "POLICE_HQ", "at": Vector2i(118, 148), "scale": 0.75},
-	{"id": 670, "kind": "BURGER_JOINT", "at": Vector2i(110, 153), "scale_abs": 1.0},
-	{"id": 863, "kind": "QUARTER_BLDG", "at": Vector2i(165, 208), "replace": "HOSPITAL"},
-	{"id": 1114, "kind": "LIGHTHOUSE", "at": Vector2i(93, 202), "clear_quay": 6},
-	{"id": -1, "kind": "POOR_BLDG", "at": Vector2i(129, 77), "delete": true},
-	{"id": -1, "kind": "URBAN_BLDG", "at": Vector2i(37, 182), "scale": 1.6},
-	{"id": -1, "kind": "OIL_PUMP", "at": Vector2i(80, 131), "delete": true},
-	{"id": -1, "kind": "OUTPOST", "at": Vector2i(80, 134), "move_to": Vector2i(80, 101)},
-	{"id": 653, "kind": "FIRE_STATION", "at": Vector2i(150, 140), "scale": 1.12},
-	{"id": 654, "kind": "POST_OFFICE", "at": Vector2i(133, 152), "scale": 1.12},
-	# Shopping center: a casino like B-00675 stands in a park where it was.
-	{"id": 645, "kind": "SHOPPING_CENTER", "at": Vector2i(100, 138), "replace": "CASINO",
-		"rect": [100, 138, 3, 3], "old_ground": "PARK"},
-	{"id": 409, "kind": "OFFICE", "at": Vector2i(142, 140), "delete": true},
-	{"id": 669, "kind": "BURGER_JOINT", "at": Vector2i(139, 140), "delete": true},
-	{"id": 205, "kind": "APARTMENT", "at": Vector2i(120, 91), "delete": true},
-	# Burger joints: 5 of the 10 are gone (B-00667 and B-00669 above, and these three).
-	{"id": 666, "kind": "BURGER_JOINT", "at": Vector2i(131, 101), "delete": true},
-	{"id": 671, "kind": "BURGER_JOINT", "at": Vector2i(160, 119), "delete": true},
-	{"id": 673, "kind": "BURGER_JOINT", "at": Vector2i(154, 166), "delete": true},
-	# Second hand-picked wave of deletions (red district, prison blocks, a yard, two towers).
-	{"id": 830, "kind": "QUARTER_BLDG", "at": Vector2i(144, 209), "delete": true},
-	{"id": 831, "kind": "QUARTER_BLDG", "at": Vector2i(144, 211), "delete": true},
-	{"id": 832, "kind": "QUARTER_BLDG", "at": Vector2i(144, 213), "delete": true},
-	{"id": 888, "kind": "QUARTER_BLDG", "at": Vector2i(155, 222), "delete": true},
-	{"id": 827, "kind": "QUARTER_BLDG", "at": Vector2i(141, 208), "delete": true},
-	{"id": 801, "kind": "QUARTER_BLDG", "at": Vector2i(136, 207), "delete": true},
-	{"id": 800, "kind": "QUARTER_BLDG", "at": Vector2i(134, 207), "delete": true},
-	{"id": 798, "kind": "QUARTER_BLDG", "at": Vector2i(137, 204), "delete": true},
-	{"id": 758, "kind": "QUARTER_BLDG", "at": Vector2i(101, 206), "delete": true},
-	{"id": 759, "kind": "QUARTER_BLDG", "at": Vector2i(104, 203), "delete": true},
-	{"id": 761, "kind": "QUARTER_BLDG", "at": Vector2i(108, 203), "delete": true},
-	{"id": 1111, "kind": "PRISON_WING", "at": Vector2i(26, 43), "delete": true},
-	{"id": 1109, "kind": "PRISON_WING", "at": Vector2i(23, 35), "delete": true},
-	{"id": 1107, "kind": "PRISON_WING", "at": Vector2i(23, 30), "delete": true},
-	{"id": 1108, "kind": "PRISON_WING", "at": Vector2i(35, 29), "delete": true},
-	{"id": 1112, "kind": "PRISON_WING", "at": Vector2i(41, 33), "delete": true},
-	{"id": 1110, "kind": "PRISON_WING", "at": Vector2i(35, 42), "delete": true},
-	{"id": 1011, "kind": "INDUSTRIAL_YARD", "at": Vector2i(48, 113), "delete": true},
-	{"id": 937, "kind": "FUTURE_BLDG", "at": Vector2i(11, 160), "delete": true},
-	{"id": 925, "kind": "FUTURE_BLDG", "at": Vector2i(14, 137), "delete": true},
-	{"id": 401, "kind": "QUARTER_BLDG", "at": Vector2i(129, 178), "delete": true},
+	{"kind": "POLICE", "near": Vector2i(171, 154), "sign": "NEON_PACMAN"},
+	{"kind": "POLICE_HQ", "near": Vector2i(118, 148), "scale": 0.75},
+	{"kind": "BURGER_JOINT", "near": Vector2i(110, 153), "scale_abs": 1.0},
+	{"kind": "QUARTER_BLDG", "near": Vector2i(165, 208), "replace": "HOSPITAL"},
+	{"kind": "LIGHTHOUSE", "near": Vector2i(93, 202), "clear_quay": 6},
+	{"kind": "URBAN_BLDG", "near": Vector2i(37, 182), "scale": 1.6},
+	{"kind": "OUTPOST", "near": Vector2i(80, 134), "shift": Vector2i(0, -33)},
+	{"kind": "FIRE_STATION", "near": Vector2i(150, 140), "scale": 1.12},
+	{"kind": "POST_OFFICE", "near": Vector2i(133, 152), "scale": 1.12},
+	# Shopping center: a casino stands in a park where it was.
+	{"kind": "SHOPPING_CENTER", "near": Vector2i(100, 138), "replace": "CASINO", "size": [3, 3],
+		"old_ground": "PARK"},
 ]
 
-## Kinds taken away everywhere, whatever their number: the pirate ships (the ones at sea are
-## only made after the other edits), the airport and the urban ghetto block.
-const DELETED_KINDS := ["PIRATE_SHIP", "AIRPORT", "RUSSIAN"]
+## Kinds taken away everywhere: the pirate ships (the ones at sea are only made after the
+## other edits), the airport, the urban ghetto block and the wings of the prison.
+const DELETED_KINDS := ["PIRATE_SHIP", "AIRPORT", "RUSSIAN", "PRISON_WING"]
+
+## The beach hut nearest to this cell of the first map goes into the forest next to the desert.
+const HUT_FROM := Vector2i(191, 65)
+## A balloon floats over the mountain nearest to this cell of the first map (and over the
+## stadium and the north-east corner of the central park).
+const BALLOON_MOUNTAIN := Vector2i(177, 101)
 
 
 ## Applies every entry; returns how many were applied.
 static func apply(data: CityData) -> int:
-	var names := CityTypes.Kind.keys()
 	var applied := 0
 	resolved.clear()
+	var used := {}
 	for n in EDITS.size():
 		var e: Dictionary = EDITS[n]
-		var id: int = e["id"]
-		# The number is only a hint: when it points at something else (numbers move when the
-		# urban island changes), the building is looked up by its kind and lot.
-		if id < 0 or id >= data.building_count() or data.b_kind[id] != CityTypes.Kind[e["kind"]] \
-				or data.building_rect(id).position != e["at"]:
-			id = _find(data, e["kind"], e["at"])
-			if id < 0:
-				push_warning("[Edits] no %s at %s: skipped" % [e["kind"], e["at"]])
-				continue
-		if id >= data.building_count():
-			push_warning("[Edits] B-%05d does not exist" % id)
+		var id := _nearest(data, e["kind"], MapLayout.scaled(e["near"]), used)
+		if id < 0:
+			push_warning("[Edits] no %s for the edit near %s: skipped" % [e["kind"], e["near"]])
 			continue
+		used[id] = true
+		resolved[n] = id
 		var r := data.building_rect(id)
-		if names[data.b_kind[id]] != e["kind"]:
-			push_warning("[Edits] B-%05d is %s at %s, not %s at %s: skipped" % [
-					id, names[data.b_kind[id]], r.position, e["kind"], e["at"]])
-			continue
 		var lot := r
-		if e.has("rect"):
-			var a: Array = e["rect"]
-			lot = Rect2i(a[0], a[1], a[2], a[3])
-		elif e.has("move_to"):
-			lot = Rect2i(e["move_to"], r.size)
+		if e.has("shift"):
+			lot.position += MapLayout.scaled(e["shift"])
+		if e.has("size"):
+			lot.size = Vector2i(e["size"][0], e["size"][1])
+		if lot != r and not _lot_is_free(data, id, lot):
+			# Not enough room for the wanted lot: what fits inside the old one, where it was.
+			lot = Rect2i(r.position, Vector2i(mini(lot.size.x, r.size.x), mini(lot.size.y, r.size.y)))
 		if lot != r:
-			if not _lot_is_free(data, id, lot):
-				push_warning("[Edits] B-%05d: the lot %s is not free: skipped" % [id, lot])
-				continue
 			_move_ground(data, r, lot, e.get("old_ground", ""))
 			data.set_building_rect(id, lot)
-		resolved[n] = id
 		if e.has("facing"):
 			data.b_facing[id] = e["facing"]
 		if e.has("scale"):
@@ -169,11 +116,36 @@ static func apply(data: CityData) -> int:
 	return applied
 
 
+## Building numbers the entries changed and that must stay (BuildingBudget does not clear them).
+static func kept() -> Dictionary:
+	var out := {}
+	for n in resolved:
+		if not EDITS[n].get("delete", false):
+			out[resolved[n]] = true
+	return out
+
+
+## The building of `kind_name` nearest to `at` that is not in `used`, or -1.
+static func _nearest(data: CityData, kind_name: String, at: Vector2i, used: Dictionary = {}) -> int:
+	var kind: int = CityTypes.Kind[kind_name]
+	var best := -1
+	var best_d := INF
+	for b in data.building_count():
+		if data.b_kind[b] != kind or used.has(b):
+			continue
+		var d := Vector2(data.building_rect(b).position).distance_to(Vector2(at))
+		if d < best_d:
+			best_d = d
+			best = b
+	return best
+
+
 ## True when `lot` is dry land and no other (not cleared) building stands on it.
 static func _lot_is_free(data: CityData, id: int, lot: Rect2i) -> bool:
 	for y in range(lot.position.y, lot.end.y):
 		for x in range(lot.position.x, lot.end.x):
-			if not data.in_bounds(x, y) or data.terrain[data.idx(x, y)] != CityTypes.Terrain.LAND:
+			if not data.in_bounds(x, y) or data.terrain[data.idx(x, y)] != CityTypes.Terrain.LAND \
+					or data.road[data.idx(x, y)] != 0:
 				return false
 	for b in data.building_count():
 		if b != id and data.b_kind[b] != CityTypes.Kind.EMPTY and data.building_rect(b).intersects(lot):
@@ -203,67 +175,51 @@ static func _clear_quay(data: CityData, lot: Rect2i, radius: int) -> void:
 				data.rocky[data.idx(x, y)] = 0
 
 
-## How far from the place of an edit its building may have moved (cells).
-const NEAR := 10
-
-
-## The building of `kind_name` whose lot starts at `at`; when the map moved a little (another
-## road, another row for a highway), the nearest one of that kind within NEAR cells. -1: none.
-static func _find(data: CityData, kind_name: String, at: Vector2i) -> int:
-	var kind: int = CityTypes.Kind[kind_name]
-	var best := -1
-	var best_d := NEAR + 1
-	for b in data.building_count():
-		if data.b_kind[b] != kind:
-			continue
-		var p := data.building_rect(b).position
-		if p == at:
-			return b
-		var d := maxi(absi(p.x - at.x), absi(p.y - at.y))
-		if d < best_d:
-			best_d = d
-			best = b
-	return best
-
-
-## Edits of things that only exist after the props: deleted by place (kind and lot).
-const LATE := [
-	{"kind": "BUS_STOP", "at": Vector2i(140, 194)},
-	{"kind": "BUS_STOP", "at": Vector2i(208, 131)},
-	{"kind": "BILLBOARD", "at": Vector2i(75, 126)},
-	{"kind": "BILLBOARD", "at": Vector2i(199, 179)},
-	{"kind": "BILLBOARD", "at": Vector2i(150, 255)},
-	{"kind": "BEACH_HUT", "at": Vector2i(215, 122)},
-	{"kind": "BILLBOARD", "at": Vector2i(182, 59)},
-]
-
-## Hot air balloons added at the end of the building list (no number moves): over the stadium,
-## over the north-east corner of the central park and over the mountain B-01102.
-const BALLOONS := [Vector2i(113, 162), Vector2i(169, 120), Vector2i(177, 101)]
-## Buildings moved by place: the beach hut B-01132 goes into the forest next to the desert.
-const HUT_FROM := Vector2i(191, 65)
-
-
+# --- After the props ----------------------------------------------------------------------------
+## What only exists once the props are placed: the kinds taken away, the hut in the forest
+## and the balloons (added at the end of the building list).
 static func apply_late(data: CityData) -> void:
 	for kind_name in DELETED_KINDS:
 		var kind: int = CityTypes.Kind[kind_name]
 		for b in data.building_count():
 			if data.b_kind[b] == kind:
 				data.b_kind[b] = CityTypes.Kind.EMPTY
-	for e in LATE:
-		var id := _find(data, e["kind"], e["at"])
-		if id >= 0:
-			data.b_kind[id] = CityTypes.Kind.EMPTY
 	_move_hut(data)
-	for c: Vector2i in BALLOONS:
+	for c in _balloon_cells(data):
 		data.add_building(Rect2i(c - Vector2i(1, 1), Vector2i(3, 3)), CityTypes.Kind.BALLOON, 2, 1, 0.5)
 
 
-## The beach hut at HUT_FROM moves to the densest free 2x2 forest spot of the map that has
-## desert within 6 cells, the nearest one to where it was on a tie (the pier, if any, stays on
-## the beach). The desert is in the west, far from the east beach the hut stood on.
+## Over the stadium, over the north-east corner of the central park, over a mountain.
+static func _balloon_cells(data: CityData) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	var stadium := _nearest(data, "STADIUM", Vector2i(data.size / 2, data.size / 2))
+	if stadium >= 0:
+		out.append(data.building_rect(stadium).get_center())
+	# The central park is the biggest group of park cells: its corner is taken on the rows
+	# and columns that hold the most of them.
+	var lo := Vector2i(data.size, data.size)
+	var hi := Vector2i(-1, -1)
+	var middle := Vector2i(data.size / 2, data.size / 2)
+	var reach := data.size / 4
+	for y in range(middle.y - reach, middle.y + reach):
+		for x in range(middle.x - reach, middle.x + reach):
+			if data.zone_at(x, y) == CityTypes.Zone.PARK and data.road[data.idx(x, y)] == 0:
+				lo = Vector2i(mini(lo.x, x), mini(lo.y, y))
+				hi = Vector2i(maxi(hi.x, x), maxi(hi.y, y))
+	if hi.x >= 0:
+		out.append(Vector2i(hi.x - 1, lo.y + 1))
+	var mountain := _nearest(data, "MOUNTAIN", MapLayout.scaled(BALLOON_MOUNTAIN))
+	if mountain >= 0:
+		out.append(data.building_rect(mountain).get_center())
+	return out
+
+
+## The beach hut nearest to HUT_FROM moves to the densest free 2x2 forest spot of the map that
+## has desert within 6 cells, the nearest one to where it was on a tie (the pier, if any, stays
+## on the beach). The desert is in the west, far from the east beach the hut stood on.
 static func _move_hut(data: CityData) -> void:
-	var id := _find(data, "BEACH_HUT", HUT_FROM)
+	var from := MapLayout.scaled(HUT_FROM)
+	var id := _nearest(data, "BEACH_HUT", from)
 	if id < 0:
 		return
 	var taken := {}
@@ -275,7 +231,7 @@ static func _move_hut(data: CityData) -> void:
 			for x in range(r.position.x, r.end.x):
 				taken[Vector2i(x, y)] = true
 	var best := Vector2i(-1, -1)
-	var best_key := -1.0
+	var best_key := -INF
 	for y in range(2, data.size - 3):
 		for x in range(2, data.size - 3):
 			var forest := 0
@@ -284,11 +240,9 @@ static func _move_hut(data: CityData) -> void:
 				for dx in 2:
 					var cx := x + dx
 					var cy := y + dy
-					if not data.in_bounds(cx, cy):
-						ok = false
-						break
 					var i := data.idx(cx, cy)
-					if data.terrain[i] != CityTypes.Terrain.LAND or data.zone[i] != CityTypes.Zone.NATURE 							or data.road[i] != 0 or taken.has(Vector2i(cx, cy)):
+					if data.terrain[i] != CityTypes.Terrain.LAND or data.zone[i] != CityTypes.Zone.NATURE \
+							or data.road[i] != 0 or taken.has(Vector2i(cx, cy)):
 						ok = false
 						break
 					forest += data.forest[i]
@@ -303,7 +257,7 @@ static func _move_hut(data: CityData) -> void:
 						desert = true
 			if not desert:
 				continue
-			var key := float(forest) - Vector2(x - HUT_FROM.x, y - HUT_FROM.y).length() * 2.0
+			var key := float(forest) - Vector2(x - from.x, y - from.y).length() * 2.0
 			if key > best_key:
 				best_key = key
 				best = Vector2i(x, y)

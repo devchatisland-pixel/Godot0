@@ -54,10 +54,11 @@ export_presets.cfg     "Web" (threads) and "Web Lite" (no threads) presets
 
 ## The island
 
-Chat City is a 272×272-cell map: one big **rounded main island**, the **urban island** to the west and the
-**fog island** to the east. The city of the earlier versions sits in the west part of the main island
-**exactly as it was** (same seed, same streets and buildings); the districts around it are round blobs,
-not squares. On screen north-west is up. Special buildings are kept far from each other on purpose.
+Chat City is a 384×384-cell map: one big **rounded main island**, the **urban island** to the west and the
+**fog island** to the east. It is the first map (272 cells) rebuilt 1.41 times longer on every side: the
+islands have twice the area, with the same number of buildings of every kind and the same number of
+trees, the same zones touching each other, and roads that form one clean network. The city sits in the
+west part of the main island; the districts around it are round blobs, not squares. On screen north-west is up. Special buildings are kept far from each other on purpose.
 
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
@@ -85,7 +86,10 @@ not squares. On screen north-west is up. Special buildings are kept far from eac
 
 How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same map on every device):
 
-**1. The core city** (the original pipeline, on a 128×128 grid):
+**0. The layout** (`map_layout.gd`): every island, round district and single place of the big map, in
+cells of the first map and scaled by `CityConfig.map_scale`. The planners ask for them by name.
+
+**1. The core city** (on a 180×180 grid):
 
 1. **`island_shaper.gd`**: an elliptical island with a little noise, sandy and rocky shores.
 2. **`district_planner.gd`**: the district layout (anchors, hints and the park, mountain forest and big-building plots, in island units).
@@ -96,10 +100,17 @@ How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same 
 
 **2. Everything around it** (`core_embed.gd`, `extension_island.gd`, `extension_planner.gd`):
 
-7. **`core_embed.gd`** copies the finished core city into the 272×272 map.
+7. **`core_embed.gd`** copies the finished core city into the 384×384 map.
 8. **`extension_island.gd`** raises the rounded main island around it (the core keeps its own streets, shores and forests), the urban island, palm islets and the prison island.
 9. **`extension_planner.gd`** works only on free land, with round blobs, and calls its helpers: `extension_roads.gd` (the two highways, east to the Golden Gate and west to the metal bridge, and the shortest-road links), `extension_spots.gd` (free plots and spots), `urban_island_planner.gd` (the urban island, with its own random numbers), `extension_features.gd` (the desert with the base, the industrial zone and port, the farmland, two more mountains, the watchtowers, the prison compound, the lighthouses). The poor and red districts get BSP streets and lots with round shapes. Everything is linked to the old city by the shortest road.
 10. **`fog_island_shaper.gd`**: the island in the fog, placed right after the end of the east highway.
+
+**3. The rules of the finished map**:
+
+11. **`manual_edits.gd`**: hand-made corrections, each one named by a kind of building near a place (no cell, no building number).
+12. **`road_network.gd`**: makes one clean network of the roads the planners drew: no two roads side by side, no corner contacts, no stubs, no loose groups; the highways end at a bridge or at an avenue that crosses their three lanes.
+13. **`building_budget.gd`**: how many buildings of each kind the map holds, whatever its size. The surplus is cleared (bare ground), the few missing ones are added.
+14. **`map_audit.gd`** measures all this; `tests/test_map_audit.gd` checks it against `tests/baseline/map_snapshot.json` (see `docs/map_rebuild_plan.md`).
 
 Which family of models a building uses (Kenney, photo towers, New York, cartoon shops, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
 
@@ -375,6 +386,11 @@ textures/     signs.png, fog_noise.png, fog_puffs.png, season2.png
 * **Public buildings** (which ones, how many, in which district): `scripts/generation/service_planner.gd` (`SPECS`).
 
 ## Tests and tools
+
+**Polygon heatmap:** `godot --path . --rendering-driver opengl3 --script res://tools/poly_heatmap.gd`
+(not `--headless`: MultiMesh transforms need a renderer) then `python3 tools/poly_heatmap.py`
+writes `poly_heatmap.png`: every parcel coloured by its triangles, chunk totals, heaviest
+parcels and kinds.
 
 ```
 godot --headless --import                                         # first import of the models

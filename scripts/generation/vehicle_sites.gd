@@ -58,7 +58,6 @@ func _run() -> void:
 	_container_tanker()
 	_nuclear_plant_convoy()
 	_desert()
-	_airport()
 	_bus_stops()
 	_prison_helicopters()
 	_cinema_parking()
@@ -244,12 +243,21 @@ func _forest_suv() -> void:
 		push_warning("[Vehicles] no forest road for the SUV")
 
 
-## The loader beside the barn B-01076 (OUTPOST at 195,169); the tractor and the harvester
-## together on the crop field B-01088 (FIELD at 196,174, 5x5). Falls back to one machine in
-## each of three fields when those two lots are not there.
+## The tractor and the harvester together on the biggest crop field, the loader beside the
+## farm building nearest to it. Falls back to one machine in each of three fields when
+## there is no farm building.
 func _farm_machines() -> void:
-	var barn := _lot_at(Kind.OUTPOST, Vector2i(195, 169))
-	var field := _lot_at(Kind.FIELD, Vector2i(196, 174))
+	var field := _biggest(Kind.FIELD)
+	var barn := -1
+	if field >= 0:
+		var fc := Vector2(_d.building_rect(field).get_center())
+		var best := INF
+		for b in _d.building_count():
+			if _d.b_kind[b] == Kind.OUTPOST:
+				var d := Vector2(_d.building_rect(b).get_center()).distance_to(fc)
+				if d < best:
+					best = d
+					barn = b
 	if barn < 0 or field < 0:
 		_farm_machines_auto()
 		return
@@ -261,14 +269,6 @@ func _farm_machines() -> void:
 	var c := Vector2(fr.position) + Vector2(fr.size) * 0.5
 	_add("p54_43_tractor_vintage_trailer", c + Vector2(-1.0, -0.9), Vector2(1, 0), "in an agricultural field")
 	_add("p54_21_harvester_olive", c + Vector2(0.9, 1.0), Vector2(1, 0), "in an agricultural field")
-
-
-## Building of `kind` whose lot starts at `at` (-1 when there is none).
-func _lot_at(kind: int, at: Vector2i) -> int:
-	for b in _d.building_count():
-		if _d.b_kind[b] == kind and _d.building_rect(b).position == at:
-			return b
-	return -1
 
 
 ## One machine in each of three different crop fields (the biggest ones, far apart).
@@ -478,7 +478,7 @@ func _nuclear_plant_convoy() -> void:
 		_beside(ids[k], plant, "near the nuclear plant", 100 + k * 7, 1.0, 6.0)
 
 
-# --- Desert, airport, buses ---------------------------------------------------------------------
+# --- Desert, buses -----------------------------------------------------------------------------
 
 ## A motorhome in the middle of nowhere and a wreck elsewhere in the desert.
 func _desert() -> void:
@@ -516,16 +516,6 @@ func _clear_radius(c: Vector2i, max_r: int) -> int:
 				if _taken[i] == 1 or _d.road[i] != 0 or _d.terrain[i] < CityTypes.Terrain.BEACH:
 					return r - 1
 	return max_r
-
-
-func _airport() -> void:
-	var b := _biggest(Kind.AIRPORT)
-	if b < 0:
-		push_warning("[Vehicles] no airport")
-		return
-	var r := _d.building_rect(b)
-	_beside("police_jp_black", r, "at the airport", 201, 1.0, 5.0)
-	_beside("p54_08_tow_truck_yellow", r, "at the airport", 207, 1.0, 5.0)
 
 
 ## A coach and an intercity bus on the road in front of two different stops of the city.

@@ -58,7 +58,7 @@ func _paint_path(x: int, y: int) -> void:
 func _build_mountain() -> void:
 	var area := _districts.forest
 	var c := area.get_center()
-	var r := _find_spot(c + Vector2i(-4, -4), Vector2i(8, 8), Zone.NATURE, 14)
+	var r := _find_spot(c + Vector2i(-4, -4), Vector2i(8, 8), Zone.NATURE, MapLayout.span(14))
 	if r.size.x > 0:
 		_services.claim(r, Kind.MOUNTAIN, 2, -1, 16)
 

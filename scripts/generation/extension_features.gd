@@ -174,7 +174,8 @@ func build_mountains() -> void:
 	var seeds := [100, 108]
 	var i := 0
 	for o in [Vector2i(15, -6), Vector2i(3, -17)]:
-		var r := _spots.find_spot(first + o - Vector2i(4, 4), Vector2i(8, 8), Zone.NATURE, 8, 0)
+		var r := _spots.find_spot(first + MapLayout.scaled(o) - Vector2i(4, 4), Vector2i(8, 8), Zone.NATURE,
+				MapLayout.span(8), 0)
 		if r.size.x > 0:
 			_spots.claim(r, Kind.MOUNTAIN, 2, -1, seeds[i])
 			i += 1

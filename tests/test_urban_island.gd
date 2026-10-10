@@ -141,10 +141,14 @@ func _check_boats(data: CityData, by_kind: Dictionary) -> void:
 	var port := Vector2(MapLayout.blob("industrial")["at"])
 	if Vector2((seeds[BoatSites.CARGO] as Rect2i).get_center()).distance_to(port) > 35.0:
 		_fail("the cargo ship is not near the industrial port")
-	var d := Vector2((seeds[BoatSites.SUB] as Rect2i).get_center()).distance_to(Vector2(data.bridge))
-	print("[Test] the submarine is %.0f cells from the end of the highway" % d)
+	# One of the submarines lies off the end of the east highway, away from the bridge.
+	var d := INF
+	for b in by_kind.get(Kind.BOAT, []):
+		if data.b_seed[b] == BoatSites.SUB:
+			d = minf(d, Vector2(data.building_rect(b).get_center()).distance_to(Vector2(data.bridge)))
+	print("[Test] the nearest submarine is %.0f cells from the end of the highway" % d)
 	if d < 12.0 or d > 40.0:
-		_fail("the submarine is %.0f cells from the Golden Gate bridge" % d)
+		_fail("the nearest submarine is %.0f cells from the bridge to the fog island" % d)
 
 
 ## Every hand edit (ManualEdits) was applied: the kind, facing and scale are the wanted ones.
@@ -152,7 +156,7 @@ func _check_edits(data: CityData) -> void:
 	for n in ManualEdits.EDITS.size():
 		var e: Dictionary = ManualEdits.EDITS[n]
 		if not ManualEdits.resolved.has(n):
-			_fail("edit %d (%s at %s) was not applied" % [n, e["kind"], e["at"]])
+			_fail("edit %d (%s near %s) was not applied" % [n, e["kind"], e["near"]])
 			continue
 		var id: int = ManualEdits.resolved[n]
 		var want: String = "EMPTY" if e.get("delete", false) else e.get("replace", e["kind"])
@@ -162,10 +166,6 @@ func _check_edits(data: CityData) -> void:
 			_fail("edit B-%05d: facing %d, wanted %d" % [id, data.b_facing[id], e["facing"]])
 		if e.has("scale") and not is_equal_approx(data.b_scale[id], e["scale"]):
 			_fail("edit B-%05d: scale %.2f, wanted %.2f" % [id, data.b_scale[id], e["scale"]])
-		if e.has("rect") and data.building_rect(id) != Rect2i(e["rect"][0], e["rect"][1], e["rect"][2], e["rect"][3]):
-			_fail("edit B-%05d: lot is %s, not the wanted rect" % [id, data.building_rect(id)])
-		if e.has("move_to") and data.building_rect(id).position != e["move_to"]:
-			_fail("edit B-%05d: not moved to %s" % [id, e["move_to"]])
 		if e.has("sign") and data.b_sign[id] != ModelCatalog.Cat[e["sign"]]:
 			_fail("edit B-%05d: sign not set" % id)
 		if e.has("scale_abs") and not is_equal_approx(data.b_scale[id], -float(e["scale_abs"])):
