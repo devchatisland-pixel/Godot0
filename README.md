@@ -26,7 +26,7 @@ The images use **Godot 4.6.3**. Set `GODOT_VERSION` in `docker-compose.yml` to u
 docker compose up --build web
 ```
 
-Then open **http://localhost:8080**. This is the fast multi-threaded build, rendered by your GPU through WebGL 2.
+Then open **http://localhost:8080**. If that port is already used (an older build still running), pick another one: `WEB_PORT=8081 docker compose up --build web` (PowerShell: `$env:WEB_PORT=8081; docker compose up --build web`). This is the fast multi-threaded build, rendered by your GPU through WebGL 2.
 
 * **From a phone or another PC on your network:** open `http://<your-pc-ip>:8080/lite/`. Browsers only allow the multi-threaded build on `localhost` or HTTPS, so `/lite/` is a single-threaded build. It is slower, but works everywhere.
 * **First build:** it downloads Godot (~60 MB) and its export templates (~1.25 GB). Docker caches both, so later builds only re-export the project (about 1 minute).
