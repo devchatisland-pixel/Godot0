@@ -61,6 +61,18 @@ const EDITS := [
 ## Kinds taken away everywhere: the airport, the urban ghetto block and the wings of the prison.
 const DELETED_KINDS := ["AIRPORT", "RUSSIAN", "PRISON_WING"]
 
+## Futuristic towers of the urban island taken away by hand: the top-left cell of their lot on
+## the final map (the island is rebuilt last, so these cells are final).
+const DELETED_URBAN_TOWERS: Array[Vector2i] = [
+	Vector2i(55,225), Vector2i(52,227), Vector2i(62,214), Vector2i(65,197),
+	Vector2i(60,198), Vector2i(58,194), Vector2i(48,202), Vector2i(37,181),
+	Vector2i(36,196), Vector2i(36,200), Vector2i(37,204), Vector2i(44,212),
+	Vector2i(48,212), Vector2i(58,210), Vector2i(41,177), Vector2i(35,144),
+	Vector2i(35,147), Vector2i(38,148), Vector2i(50,161), Vector2i(41,154),
+	Vector2i(53,157), Vector2i(57,157), Vector2i(61,157), Vector2i(72,146),
+	Vector2i(70,142), Vector2i(47,144), Vector2i(41,139),
+]
+
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
 const BALLOON_MOUNTAIN := Vector2i(177, 101)
@@ -252,3 +264,14 @@ static func _all_desert(data: CityData, r: Rect2i) -> bool:
 			if data.zone[data.idx(x, y)] != CityTypes.Zone.DESERT:
 				return false
 	return true
+
+
+## Deletes the futuristic towers of DELETED_URBAN_TOWERS (run after the urban island is rebuilt).
+## Returns how many were found.
+static func delete_urban_towers(data: CityData) -> int:
+	var found := 0
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.FUTURE_BLDG and DELETED_URBAN_TOWERS.has(data.building_rect(b).position):
+			data.b_kind[b] = CityTypes.Kind.EMPTY
+			found += 1
+	return found
