@@ -66,6 +66,28 @@ const EDITS := [
 	{"id": -1, "kind": "OUTPOST", "at": Vector2i(80, 134), "move_to": Vector2i(80, 101)},
 	{"id": 653, "kind": "FIRE_STATION", "at": Vector2i(150, 140), "scale": 1.12},
 	{"id": 654, "kind": "POST_OFFICE", "at": Vector2i(133, 152), "scale": 1.12},
+	# Deleted by hand from the live map (ids as shown in the information bubble).
+	{"id": 830, "kind": "QUARTER_BLDG", "at": Vector2i(144, 209), "delete": true},
+	{"id": 831, "kind": "QUARTER_BLDG", "at": Vector2i(144, 211), "delete": true},
+	{"id": 832, "kind": "QUARTER_BLDG", "at": Vector2i(144, 213), "delete": true},
+	{"id": 888, "kind": "QUARTER_BLDG", "at": Vector2i(155, 222), "delete": true},
+	{"id": 827, "kind": "QUARTER_BLDG", "at": Vector2i(141, 208), "delete": true},
+	{"id": 801, "kind": "QUARTER_BLDG", "at": Vector2i(136, 207), "delete": true},
+	{"id": 800, "kind": "QUARTER_BLDG", "at": Vector2i(134, 207), "delete": true},
+	{"id": 798, "kind": "QUARTER_BLDG", "at": Vector2i(137, 204), "delete": true},
+	{"id": 758, "kind": "QUARTER_BLDG", "at": Vector2i(101, 206), "delete": true},
+	{"id": 759, "kind": "QUARTER_BLDG", "at": Vector2i(104, 203), "delete": true},
+	{"id": 761, "kind": "QUARTER_BLDG", "at": Vector2i(108, 203), "delete": true},
+	{"id": 1111, "kind": "PRISON_WING", "at": Vector2i(26, 43), "delete": true},
+	{"id": 1109, "kind": "PRISON_WING", "at": Vector2i(23, 35), "delete": true},
+	{"id": 1107, "kind": "PRISON_WING", "at": Vector2i(23, 30), "delete": true},
+	{"id": 1108, "kind": "PRISON_WING", "at": Vector2i(35, 29), "delete": true},
+	{"id": 1112, "kind": "PRISON_WING", "at": Vector2i(41, 33), "delete": true},
+	{"id": 1110, "kind": "PRISON_WING", "at": Vector2i(35, 42), "delete": true},
+	{"id": 1011, "kind": "INDUSTRIAL_YARD", "at": Vector2i(48, 113), "delete": true},
+	{"id": 937, "kind": "FUTURE_BLDG", "at": Vector2i(11, 160), "delete": true},
+	{"id": 925, "kind": "FUTURE_BLDG", "at": Vector2i(14, 137), "delete": true},
+	{"id": 401, "kind": "QUARTER_BLDG", "at": Vector2i(129, 178), "delete": true},
 ]
 
 
