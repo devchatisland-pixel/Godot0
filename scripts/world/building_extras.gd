@@ -26,7 +26,7 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	var pid: int = pick["id"]
 	var box: AABB = lib.bounds[pid]
 	if data.b_sign[i] != 0:
-		_place_roof_sign(data, lib, i, xform * box, batch)
+		_place_sign(data, lib, i, pid, xform, batch)
 	match kind:
 		Kind.STADIUM:
 			# Floodlight masts at the corners of the plot (seen at night).
@@ -120,14 +120,55 @@ static func tree_xform(p: Vector3, seed: int) -> Transform3D:
 	return Transform3D(Basis(Vector3.UP, float(seed & 63) * 0.1).scaled(Vector3(s, s, s)), p)
 
 
-## A neon sign standing on the roof (top of the building's box), centred on the lot and
-## turned to the south, which the camera sees.
-static func _place_roof_sign(data: CityData, lib: ModelLibrary, i: int, roof: AABB, batch: InstanceBatch) -> void:
-	var ids := lib.ids(data.b_sign[i])
-	if ids.is_empty():
+## Neon signs by model category: "roof" stands on the roof of the building at its south
+## edge (on the highest point under the sign), "wall" hangs on its south wall at `height` (share of the building
+## height). `scale` shrinks the model; `halo` is the size of the glow copy drawn behind it.
+const ROOF_EDGE_INSET := 0.1
+const SIGNS := {
+	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
+	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.68, "halo": 1.15},
+}
+
+
+static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xform: Transform3D,
+		batch: InstanceBatch) -> void:
+	var cat: int = data.b_sign[i]
+	var ids := lib.ids(cat)
+	if ids.is_empty() or not SIGNS.has(cat):
 		return
-	var r := data.building_rect(i)
-	var at := Vector3(r.position.x + r.size.x * 0.5, roof.end.y, r.position.y + r.size.y * 0.5)
-	var box := lib.bounds[ids[0]]
-	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
-	batch.add(ids[0], Transform3D(Basis(), at - center))
+	var spec: Dictionary = SIGNS[cat]
+	var s: float = spec["scale"]
+	var body: AABB = xform * lib.bounds[pid]
+	var model := lib.bounds[ids[0]]
+	var local_center := Vector3(model.get_center().x, model.position.y, model.get_center().z)
+	var at := Vector3(body.get_center().x, 0.0, body.get_center().z)
+	if spec["mount"] == "wall":
+		local_center = model.get_center()
+		at.y = body.position.y + body.size.y * float(spec["height"])
+		at.z = body.end.z + 0.02
+	else:
+		at.z = body.end.z - ROOF_EDGE_INSET # at the south edge of the roof, like a parapet sign
+		at.y = _roof_height(lib, pid, xform, Vector2(at.x, at.z), model.size.x * s * 0.5)
+	batch.add(ids[0], Transform3D(Basis.from_scale(Vector3(s, s, s)), at - local_center * s))
+	var halo := lib.named_id("neon_halo_%d" % cat)
+	if halo >= 0:
+		var h: float = s * float(spec["halo"])
+		var back := Vector3(0, 0, -0.03)
+		batch.add(halo, Transform3D(Basis.from_scale(Vector3(h, h, s)), at + back - local_center * h
+				+ Vector3(0, 0, local_center.z * (h - s))))
+
+
+## Height of the highest point of the model under a square window of half-width `half`
+## around `center` (the roof under a sign); the top of its box when nothing is there.
+static func _roof_height(lib: ModelLibrary, id: int, xform: Transform3D, center: Vector2, half: float) -> float:
+	var top := -INF
+	var mesh := lib.meshes[id]
+	for s in mesh.get_surface_count():
+		var verts: PackedVector3Array = mesh.surface_get_arrays(s)[Mesh.ARRAY_VERTEX]
+		for v in verts:
+			var p := xform * v
+			if absf(p.x - center.x) <= half and absf(p.z - center.y) <= half:
+				top = maxf(top, p.y)
+	if top == -INF:
+		top = (xform * lib.bounds[id]).end.y
+	return top

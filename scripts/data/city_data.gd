@@ -27,7 +27,7 @@ var b_facing := PackedByteArray()
 var b_seed := PackedInt32Array()
 var b_height := PackedFloat32Array() # relative height factor (density driven)
 var b_scale := PackedFloat32Array()  # size factor of the model (1 = as placed; ManualEdits changes it)
-var b_sign := PackedByteArray()      # neon sign on the roof: 0 none, else a ModelCatalog.Cat (ManualEdits)
+var b_sign := PackedByteArray()      # neon sign on the building: 0 none, else a ModelCatalog.Cat (ManualEdits)
 
 # Chunk index -> building ids whose lot origin is inside the chunk
 var chunk_buildings: Array[PackedInt32Array] = []

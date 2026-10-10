@@ -135,8 +135,8 @@ func _check_edits(data: CityData) -> void:
 			_fail("edit B-%05d: facing %d, wanted %d" % [id, data.b_facing[id], e["facing"]])
 		if e.has("scale") and not is_equal_approx(data.b_scale[id], e["scale"]):
 			_fail("edit B-%05d: scale %.2f, wanted %.2f" % [id, data.b_scale[id], e["scale"]])
-		if e.has("roof_sign") and data.b_sign[id] != ModelCatalog.Cat[e["roof_sign"]]:
-			_fail("edit B-%05d: roof sign not set" % id)
+		if e.has("sign") and data.b_sign[id] != ModelCatalog.Cat[e["sign"]]:
+			_fail("edit B-%05d: sign not set" % id)
 		if e.has("scale_abs") and not is_equal_approx(data.b_scale[id], -float(e["scale_abs"])):
 			_fail("edit B-%05d: absolute scale not set" % id)
 	print("[Test] %d hand edits checked" % ManualEdits.EDITS.size())
@@ -157,6 +157,8 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 			ModelCatalog.Cat.COOLING_HALL, ModelCatalog.Cat.WATCHTOWER]:
 		if not lib.has_cat(cat):
 			_fail("model category %s is empty" % ModelCatalog.Cat.keys()[cat])
+	NightWindows.apply(lib)
+	_check_signs(data, lib)
 	for cat in [ModelCatalog.Cat.NEON_CONTROLLER, ModelCatalog.Cat.NEON_PACMAN]:
 		var b := lib.bounds[lib.ids(cat)[0]]
 		print("[Test] neon sign %s: %.1f wide, %.1f high, %.2f thick" % [ModelCatalog.Cat.keys()[cat], b.size.x, b.size.y, b.size.z])
@@ -184,6 +186,30 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 	print("[Test] tallest Vegas club: %.1f" % tallest_club)
 	if tallest_club > 4.0:
 		_fail("a Vegas club is %.1f tall (limit 4.0)" % tallest_club)
+
+
+## The neon signs are drawn on their buildings: the wall sign on the south face, the roof sign
+## on the roof, each with its glow copy.
+func _check_signs(data: CityData, lib: ModelLibrary) -> void:
+	for b in data.building_count():
+		if data.b_sign[b] == 0:
+			continue
+		var batch := InstanceBatch.new()
+		BuildingPlacer.place(data, lib, b, batch, false)
+		var pick := BuildingPlacer.pick_for(data, lib, b)
+		var body: AABB = (pick["xform"] as Transform3D) * lib.bounds[pick["id"]]
+		var cat: int = data.b_sign[b]
+		var sign_id: int = lib.ids(cat)[0]
+		var halo_id := lib.named_id("neon_halo_%d" % cat)
+		if not batch.transforms.has(sign_id) or not batch.transforms.has(halo_id):
+			_fail("B-%05d has no sign or halo in its batch" % b)
+			continue
+		var t: PackedFloat32Array = batch.transforms[sign_id]
+		# Transform3D is stored as 12 floats: basis rows then origin.
+		var origin := Vector3(t[3], t[7], t[11])
+		print("[Test] B-%05d sign %s at %s, building box %s" % [b, ModelCatalog.Cat.keys()[cat], origin, body])
+		if origin.y < body.position.y or origin.y > body.end.y + 0.1:
+			_fail("B-%05d sign height %.2f is outside the building (%.2f..%.2f)" % [b, origin.y, body.position.y, body.end.y])
 
 
 func _print_map(data: CityData) -> void:

@@ -34,7 +34,9 @@ const PACK_GLOW := {
 ## Neon roof signs: dim by day, very bright at night (they glow in their own colours).
 const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN]
 const NEON_DAY := 0.35
-const NEON_NIGHT := 3.0
+const NEON_NIGHT := 5.0
+## Brightness of the halo (a bigger copy added behind the sign) at night.
+const HALO_NIGHT := 3.0
 ## Night packs keep the lights painted in their emission map (a lit facade where they have none).
 const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
 
@@ -51,6 +53,7 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in NEON_PACKS:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
+			lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
 	for cat in NIGHT_PACKS:
 		for id in lib.ids(cat):
 			var mesh := lib.meshes[id]
@@ -85,6 +88,30 @@ static func _light_facade(mesh: Mesh, energy: float, done: Dictionary, day: floa
 			done[mat] = m
 			done[m] = m
 		mesh.surface_set_material(s, done[mat])
+
+
+## A copy of a neon sign that only adds light (additive, invisible by day): drawn a bit
+## bigger behind the sign it thickens the glow.
+static func _halo(mesh: Mesh) -> ArrayMesh:
+	var out := ArrayMesh.new()
+	for s in mesh.get_surface_count():
+		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh.surface_get_arrays(s))
+		var src := mesh.surface_get_material(s) as BaseMaterial3D
+		var m := StandardMaterial3D.new()
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		m.albedo_color = Color.BLACK
+		m.emission_enabled = true
+		m.emission_operator = BaseMaterial3D.EMISSION_OP_ADD
+		if src != null and src.emission_texture != null:
+			m.emission = Color.BLACK
+			m.emission_texture = src.emission_texture
+		elif src != null:
+			m.emission = src.emission if src.emission_enabled else src.albedo_color
+		SignAtlas.register_night(m, 0.0, HALO_NIGHT)
+		out.surface_set_material(s, m)
+	return out
 
 
 ## The skyline has its city lights in an emission map: dim by day, bright at night.
