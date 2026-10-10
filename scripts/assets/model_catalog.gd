@@ -32,6 +32,8 @@ enum Cat {
 	URBAN2, NIGHT_TOWER, COOLING, COOLING_HALL, WATCHTOWER,
 	# Eighth wave: neon roof signs
 	NEON_CONTROLLER, NEON_PACMAN,
+	# Ninth wave: beach huts and piers
+	BEACH_HUT, PIER,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

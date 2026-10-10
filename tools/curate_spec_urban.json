@@ -187,6 +187,80 @@
 					"footprint": 2.8
 				}
 			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/stylized_pirate_island_pack__low_poly_3d_assets.glb",
+			"out": "pirate_huts",
+			"texture_max": 256,
+			"comment": "Huts and pavilions of the pirate island pack (its boats, barrels and crates are not used). Fronts towards +Z.",
+			"items": [
+				{
+					"id": "hut_house",
+					"nodes": [
+						"084"
+					],
+					"cat": "BEACH_HUT",
+					"footprint": 1.9
+				},
+				{
+					"id": "hut_stilts",
+					"nodes": [
+						"071"
+					],
+					"cat": "BEACH_HUT",
+					"footprint": 1.9
+				},
+				{
+					"id": "hut_pavilion_a",
+					"nodes": [
+						"079"
+					],
+					"cat": "BEACH_HUT",
+					"footprint": 1.9
+				},
+				{
+					"id": "hut_pavilion_b",
+					"nodes": [
+						"080"
+					],
+					"cat": "BEACH_HUT",
+					"footprint": 1.9
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/old_pier.glb",
+			"out": "pier_old",
+			"texture_max": 512,
+			"comment": "The pier runs along +Z; its legs go below the ground (base_frac), the deck stays just above the sea.",
+			"items": [
+				{
+					"id": "pier_old",
+					"nodes": [
+						"peire"
+					],
+					"cat": "PIER",
+					"footprint": 5.0,
+					"yaw": -90,
+					"base_frac": 0.93
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/pier__game_ready_model.glb",
+			"out": "pier_game",
+			"texture_max": 128,
+			"items": [
+				{
+					"id": "pier_game",
+					"nodes": [
+						"Cylinder_048"
+					],
+					"cat": "PIER",
+					"footprint": 4.0,
+					"base_frac": 0.9
+				}
+			]
 		}
 	]
 }

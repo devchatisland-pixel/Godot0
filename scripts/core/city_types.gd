@@ -106,6 +106,8 @@ enum Kind {
 	BT_TOWER,         # the lone tower on its own islet
 	WATCHTOWER,       # wooden lookout in the forests
 	EMPTY,            # a building taken away by hand (ManualEdits): nothing is drawn, the id stays
+	BEACH_HUT,        # hut or pavilion on a beach (BeachSites)
+	PIER,             # wooden pier into the sea (BeachSites)
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -121,7 +123,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.FACTORY_BLDG, Kind.MCDONALDS, Kind.BURGER_KING, Kind.URBAN_CLUSTER,
 	Kind.PIRATE_SHIP, Kind.GRAVE,
 	Kind.NUCLEAR_PLANT, Kind.CINEMA_MAIN, Kind.AIRPORT, Kind.BURGER_JOINT,
-	Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER, Kind.WATCHTOWER,
+	Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER, Kind.WATCHTOWER, Kind.BEACH_HUT, Kind.PIER,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

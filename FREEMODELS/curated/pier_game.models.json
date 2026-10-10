@@ -1,0 +1,9 @@
+{
+	"file": "pier_game.glb",
+	"models": [
+		{
+			"cat": "PIER",
+			"node": "pier_game"
+		}
+	]
+}

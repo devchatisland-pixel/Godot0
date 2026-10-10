@@ -35,7 +35,7 @@ const FAR_COLORS := {
 	Kind.URBAN_CLUSTER: Color("4a4f60"), Kind.NUCLEAR_PLANT: Color("b9bcb8"), Kind.CINEMA_MAIN: Color("e98b8b"),
 	Kind.AIRPORT: Color("9aa0aa"), Kind.BURGER_JOINT: Color("d6402f"),
 	Kind.COOLING_TOWER: Color("c9c6bd"), Kind.COOLING_HALL: Color("b9b6ad"), Kind.BT_TOWER: Color("c7c3bb"),
-	Kind.WATCHTOWER: Color("8a6a45"),
+	Kind.WATCHTOWER: Color("8a6a45"), Kind.BEACH_HUT: Color("c9954a"), Kind.PIER: Color("8a6a45"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -54,7 +54,7 @@ const NAMED := {
 	Kind.BURGER_KING: ["box"], Kind.URBAN_BLDG: ["box"], Kind.URBAN_CLUSTER: ["box"],
 	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.GRAVE: ["grave"],
 	Kind.NUCLEAR_PLANT: ["box"], Kind.CINEMA_MAIN: ["box"], Kind.AIRPORT: ["box"], Kind.BURGER_JOINT: ["box"],
-	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"],
+	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"], Kind.BEACH_HUT: ["box"], Kind.PIER: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -133,18 +133,19 @@ static func place(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatc
 
 ## The model and transform used for building `i`, or {} for fillers without a model
 ## (plazas, gardens, yards). Same choice as `place`, so the picker highlights the right thing.
-static func pick_for(data: CityData, lib: ModelLibrary, i: int) -> Dictionary:
+## `facing` >= 0 asks for the model as if the building faced that way (signs keep their place).
+static func pick_for(data: CityData, lib: ModelLibrary, i: int, facing: int = -1) -> Dictionary:
 	var kind: int = data.b_kind[i]
 	if kind == Kind.PLAZA or kind == Kind.GARDEN or kind == Kind.INDUSTRIAL_YARD or kind == Kind.EMPTY:
 		return {}
-	return _pick_model(data, lib, i)
+	return _pick_model(data, lib, i, facing)
 
 
 # --- Model choice ------------------------------------------------------------------------
-static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary:
+static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
 	var kind: int = data.b_kind[i]
 	var r := data.building_rect(i)
-	var facing: int = data.b_facing[i]
+	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
 	var seed: int = data.b_seed[i]
 	var density: float = data.b_height[i]
 	var candidates := ModelPools.candidates(data, lib, i, kind)

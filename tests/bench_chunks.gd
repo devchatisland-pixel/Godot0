@@ -13,6 +13,7 @@ func _init() -> void:
 	LandmarkMeshes.build_all(lib)
 	EntertainmentMeshes.build_all(lib)
 	NatureMeshes.build_all(lib)
+	ParkMeshes.build_all(lib)
 	CivicMeshes.build_all(lib)
 	var side := data.chunks_per_side()
 	var c := data.centers[0] / cfg.chunk_size

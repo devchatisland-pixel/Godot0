@@ -93,6 +93,7 @@ func _start_city() -> void:
 	PublicMeshes.build_all(library)
 	MilitaryMeshes.build_all(library)
 	FarmMeshes.build_all(library)
+	ParkMeshes.build_all(library)
 	NightWindows.apply(library)
 	var ground := GroundLayer.new()
 	ground.name = "Ground"

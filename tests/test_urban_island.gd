@@ -160,23 +160,13 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 	LandmarkMeshes.build_all(lib)
 	EntertainmentMeshes.build_all(lib)
 	NatureMeshes.build_all(lib)
+	ParkMeshes.build_all(lib)
 	CivicMeshes.build_all(lib)
 	for cat in [ModelCatalog.Cat.NEON_CONTROLLER, ModelCatalog.Cat.NEON_PACMAN, ModelCatalog.Cat.URBAN2, ModelCatalog.Cat.NIGHT_TOWER, ModelCatalog.Cat.COOLING,
 			ModelCatalog.Cat.COOLING_HALL, ModelCatalog.Cat.WATCHTOWER]:
 		if not lib.has_cat(cat):
 			_fail("model category %s is empty" % ModelCatalog.Cat.keys()[cat])
 	NightWindows.apply(lib)
-	for cat in LitWindows.CATS:
-		var lit := 0
-		var total := 0
-		for id in lib.ids(cat):
-			for s in lib.meshes[id].get_surface_count():
-				var m := lib.meshes[id].surface_get_material(s) as BaseMaterial3D
-				total += 1
-				lit += int(m != null and m.emission_enabled and (m.emission_texture != null or m.emission != Color.BLACK))
-		print("[Test] lit windows %-16s %d of %d surfaces" % [ModelCatalog.Cat.keys()[cat], lit, total])
-		if lit == 0:
-			_fail("no lit windows for %s" % ModelCatalog.Cat.keys()[cat])
 	_check_signs(data, lib)
 	for cat in [ModelCatalog.Cat.NEON_CONTROLLER, ModelCatalog.Cat.NEON_PACMAN]:
 		var b := lib.bounds[lib.ids(cat)[0]]

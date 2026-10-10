@@ -1,0 +1,9 @@
+{
+	"file": "pier_old.glb",
+	"models": [
+		{
+			"cat": "PIER",
+			"node": "pier_old"
+		}
+	]
+}

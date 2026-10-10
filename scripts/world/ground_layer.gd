@@ -30,6 +30,11 @@ const ZONE_COLORS := {
 	CityTypes.Zone.SAND: Color("ead9a4"),
 }
 
+## Paths of the park, the boardwalk, and the dry grass where the desert blends into the meadows.
+const PATH := Color("e6d9b0")
+const BOARDWALK := Color("a8794a")
+const DRY_GRASS := Color("c7bb78")
+
 ## Sea colour, also used as background so the ocean looks endless.
 const DEEP_SEA := Color(0.16, 0.45, 0.66)
 
@@ -94,6 +99,16 @@ func _zone_texture(data: CityData) -> ImageTexture:
 			c = lut[z]
 			if z == CityTypes.Zone.NATURE:
 				c = GRASS.lerp(FOREST, float(data.forest[i]) / 255.0)
+			var deco: int = data.deco[i]
+			if deco == AmenitiesPlanner.PATH:
+				c = PATH
+			elif deco == AmenitiesPlanner.BOARD or deco == AmenitiesPlanner.BOARD_LAMP:
+				c = BOARDWALK
+			elif data.edge[i] != 0:
+				# Patchy: the dry colour reaches further in some places than in others.
+				var patch := 0.35 + 0.65 * CityTypes.hashf(i % data.size, i / data.size, 77)
+				var t := float(data.edge[i] & 15) / 4.0 * patch
+				c = c.lerp(DRY_GRASS, t * (0.8 if (data.edge[i] & 0x80) != 0 else 1.0))
 		bytes[i * 4] = c.r8
 		bytes[i * 4 + 1] = c.g8
 		bytes[i * 4 + 2] = c.b8

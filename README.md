@@ -118,6 +118,18 @@ The fog is made of pictures, not 3D volumes:
 The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
 At night the fog turns dark blue-grey and the night skyline model shows its city lights through it.
 
+## Beaches, park and borders
+
+* **Beach huts and piers** (`beach_sites.gd`): five thatched huts on sandy beaches of the main island,
+  three of them with a wooden pier running into the sea (`pirate_huts`, `pier_old`, `pier_game` packs).
+* **Central park** (`amenities_planner.gd`): wide paths from the streets through the lake, a ring path round
+  it, diagonal paths to the corners, benches along the arms, flowerbeds and a playground.
+* **Boardwalk** along the beach of the red district, with lamps that glow at night.
+* **Desert border**: the grass turns patchy and dry over a few cells on both sides, with dry tufts and rocks.
+* **Golden Gate checkpoint**: a police car beside the barriers, like the one on the west highway.
+
+All of it is stored in two layers of `CityData` (`deco`, `edge`) and drawn by `GroundPlacer` / `GroundLayer`.
+
 ## Hand edits
 
 `scripts/generation/manual_edits.gd` lists single-building corrections made after the map is generated:
@@ -153,9 +165,6 @@ At night:
 * Street lamps get bulbs.
 * Signs shine, and the neon stays bright.
 
-* The windows of the city hall, police headquarters, main hospital, main school, pharmacy, cinema, shopping
-  center and the hotels glow warm (cool for blue glass, green for the pharmacy cross): `scripts/assets/lit_windows.gd`
-  finds them by colour in the textures and writes an emission map.
 No real lights are added, so night costs the same as day, on phones too.
 
 ## Signs
@@ -238,6 +247,8 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `cooling` | Cooling Tower (Background) | COOLING, COOLING_HALL | the cooling towers and hall of the nuclear plant |
 | `neon_controller` | Neon game controller | NEON_CONTROLLER | a neon roof sign, very bright at night (on shop B-00257) |
 | `neon_pacman` | Neon Pac-Man (rest pose, no animation) | NEON_PACMAN | a neon roof sign (on the police station B-00685) |
+| `pirate_huts` | Stylized Pirate Island Pack (huts and pavilions only, no boats) | BEACH_HUT | huts on the beaches |
+| `pier_old`, `pier_game` | Old pier, Pier (Game ready model) | PIER | piers beside the huts |
 | `watchtower` | low poly Watchtower (without fences, rails, lamps and trees) | WATCHTOWER | the two forest lookouts |
 | `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |
 | `hungry` | Hungry Jack's restaurant | BURGER_KING | the Burger King of the red district |
@@ -277,6 +288,7 @@ Not used:
 * "Low-poly-night-city-building-skyline" by willis123, CC BY 4.0
 * "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
 * "Pirate Ship" by Oleg Muzyka, CC BY 4.0
+* "Pier (Game ready model)" by BlackBox613, "Old pier" by smitecraft.swe and "Stylized Pirate Island Pack" by CG Lads, CC BY 4.0
 * "neon game controller" by alina_dreiman and "Neon Pac-Man" by patrakeevasveta, CC BY 4.0
 * "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)
 * "XXX Neon Sign" by Jimmy Johansson, CC BY 4.0 (only a front render of it is used, as the XXX texture of the sign atlas)

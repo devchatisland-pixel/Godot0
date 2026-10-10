@@ -42,6 +42,9 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 				continue
 			if data.occupied[i] == 1 or bridge.has_point(Vector2i(x, y)):
 				continue
+			if data.deco[i] != 0:
+				_place_deco(data, lib, x, y, data.deco[i], batch)
+				continue
 			var z: int = data.zone[i]
 			var beach: bool = data.terrain[i] == CityTypes.Terrain.BEACH and data.rocky[i] == 0
 			match z:
@@ -59,6 +62,8 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 				Zone.PRISON:
 					if data.terrain[i] == CityTypes.Terrain.LAND:
 						_scatter(x, y, 0.12, 0.2, trees[(x + y) % trees.size()], batch)
+			if data.edge[i] != 0:
+				_place_edge(lib, x, y, data.edge[i], batch)
 
 
 ## Where no tree or palm grows: round both ends of the metal bridge to the urban island.
@@ -72,6 +77,37 @@ static func _bridge_clearing(data: CityData) -> Rect2i:
 		return Rect2i()
 	var x0 := wb.y - BRIDGE_CLEAR_X.x
 	return Rect2i(x0, wb.z - BRIDGE_CLEAR_Y, wb.x + BRIDGE_CLEAR_X.y - x0, BRIDGE_CLEAR_Y * 2 + 1)
+
+
+# --- Park, boardwalk and the border of the desert -------------------------------------------------
+static func _place_deco(data: CityData, lib: ModelLibrary, x: int, y: int, deco: int, batch: InstanceBatch) -> void:
+	var at := Vector3(x + 0.5, 0.0, y + 0.5)
+	match deco:
+		AmenitiesPlanner.BENCH_X:
+			batch.add(lib.named_id("bench"), Transform3D(Basis(), at))
+		AmenitiesPlanner.BENCH_Z:
+			batch.add(lib.named_id("bench"), Transform3D(Basis(Vector3.UP, PI * 0.5), at))
+		AmenitiesPlanner.FLOWER:
+			batch.add(lib.named_id("flowerbed"), Transform3D(Basis(), at))
+		AmenitiesPlanner.PLAY_CENTER:
+			batch.add(lib.named_id("playground"), Transform3D(Basis(), at))
+		AmenitiesPlanner.BOARD:
+			batch.add(lib.named_id("plank"), Transform3D(Basis(), at))
+		AmenitiesPlanner.BOARD_LAMP:
+			batch.add(lib.named_id("plank"), Transform3D(Basis(), at))
+			batch.add(lib.named_id("boardwalk_lamp"), Transform3D(Basis(), at))
+
+
+## Dry tufts and a few rocks where the desert meets the meadow (`edge`: closeness 1..4 in the
+## low nibble, 0x80 = the cell is desert).
+static func _place_edge(lib: ModelLibrary, x: int, y: int, edge: int, batch: InstanceBatch) -> void:
+	var closeness := float(edge & 15) / 4.0
+	var desert := (edge & 0x80) != 0
+	_scatter(x, y, closeness * (0.2 if desert else 0.5), 0.3, lib.named_id("dry_tuft"), batch)
+	var h := CityTypes.hash2(x, y, 6151)
+	if float(h & 1023) / 1024.0 < closeness * 0.1:
+		var p := Vector3(x + 0.2 + float((h >> 10) & 255) / 255.0 * 0.6, 0, y + 0.2 + float((h >> 18) & 255) / 255.0 * 0.6)
+		batch.add(lib.named_id("rock"), Transform3D(Basis(Vector3.UP, float(h & 63) * 0.1), p))
 
 
 # --- Roads --------------------------------------------------------------------------------

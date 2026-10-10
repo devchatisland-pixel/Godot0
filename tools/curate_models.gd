@@ -124,7 +124,9 @@ func _build_item(src: Node, out: Node3D, item: Dictionary, pack: Dictionary) -> 
 		s = float(item["height"]) / box.size.y
 	if pack.has("max_height") and box.size.y * s > float(pack["max_height"]):
 		s = float(pack["max_height"]) / box.size.y
-	var base := Vector3(box.get_center().x, box.position.y, box.get_center().z)
+	# "base_frac": share of the height that goes below the ground (piers stand on their legs).
+	var base := Vector3(box.get_center().x, box.position.y + box.size.y * float(item.get("base_frac", 0.0)),
+			box.get_center().z)
 	# "yaw" turns the building so that its front looks towards +Z.
 	var rot := Basis(Vector3.UP, deg_to_rad(float(item.get("yaw", 0.0))))
 	holder.transform = Transform3D(rot * Basis.from_scale(Vector3(s, s, s)), rot * (-base * s))

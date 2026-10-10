@@ -138,6 +138,11 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		return
 	var spec: Dictionary = SIGNS[cat]
 	var s: float = spec["scale"]
+	# The sign stays where it was put when the building is turned afterwards.
+	var anchor := BuildingPlacer.pick_for(data, lib, i, data.b_sign_facing[i])
+	if not anchor.is_empty():
+		pid = anchor["id"]
+		xform = anchor["xform"]
 	var body: AABB = xform * lib.bounds[pid]
 	var model := lib.bounds[ids[0]]
 	var local_center := Vector3(model.get_center().x, model.position.y, model.get_center().z)

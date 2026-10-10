@@ -19,6 +19,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 	if data.bridge.x >= 0:
 		var x := data.bridge.x - EAST_BACK
 		_block(lib, Cat.ROADBLOCK_A, x, data.bridge.y, true)
+		_police_car(lib, x + 2, data.bridge.y)
 	if data.west_bridge.x >= 0:
 		var x := data.west_bridge.x + WEST_BACK
 		_block(lib, Cat.ROADBLOCK_B, x, data.west_bridge.z, false)

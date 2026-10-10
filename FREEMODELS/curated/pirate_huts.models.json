@@ -1,0 +1,21 @@
+{
+	"file": "pirate_huts.glb",
+	"models": [
+		{
+			"cat": "BEACH_HUT",
+			"node": "hut_house"
+		},
+		{
+			"cat": "BEACH_HUT",
+			"node": "hut_stilts"
+		},
+		{
+			"cat": "BEACH_HUT",
+			"node": "hut_pavilion_a"
+		},
+		{
+			"cat": "BEACH_HUT",
+			"node": "hut_pavilion_b"
+		}
+	]
+}

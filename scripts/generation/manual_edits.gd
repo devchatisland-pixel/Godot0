@@ -15,6 +15,8 @@ extends RefCounted
 ##   delete   true = nothing is drawn any more
 ##   rect     [x, y, w, h] the new lot (it must be free: take the buildings away first)
 ##   move_to  new top-left cell of the lot, same size (must be free)
+##   old_ground  zone name given back to the cells the building leaves when its lot changes
+##            (the cells it enters take the ground of the building)
 ##   sign     name of a ModelCatalog.Cat (a neon sign); BuildingExtras.SIGNS says where it goes
 
 const EDITS := [
@@ -29,7 +31,8 @@ const EDITS := [
 	{"id": 664, "kind": "HOTEL", "at": Vector2i(170, 164), "scale_abs": 1.0},
 	{"id": 901, "kind": "HOTEL", "at": Vector2i(123, 210), "facing": 2},
 	{"id": 1058, "kind": "OIL_PUMP", "at": Vector2i(73, 109), "move_to": Vector2i(82, 108)},
-	{"id": 1047, "kind": "AIRBASE", "at": Vector2i(69, 113), "rect": [75, 108, 5, 16], "facing": 1},
+	{"id": 1047, "kind": "AIRBASE", "at": Vector2i(69, 113), "rect": [75, 108, 5, 16], "facing": 1,
+		"old_ground": "DESERT"},
 	{"id": 657, "kind": "PHARMACY", "at": Vector2i(150, 166), "facing": 2},
 	{"id": 699, "kind": "SHOP", "at": Vector2i(110, 71), "replace": "BURGER_KING"},
 	{"id": 741, "kind": "POOR_BLDG", "at": Vector2i(122, 82), "delete": true},
@@ -38,7 +41,7 @@ const EDITS := [
 	{"id": 995, "kind": "FUTURE_BLDG", "at": Vector2i(36, 137), "delete": true},
 	{"id": 927, "kind": "FUTURE_BLDG", "at": Vector2i(11, 142), "delete": true},
 	{"id": 985, "kind": "FUTURE_BLDG", "at": Vector2i(23, 143), "delete": true},
-	{"id": 257, "kind": "SHOP", "at": Vector2i(137, 102), "sign": "NEON_CONTROLLER"},
+	{"id": 257, "kind": "SHOP", "at": Vector2i(137, 102), "facing": 1, "sign": "NEON_CONTROLLER"},
 	{"id": 685, "kind": "POLICE", "at": Vector2i(171, 154), "sign": "NEON_PACMAN"},
 	{"id": 653, "kind": "FIRE_STATION", "at": Vector2i(150, 140), "scale": 1.12},
 	{"id": 654, "kind": "POST_OFFICE", "at": Vector2i(133, 152), "scale": 1.12},
@@ -69,6 +72,7 @@ static func apply(data: CityData) -> int:
 			if not _lot_is_free(data, id, lot):
 				push_warning("[Edits] B-%05d: the lot %s is not free: skipped" % [id, lot])
 				continue
+			_move_ground(data, r, lot, e.get("old_ground", ""))
 			data.set_building_rect(id, lot)
 		if e.has("facing"):
 			data.b_facing[id] = e["facing"]
@@ -96,3 +100,17 @@ static func _lot_is_free(data: CityData, id: int, lot: Rect2i) -> bool:
 		if b != id and data.b_kind[b] != CityTypes.Kind.EMPTY and data.building_rect(b).intersects(lot):
 			return false
 	return true
+
+
+## The ground follows the lot: the new cells get the zone of the building, the cells it
+## leaves go back to `old_ground` (when given).
+static func _move_ground(data: CityData, old: Rect2i, lot: Rect2i, old_ground: String) -> void:
+	var zone := data.zone[data.idx(old.position.x, old.position.y)]
+	if old_ground != "":
+		for y in range(old.position.y, old.end.y):
+			for x in range(old.position.x, old.end.x):
+				if not lot.has_point(Vector2i(x, y)):
+					data.zone[data.idx(x, y)] = CityTypes.Zone[old_ground]
+	for y in range(lot.position.y, lot.end.y):
+		for x in range(lot.position.x, lot.end.x):
+			data.zone[data.idx(x, y)] = zone
