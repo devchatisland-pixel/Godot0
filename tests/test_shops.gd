@@ -48,8 +48,8 @@ func _init() -> void:
 	for p in plan:
 		var at: Vector2 = p["at"]
 		var e: Dictionary = by_id[p["id"]]
-		var w: float = e["width"] * ShopSites.CELLS_PER_METRE
-		var d: float = e["depth"] * ShopSites.CELLS_PER_METRE
+		var w: float = e["width"] * float(p["scale"])
+		var d: float = e["depth"] * float(p["scale"])
 		var rect := Rect2(at - Vector2(w, d) * 0.5, Vector2(w, d))
 		for corner in [rect.position, rect.end]:
 			var c := Vector2i(int(floor(corner.x)), int(floor(corner.y)))

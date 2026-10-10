@@ -47,7 +47,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		if mid < 0:
 			continue
 		var at: Vector2 = p["at"]
-		var s := ShopSites.CELLS_PER_METRE
+		var s: float = p.get("scale", ShopSites.CELLS_PER_METRE)
 		var mi := MeshInstance3D.new()
 		mi.mesh = lib.meshes[mid]
 		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * s),

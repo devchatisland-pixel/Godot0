@@ -1,6 +1,6 @@
 # Shop catalog
 
-15 shops, one of each, in a row on the development island (north-east of the map, `Zone.DEV`),
+13 shops and 16 shipping containers, one of each, in rows on the development island (north-east of the map, `Zone.DEV`),
 placed by `scripts/generation/shop_sites.gd` (data: `shops/catalog.json`).
 
 ![Shop catalog](CATALOG.png)
@@ -15,7 +15,6 @@ Rebuild with `python tools/build_shop_catalog.py <raw dir> shops`. Preview all o
 | `shop-candy-b` | Candy | Low Poly Candy Shop | 6.1 x 4.24 x 5.47 | Anggo Ari Wibowo | CC-BY-4.0 |
 | `shop-coffee-a` | Coffee | Coffee Shop (stall) | 20.5 x 9.6 x 6.02 | mohdrafey2207 | CC-BY-4.0 |
 | `shop-flower-a` | Flower | Flower Shop (game asset) | 6.27 x 4.05 x 2.46 | maloy02 | CC-BY-4.0 |
-| `shop-convenience-quickstop` | Convenience | Jay and Silent Bob Quick Stop | 12.02 x 10.26 x 6.21 | Kris Kovac | CC-BY-4.0 |
 | `shop-general-orange-a` | General | Low Poly Shop (orange awning) | 7.67 x 3.89 x 3.33 | Virginia Vidonis | CC-BY-4.0 |
 | `shop-general-orange-b` | General | 2nd Low Poly Shop (orange awning) | 5.89 x 4.37 x 3.31 | Virginia Vidonis | CC-BY-4.0 |
 | `shop-general-generic` | General | Low Poly Generic Shop | 3.69 x 2.48 x 2.64 | assetfactory | SKETCHFAB Standard |
@@ -24,8 +23,33 @@ Rebuild with `python tools/build_shop_catalog.py <raw dir> shops`. Preview all o
 | `shop-townhouse-gabled` | Townhouse | Shop (gabled townhouse) | 2.3 x 2.74 x 2.48 | linus1178 | CC-BY-4.0 |
 | `shop-steel-glass` | General | Shop (steel & glass) | 4.9 x 3.91 x 3.42 | bystryakov.yuriy | CC-BY-4.0 |
 | `shop-coffee-b` | Coffee | Shop - Free model (coffee shop) | 8.05 x 8.91 x 6.86 | Astro0960 | CC-BY-4.0 |
-| `shop-townhouse-belgium` | Townhouse | Nivelles Shop 1 (Belgium) | 8 x 9.3 x 12.51 | Lost Gecko | CC-BY-4.0 |
 | `shop-building-multi` | Building | Building (multi-part cubes) | 4.5 x 6.84 x 6.75 | Codracer13 | CC-BY-4.0 |
+
+### Shipping containers
+
+Split from the "Low-poly Container" pack by `python tools/build_container_shops.py <pack.glb> shops`
+(16 boxes of 12 triangles in 8 textures with 2 UV layouts, textures halved to 512 px). They stand in
+rows south of the shops. "Low-poly Container" by Muhammad Awais Gul, CC-BY-4.0,
+<https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7>
+
+| ID | W x D x H (m) |
+|---|---|
+| `container-01` | 6.1 x 2.44 x 2.65 |
+| `container-02` | 6.1 x 2.44 x 2.65 |
+| `container-03` | 6.1 x 2.44 x 2.65 |
+| `container-04` | 6.1 x 2.44 x 2.65 |
+| `container-05` | 6.1 x 2.44 x 2.65 |
+| `container-06` | 6.1 x 2.44 x 2.65 |
+| `container-07` | 6.1 x 2.44 x 2.65 |
+| `container-08` | 6.1 x 2.44 x 2.65 |
+| `container-09` | 6.1 x 2.44 x 2.65 |
+| `container-10` | 6.1 x 2.44 x 2.65 |
+| `container-11` | 6.1 x 2.44 x 2.65 |
+| `container-12` | 6.1 x 2.44 x 2.65 |
+| `container-13` | 6.1 x 2.44 x 2.65 |
+| `container-14` | 6.1 x 2.44 x 2.65 |
+| `container-15` | 6.1 x 2.44 x 2.65 |
+| `container-16` | 6.1 x 2.44 x 2.65 |
 
 ## Notes and credits
 
@@ -33,7 +57,6 @@ Rebuild with `python tools/build_shop_catalog.py <raw dir> shops`. Preview all o
 - **shop-candy-b** - Candy shop with candy_1 prop; origin is off-centre (bbox x -2.3..3.8). Source: <https://sketchfab.com/3d-models/low-poly-candy-shop-d9cd96eb8e2249eea112d7f9b13e3425>
 - **shop-coffee-a** - Coffee stall between two dark blocks. The original 70x70 ground plane (mesh Object_20) was removed from this copy; bbox is now 20.5 x 6 x 9.6. Source: <https://sketchfab.com/3d-models/coffee-shop-fa7e884d363847619f89f8ee21fa8742>
 - **shop-flower-a** - 255 small meshes (plants/flowers). Contains a Camera node and a pavement mesh. Source: <https://sketchfab.com/3d-models/flower-shop-game-asset-f1eaee257ef5422eb896a08541b4e821>
-- **shop-convenience-quickstop** - Biggest file (6.3 MB, 65k tris). Includes asphalt slab + parked car; origin far from 0 (x 2..12). Heavy for a city tile. Source: <https://sketchfab.com/3d-models/jay-and-silent-bob-quick-stop-49e19755f4ae4688b9b07c82cf4e0699>
 - **shop-general-orange-a** - Same author/style as shop-general-orange-b. Italian node names. Source: <https://sketchfab.com/3d-models/low-poly-shop-0013cf5979c846449c817a2439fd8705>
 - **shop-general-orange-b** - Variant of shop-general-orange-a (adds AC unit, plants, extra awnings). Source: <https://sketchfab.com/3d-models/2nd-low-poly-shop-bc65e31bcdd24d2392e7ea4babebcdc2>
 - **shop-general-generic** - Single textured mesh 'ShopBuilding' + a Collider mesh (hide/remove Collider). License is Sketchfab Standard, not CC-BY. Source: <https://sketchfab.com/3d-models/low-poly-generic-shop-58797c167b834d7ab982afa82f693415>
@@ -42,5 +65,4 @@ Rebuild with `python tools/build_shop_catalog.py <raw dir> shops`. Preview all o
 - **shop-townhouse-gabled** - Step-gabled house with red roof and hanging SHOP sign. 170 tris, single material - cheapest model. Source: <https://sketchfab.com/3d-models/shop-e89a9be0af324355b85278feb4f9da8f>
 - **shop-steel-glass** - Grey flat roof, glass front, red louvres/shutters. Pivot is centred vertically (y -1.6..1.8): needs lifting to sit on ground. Source: <https://sketchfab.com/3d-models/shop-23e3cdb766bd40ac9c63fddfd2d39856>
 - **shop-coffee-b** - Coffee shop with cup + COFFEE sign on roof, lamp post, fence, on a dark base slab. 12k tris; floats at y 0.68 min. Source: <https://sketchfab.com/3d-models/shop-free-model-a10e5b0977cc41c6b115a568ee18772b>
-- **shop-townhouse-belgium** - Tall grey townhouse, untextured single material, 543 tris, 12.5 tall. Source: <https://sketchfab.com/3d-models/nivelles-shop-1-belgium-209c0097e5ab46fd8be7ca5d904479e9>
 - **shop-building-multi** - Pink/grey multi-storey building with striped awning and green base. 36 Cube meshes, 19 materials; pivot centred (y -2.85..3.9). Source: <https://sketchfab.com/3d-models/building-6f57edbc41024402ac4035b6b89661e5>

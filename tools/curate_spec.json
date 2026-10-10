@@ -189,20 +189,6 @@
       "texture_max": 256
     },
     {
-      "src": "res://FREEMODELS/_incoming/detailed_12_storey_panel_apartment_building.glb",
-      "out": "panel_block",
-      "footprint": 1.95,
-      "items": [
-        {
-          "id": "panel_block",
-          "nodes": [
-            "12stbuilding1_LOD1"
-          ],
-          "cat": "PANEL"
-        }
-      ]
-    },
-    {
       "src": "res://FREEMODELS/_incoming/100_lowpoly_buildings__buildings_pack.glb",
       "out": "quarter",
       "max_height": 5.5,
@@ -487,20 +473,6 @@
           ],
           "cat": "CRANE",
           "height": 7.0
-        }
-      ]
-    },
-    {
-      "src": "res://FREEMODELS/_incoming/golden_gate_bridge.glb",
-      "out": "golden_gate",
-      "items": [
-        {
-          "id": "golden_gate",
-          "nodes": [
-            "Cube.001"
-          ],
-          "cat": "BRIDGE",
-          "height": 6.0
         }
       ]
     },
@@ -1092,13 +1064,6 @@
           "id": "flat8",
           "nodes": [
             "PublicBuilding_8"
-          ],
-          "cat": "TOWN2"
-        },
-        {
-          "id": "flat9",
-          "nodes": [
-            "PublicBuilding_9"
           ],
           "cat": "TOWN2"
         },

@@ -1,9 +1,0 @@
-{
-	"file": "panel_block.glb",
-	"models": [
-		{
-			"cat": "PANEL",
-			"node": "panel_block"
-		}
-	]
-}

@@ -107,7 +107,7 @@ To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA
 
 ### The fog island
 
-East of Chat City, the Golden Gate bridge leaves the east coast and disappears into the fog (`scripts/world/fog_island.gd`).
+East of Chat City, a metal bridge (the same model as the west one) leaves the east coast and disappears into the fog (`scripts/world/fog_island.gd`).
 The island itself lies next to the city map and costs very little: it is not streamed, it has no streets and it is drawn with a few MultiMeshes.
 The fog is made of pictures, not 3D volumes:
 
@@ -121,7 +121,7 @@ At night the fog turns dark blue-grey and the night skyline model shows its city
 ## Beaches, park and borders
 
 * **Beach huts and piers** (`beach_sites.gd`): five thatched huts on sandy beaches of the main island,
-  three of them with a wooden pier running into the sea (`pirate_huts`, `pier_old`, `pier_game` packs).
+  three of them with a wooden pier running into the sea (`pirate_huts`, `pier_old` packs).
 * **Central park** (`amenities_planner.gd`): wide paths from the streets through the lake, a ring path round
   it, diagonal paths to the corners, benches along the arms, flowerbeds and a playground.
 * **Boardwalk** along the beach of the red district, with lamps that glow at night.
@@ -251,7 +251,6 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `ny_buildings` | New York buildings | LANDMARK, TOWER_PHOTO, NY_MIDRISE | 7 landmarks, glass towers, brick buildings |
 | `ny_street` | buildings | NY_STREET | shop and office buildings in commercial streets |
 | `towers_a`, `towers_b` | city pack 7 / 8 | TOWER_PHOTO | 16 towers for the middle of downtown |
-| `panel_block` | 12-storey panel block | PANEL | some apartment lots |
 | `quarter` | 100 low-poly buildings | QUARTER_LOW / MID / TALL | the colourful quarter (87 buildings) |
 | `business` | low-poly business pack | BIZ_SHOP, CINEMA, MALL | diners and shops, the cinema, the shopping center |
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
@@ -260,7 +259,6 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `public_main` | low-poly public buildings pack | POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, PHARMACY, GAS_STATION | the main public buildings, one of each, drawn big |
 | `un_tower` | building 3 | UN_TOWER | the United Nations tower |
 | `crane` | building crane | CRANE | one crane in the colourful quarter |
-| `golden_gate` | Golden Gate bridge | BRIDGE | the bridge to the fog island |
 | `night_skyline` | low-poly night city skyline (keeps its light map) | SKYLINE | the hidden city of the fog island, a block of the urban island |
 | `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the second skyline block of the urban island |
 | `urban` | City Buildings - BlackThornProd | URBAN | the towers of the urban island |
@@ -270,7 +268,7 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `neon_controller` | Neon game controller | NEON_CONTROLLER | a neon roof sign, very bright at night (on shop B-00257) |
 | `neon_pacman` | Neon Pac-Man (rest pose, no animation) | NEON_PACMAN | a neon roof sign (on the police station B-00685) |
 | `pirate_huts` | Stylized Pirate Island Pack (huts and pavilions only, no boats) | BEACH_HUT | huts on the beaches |
-| `pier_old`, `pier_game` | Old pier, Pier (Game ready model) | PIER | piers beside the huts |
+| `pier_old` | Old pier | PIER | piers beside the huts |
 | `boat_simple`, `boat_wooden`, `boat_fishing`, `boat_cargo`, `boat_sub` | the five boat files | BOAT_* | one boat of each at sea |
 | `watchtower` | low poly Watchtower (without fences, rails, lamps and trees) | WATCHTOWER | the two forest lookouts |
 | `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |
@@ -300,7 +298,7 @@ Not used:
 
 ### Credits of the latest models
 
-* "Golden Gate Bridge" by JuanG3D, CC BY 4.0
+* "Low-poly Container" by Muhammad Awais Gul, CC BY 4.0 (shops/, development island)
 * "building 3" by geniusrahman155, CC BY 4.0
 * "Low Poly Night City Building Skyline" by 99.Miles, CC BY 4.0
 * "Building Crane (low poly)" by jmarco2000, CC BY 4.0

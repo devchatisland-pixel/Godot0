@@ -83,26 +83,6 @@
    "_x": 35.285
   },
   {
-   "id": "shop-convenience-quickstop",
-   "file": "res://shops/models/shop-convenience-quickstop.glb",
-   "category": "Convenience",
-   "name": "Jay and Silent Bob Quick Stop",
-   "credit": {
-    "title": "Jay And Silent Bob Quick Stop",
-    "author": "Kris Kovac",
-    "url": "https://sketchfab.com/3d-models/jay-and-silent-bob-quick-stop-49e19755f4ae4688b9b07c82cf4e0699",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 12.02,
-    "depth": 10.26,
-    "height": 6.21
-   },
-   "triangles": 64834,
-   "notes": "Biggest file (6.3 MB, 65k tris). Includes asphalt slab + parked car; origin far from 0 (x 2..12). Heavy for a city tile.",
-   "_x": 135.89
-  },
-  {
    "id": "shop-general-orange-a",
    "file": "res://shops/models/shop-general-orange-a.glb",
    "category": "General",
@@ -263,26 +243,6 @@
    "_x": 158.425
   },
   {
-   "id": "shop-townhouse-belgium",
-   "file": "res://shops/models/shop-townhouse-belgium.glb",
-   "category": "Townhouse",
-   "name": "Nivelles Shop 1 (Belgium)",
-   "credit": {
-    "title": "Nivelles Shop 1 [Belgium]",
-    "author": "Lost Gecko",
-    "url": "https://sketchfab.com/3d-models/nivelles-shop-1-belgium-209c0097e5ab46fd8be7ca5d904479e9",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 8.0,
-    "depth": 9.3,
-    "height": 12.51
-   },
-   "triangles": 543,
-   "notes": "Tall grey townhouse, untextured single material, 543 tris, 12.5 tall.",
-   "_x": 170.45000000000002
-  },
-  {
    "id": "shop-building-multi",
    "file": "res://shops/models/shop-building-multi.glb",
    "category": "Building",
@@ -301,6 +261,310 @@
    "triangles": 1060,
    "notes": "Pink/grey multi-storey building with striped awning and green base. 36 Cube meshes, 19 materials; pivot centred (y -2.85..3.9).",
    "_x": 148.15
+  },
+  {
+   "id": "container-01",
+   "file": "res://shops/models/container-01.glb",
+   "category": "Container",
+   "name": "Container 01 (texture 01.5)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-02",
+   "file": "res://shops/models/container-02.glb",
+   "category": "Container",
+   "name": "Container 02 (texture 01.5)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-03",
+   "file": "res://shops/models/container-03.glb",
+   "category": "Container",
+   "name": "Container 03 (texture 01.6)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-04",
+   "file": "res://shops/models/container-04.glb",
+   "category": "Container",
+   "name": "Container 04 (texture 01.6)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-05",
+   "file": "res://shops/models/container-05.glb",
+   "category": "Container",
+   "name": "Container 05 (texture 01.8)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-06",
+   "file": "res://shops/models/container-06.glb",
+   "category": "Container",
+   "name": "Container 06 (texture 01.000)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-07",
+   "file": "res://shops/models/container-07.glb",
+   "category": "Container",
+   "name": "Container 07 (texture 01.7)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-08",
+   "file": "res://shops/models/container-08.glb",
+   "category": "Container",
+   "name": "Container 08 (texture 01.7)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-09",
+   "file": "res://shops/models/container-09.glb",
+   "category": "Container",
+   "name": "Container 09 (texture 01.3)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-10",
+   "file": "res://shops/models/container-10.glb",
+   "category": "Container",
+   "name": "Container 10 (texture 01.3)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-11",
+   "file": "res://shops/models/container-11.glb",
+   "category": "Container",
+   "name": "Container 11 (texture 01.4)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-12",
+   "file": "res://shops/models/container-12.glb",
+   "category": "Container",
+   "name": "Container 12 (texture 01.4)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-13",
+   "file": "res://shops/models/container-13.glb",
+   "category": "Container",
+   "name": "Container 13 (texture 01.000)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-14",
+   "file": "res://shops/models/container-14.glb",
+   "category": "Container",
+   "name": "Container 14 (texture 01.000)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-15",
+   "file": "res://shops/models/container-15.glb",
+   "category": "Container",
+   "name": "Container 15 (texture 01.1)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "container-16",
+   "file": "res://shops/models/container-16.glb",
+   "category": "Container",
+   "name": "Container 16 (texture 01.1)",
+   "credit": {
+    "title": "Low-poly Container",
+    "author": "Muhammad Awais Gul",
+    "url": "https://sketchfab.com/3d-models/low-poly-container-044a9b7d5046496b9de3b22ee60bfaa7",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 2.44,
+    "height": 2.65
+   },
+   "triangles": 12,
+   "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
   }
  ]
 }

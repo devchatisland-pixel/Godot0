@@ -247,22 +247,6 @@
 			]
 		},
 		{
-			"src": "res://FREEMODELS/_incoming/pier__game_ready_model.glb",
-			"out": "pier_game",
-			"texture_max": 128,
-			"items": [
-				{
-					"id": "pier_game",
-					"nodes": [
-						"Cylinder_048"
-					],
-					"cat": "PIER",
-					"footprint": 4.0,
-					"base_frac": 0.9
-				}
-			]
-		},
-		{
 			"src": "res://FREEMODELS/_incoming/simple_low_poly_boat.glb",
 			"out": "boat_simple",
 			"texture_max": 256,

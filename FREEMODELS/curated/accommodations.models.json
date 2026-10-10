@@ -35,10 +35,6 @@
 		},
 		{
 			"cat": "TOWN2",
-			"node": "flat9"
-		},
-		{
-			"cat": "TOWN2",
 			"node": "flat10"
 		}
 	]

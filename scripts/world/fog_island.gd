@@ -1,6 +1,6 @@
 class_name FogIsland
 extends Node3D
-## Draws the island hidden in the fog east of Chat City and the Golden Gate
+## Draws the island hidden in the fog east of Chat City and the metal
 ## bridge that leads to it:
 ##   - its buildings and palms (a few MultiMeshes, always loaded, small),
 ##   - the night skyline model in its two downtowns (city lights in the fog),
@@ -22,18 +22,12 @@ const LAYERS := [
 ]
 ## Smoke plumes rising from the hidden city (local cells of the fog island).
 const PLUMES := [Vector2(70, 40) + FogIslandShaper.SHIFT, Vector2(78, 88) + FogIslandShaper.SHIFT]
-## Highest the bridge towers may stand (the model is squashed to keep them slim).
-const BRIDGE_HEIGHT := 3.6
-## Where the deck of the bridge model is (fraction of its height) and the height it must have
-## (just above the road tiles), so the highway runs onto the bridge without a step.
-const DECK_FRACTION := 0.3083
-const DECK_LEVEL := 0.06
 ## Width of the title in world units and its height above the island.
 const TITLE_WIDTH := 84.0
 const TITLE_HEIGHT := 3.0
 
 var _materials: Array[ShaderMaterial] = []
-## x range and row of the Golden Gate, kept free of fog.
+## x range and row of the bridge, kept free of fog.
 var _clear := Vector3(-1000.0, -1000.0, 0.0)
 ## Clear radius around the bridge (cells) and how wide the fog fades back in.
 const CLEAR_RADIUS := 6.0
@@ -117,7 +111,8 @@ func _build_skylines(fog: FogIslandShaper, lib: ModelLibrary, id: int) -> void:
 		k += 1
 
 
-# --- Golden Gate bridge -----------------------------------------------------------------------
+# --- Bridge to the fog island ------------------------------------------------------------------
+## The same metal truss as the west bridge (WestBridge), several spans end to end.
 func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	var fog := data.fog
 	if data.bridge.x < 0 or fog.bridge_land_x < 0.0:
@@ -125,27 +120,33 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	var x0 := float(data.bridge.x) - 0.6
 	var x1 := fog.bridge_land_x + 1.0
 	var z := float(data.bridge.y) + 0.5
-	var ids := lib.ids(Cat.BRIDGE)
+	var ids := lib.ids(Cat.METAL_BRIDGE)
 	if ids.is_empty():
 		return
 	var box := lib.bounds[ids[0]]
-	# The model runs along its longest side; turn it to run along X.
+	var count := maxi(1, ceili((x1 - x0) / WestBridge.SPAN))
+	var span := (x1 - x0) / float(count)
 	var along_x := box.size.x >= box.size.z
-	var length := box.size.x if along_x else box.size.z
-	var s := (x1 - x0) / length
-	var sy := minf(s, BRIDGE_HEIGHT / box.size.y)
-	# The deck is as wide as the three-lane highway that leads to it.
-	var width := 3.0 / (box.size.z if along_x else box.size.x)
-	var basis := (Basis() if along_x else Basis(Vector3.UP, PI * 0.5)) * Basis.from_scale(Vector3(s, sy, width))
+	var model_len := box.size.x if along_x else box.size.z
+	var model_w := box.size.z if along_x else box.size.x
+	var sx := span / model_len
+	var sz := WestBridge.WIDTH / model_w
+	var sy := minf(sx, WestBridge.MAX_HEIGHT / box.size.y)
+	var basis := (Basis() if along_x else Basis(Vector3.UP, PI * 0.5)) * Basis.from_scale(Vector3(sx, sy, sz))
 	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
-	var mi := MeshInstance3D.new()
-	mi.name = "GoldenGate"
-	mi.mesh = lib.meshes[ids[0]]
-	# Lower the model so that its deck (measured: 31% of its height) is level with the highway.
-	var deck := (box.position.y + DECK_FRACTION * box.size.y) * sy
-	mi.transform = Transform3D(basis, Vector3((x0 + x1) * 0.5, DECK_LEVEL - deck, z) - basis * center)
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(mi)
+	var deck := (box.position.y + WestBridge.DECK_FRACTION * box.size.y) * sy - WestBridge.DECK_LEVEL
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = lib.meshes[ids[0]]
+	mm.instance_count = count
+	for k in count:
+		var at := Vector3(x0 + span * (float(k) + 0.5), 0.0, z)
+		mm.set_instance_transform(k, Transform3D(basis, at - basis * center - Vector3(0, deck, 0)))
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = "FogBridge"
+	mmi.multimesh = mm
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mmi)
 	# Only the span over the water stays clear: the fog covers the island itself from its coast.
 	_clear = Vector3(x0 - 4.0, x1 - 10.0, z)
 
