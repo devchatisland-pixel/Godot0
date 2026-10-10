@@ -15,6 +15,7 @@ extends RefCounted
 ##   scale_abs  absolute scale of the model, 1 = its own size (ignores the lot)
 ##   replace  name of the Kind the building becomes (it keeps its lot and its facing)
 ##   delete   true = nothing is drawn any more
+##   park     true = the cells of the lot become park ground (trees grow there; use with delete)
 ##   rect     [x, y, w, h] the new lot (it must be free: take the buildings away first)
 ##   move_to  new top-left cell of the lot, same size (must be free)
 ##   old_ground  zone name given back to the cells the building leaves when its lot changes
@@ -30,7 +31,7 @@ const EDITS := [
 	{"id": 676, "kind": "CRANE", "at": Vector2i(132, 165), "facing": 1},
 	{"id": 646, "kind": "CINEMA_MAIN", "at": Vector2i(139, 143), "scale": 0.45},
 	{"id": 652, "kind": "BANK", "at": Vector2i(139, 157), "scale": 0.6},
-	{"id": 662, "kind": "HOTEL", "at": Vector2i(164, 129), "facing": 3, "scale": 0.7},
+	{"id": 662, "kind": "HOTEL", "at": Vector2i(164, 129), "delete": true, "park": true},
 	{"id": 661, "kind": "HOTEL", "at": Vector2i(100, 166), "facing": 3},
 	{"id": 214, "kind": "SHOP", "at": Vector2i(120, 132), "delete": true},
 	{"id": 215, "kind": "SHOP", "at": Vector2i(121, 132), "delete": true},
@@ -88,7 +89,21 @@ const EDITS := [
 	{"id": 937, "kind": "FUTURE_BLDG", "at": Vector2i(11, 160), "delete": true},
 	{"id": 925, "kind": "FUTURE_BLDG", "at": Vector2i(14, 137), "delete": true},
 	{"id": 401, "kind": "QUARTER_BLDG", "at": Vector2i(129, 178), "delete": true},
+	# Shopping center: a casino like B-00675 stands in a park where it was.
+	{"id": 645, "kind": "SHOPPING_CENTER", "at": Vector2i(100, 138), "replace": "CASINO",
+		"rect": [100, 138, 3, 3], "old_ground": "PARK"},
+	{"id": 409, "kind": "OFFICE", "at": Vector2i(142, 140), "delete": true},
+	{"id": 669, "kind": "BURGER_JOINT", "at": Vector2i(139, 140), "delete": true},
+	{"id": 205, "kind": "APARTMENT", "at": Vector2i(120, 91), "delete": true},
+	# Burger joints: 5 of the 10 are gone (B-00667 and B-00669 above, and these three).
+	{"id": 666, "kind": "BURGER_JOINT", "at": Vector2i(131, 101), "delete": true},
+	{"id": 671, "kind": "BURGER_JOINT", "at": Vector2i(160, 119), "delete": true},
+	{"id": 673, "kind": "BURGER_JOINT", "at": Vector2i(154, 166), "delete": true},
 ]
+
+## Kinds taken away everywhere, whatever their number: the pirate ships (the ones at sea are
+## only made after the other edits), the airport and the urban ghetto block.
+const DELETED_KINDS := ["PIRATE_SHIP", "AIRPORT", "RUSSIAN"]
 
 
 ## Applies every entry; returns how many were applied.
@@ -144,6 +159,10 @@ static func apply(data: CityData) -> int:
 			data.b_kind[id] = CityTypes.Kind[e["replace"]]
 		if e.get("delete", false):
 			data.b_kind[id] = CityTypes.Kind.EMPTY
+		if e.get("park", false):
+			for y in range(lot.position.y, lot.end.y):
+				for x in range(lot.position.x, lot.end.x):
+					data.zone[data.idx(x, y)] = CityTypes.Zone.PARK
 		applied += 1
 	return applied
 
@@ -202,6 +221,11 @@ const LATE := [
 
 
 static func apply_late(data: CityData) -> void:
+	for kind_name in DELETED_KINDS:
+		var kind: int = CityTypes.Kind[kind_name]
+		for b in data.building_count():
+			if data.b_kind[b] == kind:
+				data.b_kind[b] = CityTypes.Kind.EMPTY
 	for e in LATE:
 		var id := _find(data, e["kind"], e["at"])
 		if id >= 0:

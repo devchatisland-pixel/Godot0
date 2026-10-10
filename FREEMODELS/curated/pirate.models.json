@@ -1,9 +1,0 @@
-{
-	"file": "pirate.glb",
-	"models": [
-		{
-			"cat": "PIRATE_SHIP",
-			"node": "pirate_ship"
-		}
-	]
-}

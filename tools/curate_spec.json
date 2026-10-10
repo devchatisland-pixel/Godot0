@@ -262,14 +262,6 @@
             "Cinema"
           ],
           "cat": "CINEMA"
-        },
-        {
-          "id": "shopping_center",
-          "nodes": [
-            "ShoppingCenterBuilding"
-          ],
-          "cat": "MALL",
-          "scale_mul": 0.733
         }
       ],
       "scale_ref": {
@@ -1330,14 +1322,6 @@
           "cat": "WAREHOUSE"
         },
         {
-          "id": "brick_works",
-          "nodes": [
-            "Object_10"
-          ],
-          "cat": "FACTORY",
-          "scale_mul": 0.4
-        },
-        {
           "id": "field",
           "nodes": [
             "Object_2"
@@ -1361,86 +1345,11 @@
             -0.7
           ],
           "cat": "POOR_SLAB"
-        },
-        {
-          "id": "panel0",
-          "region": [
-            -2.2,
-            -2.4,
-            -0.65,
-            -0.7
-          ],
-          "cat": "POOR_BLOCK"
-        },
-        {
-          "id": "panel1",
-          "region": [
-            -0.65,
-            -2.4,
-            0.75,
-            -0.7
-          ],
-          "cat": "POOR_BLOCK"
-        },
-        {
-          "id": "panel2",
-          "region": [
-            0.75,
-            -2.4,
-            2.1,
-            -0.7
-          ],
-          "cat": "POOR_BLOCK"
-        },
-        {
-          "id": "panel3",
-          "region": [
-            2.1,
-            -2.4,
-            3.45,
-            -0.7
-          ],
-          "cat": "POOR_BLOCK"
-        },
-        {
-          "id": "panel4",
-          "region": [
-            3.45,
-            -2.4,
-            4.75,
-            -0.7
-          ],
-          "cat": "POOR_BLOCK"
-        },
-        {
-          "id": "panel5",
-          "region": [
-            4.75,
-            -2.4,
-            6.2,
-            -0.7
-          ],
-          "cat": "POOR_BLOCK"
         }
       ],
       "texture_max": 384
     },
-    {
-      "src": "res://FREEMODELS/_incoming/russian_building.glb",
-      "out": "russian",
-      "footprint": 3.6,
-      "items": [
         {
-          "id": "ghetto",
-          "nodes": [
-            "Cube"
-          ],
-          "cat": "RUSSIAN"
-        }
-      ],
-      "texture_max": 1024
-    },
-    {
       "src": "res://FREEMODELS/_incoming/industrial_building.glb",
       "out": "industrial",
       "footprint": 6.0,
@@ -1586,23 +1495,7 @@
         }
       ]
     },
-    {
-      "src": "res://FREEMODELS/_incoming/pirate_ship.glb",
-      "out": "pirate",
-      "texture_max": 512,
-      "items": [
         {
-          "id": "pirate_ship",
-          "nodes": [
-            "Polygon_Reduction_1"
-          ],
-          "cat": "PIRATE_SHIP",
-          "footprint": 6.0,
-          "yaw": 90
-        }
-      ]
-    },
-    {
       "src": "res://FREEMODELS/_incoming/night_skyline_2.glb",
       "out": "future",
       "keep_emission": true,
@@ -1740,27 +1633,6 @@
           "footprint": 3.2
         }
       ]
-    },
-    {
-      "src": "res://FREEMODELS/_incoming/airport_pack.glb",
-      "out": "airport",
-      "texture_max": 512,
-      "items": [
-        {
-          "id": "airport",
-          "nodes": [
-            "02_ControlTower",
-            "03_AirplaneStairs",
-            "04_Hangar",
-            "06_Tunnel",
-            "07_Modulo1",
-            "07_Modulo2",
-            "LandingTrack1Straight"
-          ],
-          "cat": "AIRPORT",
-          "footprint": 32.0
-        }
-      ]
     }
-  ]
+      ]
 }
