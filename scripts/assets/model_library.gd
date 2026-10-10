@@ -96,6 +96,18 @@ func named_id(name: String) -> int:
 	return named.get(name, -1)
 
 
+## Loads one model file (imported or raw) as a mesh named `name`; returns its id or -1.
+## Used for the single vehicles that are not part of a category.
+func load_named(name: String, path: String) -> int:
+	if named.has(name):
+		return named[name]
+	var mesh := _load_mesh(path)
+	if mesh == null:
+		push_warning("[Models] could not load " + path)
+		return -1
+	return add_named(name, mesh)
+
+
 # --- Loading -------------------------------------------------------------------------
 ## Keeps at most `limit` models per category (evenly spread over the list).
 func _limit_variants(entries: Array[Dictionary], limit: int) -> Array[Dictionary]:

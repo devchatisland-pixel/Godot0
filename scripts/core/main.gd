@@ -128,6 +128,11 @@ func _start_city() -> void:
 	add_child(roadblocks)
 	roadblocks.build(data, library)
 
+	var vehicles := MapVehicles.new()
+	vehicles.name = "Vehicles"
+	add_child(vehicles)
+	vehicles.build(data, library)
+
 	# Every building can be clicked: glow and information bubble.
 	picker = BuildingPicker.new()
 	picker.name = "BuildingPicker"
