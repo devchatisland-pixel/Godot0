@@ -26,6 +26,9 @@ const EDITS := [
 	{"id": 741, "kind": "POOR_BLDG", "at": Vector2i(122, 82), "delete": true},
 	{"id": 667, "kind": "BURGER_JOINT", "at": Vector2i(92, 136), "delete": true},
 	{"id": 693, "kind": "HOSPITAL", "at": Vector2i(160, 139), "replace": "MAIN_HOSPITAL", "scale_abs": 1.0},
+	{"id": 995, "kind": "FUTURE_BLDG", "at": Vector2i(36, 137), "delete": true},
+	{"id": 927, "kind": "FUTURE_BLDG", "at": Vector2i(11, 142), "delete": true},
+	{"id": 985, "kind": "FUTURE_BLDG", "at": Vector2i(23, 143), "delete": true},
 	{"id": 653, "kind": "FIRE_STATION", "at": Vector2i(150, 140), "scale": 1.12},
 	{"id": 654, "kind": "POST_OFFICE", "at": Vector2i(133, 152), "scale": 1.12},
 ]

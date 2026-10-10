@@ -16,6 +16,8 @@ const FARM := {"at": Vector2(202, 190), "r": Vector2(24, 32)}
 const FOREST := {"at": Vector2(178, 62), "r": Vector2(34, 17)}
 ## The smallest palm islet: the pirate grave stands on it, the pirate ship lies off its coast.
 const PIRATE_ISLET := Vector2i(250, 92)
+## Where the search for the sea of the pirate ship starts.
+const PIRATE_SEA := Vector2i(252, 238)
 ## The 8 buildings of the industrial zone: sizes in cells.
 const FACTORY_SIZES := [Vector2i(7, 4), Vector2i(6, 4), Vector2i(5, 4), Vector2i(4, 3),
 		Vector2i(4, 3), Vector2i(3, 3), Vector2i(3, 3), Vector2i(3, 3)]
@@ -187,13 +189,13 @@ func build_mountains() -> void:
 			i += 1
 
 
-## The pirate grave on the smallest islet, and the pirate ship anchored off its coast: far
-## enough west to be at the edge of the fog of the fog island, not in the thick of it.
+## The pirate grave on the smallest islet, and the pirate ship in the open sea of the
+## south-east, off the palm islet there: far from the fog of the fog island.
 func build_pirate_islet() -> void:
 	var grave := _spots.find_spot(PIRATE_ISLET, Vector2i.ONE, Zone.ISLET, 3, 0)
 	if grave.size.x > 0:
 		_spots.claim(grave, Kind.GRAVE, 2)
-	var ship := _spots.find_water(PIRATE_ISLET + Vector2i(-14, 4), Vector2i(7, 3), 8)
+	var ship := _spots.find_water(PIRATE_SEA, Vector2i(7, 3), 10)
 	if ship.size.x > 0:
 		_spots.claim(ship, Kind.PIRATE_SHIP, 2)
 
