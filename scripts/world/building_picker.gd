@@ -68,6 +68,8 @@ func pick(screen_pos: Vector2) -> int:
 	var best := -1
 	var best_t := INF
 	for i in _data.building_count():
+		if _data.b_kind[i] == CityTypes.Kind.EMPTY:
+			continue
 		var r := _data.building_rect(i)
 		var coarse := AABB(Vector3(r.position.x, 0.0, r.position.y), Vector3(r.size.x, COARSE_HEIGHT, r.size.y))
 		if coarse.intersects_ray(from, dir) == null:

@@ -135,7 +135,7 @@ func _build_item(src: Node, out: Node3D, item: Dictionary, pack: Dictionary) -> 
 
 ## Packs that store one object per material for the whole town: cuts the
 ## triangles into the items that carry a "region" ([x0, z0, x1, z1] in world
-## space, optional "ymax"), by the centre of each triangle. One pass over
+## space, optional "ymax" and "circle" [x, z, radius]), by the centre of each triangle. One pass over
 ## the triangles whatever the number of buildings.
 func _split_regions(src: Node, items: Array) -> Dictionary:
 	var wanted: Array = items.filter(func(i): return i.has("region"))
@@ -173,6 +173,10 @@ func _split_regions(src: Node, items: Array) -> Dictionary:
 						continue
 					if it.has("ymax") and ctr.y > float(it["ymax"]):
 						continue
+					if it.has("circle"):
+						var circ: Array = it["circle"]
+						if Vector2(ctr.x - float(circ[0]), ctr.z - float(circ[1])).length() > float(circ[2]):
+							continue
 					var per: Dictionary = buckets[it["id"]]
 					if not per.has(mat):
 						per[mat] = {"v": PackedVector3Array(), "n": PackedVector3Array(),

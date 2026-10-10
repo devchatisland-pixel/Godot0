@@ -163,7 +163,9 @@ func _paint_new_land() -> void:
 				_data.zone[i] = Zone.NATURE
 			elif _island.is_prison_island(x, y):
 				_data.zone[i] = Zone.PRISON
-			elif _island.is_urban_island(x, y) or _island.is_tower_islet(x, y):
+			elif _island.is_tower_islet(x, y):
+				_data.zone[i] = Zone.INDUSTRIAL
+			elif _island.is_urban_island(x, y):
 				_data.zone[i] = Zone.URBAN
 			else:
 				_data.zone[i] = Zone.ISLET

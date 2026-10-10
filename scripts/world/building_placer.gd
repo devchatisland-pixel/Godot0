@@ -35,7 +35,7 @@ const FAR_COLORS := {
 	Kind.URBAN_CLUSTER: Color("4a4f60"), Kind.NUCLEAR_PLANT: Color("b9bcb8"), Kind.CINEMA_MAIN: Color("e98b8b"),
 	Kind.AIRPORT: Color("9aa0aa"), Kind.BURGER_JOINT: Color("d6402f"),
 	Kind.COOLING_TOWER: Color("c9c6bd"), Kind.COOLING_HALL: Color("b9b6ad"), Kind.BT_TOWER: Color("c7c3bb"),
-	Kind.HELIPAD: Color("9aa0aa"), Kind.WATCHTOWER: Color("8a6a45"),
+	Kind.WATCHTOWER: Color("8a6a45"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -55,7 +55,6 @@ const NAMED := {
 	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.GRAVE: ["grave"],
 	Kind.NUCLEAR_PLANT: ["box"], Kind.CINEMA_MAIN: ["box"], Kind.AIRPORT: ["box"], Kind.BURGER_JOINT: ["box"],
 	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["box"], Kind.WATCHTOWER: ["box"],
-	Kind.HELIPAD: ["helipad_pad"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -68,10 +67,10 @@ const SEED_VARIANTS: Array[int] = [Kind.MUSEUM, Kind.HOTEL]
 ## Small props that keep their modelled size instead of filling the lot.
 const FIXED_SIZE: Array[int] = [
 	Kind.LIGHTHOUSE, Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
-	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE, Kind.HELIPAD,
+	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE,
 ]
 ## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
-const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6, Kind.HELIPAD: 2.6}
+const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6}
 ## Las Vegas buildings are drawn at most this much bigger than modelled (they were skyscraper size).
 const VEGAS_MAX_FILL := 1.2
 ## Cooling towers beside the nuclear plant, the BT tower and the watchtowers: largest scale.
@@ -85,6 +84,8 @@ const BIG_MOUNTAIN_SEED := 16
 const UN_SCALE := 1.5
 ## Futuristic towers of the urban island: a bit wider than their lot allows for others, much taller.
 const FUTURE_STRETCH := 1.5
+## The futuristic tower (model name ends with this) that always shows its south face.
+const TOWER_FACING_SOUTH := "tower_e"
 ## Las Vegas buildings by the short side of their lot: small bars and chapels,
 ## clubs, then neon towers and resorts that fill bigger lots.
 const VEGAS_BY_SIZE := {
@@ -104,6 +105,8 @@ const LANDMARK_HEIGHT := 11.0
 ## Adds the models of building `i` to `batch` (near LOD) or a box (far LOD).
 static func place(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatch, far: bool) -> void:
 	var kind: int = data.b_kind[i]
+	if kind == Kind.EMPTY:
+		return
 	if kind == Kind.PLAZA or kind == Kind.GARDEN or kind == Kind.INDUSTRIAL_YARD:
 		if not far:
 			BuildingExtras.place_filler(data, lib, i, kind, batch)
@@ -127,7 +130,7 @@ static func place(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatc
 ## (plazas, gardens, yards). Same choice as `place`, so the picker highlights the right thing.
 static func pick_for(data: CityData, lib: ModelLibrary, i: int) -> Dictionary:
 	var kind: int = data.b_kind[i]
-	if kind == Kind.PLAZA or kind == Kind.GARDEN or kind == Kind.INDUSTRIAL_YARD:
+	if kind == Kind.PLAZA or kind == Kind.GARDEN or kind == Kind.INDUSTRIAL_YARD or kind == Kind.EMPTY:
 		return {}
 	return _pick_model(data, lib, i)
 
@@ -157,6 +160,7 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 		fill *= KIND_SCALE.get(kind, 1.0)
 		if kind == Kind.MOUNTAIN and seed == BIG_MOUNTAIN_SEED:
 			fill *= 1.4
+		fill *= data.b_scale[i]
 		return {"id": nid, "xform": _fit(lib, nid, r, facing, fill, 1.0, 0.0, true)}
 	if candidates.is_empty():
 		var bid := lib.named_id("box")
@@ -167,6 +171,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	if kind == Kind.FIELD:
 		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r)}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
+	if kind == Kind.FUTURE_BLDG and lib.model_name(id).ends_with(TOWER_FACING_SOUTH):
+		facing = 2 # this tower is only good looking from the south
 	var scale := 1.0
 	var stretch := 1.0
 	var room := _room(lib, id, r, facing)
@@ -214,6 +220,7 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 	if ModelPools.is_new_york(lib, id):
 		# The New York street buildings stand taller than the Kenney kit.
 		stretch = 1.5
+	scale *= data.b_scale[i]
 	var push := 0.25 if kind == Kind.HOUSE else 0.85
 	if CityTypes.is_service(kind):
 		push = 0.0

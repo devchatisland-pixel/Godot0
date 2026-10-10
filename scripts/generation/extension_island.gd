@@ -18,7 +18,7 @@ const URBAN_NORTH := {"at": Vector2(34, 96), "r": Vector2(21, 13)}
 ## Columns of the map the urban island may use (west of the metal bridge).
 const URBAN_COLUMNS := 60
 ## The tiny islet of the BT tower, off the south end of the urban island.
-const TOWER_ISLET := {"at": Vector2(18, 204), "r": Vector2(9, 5.5)}
+const TOWER_ISLET := {"at": Vector2(18, 204), "r": Vector2(10, 6.5)}
 ## Palm islets: centre and radius in cells.
 const PALM_ISLETS := [
 	{"at": Vector2(70, 252), "r": 4.5}, {"at": Vector2(150, 259), "r": 5.0},

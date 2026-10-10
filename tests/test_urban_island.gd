@@ -23,6 +23,7 @@ func _init() -> void:
 	_check_places(data, by_kind)
 	_check_towers(data, by_kind)
 	_check_watchtowers(data, by_kind)
+	_check_edits(data)
 	_check_models(cfg, data, by_kind)
 	print("[Test] %s" % ("FAILED: %d" % _fails if _fails > 0 else "all urban island checks passed"))
 	quit(1 if _fails > 0 else 0)
@@ -81,12 +82,20 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 	if not by_kind.has(Kind.COOLING_HALL):
 		_fail("no cooling hall")
 	var bt := _rect(data, Kind.BT_TOWER, by_kind)
-	var pad := _rect(data, Kind.HELIPAD, by_kind)
-	if bt.size.x == 0 or pad.size.x == 0:
-		_fail("BT tower or helipad missing")
-	elif not (ExtensionIsland.TOWER_ISLET["at"] as Vector2).distance_to(Vector2(bt.get_center())) < 12.0:
-		_fail("BT tower is not on its islet: %s" % bt)
-	print("[Test] airport %s  plant %s  BT %s  pad %s" % [airport, plant, bt, pad])
+	var islet := ExtensionIsland.TOWER_ISLET["at"] as Vector2
+	var dishes := 0
+	for b in by_kind.get(Kind.SAT_DISH, []):
+		if islet.distance_to(Vector2(data.building_rect(b).get_center())) < 12.0:
+			dishes += 1
+	if bt.size.x == 0:
+		_fail("BT tower missing")
+	elif islet.distance_to(Vector2(bt.get_center())) > 2.5:
+		_fail("BT tower is not in the middle of its islet: %s" % bt)
+	if dishes != 3:
+		_fail("expected 3 satellite dishes round the BT tower, found %d" % dishes)
+	if bt.size.x > 0 and data.zone_at(bt.position.x, bt.position.y) != Zone.INDUSTRIAL:
+		_fail("the BT islet is not an industrial zone")
+	print("[Test] airport %s  plant %s  BT %s  dishes %d" % [airport, plant, bt, dishes])
 
 
 func _check_towers(data: CityData, by_kind: Dictionary) -> void:
@@ -115,6 +124,20 @@ func _check_watchtowers(data: CityData, by_kind: Dictionary) -> void:
 	print("[Test] watchtowers: ", list.map(func(b): return data.building_rect(b)))
 
 
+## Every hand edit (ManualEdits) was applied: the kind, facing and scale are the wanted ones.
+func _check_edits(data: CityData) -> void:
+	for e in ManualEdits.EDITS:
+		var id: int = e["id"]
+		var want: String = "EMPTY" if e.get("delete", false) else e.get("replace", e["kind"])
+		if CityTypes.Kind.keys()[data.b_kind[id]] != want:
+			_fail("edit B-%05d: expected %s, found %s" % [id, want, CityTypes.Kind.keys()[data.b_kind[id]]])
+		if e.has("facing") and data.b_facing[id] != e["facing"]:
+			_fail("edit B-%05d: facing %d, wanted %d" % [id, data.b_facing[id], e["facing"]])
+		if e.has("scale") and not is_equal_approx(data.b_scale[id], e["scale"]):
+			_fail("edit B-%05d: scale %.2f, wanted %.2f" % [id, data.b_scale[id], e["scale"]])
+	print("[Test] %d hand edits checked" % ManualEdits.EDITS.size())
+
+
 ## Every new kind gets its real model (not the grey box); Vegas buildings stay low.
 func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void:
 	var lib := ModelLibrary.new()
@@ -133,7 +156,7 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 	var seen := {}
 	var tallest_club := 0.0
 	for k in [Kind.AIRPORT, Kind.NUCLEAR_PLANT, Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER,
-			Kind.HELIPAD, Kind.WATCHTOWER, Kind.URBAN_BLDG, Kind.FUTURE_BLDG, Kind.NIGHTCLUB]:
+			Kind.WATCHTOWER, Kind.SAT_DISH, Kind.URBAN_BLDG, Kind.FUTURE_BLDG, Kind.NIGHTCLUB]:
 		for b in by_kind.get(k, []):
 			var pick := BuildingPlacer.pick_for(data, lib, b)
 			if not pick.has("id") or pick["id"] < 0:
@@ -144,7 +167,7 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 			var name := lib.model_name(pick["id"])
 			if k == Kind.NIGHTCLUB:
 				tallest_club = maxf(tallest_club, h)
-			elif k != Kind.HELIPAD and lib.cats[pick["id"]] < 0 and name == "box":
+			elif lib.cats[pick["id"]] < 0 and name == "box":
 				_fail("%s B-%05d is drawn as a grey box" % [CityTypes.Kind.keys()[k], b])
 			if not seen.has(name):
 				seen[name] = true
@@ -158,7 +181,7 @@ func _print_map(data: CityData) -> void:
 	var rows := PackedStringArray()
 	var glyph := {Kind.AIRPORT: "A", Kind.NUCLEAR_PLANT: "N", Kind.COOLING_TOWER: "c",
 			Kind.COOLING_HALL: "c", Kind.URBAN_BLDG: "T", Kind.FUTURE_BLDG: "F", Kind.INDUSTRIAL: "I",
-			Kind.INDUSTRIAL_YARD: "y", Kind.HELIPAD: "H", Kind.BT_TOWER: "B"}
+			Kind.INDUSTRIAL_YARD: "y", Kind.SAT_DISH: "d", Kind.BT_TOWER: "B"}
 	var layer := {}
 	for b in data.building_count():
 		var r := data.building_rect(b)

@@ -37,6 +37,8 @@ func generate() -> CityData:
 	data.fog = FogIslandShaper.new(_cfg, data)
 	data.fog.shape(FogIslandShaper.SIZE / 2)
 
+	var edits := ManualEdits.apply(data)
+	print("[City] %d hand edits applied" % edits)
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	var services: Dictionary = core["services"].duplicate()

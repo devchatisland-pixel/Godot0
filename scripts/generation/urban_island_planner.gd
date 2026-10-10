@@ -8,7 +8,7 @@ extends RefCounted
 ##   middle     the tower city (streets and lots). The strip in front of the
 ##              plant, as the camera sees it, only gets low industrial buildings.
 ##   south end  the airport. Nothing at all is built in front of it.
-## Next to the south end lies a tiny islet with the BT tower and a helipad.
+## Next to the south end lies a tiny industrial islet with the BT tower in its middle.
 ## The island has its own random numbers (seed + SEED_OFFSET): changing it does not
 ## move anything on the other districts.
 
@@ -214,14 +214,21 @@ func _place_beside(body: Rect2i, size: Vector2i, kind: int, sides: Array, drop: 
 
 
 # --- The BT tower islet --------------------------------------------------------------------------
-## The tower and its helipad side by side on the islet: the pad is nearer to the camera,
-## so the tower never hides it.
+## The tower in the middle of its islet, which is an industrial zone: three satellite
+## dishes round it (like the radio tower of the desert) and two little yards.
 func _build_tower_islet() -> void:
 	var at := Vector2i(ExtensionIsland.TOWER_ISLET["at"])
-	var tower := _spots.find_spot(at + Vector2i(-5, -1), Vector2i(3, 3), Zone.URBAN, 4, 0)
-	if tower.size.x > 0:
-		_spots.claim(tower, Kind.BT_TOWER, 2, Zone.URBAN, 0)
-	var pad := _spots.find_spot((tower.position if tower.size.x > 0 else at) + Vector2i(4, 0),
-			Vector2i(3, 3), Zone.URBAN, 3, 0)
-	if pad.size.x > 0:
-		_spots.claim(pad, Kind.HELIPAD, 2, Zone.URBAN, 0)
+	var tower := _spots.find_spot(at - Vector2i(1, 1), Vector2i(3, 3), Zone.INDUSTRIAL, 3, 0)
+	if tower.size.x <= 0:
+		return
+	_spots.claim(tower, Kind.BT_TOWER, 2, Zone.INDUSTRIAL, 0)
+	for o in [Vector2i(4, -1), Vector2i(4, 2), Vector2i(0, 4)]:
+		var dish := _spots.find_spot(tower.position + o, Vector2i(2, 2), Zone.INDUSTRIAL, 2, 0)
+		if dish.size.x > 0:
+			_spots.claim(dish, Kind.SAT_DISH, 3, Zone.INDUSTRIAL)
+	var k := 0
+	for o in [Vector2i(-4, -1), Vector2i(-4, 2)]:
+		var yard := _spots.find_spot(tower.position + o, Vector2i(2, 2), Zone.INDUSTRIAL, 2, 0)
+		if yard.size.x > 0:
+			_spots.claim(yard, Kind.INDUSTRIAL_YARD, 2, Zone.INDUSTRIAL, k)
+			k += 1

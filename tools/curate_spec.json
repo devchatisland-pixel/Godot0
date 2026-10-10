@@ -1642,17 +1642,6 @@
           "footprint": 2.8
         },
         {
-          "id": "tower_d",
-          "region": [
-            0,
-            -4.6,
-            3.8,
-            -1.0
-          ],
-          "cat": "FUTURE",
-          "footprint": 2.8
-        },
-        {
           "id": "tower_e",
           "region": [
             -17,
@@ -1692,17 +1681,6 @@
             1.9,
             11.3,
             5.9
-          ],
-          "cat": "FUTURE",
-          "footprint": 2.8
-        },
-        {
-          "id": "tower_i",
-          "region": [
-            1.1,
-            3,
-            4.7,
-            6.8
           ],
           "cat": "FUTURE",
           "footprint": 2.8

@@ -77,7 +77,7 @@ not squares. On screen north-west is up. Special buildings are kept far from eac
 | south-east | **Farmland** | the one farming district: crop fields (wheat, corn, plowed soil, green rows) with farms and a country road |
 | everywhere | **Hotels** | nine different hotels, one of each model: four in the city, five in the red district |
 | far west, across the metal bridge | **Urban island** | the third island, long from north to south, planned end to end (`urban_island_planner.gd`): the **airport** at the south end (the left end on screen) with nothing built in front of it, the **tower city** in the middle (towers of three packs, all showing their front to the camera, a few futuristic ones in the centre), and the **nuclear plant** at the north end (the right end) with its cooling towers and hall beside it, a small yard and only low industry in front. No trees |
-| just south of the urban island | **BT tower islet** | a tiny islet with the BT tower alone and a lit helipad |
+| just south of the urban island | **BT tower islet** | a tiny industrial islet with the BT tower in its middle and three satellite dishes round it |
 | the two forests | **Watchtowers** | two simplified wooden lookouts, one in the north-east forest and one in the forest of the old city |
 | far north-west, at sea | **Prison island** | a long rocky island far from the coast: a very big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses |
 | east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke (twice the area of before, same buildings). A three-lane highway leads to the Golden Gate (no roadblocks, the deck is level with the road; the fog stays clear only over the bridge itself and covers the island from its coast). "SEASON 2" floats over it |
@@ -117,6 +117,15 @@ The fog is made of pictures, not 3D volumes:
 
 The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
 At night the fog turns dark blue-grey and the night skyline model shows its city lights through it.
+
+## Hand edits
+
+`scripts/generation/manual_edits.gd` lists single-building corrections made after the map is generated:
+a facing, a size factor, a replacement kind (a hotel becomes a city hall, a shop a Burger King) or a
+deletion. The number is the one shown in the information bubble. A deleted building stays in the list
+as `Kind.EMPTY`, so no number ever moves. Each entry also names the kind and the lot it expects: if the
+generation changes and the numbers move, the entry is skipped with a warning instead of touching
+another building. The test `tests/test_urban_island.gd` checks that all entries were applied.
 
 ## Selecting buildings
 
