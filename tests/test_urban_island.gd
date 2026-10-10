@@ -141,7 +141,12 @@ func _check_boats(data: CityData, by_kind: Dictionary) -> void:
 	var port := Vector2(MapLayout.blob("industrial")["at"])
 	if Vector2((seeds[BoatSites.CARGO] as Rect2i).get_center()).distance_to(port) > 35.0:
 		_fail("the cargo ship is not near the industrial port")
-	var d := Vector2((seeds[BoatSites.SUB] as Rect2i).get_center()).distance_to(Vector2(data.bridge))
+	# There are several submarines all round the seas: the one that matters here is the one
+	# placed relative to the bridge, i.e. the nearest to it.
+	var d := INF
+	for b in by_kind.get(Kind.BOAT, []):
+		if data.b_seed[b] == BoatSites.SUB:
+			d = minf(d, Vector2(data.building_rect(b).get_center()).distance_to(Vector2(data.bridge)))
 	print("[Test] the submarine is %.0f cells from the end of the highway" % d)
 	if d < 12.0 or d > 40.0:
 		_fail("the submarine is %.0f cells from the Golden Gate bridge" % d)
