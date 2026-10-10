@@ -37,6 +37,11 @@ func _run() -> void:
 		await get_tree().process_frame
 	var cam: IsoCamera = main.camera
 	var data: CityData = main.data
+	var args := OS.get_cmdline_user_args()
+	var bi := args.find("--building")
+	if bi >= 0 and bi + 1 < args.size():
+		await _single(main, int(args[bi + 1]))
+		return
 	var base := cam.target
 	for s in SHOTS.size():
 		var shot: Dictionary = SHOTS[s]
@@ -95,3 +100,25 @@ func _find(data: CityData, kind: int, near: Vector3) -> Vector3:
 			best_d = d
 			best = p
 	return best
+
+
+## One close shot of building `id` (zoom 9, by day) saved as building.png, then quit.
+func _single(main: Node, id: int) -> void:
+	var cam: IsoCamera = main.camera
+	var r: Rect2i = main.data.building_rect(id)
+	cam.target = Vector3(r.get_center().x, 0, r.get_center().y)
+	cam.zoom = 9.0
+	cam.set("_zoom_goal", 9.0)
+	var frames := 0
+	while frames < 900:
+		await get_tree().process_frame
+		frames += 1
+		if frames > 30 and main.streamer.pending_jobs() == 0:
+			break
+	if main.day_night != null:
+		main.day_night.set_phase(0.2)
+	for k in 5:
+		await get_tree().process_frame
+	get_viewport().get_texture().get_image().save_png(_dir.path_join("building.png"))
+	print("[Capture] building ", id, " saved")
+	get_tree().quit()

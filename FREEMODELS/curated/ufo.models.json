@@ -1,0 +1,9 @@
+{
+	"file": "ufo.glb",
+	"models": [
+		{
+			"cat": "UFO",
+			"node": "ufo"
+		}
+	]
+}

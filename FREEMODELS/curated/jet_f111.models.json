@@ -1,0 +1,9 @@
+{
+	"file": "jet_f111.glb",
+	"models": [
+		{
+			"cat": "JET_F111",
+			"node": "jet_f111"
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"file": "tank.glb",
+	"models": [
+		{
+			"cat": "TANK",
+			"node": "tank"
+		}
+	]
+}

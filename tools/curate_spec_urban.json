@@ -324,7 +324,7 @@
 					],
 					"cat": "BOAT_CARGO",
 					"footprint": 9.0,
-					"base_frac": 0.5
+					"base_frac": 0.2
 				}
 			]
 		},
@@ -341,6 +341,116 @@
 					"cat": "BOAT_SUB",
 					"footprint": 8.0,
 					"base_frac": 0.31
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/ccf.glb",
+			"out": "truck_ccf",
+			"texture_max": 256,
+			"items": [
+				{
+					"id": "truck_ccf",
+					"nodes": [
+						"CCF_baspoly"
+					],
+					"cat": "TRUCK_CCF",
+					"footprint": 2.0,
+					"yaw": 180
+				}
+			],
+			"comment": "Forest fire truck."
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/low-poly_tank.glb",
+			"out": "tank",
+			"texture_max": 256,
+			"items": [
+				{
+					"id": "tank",
+					"nodes": [
+						"Root"
+					],
+					"cat": "TANK",
+					"footprint": 2.2
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/low_poly_billboard_sign_-_standard.glb",
+			"out": "billboard",
+			"texture_max": 256,
+			"items": [
+				{
+					"id": "billboard",
+					"nodes": [
+						"billboard-1_baked_0"
+					],
+					"cat": "BILLBOARD",
+					"footprint": 2.6
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/hot_air_balloon_low_poly_optimized_game_ready.glb",
+			"out": "balloon",
+			"texture_max": 128,
+			"items": [
+				{
+					"id": "balloon",
+					"nodes": [
+						"HotAirBalloon"
+					],
+					"cat": "BALLOON",
+					"footprint": 3.0
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/low_poly_f-111_aardvark.glb",
+			"out": "jet_f111",
+			"texture_max": 256,
+			"items": [
+				{
+					"id": "jet_f111",
+					"nodes": [
+						"bone2_148"
+					],
+					"cat": "JET_F111",
+					"footprint": 1.3
+				}
+			],
+			"comment": "The jets of the secret base (rest pose of the file, no animation)."
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/low_poly_ufo_scene.glb",
+			"out": "ufo",
+			"texture_max": 128,
+			"comment": "Only the flying saucer of the scene.",
+			"items": [
+				{
+					"id": "ufo",
+					"nodes": [
+						"Cylinder_022"
+					],
+					"cat": "UFO",
+					"footprint": 2.4
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/bus_stop_shelters__sign_pack__brisbane.glb",
+			"out": "bus_shelter",
+			"texture_max": 256,
+			"comment": "Only the second shelter (the green one) of the 20 MB pack.",
+			"items": [
+				{
+					"id": "bus_shelter",
+					"nodes": [
+						"bus_shelter02"
+					],
+					"cat": "BUS_SHELTER",
+					"footprint": 2.0
 				}
 			]
 		}

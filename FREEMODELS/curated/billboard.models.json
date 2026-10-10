@@ -1,0 +1,9 @@
+{
+	"file": "billboard.glb",
+	"models": [
+		{
+			"cat": "BILLBOARD",
+			"node": "billboard"
+		}
+	]
+}

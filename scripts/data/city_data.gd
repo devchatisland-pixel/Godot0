@@ -34,6 +34,8 @@ var b_seed := PackedInt32Array()
 var b_height := PackedFloat32Array() # relative height factor (density driven)
 var b_scale := PackedFloat32Array()  # size factor of the model (1 = as placed; ManualEdits changes it)
 var b_sign_facing := PackedByteArray() # facing the sign was set up for (the sign does not turn with the building)
+## Building id -> name of the model it must use (ManualEdits "model").
+var b_model := {}
 var b_sign := PackedByteArray()      # neon sign on the building: 0 none, else a ModelCatalog.Cat (ManualEdits)
 
 # Chunk index -> building ids whose lot origin is inside the chunk

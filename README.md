@@ -137,6 +137,21 @@ kind): the cargo ship west of the industrial port, the submarine north of the Go
 away from the highway, a fishing boat and a wooden boat beside the piers, a simple boat off the red district.
 The sea around each boat must be free, and the corridors of both bridges are kept clear.
 
+## Props, fences, bus stops
+
+* **`prop_sites.gd`** (end of the building list): the forest fire truck (CCF), one billboard in every zone, the
+  hot air balloon over the north-east, buildings behind the main cinema and a fountain in front of it, many
+  container stacks round the cranes of the port and on the BT tower islet (with a crane), two more post offices
+  (poor and red districts: the closest lot becomes one), the UFO and two tanks at the secret base, and more
+  Kenney commercial buildings in Las Vegas.
+* **Fences** (`amenities_planner.gd`, `deco` layer): round the secret base (two gates, a tank outside each) and
+  round the facility of the BT tower islet.
+* **Bus stops** (`bus_stops.gd`): the second (green) shelter of the Brisbane pack, mostly along the two
+  highways, a few on the avenues of the country and in the city.
+* **Highway asphalt** (`highway_surface.gd`): a 75 KB texture (lanes, double yellow line) laid over the
+  three-lane highways only. The 4.6 MB `highway_road.glb` (18,000 triangles) is not used: too heavy.
+* The map starts at night; the city name is no longer shown.
+
 ## Hand edits
 
 `scripts/generation/manual_edits.gd` lists single-building corrections made after the map is generated:
@@ -297,6 +312,7 @@ Not used:
 * "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
 * "Pirate Ship" by Oleg Muzyka, CC BY 4.0
 * "Simple Low poly Boat" by Jewel John, "Wooden Boat" by sumitmangela, "Low Poly Cargo Ship" by Javier_Fernandez and "The Project 941 / Akula / Typhoon submarine" by yakudami, CC BY 4.0; "Fishing Boat (low poly style)" by liborv, Sketchfab Standard licence (raw file kept out of git)
+* "Low Poly UFO Scene" by EdwinRC (CC BY 4.0), "Highway" by Genkidonky (CC BY 4.0), "Bus Stop Shelters & Sign Pack | Brisbane" by Jotrain Models (Sketchfab Standard licence: raw file kept out of git)
 * "Pier (Game ready model)" by BlackBox613, "Old pier" by smitecraft.swe and "Stylized Pirate Island Pack" by CG Lads, CC BY 4.0
 * "neon game controller" by alina_dreiman and "Neon Pac-Man" by patrakeevasveta, CC BY 4.0
 * "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)

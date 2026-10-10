@@ -142,7 +142,7 @@ func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int
 			return Kind.OFFICE if area >= 4 and h < 0.3 else Kind.SHOP
 		Zone.ENTERTAINMENT:
 			# Neon clubs of every size (bars to resorts), offices and shops in between.
-			if h < (0.7 if mini(lot.size.x, lot.size.y) <= 1 else 0.55):
+			if h < (0.55 if mini(lot.size.x, lot.size.y) <= 1 else 0.35):
 				return Kind.NIGHTCLUB
 			return Kind.OFFICE if area >= 4 and h < 0.85 else Kind.SHOP
 		Zone.APARTMENT:

@@ -40,6 +40,11 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 	var roll := float((seed >> 12) & 1023) / 1024.0
 	var r := data.building_rect(i)
 	var zone: int = data.zone[data.idx(r.position.x, r.position.y)]
+	# The little Las Vegas: offices and shops come from a few Kenney commercial buildings.
+	if zone == Zone.ENTERTAINMENT and (kind == Kind.OFFICE or kind == Kind.SHOP):
+		var kit := _vegas_kit(lib)
+		if not kit.is_empty():
+			return kit
 	match kind:
 		Kind.SKYSCRAPER:
 			# Photo-real towers gather in the middle of downtown.
@@ -93,6 +98,18 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return _variant(lib, Cat.BEACH_HUT, seed)
 		Kind.PIER:
 			return _variant(lib, Cat.PIER, seed)
+		Kind.FIRE_TRUCK:
+			return lib.ids(Cat.TRUCK_CCF)
+		Kind.BALLOON:
+			return lib.ids(Cat.BALLOON)
+		Kind.BILLBOARD:
+			return lib.ids(Cat.BILLBOARD)
+		Kind.UFO:
+			return lib.ids(Cat.UFO)
+		Kind.TANK:
+			return lib.ids(Cat.TANK)
+		Kind.BUS_STOP:
+			return lib.ids(Cat.BUS_SHELTER)
 		Kind.BOAT:
 			return lib.ids(BOAT_CATS[absi(seed) % BOAT_CATS.size()])
 		Kind.FUTURE_BLDG:
@@ -159,6 +176,18 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.STADIUM:
 			return lib.ids(Cat.STADIUM)
 	return PackedInt32Array()
+
+
+## Kenney commercial buildings used for the offices and shops of Las Vegas.
+const VEGAS_KIT := ["building-b.glb", "building-d.glb", "building-f.glb", "building-h.glb", "building-k.glb", "building-n.glb"]
+
+
+static func _vegas_kit(lib: ModelLibrary) -> PackedInt32Array:
+	var out := PackedInt32Array()
+	for id in lib.ids(Cat.COMMERCIAL):
+		if VEGAS_KIT.has(lib.model_name(id)):
+			out.append(id)
+	return out
 
 
 ## Towers of the urban island: the blackthorn blocks, the night city and the night

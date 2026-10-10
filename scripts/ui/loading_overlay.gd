@@ -51,9 +51,7 @@ func set_progress(value: float, text: String) -> void:
 	_label.text = text
 
 
-func finish(city_name: String) -> void:
-	_title.text = city_name
-	_title.visible = true
+func finish(_city_name: String) -> void:
 	var tw := create_tween()
 	tw.tween_property(_panel, "modulate:a", 0.0, 0.6)
 	tw.tween_callback(_panel.queue_free)

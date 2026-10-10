@@ -13,26 +13,30 @@ const WEST_BACK := 11
 const BARRIER_LEN := 1.05
 const CAR_LEN := 0.85
 const CONE_LEN := 0.3
+const TANK_LEN := 2.2
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
 	if data.bridge.x >= 0:
 		var x := data.bridge.x - EAST_BACK
-		_block(lib, Cat.ROADBLOCK_A, x, data.bridge.y, true)
-		_police_car(lib, x + 2, data.bridge.y)
+		_block(lib, Cat.ROADBLOCK_A, x, data.bridge.y, true, true)
+		_police_car(lib, x + 2, data.bridge.y, 2.7)
+		_police_car(lib, x - 3, data.bridge.y, -3.7)
+		_tank(lib, x + 4, data.bridge.y)
 	if data.west_bridge.x >= 0:
 		var x := data.west_bridge.x + WEST_BACK
 		_block(lib, Cat.ROADBLOCK_B, x, data.west_bridge.z, false)
-		_police_car(lib, x, data.west_bridge.z)
+		_police_car(lib, x, data.west_bridge.z, 2.7)
 
 
 ## A line of barriers across the three lanes of the row `row` at column `x`.
-func _block(lib: ModelLibrary, cat: int, x: int, row: int, with_cones: bool) -> void:
+## `same_model`: all three barriers use the same model (the same colour).
+func _block(lib: ModelLibrary, cat: int, x: int, row: int, with_cones: bool, same_model: bool = false) -> void:
 	var ids := lib.ids(cat)
 	if ids.is_empty():
 		return
 	for k in 3:
-		var id := ids[k % ids.size()]
+		var id := ids[0 if same_model else k % ids.size()]
 		var z := float(row) + 0.5 + float(k - 1)
 		_put(lib, id, Vector3(float(x) + 0.5, 0.0, z), PI * 0.5, BARRIER_LEN)
 	if with_cones:
@@ -43,12 +47,29 @@ func _block(lib: ModelLibrary, cat: int, x: int, row: int, with_cones: bool) -> 
 				_put(lib, cones[0], Vector3(float(x) - 1.4, 0.0, z), 0.0, CONE_LEN)
 
 
-func _police_car(lib: ModelLibrary, x: int, row: int) -> void:
+## A police car beside the road, `side` rows from the middle lane (the text of the model is
+## readable from the south, so the car is turned the way the road runs).
+func _police_car(lib: ModelLibrary, x: int, row: int, side: float = 2.7) -> void:
 	var ids := lib.ids(Cat.POLICE_CAR)
 	if ids.is_empty():
 		return
-	# Two cells beside the outer lane, on the verge, facing along the road.
-	_put(lib, ids[0], Vector3(float(x) - 1.6, 0.0, float(row) + 0.5 + 2.7), 0.0, CAR_LEN)
+	_put(lib, ids[0], Vector3(float(x) - 1.6, 0.0, float(row) + 0.5 + side), PI, CAR_LEN)
+
+
+## The tank on the south verge, its gun towards the traffic coming from the west.
+func _tank(lib: ModelLibrary, x: int, row: int) -> void:
+	var ids := lib.ids(Cat.TANK)
+	if ids.is_empty():
+		return
+	_put(lib, ids[0], Vector3(float(x) + 0.5, 0.0, float(row) + 0.5 + 4.6), -PI * 0.5, TANK_LEN)
+
+
+## Rectangle (cells) round the Golden Gate checkpoint where no tree grows.
+static func clearing(data: CityData) -> Rect2i:
+	if data.bridge.x < 0:
+		return Rect2i()
+	var x := data.bridge.x - EAST_BACK
+	return Rect2i(x - 7, data.bridge.y - 8, 16, 18)
 
 
 ## Puts model `id` on the ground at `at`, scaled so that its longest side is `length`.

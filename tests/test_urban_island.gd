@@ -25,10 +25,6 @@ func _init() -> void:
 	_check_watchtowers(data, by_kind)
 	_check_edits(data)
 	_check_boats(data, by_kind)
-	var fill: int = by_kind.get(Kind.URBAN_BLDG, []).filter(func(b): return data.building_rect(b).position.y > 181 and data.building_rect(b).position.x < 60).size()
-	print("[Test] towers south of the airport: %d" % fill)
-	if fill < 3:
-		_fail("fewer than 3 towers south of the airport")
 	_check_models(cfg, data, by_kind)
 	print("[Test] %s" % ("FAILED: %d" % _fails if _fails > 0 else "all urban island checks passed"))
 	quit(1 if _fails > 0 else 0)

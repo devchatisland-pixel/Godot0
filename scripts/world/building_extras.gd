@@ -10,6 +10,8 @@ const Cat := ModelCatalog.Cat
 ## Helipad of the main hospital model: offset (x, z) from the roof centre and
 ## size, as fractions of the model width / depth.
 const HOSPITAL_PAD := Vector3(0.0, 0.0, 0.3)
+## Size of the F-111 jets of the airbase (the model is 1.3 cells across).
+const JET_SCALE := 0.85
 ## The emblem of the U.N. tower is a bit smaller than the tower is wide.
 const UN_EMBLEM := 0.38
 
@@ -28,6 +30,14 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	if data.b_sign[i] != 0:
 		_place_sign(data, lib, i, pid, xform, batch)
 	match kind:
+		Kind.AIRBASE:
+			var jets := lib.ids(Cat.JET_F111)
+			if not jets.is_empty():
+				for spot in MilitaryMeshes.JET_SPOTS:
+					var turn := Basis(Vector3.UP, spot[1]).scaled(Vector3.ONE * JET_SCALE)
+					batch.add(jets[0], xform * Transform3D(turn, spot[0]))
+		Kind.AIRPORT:
+			batch.add(lib.named_id("runway_ext"), xform)
 		Kind.STADIUM:
 			# Floodlight masts at the corners of the plot (seen at night).
 			var lights := lib.named_id("stadium_lights")
@@ -152,7 +162,12 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		at.y = body.position.y + body.size.y * float(spec["height"])
 		at.z = body.end.z + 0.02
 	else:
-		at.z = body.end.z - ROOF_EDGE_INSET # at the south edge of the roof, like a parapet sign
+		# A parapet sign: flush with the edge of the roof the sign faces (south, or east when
+		# it is turned 90 degrees), centred along that edge.
+		if absf(sin(float(spec.get("yaw", 0.0)))) > 0.5:
+			at.x = body.end.x - ROOF_EDGE_INSET
+		else:
+			at.z = body.end.z - ROOF_EDGE_INSET
 		at.y = _roof_height(lib, pid, xform, Vector2(at.x, at.z), model.size.x * s * 0.5)
 	var turn := Basis(Vector3.UP, float(spec.get("yaw", 0.0)))
 	batch.add(ids[0], Transform3D(turn * Basis.from_scale(Vector3(s, s, s)), at - turn * (local_center * s)))

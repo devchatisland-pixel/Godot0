@@ -17,7 +17,7 @@ const FOREST := {"at": Vector2(178, 62), "r": Vector2(34, 17)}
 ## The smallest palm islet: the pirate grave stands on it, the pirate ship lies off its coast.
 const PIRATE_ISLET := Vector2i(250, 92)
 ## Where the search for the sea of the pirate ship starts.
-const PIRATE_SEA := Vector2i(252, 238)
+const PIRATE_SEA := Vector2i(262, 188)
 ## The 8 buildings of the industrial zone: sizes in cells.
 const FACTORY_SIZES := [Vector2i(7, 4), Vector2i(6, 4), Vector2i(5, 4), Vector2i(4, 3),
 		Vector2i(4, 3), Vector2i(3, 3), Vector2i(3, 3), Vector2i(3, 3)]

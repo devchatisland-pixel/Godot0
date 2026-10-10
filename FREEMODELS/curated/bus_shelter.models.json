@@ -1,0 +1,9 @@
+{
+	"file": "bus_shelter.glb",
+	"models": [
+		{
+			"cat": "BUS_SHELTER",
+			"node": "bus_shelter"
+		}
+	]
+}

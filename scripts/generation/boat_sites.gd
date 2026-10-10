@@ -22,6 +22,8 @@ const SUB_OFFSET := Vector2i(14, -17)
 const BRIDGE_CLEAR := 6
 ## How far a search for sea goes, in cells.
 const REACH := 14
+## Sea north of the main island, where the wooden boat lies.
+const NORTH_SEA := Vector2i(150, 30)
 
 
 static func apply(data: CityData) -> int:
@@ -64,8 +66,8 @@ static func apply(data: CityData) -> int:
 		var side := Vector2i(-d.y, d.x) * 3
 		if k == 0:
 			plan.append([FISHING, out + side, Vector2i(5, 3), 1])
-		else:
-			plan.append([WOODEN, out + side, Vector2i(3, 4), 2])
+	# The wooden boat lies off the north coast of the main island.
+	plan.append([WOODEN, NORTH_SEA, Vector2i(3, 4), 2])
 	var placed := 0
 	for p in plan:
 		var spot := _water(data, taken, p[1], p[2], forbid)

@@ -1,0 +1,9 @@
+{
+	"file": "balloon.glb",
+	"models": [
+		{
+			"cat": "BALLOON",
+			"node": "balloon"
+		}
+	]
+}

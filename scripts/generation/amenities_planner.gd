@@ -20,6 +20,8 @@ const PLAY := 5          # a cell of the playground (no trees)
 const PLAY_CENTER := 6   # the top-left cell of the middle 2x2 of the playground (draws it)
 const BOARD := 7
 const BOARD_LAMP := 8
+const FENCE_X := 9      # a piece of fence along X
+const FENCE_Z := 10     # a piece of fence along Z
 
 ## Half-width of the area searched for the park round its lake.
 const PARK_REACH := 48
@@ -54,6 +56,7 @@ func _run() -> void:
 	_park()
 	_boardwalk()
 	_biome_edge()
+	_fences()
 
 
 # --- Central park ---------------------------------------------------------------------------
@@ -228,3 +231,51 @@ func _biome_edge() -> void:
 			var reach := EDGE_REACH_DESERT if _data.zone[i] == Zone.DESERT else EDGE_REACH_MEADOW
 			var closeness := reach + 1 - dist[i]
 			_data.edge[i] = closeness | (0x80 if _data.zone[i] == Zone.DESERT else 0)
+
+
+# --- Fences -------------------------------------------------------------------------------------------
+## The fence round the secret base: the lot of the airbase grown by 3 cells, with a gate in the
+## middle of the west side and one in the middle of the south side (cells just inside the fence).
+static func base_fence(base: Rect2i) -> Dictionary:
+	var ring := base.grow(3)
+	var west := Vector2i(ring.position.x, ring.get_center().y)
+	var south := Vector2i(ring.get_center().x, ring.end.y - 1)
+	return {"rect": ring, "gates": [west, south]}
+
+
+func _fences() -> void:
+	# The secret base.
+	for b in _data.building_count():
+		if _data.b_kind[b] == Kind.AIRBASE:
+			var f := base_fence(_data.building_rect(b))
+			var gates: Array = f["gates"]
+			_fence_ring(f["rect"], [gates[0], gates[0] + Vector2i(0, 1), gates[1], gates[1] + Vector2i(1, 0)])
+	# The facility of the BT tower islet: everything built on the islet, grown by one cell.
+	var islet := Rect2i()
+	var any := false
+	var at := Vector2i(ExtensionIsland.TOWER_ISLET["at"])
+	for b in _data.building_count():
+		var r := _data.building_rect(b)
+		if _data.b_kind[b] != Kind.EMPTY and absi(r.get_center().x - at.x) < 16 and absi(r.get_center().y - at.y) < 10:
+			islet = r if not any else islet.merge(r)
+			any = true
+	if any:
+		_fence_ring(islet.grow(1), [])
+
+
+## Fence cells along the border of `ring` on dry, free cells, except the `gaps`.
+func _fence_ring(ring: Rect2i, gaps: Array) -> void:
+	for x in range(ring.position.x, ring.end.x):
+		_fence_cell(Vector2i(x, ring.position.y), FENCE_X, gaps)
+		_fence_cell(Vector2i(x, ring.end.y - 1), FENCE_X, gaps)
+	for y in range(ring.position.y + 1, ring.end.y - 1):
+		_fence_cell(Vector2i(ring.position.x, y), FENCE_Z, gaps)
+		_fence_cell(Vector2i(ring.end.x - 1, y), FENCE_Z, gaps)
+
+
+func _fence_cell(p: Vector2i, value: int, gaps: Array) -> void:
+	if gaps.has(p) or not _data.in_bounds(p.x, p.y):
+		return
+	var i := _data.idx(p.x, p.y)
+	if _data.terrain[i] == Terrain.LAND and _data.road[i] == 0 and _taken[i] == 0 and _data.deco[i] == 0:
+		_data.deco[i] = value

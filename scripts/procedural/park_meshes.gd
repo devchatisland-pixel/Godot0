@@ -19,6 +19,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("boardwalk_lamp", boardwalk_lamp())
 	lib.add_named("rock", rock())
 	lib.add_named("dry_tuft", dry_tuft())
+	lib.add_named("fence", fence())
 
 
 ## Park bench, seat along X, back towards -Z (the path is on its +Z side).
@@ -100,4 +101,16 @@ static func dry_tuft() -> ArrayMesh:
 		var a := TAU * i / 6.0
 		var h := 0.16 + 0.05 * float(i % 3)
 		k.cylinder(Vector3(cos(a) * 0.05, 0, sin(a) * 0.05), 0.03, 0.0, h, 4, colors[i % 3])
+	return k.commit()
+
+
+## One cell of chain-link fence along X: two posts, a top rail and a few wires.
+static func fence() -> ArrayMesh:
+	var k := MeshKit.new()
+	for x in [-0.5, 0.46]:
+		k.box(Vector3(x, 0, -0.02), Vector3(0.04, 0.42, 0.04), METAL)
+	k.box(Vector3(-0.5, 0.4, -0.015), Vector3(1.0, 0.025, 0.03), METAL)
+	k.box(Vector3(-0.5, 0.02, -0.01), Vector3(1.0, 0.02, 0.02), METAL)
+	for i in 9:
+		k.box(Vector3(-0.44 + i * 0.11, 0.04, -0.005), Vector3(0.012, 0.36, 0.01), Color("9aa0aa"))
 	return k.commit()

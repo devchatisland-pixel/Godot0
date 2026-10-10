@@ -5,6 +5,8 @@ extends Node3D
 enum Phase { GENERATING, LOADING_MODELS, RUNNING }
 
 ## Starting zoom (ortho size): the middle of the city, close enough to see its buildings.
+## The map starts in the middle of the night (0.78 of the day cycle).
+const START_PHASE := 0.78
 const START_ZOOM := 62.0
 
 var cfg: CityConfig
@@ -116,6 +118,11 @@ func _start_city() -> void:
 	add_child(west_bridge)
 	west_bridge.build(data, library)
 
+	var asphalt := HighwaySurface.new()
+	asphalt.name = "HighwaySurface"
+	add_child(asphalt)
+	asphalt.build(data)
+
 	var roadblocks := Roadblocks.new()
 	roadblocks.name = "Roadblocks"
 	add_child(roadblocks)
@@ -136,7 +143,7 @@ func _start_city() -> void:
 	day_night = DayNight.new()
 	day_night.name = "DayNight"
 	add_child(day_night)
-	day_night.setup(_sun, _env, cfg.day_cycle_seconds, 0.05)
+	day_night.setup(_sun, _env, cfg.day_cycle_seconds, START_PHASE)
 	day_night.fog_island = fog_island
 	_phase = Phase.RUNNING
 

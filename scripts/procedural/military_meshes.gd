@@ -18,6 +18,7 @@ const GLASS := Color("6fa8dc")
 static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("bunker", bunker())
 	lib.add_named("airbase", airbase())
+	lib.add_named("runway_ext", runway_extension())
 
 
 # --- Bunker (3x3): sand berm, concrete front with a steel door, sandbags ------------------
@@ -79,10 +80,7 @@ static func airbase() -> ArrayMesh:
 	k.glow(false)
 	k.box(tower + Vector3(-0.1, 1.63, -0.1), Vector3(0.65, 0.05, 0.65), DARK)
 	k.block(tower + Vector3(0.22, 1.68, 0.22), Vector3(0.02, 0.4, 0.02), DARK)
-	# Three fighter jets on the apron and one ready on the runway.
-	for p in [Vector3(-1.2, 0.02, 1.3), Vector3(0.0, 0.02, 1.3), Vector3(1.2, 0.02, 1.3)]:
-		_jet(k, p, PI * 0.5)
-	_jet(k, Vector3(-5.5, 0.025, -1.55), 0.0)
+	# The jets (F-111 models) are added by BuildingExtras at JET_SPOTS.
 	# Fuel trucks and a wind sock.
 	k.block(Vector3(2.5, 0.02, 1.9), Vector3(0.45, 0.2, 0.2), KHAKI)
 	k.block(Vector3(5.5, 0.02, -0.4), Vector3(0.03, 0.5, 0.03), LINE)
@@ -98,14 +96,29 @@ static func airbase() -> ArrayMesh:
 	return k.commit()
 
 
-## Delta-wing jet: nose towards local +X turned by `yaw`.
-static func _jet(k: MeshKit, at: Vector3, yaw: float) -> void:
-	var saved := k.xform
-	k.xform = Transform3D(Basis(Vector3.UP, yaw), at)
-	k.box(Vector3(-0.45, 0.06, -0.07), Vector3(0.9, 0.12, 0.14), JET)
-	k.box(Vector3(0.45, 0.07, -0.05), Vector3(0.18, 0.08, 0.1), JET.darkened(0.15))
-	k.box(Vector3(0.15, 0.17, -0.04), Vector3(0.2, 0.05, 0.08), Color("2f3a4a"))
-	k.box(Vector3(-0.25, 0.08, -0.45), Vector3(0.45, 0.025, 0.9), JET)
-	k.box(Vector3(-0.45, 0.08, -0.2), Vector3(0.15, 0.02, 0.4), JET)
-	k.box(Vector3(-0.45, 0.12, -0.01), Vector3(0.18, 0.25, 0.02), JET.darkened(0.1))
-	k.xform = saved
+## Where the jets of the airbase stand in its own space: position and yaw (the F-111 model
+## has its nose towards -Z): three on the apron, one on the runway pointing along it.
+const JET_SPOTS := [
+	[Vector3(-1.2, 0.02, 1.3), 0.0], [Vector3(0.0, 0.02, 1.3), 0.0], [Vector3(1.2, 0.02, 1.3), 0.0],
+	[Vector3(-5.5, 0.025, -1.55), -PI * 0.5],
+]
+
+
+## Extra runway of the airport, in the space of the airport model (centred, 18 x 32 units):
+## the landing track lies on its west side from z = -6.6 to 16; this goes on to both ends.
+static func runway_extension() -> ArrayMesh:
+	var k := MeshKit.new()
+	var asphalt := Color("4c4f5e")
+	var x0 := -9.09
+	var w := 6.88
+	k.box(Vector3(x0, 0.0, -16.0), Vector3(w, 0.06, 9.37), asphalt)
+	k.box(Vector3(x0, 0.0, 16.0), Vector3(w, 0.06, 6.5), asphalt)
+	var z := -15.0
+	while z < -7.6:
+		k.box(Vector3(x0 + w * 0.5 - 0.1, 0.061, z), Vector3(0.2, 0.004, 0.9), LINE)
+		z += 1.8
+	z = 17.0
+	while z < 22.0:
+		k.box(Vector3(x0 + w * 0.5 - 0.1, 0.061, z), Vector3(0.2, 0.004, 0.9), LINE)
+		z += 1.8
+	return k.commit()

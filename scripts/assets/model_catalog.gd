@@ -36,6 +36,10 @@ enum Cat {
 	BEACH_HUT, PIER,
 	# Tenth wave: boats
 	BOAT_SIMPLE, BOAT_WOODEN, BOAT_FISHING, BOAT_CARGO, BOAT_SUB,
+	# Eleventh wave: forest fire truck, tank, billboard, hot air balloon, F-111 jets
+	TRUCK_CCF, TANK, BILLBOARD, BALLOON, JET_F111,
+	# Twelfth wave: UFO, bus shelter
+	UFO, BUS_SHELTER,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

@@ -33,6 +33,7 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 	var palm := lib.named_id("palm")
 	var cactus := lib.named_id("cactus")
 	var bridge := _bridge_clearing(data)
+	var checkpoint := Roadblocks.clearing(data)
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var i := y * data.size + x
@@ -40,7 +41,7 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 			if road != 0:
 				_place_road(data, lib, x, y, road, road_rot, lights, batch)
 				continue
-			if data.occupied[i] == 1 or bridge.has_point(Vector2i(x, y)):
+			if data.occupied[i] == 1 or bridge.has_point(Vector2i(x, y)) 					or checkpoint.has_point(Vector2i(x, y)):
 				continue
 			if data.deco[i] != 0:
 				_place_deco(data, lib, x, y, data.deco[i], batch)
@@ -93,6 +94,10 @@ static func _place_deco(data: CityData, lib: ModelLibrary, x: int, y: int, deco:
 			batch.add(lib.named_id("playground"), Transform3D(Basis(), at))
 		AmenitiesPlanner.BOARD:
 			batch.add(lib.named_id("plank"), Transform3D(Basis(), at))
+		AmenitiesPlanner.FENCE_X:
+			batch.add(lib.named_id("fence"), Transform3D(Basis(), at))
+		AmenitiesPlanner.FENCE_Z:
+			batch.add(lib.named_id("fence"), Transform3D(Basis(Vector3.UP, PI * 0.5), at))
 		AmenitiesPlanner.BOARD_LAMP:
 			batch.add(lib.named_id("plank"), Transform3D(Basis(), at))
 			batch.add(lib.named_id("boardwalk_lamp"), Transform3D(Basis(), at))

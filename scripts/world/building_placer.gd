@@ -36,6 +36,8 @@ const FAR_COLORS := {
 	Kind.AIRPORT: Color("9aa0aa"), Kind.BURGER_JOINT: Color("d6402f"),
 	Kind.COOLING_TOWER: Color("c9c6bd"), Kind.COOLING_HALL: Color("b9b6ad"), Kind.BT_TOWER: Color("c7c3bb"),
 	Kind.WATCHTOWER: Color("8a6a45"), Kind.BEACH_HUT: Color("c9954a"), Kind.PIER: Color("8a6a45"), Kind.BOAT: Color("7a6a5a"),
+	Kind.FIRE_TRUCK: Color("c0392b"), Kind.BALLOON: Color("e2573b"), Kind.BILLBOARD: Color("d8d3c4"), Kind.UFO: Color("b9bcc6"), Kind.TANK: Color("5f6a4a"),
+	Kind.BUS_STOP: Color("3f8f5a"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -55,6 +57,8 @@ const NAMED := {
 	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.GRAVE: ["grave"],
 	Kind.NUCLEAR_PLANT: ["box"], Kind.CINEMA_MAIN: ["box"], Kind.AIRPORT: ["box"], Kind.BURGER_JOINT: ["box"],
 	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"], Kind.BEACH_HUT: ["box"], Kind.PIER: ["box"], Kind.BOAT: ["box"],
+	Kind.FIRE_TRUCK: ["box"], Kind.BALLOON: ["box"], Kind.BILLBOARD: ["box"],
+	Kind.UFO: ["box"], Kind.TANK: ["box"], Kind.BUS_STOP: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -71,6 +75,8 @@ const FIXED_SIZE: Array[int] = [
 ]
 ## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
 const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6, Kind.LIGHTHOUSE: 1.65}
+## Things that float: height above the ground (in cells).
+const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
 const MODEL_BOOST := {"france.glb: blue2": 2.0}
 ## Las Vegas buildings are drawn at most this much bigger than modelled (they were skyscraper size).
@@ -149,6 +155,9 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 	var seed: int = data.b_seed[i]
 	var density: float = data.b_height[i]
 	var candidates := ModelPools.candidates(data, lib, i, kind)
+	var forced: int = lib.names.find(data.b_model.get(i, "")) if data.b_model.has(i) else -1
+	if forced >= 0:
+		candidates = PackedInt32Array([forced])
 	if kind == Kind.FIELD and candidates.is_empty():
 		var fid := lib.named_id(NAMED[kind][absi(seed >> 2) % 4])
 		return {"id": fid, "xform": _fit_field(lib, fid, r)}
@@ -218,6 +227,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 			scale = minf(room, COOLING_SCALE)
 		Kind.WATCHTOWER:
 			scale = minf(room, WATCHTOWER_SCALE)
+		Kind.BURGER_JOINT:
+			scale = minf(room, 1.0) # regular size (they used to be drawn up to 3 times bigger)
 		Kind.FUTURE_BLDG:
 			scale = minf(room, 1.0 if swapped else 1.15)
 			stretch = 1.0 if swapped else FUTURE_STRETCH
@@ -239,7 +250,10 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 	var push := 0.25 if kind == Kind.HOUSE else 0.85
 	if CityTypes.is_service(kind):
 		push = 0.0
-	return {"id": id, "xform": _fit(lib, id, r, facing, scale, stretch, push, false)}
+	var placed := _fit(lib, id, r, facing, scale, stretch, push, false)
+	if KIND_LIFT.has(kind):
+		placed.origin.y += KIND_LIFT[kind]
+	return {"id": id, "xform": placed}
 
 
 ## `base` times the building's size factor; a negative factor is an absolute scale (ManualEdits).

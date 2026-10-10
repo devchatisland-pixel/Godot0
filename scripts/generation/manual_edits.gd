@@ -17,6 +17,8 @@ extends RefCounted
 ##   move_to  new top-left cell of the lot, same size (must be free)
 ##   old_ground  zone name given back to the cells the building leaves when its lot changes
 ##            (the cells it enters take the ground of the building)
+##   model    name of the model to draw, as the library names it (e.g. "building-type-n.glb")
+##   clear_quay  radius: sand instead of quay ground (rocky = 2) within that many cells of the building
 ##   sign     name of a ModelCatalog.Cat (a neon sign); BuildingExtras.SIGNS says where it goes
 
 const EDITS := [
@@ -41,8 +43,18 @@ const EDITS := [
 	{"id": 995, "kind": "FUTURE_BLDG", "at": Vector2i(36, 137), "delete": true},
 	{"id": 927, "kind": "FUTURE_BLDG", "at": Vector2i(11, 142), "delete": true},
 	{"id": 985, "kind": "FUTURE_BLDG", "at": Vector2i(23, 143), "delete": true},
-	{"id": 257, "kind": "SHOP", "at": Vector2i(137, 102), "facing": 1, "sign": "NEON_CONTROLLER"},
+	{"id": 257, "kind": "SHOP", "at": Vector2i(137, 102), "facing": 1, "replace": "HOUSE",
+		"model": "building-type-n.glb", "sign": "NEON_CONTROLLER"},
+	{"id": 907, "kind": "FUTURE_BLDG", "at": Vector2i(11, 114), "delete": true},
+	{"id": 1120, "kind": "URBAN_BLDG", "at": Vector2i(23, 182), "delete": true},
+	{"id": 1121, "kind": "URBAN_BLDG", "at": Vector2i(29, 182), "delete": true},
+	{"id": 1122, "kind": "URBAN_BLDG", "at": Vector2i(33, 182), "delete": true},
+	{"id": 1123, "kind": "URBAN_BLDG", "at": Vector2i(29, 186), "delete": true},
 	{"id": 685, "kind": "POLICE", "at": Vector2i(171, 154), "sign": "NEON_PACMAN"},
+	{"id": 647, "kind": "POLICE_HQ", "at": Vector2i(118, 148), "scale": 0.75},
+	{"id": 670, "kind": "BURGER_JOINT", "at": Vector2i(110, 153), "scale_abs": 1.0},
+	{"id": 863, "kind": "QUARTER_BLDG", "at": Vector2i(165, 208), "replace": "HOSPITAL"},
+	{"id": 1114, "kind": "LIGHTHOUSE", "at": Vector2i(93, 202), "clear_quay": 6},
 	{"id": 653, "kind": "FIRE_STATION", "at": Vector2i(150, 140), "scale": 1.12},
 	{"id": 654, "kind": "POST_OFFICE", "at": Vector2i(133, 152), "scale": 1.12},
 ]
@@ -80,6 +92,10 @@ static func apply(data: CityData) -> int:
 			data.b_scale[id] = e["scale"]
 		if e.has("scale_abs"):
 			data.b_scale[id] = -float(e["scale_abs"])
+		if e.has("clear_quay"):
+			_clear_quay(data, lot, int(e["clear_quay"]))
+		if e.has("model"):
+			data.b_model[id] = e["model"]
 		if e.has("sign"):
 			data.b_sign[id] = ModelCatalog.Cat[e["sign"]]
 		if e.has("replace"):
@@ -114,3 +130,11 @@ static func _move_ground(data: CityData, old: Rect2i, lot: Rect2i, old_ground: S
 	for y in range(lot.position.y, lot.end.y):
 		for x in range(lot.position.x, lot.end.x):
 			data.zone[data.idx(x, y)] = zone
+
+
+## Quay ground (the land colour reaching the sea) within `radius` cells of `lot` becomes sand.
+static func _clear_quay(data: CityData, lot: Rect2i, radius: int) -> void:
+	for y in range(lot.position.y - radius, lot.end.y + radius):
+		for x in range(lot.position.x - radius, lot.end.x + radius):
+			if data.in_bounds(x, y) and data.rocky[data.idx(x, y)] == 2:
+				data.rocky[data.idx(x, y)] = 0
