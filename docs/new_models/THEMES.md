@@ -58,3 +58,39 @@ One sheet per theme; each cell is a render of the whole file (packs show every b
 
 ![](themes/12-beach-camping-and-tents.png)
 
+# Already in the project: vehicles and shops
+
+These are the catalogs of the project's own vehicles and shops (73 vehicles, 13 shops, 16 containers), grouped by theme. Sources: `vehicles/CATALOG.md`, `shops/CATALOG.md`.
+
+## 13 Vehicles: cars, pickups, vans
+
+![](themes/13-vehicles-cars-pickups-vans_p1.png)
+
+![](themes/13-vehicles-cars-pickups-vans_p2.png)
+
+## 14 Vehicles: trucks, semis, trailers, buses
+
+![](themes/14-vehicles-trucks-semis-trailers-buses_p1.png)
+
+![](themes/14-vehicles-trucks-semis-trailers-buses_p2.png)
+
+## 15 Vehicles: municipal, emergency, construction, farm
+
+![](themes/15-vehicles-municipal-emergency-construction-farm_p1.png)
+
+![](themes/15-vehicles-municipal-emergency-construction-farm_p2.png)
+
+## 16 Vehicles: military, aircraft, motorcycles, wrecks
+
+![](themes/16-vehicles-military-aircraft-motorcycles-wrecks.png)
+
+## 17 Shops (13) and shipping containers
+
+![](themes/17-shops_p1.png)
+
+![](themes/17-shops_p2.png)
+
+## 18 Shipping containers (4 of 16 shown)
+
+![](themes/18-containers.png)
+
