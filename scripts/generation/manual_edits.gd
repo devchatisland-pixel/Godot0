@@ -8,6 +8,8 @@ extends RefCounted
 ## Every entry names the `kind` and the lot `at` (top-left cell) that must be there: when
 ## a change of the generation moves the numbers, the entry is skipped with a warning
 ## instead of altering some other building.
+##   "id": -1 looks the building up by `kind` and `at` (for buildings added late, whose
+##            numbers move when something before them changes).
 ##   facing   0 north, 1 east, 2 south, 3 west (the side of the front)
 ##   scale    size factor of the model, 1 = as placed
 ##   scale_abs  absolute scale of the model, 1 = its own size (ignores the lot)
@@ -32,7 +34,7 @@ const EDITS := [
 	{"id": 663, "kind": "HOTEL", "at": Vector2i(120, 129), "replace": "CITY_HALL", "rect": [120, 129, 3, 5]},
 	{"id": 664, "kind": "HOTEL", "at": Vector2i(170, 164), "scale_abs": 1.0},
 	{"id": 901, "kind": "HOTEL", "at": Vector2i(123, 210), "facing": 2},
-	{"id": 1058, "kind": "OIL_PUMP", "at": Vector2i(73, 109), "move_to": Vector2i(82, 108)},
+	{"id": -1, "kind": "OIL_PUMP", "at": Vector2i(73, 109), "delete": true},
 	{"id": 1047, "kind": "AIRBASE", "at": Vector2i(69, 113), "rect": [75, 108, 5, 16], "facing": 1,
 		"old_ground": "DESERT"},
 	{"id": 657, "kind": "PHARMACY", "at": Vector2i(150, 166), "facing": 2},
@@ -55,6 +57,7 @@ const EDITS := [
 	{"id": 670, "kind": "BURGER_JOINT", "at": Vector2i(110, 153), "scale_abs": 1.0},
 	{"id": 863, "kind": "QUARTER_BLDG", "at": Vector2i(165, 208), "replace": "HOSPITAL"},
 	{"id": 1114, "kind": "LIGHTHOUSE", "at": Vector2i(93, 202), "clear_quay": 6},
+	{"id": -1, "kind": "POOR_BLDG", "at": Vector2i(129, 77), "delete": true},
 	{"id": 653, "kind": "FIRE_STATION", "at": Vector2i(150, 140), "scale": 1.12},
 	{"id": 654, "kind": "POST_OFFICE", "at": Vector2i(133, 152), "scale": 1.12},
 ]
@@ -66,6 +69,11 @@ static func apply(data: CityData) -> int:
 	var applied := 0
 	for e in EDITS:
 		var id: int = e["id"]
+		if id < 0:
+			id = _find(data, e["kind"], e["at"])
+			if id < 0:
+				push_warning("[Edits] no %s at %s: skipped" % [e["kind"], e["at"]])
+				continue
 		if id >= data.building_count():
 			push_warning("[Edits] B-%05d does not exist" % id)
 			continue
@@ -138,3 +146,28 @@ static func _clear_quay(data: CityData, lot: Rect2i, radius: int) -> void:
 		for x in range(lot.position.x - radius, lot.end.x + radius):
 			if data.in_bounds(x, y) and data.rocky[data.idx(x, y)] == 2:
 				data.rocky[data.idx(x, y)] = 0
+
+
+## The building of `kind_name` whose lot starts at `at`, or -1.
+static func _find(data: CityData, kind_name: String, at: Vector2i) -> int:
+	var kind: int = CityTypes.Kind[kind_name]
+	for b in data.building_count():
+		if data.b_kind[b] == kind and data.building_rect(b).position == at:
+			return b
+	return -1
+
+
+## Edits of things that only exist after the props: deleted by place (kind and lot).
+const LATE := [
+	{"kind": "BUS_STOP", "at": Vector2i(140, 194)},
+	{"kind": "BILLBOARD", "at": Vector2i(75, 126)},
+	{"kind": "BILLBOARD", "at": Vector2i(199, 179)},
+	{"kind": "BILLBOARD", "at": Vector2i(150, 255)},
+]
+
+
+static func apply_late(data: CityData) -> void:
+	for e in LATE:
+		var id := _find(data, e["kind"], e["at"])
+		if id >= 0:
+			data.b_kind[id] = CityTypes.Kind.EMPTY

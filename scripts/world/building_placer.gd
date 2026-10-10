@@ -227,6 +227,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 			scale = minf(room, COOLING_SCALE)
 		Kind.WATCHTOWER:
 			scale = minf(room, WATCHTOWER_SCALE)
+		Kind.BUS_STOP:
+			scale = minf(room, 0.7)
 		Kind.BURGER_JOINT:
 			scale = minf(room, 1.0) # regular size (they used to be drawn up to 3 times bigger)
 		Kind.FUTURE_BLDG:

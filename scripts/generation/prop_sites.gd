@@ -18,6 +18,8 @@ const FOREST_MIN := 150
 const BALLOON_AT := Vector2i(206, 44)
 ## Zones with fewer cells than this get no billboard.
 const BILLBOARD_MIN_CELLS := 40
+## Container yards on the BT tower islet (a few only).
+const ISLET_YARDS := 8
 ## Container yards round each crane: reach in cells.
 const PORT_REACH := 26
 
@@ -45,13 +47,15 @@ func _mark(r: Rect2i) -> void:
 
 
 ## All cells of `r` are dry, free, without road; `zone` >= 0 also asks for that zone.
-func _free(r: Rect2i, zone: int = -1) -> bool:
+func _free(r: Rect2i, zone: int = -1, in_park: bool = false) -> bool:
 	for y in range(r.position.y, r.end.y):
 		for x in range(r.position.x, r.end.x):
 			if not _data.in_bounds(x, y):
 				return false
 			var i := _data.idx(x, y)
 			if _taken[i] == 1 or _data.road[i] != 0 or _data.terrain[i] != Terrain.LAND:
+				return false
+			if _data.zone[i] == Zone.PARK and not in_park: # no building in the big central park
 				return false
 			if zone >= 0 and _data.zone[i] != zone:
 				return false
@@ -64,14 +68,14 @@ func _add(r: Rect2i, kind: int, facing: int, seed: int) -> void:
 
 
 ## The first free rectangle of `size` around `near` (rings of growing radius).
-func _near(near: Vector2i, size: Vector2i, zone: int, reach: int) -> Rect2i:
+func _near(near: Vector2i, size: Vector2i, zone: int, reach: int, in_park: bool = false) -> Rect2i:
 	for radius in reach + 1:
 		for dy in range(-radius, radius + 1):
 			for dx in range(-radius, radius + 1):
 				if maxi(absi(dx), absi(dy)) != radius:
 					continue
 				var r := Rect2i(near + Vector2i(dx, dy) - size / 2, size)
-				if _free(r, zone):
+				if _free(r, zone, in_park):
 					return r
 	return Rect2i()
 
@@ -148,7 +152,7 @@ func _cinema() -> int:
 		return 0
 	var placed := 0
 	# A fountain in front of it (the front is the south side).
-	var fountain := _near(Vector2i(cinema.get_center().x, cinema.end.y + 3), Vector2i(3, 3), -1, 5)
+	var fountain := _near(Vector2i(cinema.get_center().x, cinema.end.y + 3), Vector2i(3, 3), -1, 5, true)
 	if fountain.size.x > 0:
 		_add(fountain, Kind.FOUNTAIN, 2, 1)
 		placed += 1
@@ -240,7 +244,7 @@ func _ufo_and_tanks() -> int:
 	var fence := AmenitiesPlanner.base_fence(base)
 	var west := fence["gates"][0] as Vector2i
 	var south := fence["gates"][1] as Vector2i
-	for spec in [[west + Vector2i(-4, 1), Vector2i(3, 2), 1], [south + Vector2i(1, 3), Vector2i(2, 3), 0]]:
+	for spec in [[west + Vector2i(-4, 1), Vector2i(3, 2), 3], [south + Vector2i(1, 3), Vector2i(2, 3), 2]]:
 		var r := _near_in_zone(spec[0], spec[1], Zone.DESERT)
 		if r.size.x > 0:
 			_add(r, Kind.TANK, spec[2], 1)
@@ -259,12 +263,14 @@ func _islet() -> int:
 			_add(r, Kind.CRANE, 2, 1)
 			placed += 1
 			break
-	for y in range(at.y - 9, at.y + 10):
-		for x in range(at.x - 13, at.x + 14):
-			if x % 7 == 6 or y % 7 == 6:
+	var yards := 0
+	for y in range(at.y - 4, at.y + 5):
+		for x in range(at.x - 8, at.x + 9):
+			if yards >= ISLET_YARDS or x % 7 == 6 or y % 7 == 6:
 				continue
 			var r := Rect2i(x, y, 2, 2)
 			if _free(r, Zone.INDUSTRIAL):
+				yards += 1
 				_add(r, Kind.INDUSTRIAL_YARD, 2, (CityTypes.hash2(x, y, 9) & 0xfffff) * 3)
 				placed += 1
 	return placed

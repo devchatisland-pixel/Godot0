@@ -40,7 +40,7 @@ static func apply(data: CityData) -> int:
 				continue
 			# South verge first, then north.
 			for side in [2, -2]:
-				if _stop(data, taken, Vector2i(x, y + side), 0 if side > 0 else 2, stops):
+				if _stop(data, taken, Vector2i(x, y + side), 2 if side > 0 else 0, stops):
 					last_x = x
 					break
 	# Avenues of the map: single-cell avenues, spread by hash.
@@ -64,7 +64,7 @@ static func apply(data: CityData) -> int:
 		var m := data.road_mask(c.x, c.y)
 		var horizontal := m == (CityTypes.DIR_E | CityTypes.DIR_W)
 		var verge := c + (Vector2i(0, 1) if horizontal else Vector2i(1, 0))
-		var facing := 0 if horizontal else 3
+		var facing := 2 if horizontal else 1
 		if _stop(data, taken, verge, facing, stops):
 			if inside:
 				center += 1

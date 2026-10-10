@@ -248,6 +248,7 @@ func _fences() -> void:
 	for b in _data.building_count():
 		if _data.b_kind[b] == Kind.AIRBASE:
 			var f := base_fence(_data.building_rect(b))
+			_clear_fence_line(f["rect"])
 			var gates: Array = f["gates"]
 			_fence_ring(f["rect"], [gates[0], gates[0] + Vector2i(0, 1), gates[1], gates[1] + Vector2i(1, 0)])
 	# The facility of the BT tower islet: everything built on the islet, grown by one cell.
@@ -279,3 +280,17 @@ func _fence_cell(p: Vector2i, value: int, gaps: Array) -> void:
 	var i := _data.idx(p.x, p.y)
 	if _data.terrain[i] == Terrain.LAND and _data.road[i] == 0 and _taken[i] == 0 and _data.deco[i] == 0:
 		_data.deco[i] = value
+
+
+## Oil pumps (and cleared lots) standing on the line of a fence are taken away.
+func _clear_fence_line(ring: Rect2i) -> void:
+	var inner := ring.grow(-1)
+	for b in _data.building_count():
+		if _data.b_kind[b] != Kind.OIL_PUMP:
+			continue
+		var r := _data.building_rect(b)
+		if ring.grow(1).intersects(r) and not inner.encloses(r):
+			_data.b_kind[b] = Kind.EMPTY
+			for y in range(r.position.y, r.end.y):
+				for x in range(r.position.x, r.end.x):
+					_taken[_data.idx(x, y)] = 0

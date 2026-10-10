@@ -49,6 +49,7 @@ func generate() -> CityData:
 	print("[City] props: ", props)
 	var stops := BusStops.apply(data)
 	print("[City] %d bus stops" % stops)
+	ManualEdits.apply_late(data)
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")

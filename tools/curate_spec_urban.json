@@ -324,7 +324,7 @@
 					],
 					"cat": "BOAT_CARGO",
 					"footprint": 9.0,
-					"base_frac": 0.2
+					"base_frac": 0.03
 				}
 			]
 		},

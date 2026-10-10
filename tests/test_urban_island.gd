@@ -148,6 +148,8 @@ func _check_boats(data: CityData, by_kind: Dictionary) -> void:
 func _check_edits(data: CityData) -> void:
 	for e in ManualEdits.EDITS:
 		var id: int = e["id"]
+		if id < 0:
+			continue # looked up by place
 		var want: String = "EMPTY" if e.get("delete", false) else e.get("replace", e["kind"])
 		if CityTypes.Kind.keys()[data.b_kind[id]] != want:
 			_fail("edit B-%05d: expected %s, found %s" % [id, want, CityTypes.Kind.keys()[data.b_kind[id]]])
