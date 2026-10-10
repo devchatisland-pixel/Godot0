@@ -171,7 +171,7 @@ func _fits(at: Vector2, heading: Vector2, length: float) -> bool:
 	for k in range(-n / 2, n / 2 + 1):
 		var p := at + h * (float(k) * 0.4)
 		for s in [-1.0, 0.0, 1.0]:
-			var q := p + side * s
+			var q: Vector2 = p + side * float(s)
 			if not _free(int(floor(q.x)), int(floor(q.y))):
 				return false
 	return true
