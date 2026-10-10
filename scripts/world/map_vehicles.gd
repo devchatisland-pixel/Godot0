@@ -5,7 +5,7 @@ extends Node3D
 
 const CATALOG_PATH := "res://vehicles/catalog.json"
 
-## Catalog id -> {"file": path, "length": metres}; read once.
+## Catalog id -> {"file": path, "length": metres, "name", "category"}; read once.
 static var _entries := {}
 
 
@@ -17,7 +17,16 @@ static func _ensure_catalog() -> void:
 		push_warning("[Vehicles] cannot read " + CATALOG_PATH)
 		return
 	for v in data.get("vehicles", []):
-		_entries[v["id"]] = {"file": v["file"], "length": float(v["size_m"]["length"])}
+		_entries[v["id"]] = {
+			"file": v["file"], "length": float(v["size_m"]["length"]),
+			"name": v.get("name", v["id"]), "category": v.get("category", ""),
+		}
+
+
+## What the picker shows for catalog vehicle `id` (see BuildingInfo.for_prop).
+static func entry(id: String) -> Dictionary:
+	_ensure_catalog()
+	return _entries.get(id, {})
 
 
 ## Library id of the mesh of catalog vehicle `id` (loaded on first use), or -1.
@@ -52,5 +61,10 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
 		add_child(mi)
+		var e := entry(p["id"])
+		mi.set_meta("pick", {
+			"uid": "V-%03d" % placed, "number": placed, "title": e.get("name", p["id"]), "kind": "VEHICLE",
+			"model": String(p["id"]), "category": e.get("category", ""), "note": String(p.get("why", "")),
+		})
 		placed += 1
 	print("[Vehicles] %d vehicles placed" % placed)

@@ -143,6 +143,9 @@ func _start_city() -> void:
 	picker.name = "BuildingPicker"
 	add_child(picker)
 	picker.setup(camera, data, library)
+	# Vehicles, shops and roadblock pieces are not numbered buildings: clickable all the same.
+	var props := picker.add_props(vehicles) + picker.add_props(shops) + picker.add_props(roadblocks)
+	print("[Picker] %d vehicles, shops and roadblock pieces are clickable" % props)
 
 	# Start on the centre of the city (zoom out to see the islands).
 	var c := Vector2(data.size, data.size) * 0.5

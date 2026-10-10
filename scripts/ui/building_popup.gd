@@ -95,7 +95,10 @@ func show_info(info: Dictionary) -> void:
 	_row("World", "%.1f, %.1f" % [world.x, world.z])
 	_row("Facing", String(info["facing"]))
 	_row("Zone", String(info["zone"]))
-	_row("Seed", str(info["seed"]))
+	if info.has("note"):
+		_row("Note", String(info["note"]))
+	else:
+		_row("Seed", str(info["seed"]))
 	_text = BuildingInfo.to_text(info)
 	_copy.text = "Copy info"
 	_shown = true

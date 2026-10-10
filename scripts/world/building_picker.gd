@@ -8,6 +8,9 @@ extends Node
 ##   - `building_selected` is emitted with the info Dictionary (see BuildingInfo), so
 ##     that a database or game logic can react to a precise building later.
 ## Clicking elsewhere, Esc or the X of the bubble clears the selection.
+## Things that are not numbered buildings (the vehicles, the shops, the roadblock pieces) are
+## clickable too: their MeshInstance3D carries a "pick" meta Dictionary and is handed over
+## with add_props() (see BuildingInfo.for_prop for the info they show).
 
 signal building_selected(info: Dictionary)
 signal selection_cleared
@@ -20,6 +23,10 @@ const COARSE_HEIGHT := 45.0
 const FLAT_HEIGHT := 0.6
 
 var selected := -1
+## Index in `_props` of the selected vehicle/shop/roadblock piece, or -1.
+var selected_prop := -1
+## Entries {"box": AABB, "mesh": Mesh, "xform": Transform3D, "info": Dictionary}.
+var _props: Array[Dictionary] = []
 
 var _cam: IsoCamera
 var _data: CityData
@@ -48,23 +55,60 @@ func setup(cam: IsoCamera, data: CityData, lib: ModelLibrary) -> void:
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and selected >= 0:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and (selected >= 0 or selected_prop >= 0):
 		clear()
 
 
 func _on_tap(screen_pos: Vector2) -> void:
-	var hit := pick(screen_pos)
-	if hit < 0:
+	var from := _cam.project_ray_origin(screen_pos)
+	var dir := _cam.project_ray_normal(screen_pos)
+	var b := _pick_building(from, dir)
+	var p := _pick_prop(from, dir)
+	if b.x < 0 and p.x < 0:
 		clear()
+	elif p.x >= 0 and (b.x < 0 or p.y < b.y):
+		select_prop(int(p.x))
 	else:
-		select(hit)
+		select(int(b.x))
+
+
+## Registers every child MeshInstance3D of `root` that has a "pick" meta (a Dictionary with
+## uid, number, title, kind, model, category, note) as a clickable thing.
+func add_props(root: Node) -> int:
+	var n := 0
+	for c in root.get_children():
+		if not c is MeshInstance3D or not c.has_meta("pick"):
+			continue
+		var mi: MeshInstance3D = c
+		var m: Dictionary = mi.get_meta("pick")
+		var info := BuildingInfo.for_prop(_data, m["uid"], m["number"], m["title"], m["kind"],
+				m["model"], m["category"], mi, m["note"])
+		_props.append({"box": mi.transform * mi.mesh.get_aabb(), "mesh": mi.mesh,
+				"xform": mi.transform, "info": info})
+		n += 1
+	return n
+
+
+## (index, distance) of the nearest vehicle/shop/roadblock piece on the ray, or (-1, INF).
+func _pick_prop(from: Vector3, dir: Vector3) -> Vector2:
+	var best := Vector2(-1.0, INF)
+	for k in _props.size():
+		var hit = (_props[k]["box"] as AABB).intersects_ray(from, dir)
+		if hit != null:
+			var t := from.distance_to(hit)
+			if t < best.y:
+				best = Vector2(k, t)
+	return best
 
 
 # --- Picking ---------------------------------------------------------------------------------
 ## The building under a screen position, or -1.
 func pick(screen_pos: Vector2) -> int:
-	var from := _cam.project_ray_origin(screen_pos)
-	var dir := _cam.project_ray_normal(screen_pos)
+	return int(_pick_building(_cam.project_ray_origin(screen_pos), _cam.project_ray_normal(screen_pos)).x)
+
+
+## (index, distance) of the nearest building on the ray, or (-1, INF).
+func _pick_building(from: Vector3, dir: Vector3) -> Vector2:
 	var best := -1
 	var best_t := INF
 	for i in _data.building_count():
@@ -80,7 +124,7 @@ func pick(screen_pos: Vector2) -> int:
 			if t < best_t:
 				best_t = t
 				best = i
-	return best
+	return Vector2(best, best_t)
 
 
 ## World box of building `i` (its real model when it has one).
@@ -94,8 +138,25 @@ func _box_of(i: int) -> AABB:
 
 
 # --- Selection ---------------------------------------------------------------------------------
+func select_prop(k: int) -> void:
+	selected = -1
+	selected_prop = k
+	var e: Dictionary = _props[k]
+	_box = e["box"]
+	_footprint = Vector2(_box.size.x, _box.size.z)
+	_fx.visible = true
+	_overlay.visible = true
+	_overlay.mesh = e["mesh"]
+	_overlay.transform = e["xform"]
+	var c := _box.get_center()
+	_ring.position = Vector3(c.x, 0.07, c.z)
+	_popup.show_info(e["info"])
+	building_selected.emit(e["info"])
+
+
 func select(i: int) -> void:
 	selected = i
+	selected_prop = -1
 	_box = _box_of(i)
 	var r := _data.building_rect(i)
 	_footprint = Vector2(r.size)
@@ -106,16 +167,17 @@ func select(i: int) -> void:
 
 
 func clear() -> void:
-	if selected < 0:
+	if selected < 0 and selected_prop < 0:
 		return
 	selected = -1
+	selected_prop = -1
 	_fx.visible = false
 	_popup.hide_popup()
 	selection_cleared.emit()
 
 
 func _process(_delta: float) -> void:
-	if selected < 0:
+	if selected < 0 and selected_prop < 0:
 		return
 	var zs := _zoom_scale()
 	var c := _box.get_center()

@@ -24,9 +24,10 @@ const PALM_ISLETS := [
 	{"at": Vector2(70, 252), "r": 4.5}, {"at": Vector2(150, 259), "r": 5.0},
 	{"at": Vector2(236, 246), "r": 4.0}, {"at": Vector2(250, 92), "r": 3.5},
 ]
-## The development island, in the empty sea north-east: one of each shop in a row
-## (see shops/CATALOG.md). Flat, no trees, nothing else is built there.
-const DEV_ISLAND := {"at": Vector2(232, 38), "r": Vector2(24, 10)}
+## The development island, alone in the empty south-west corner of the sea, far from the
+## fog island: one of each shop in a row (see shops/CATALOG.md). Flat, no trees, nothing
+## else is built there.
+const DEV_ISLAND := {"at": Vector2(42, 228), "r": Vector2(36, 12)}
 ## The prison island: centre, radii (long and short side) and turn in radians.
 ## Far out in the north-west, well away from the coast of the main island.
 const PRISON := {"at": Vector2(34, 38), "r": Vector2(15.0, 10.0), "turn": 0.45}
