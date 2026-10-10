@@ -73,6 +73,18 @@ const DELETED_URBAN_TOWERS: Array[Vector2i] = [
 	Vector2i(70,142), Vector2i(47,144), Vector2i(41,139),
 ]
 
+## Other buildings taken away by hand: kind and top-left cell of the lot on the final map.
+const DELETED_AT := [
+	["BALLOON", Vector2i(250, 141)],
+	["HOTEL", Vector2i(206, 302)],
+	["HOTEL", Vector2i(182, 301)],
+	["PIER", Vector2i(138, 291)],
+]
+## Buildings drawn at another size by hand: kind, top-left cell of the lot, size factor.
+const RESIZED_AT := [
+	["BOAT", Vector2i(211, 40), 0.5],
+]
+
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
 const BALLOON_MOUNTAIN := Vector2i(177, 101)
@@ -266,12 +278,21 @@ static func _all_desert(data: CityData, r: Rect2i) -> bool:
 	return true
 
 
-## Deletes the futuristic towers of DELETED_URBAN_TOWERS (run after the urban island is rebuilt).
+## Deletes the buildings of DELETED_URBAN_TOWERS and DELETED_AT, resizes those of RESIZED_AT (run after the urban island is rebuilt).
 ## Returns how many were found.
 static func delete_urban_towers(data: CityData) -> int:
 	var found := 0
 	for b in data.building_count():
-		if data.b_kind[b] == CityTypes.Kind.FUTURE_BLDG and DELETED_URBAN_TOWERS.has(data.building_rect(b).position):
+		var at := data.building_rect(b).position
+		if data.b_kind[b] == CityTypes.Kind.FUTURE_BLDG and DELETED_URBAN_TOWERS.has(at):
 			data.b_kind[b] = CityTypes.Kind.EMPTY
 			found += 1
+		for d in DELETED_AT:
+			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
+				data.b_kind[b] = CityTypes.Kind.EMPTY
+				found += 1
+		for d in RESIZED_AT:
+			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
+				data.b_scale[b] = d[2]
+				found += 1
 	return found
