@@ -126,7 +126,7 @@ static func tree_xform(p: Vector3, seed: int) -> Transform3D:
 const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
-	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.58, "halo": 1.15, "yaw": PI},
+	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.58, "halo": 1.15, "yaw": PI * 0.5},
 }
 
 
