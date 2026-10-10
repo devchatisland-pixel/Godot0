@@ -97,6 +97,10 @@ enum Kind {
 	FUTURE_BLDG,      # futuristic tower of the urban island (night skyline pack)
 	PIRATE_SHIP,
 	GRAVE,            # pirate grave on the little islet
+	NUCLEAR_PLANT,    # on the urban island
+	CINEMA_MAIN,      # the big cinema (replaces the old city hall plot)
+	AIRPORT,          # small airport of the urban island
+	BURGER_JOINT,     # one cartoon burger restaurant per district
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -111,6 +115,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.MOUNTAIN, Kind.FIELD, Kind.RUSSIAN, Kind.PRISON_WING, Kind.OIL_PUMP, Kind.STALL,
 	Kind.FACTORY_BLDG, Kind.MCDONALDS, Kind.BURGER_KING, Kind.URBAN_CLUSTER,
 	Kind.PIRATE_SHIP, Kind.GRAVE,
+	Kind.NUCLEAR_PLANT, Kind.CINEMA_MAIN, Kind.AIRPORT, Kind.BURGER_JOINT,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

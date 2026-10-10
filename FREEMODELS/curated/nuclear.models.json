@@ -1,0 +1,9 @@
+{
+	"file": "nuclear.glb",
+	"models": [
+		{
+			"cat": "NUCLEAR",
+			"node": "nuclear_plant"
+		}
+	]
+}

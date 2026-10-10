@@ -36,7 +36,7 @@ const FOREST_AREA := Rect2(0.26, -1.6, 1.6, 1.2)
 const PLOTS := [
 	{"kind": CityTypes.Kind.STADIUM, "at": Vector2(-0.45, 0.58), "size": Vector2i(11, 9)},
 	{"kind": CityTypes.Kind.SHOPPING_CENTER, "at": Vector2(-0.62, 0.1), "size": Vector2i(9, 5)},
-	{"kind": CityTypes.Kind.CITY_HALL, "at": Vector2(0.14, 0.24), "size": Vector2i(8, 8)},
+	{"kind": CityTypes.Kind.CINEMA_MAIN, "at": Vector2(0.14, 0.24), "size": Vector2i(8, 8)},
 	{"kind": CityTypes.Kind.POLICE_HQ, "at": Vector2(-0.3, 0.34), "size": Vector2i(6, 6)},
 	{"kind": CityTypes.Kind.UN_HQ, "at": Vector2(0.34, -0.2), "size": Vector2i(6, 6)},
 	{"kind": CityTypes.Kind.MAIN_SCHOOL, "at": Vector2(0.62, 0.08), "size": Vector2i(9, 7)},

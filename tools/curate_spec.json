@@ -234,13 +234,6 @@
       "out": "business",
       "items": [
         {
-          "id": "restaurant",
-          "nodes": [
-            "RestaurantBuilding"
-          ],
-          "cat": "BIZ_SHOP"
-        },
-        {
           "id": "shop",
           "nodes": [
             "ShopBuilding"
@@ -261,7 +254,7 @@
           "nodes": [
             "BurgerBuilding"
           ],
-          "cat": "BIZ_SHOP"
+          "cat": "BURGER_JOINT"
         },
         {
           "id": "cinema",
@@ -897,6 +890,48 @@
             "Cylinder_005"
           ],
           "cat": "BARREL"
+        },
+        {
+          "id": "roadblock_a1",
+          "nodes": [
+            "kw_barriers_stand_white__1_"
+          ],
+          "cat": "ROADBLOCK_A"
+        },
+        {
+          "id": "roadblock_a2",
+          "nodes": [
+            "kw_barriers_stand_white__1__001"
+          ],
+          "cat": "ROADBLOCK_A"
+        },
+        {
+          "id": "roadblock_b1",
+          "nodes": [
+            "Cube_047"
+          ],
+          "cat": "ROADBLOCK_B"
+        },
+        {
+          "id": "roadblock_b2",
+          "nodes": [
+            "Cube_046"
+          ],
+          "cat": "ROADBLOCK_B"
+        },
+        {
+          "id": "cone",
+          "nodes": [
+            "Cylinder_001"
+          ],
+          "cat": "CONE"
+        },
+        {
+          "id": "police_car",
+          "nodes": [
+            "Cube_039"
+          ],
+          "cat": "POLICE_CAR"
         }
       ],
       "texture_max": 256
@@ -1193,35 +1228,35 @@
           "nodes": [
             "PublicBuilding_3"
           ],
-          "cat": "HOUSE2"
+          "cat": "VILLA"
         },
         {
           "id": "villa4",
           "nodes": [
             "PublicBuilding_4"
           ],
-          "cat": "HOUSE2"
+          "cat": "VILLA"
         },
         {
           "id": "villa5",
           "nodes": [
             "PublicBuilding_5"
           ],
-          "cat": "HOUSE2"
+          "cat": "VILLA"
         },
         {
           "id": "villa6",
           "nodes": [
             "PublicBuilding_6"
           ],
-          "cat": "HOUSE2"
+          "cat": "VILLA"
         },
         {
           "id": "villa7",
           "nodes": [
             "PublicBuilding_7"
           ],
-          "cat": "HOUSE2"
+          "cat": "VILLA"
         },
         {
           "id": "flat8",
@@ -1693,6 +1728,59 @@
           ],
           "cat": "FUTURE",
           "footprint": 2.8
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/nuclear_plant.glb",
+      "out": "nuclear",
+      "texture_max": 512,
+      "items": [
+        {
+          "id": "nuclear_plant",
+          "nodes": [
+            "Zdanie_Centr",
+            "Zdanie_Cheh",
+            "Zdanie_office",
+            "Truba"
+          ],
+          "cat": "NUCLEAR",
+          "footprint": 16.0
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/cinema_1.glb",
+      "out": "cinema2",
+      "items": [
+        {
+          "id": "cinema",
+          "nodes": [
+            "Cinema"
+          ],
+          "cat": "CINEMA2",
+          "footprint": 3.2
+        }
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/airport_pack.glb",
+      "out": "airport",
+      "texture_max": 512,
+      "items": [
+        {
+          "id": "airport",
+          "nodes": [
+            "02_ControlTower",
+            "03_AirplaneStairs",
+            "04_Hangar",
+            "06_Tunnel",
+            "07_Modulo1",
+            "07_Modulo2",
+            "LandingTrack1Straight"
+          ],
+          "cat": "AIRPORT",
+          "footprint": 32.0
         }
       ]
     }

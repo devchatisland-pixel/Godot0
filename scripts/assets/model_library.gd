@@ -16,6 +16,10 @@ var road_masks := PackedInt32Array()
 var by_cat := {}
 ## Procedural meshes by name ("hospital", "box"...).
 var named := {}
+## Parallel to `meshes`: a readable name per model (pack file + node, or procedural name),
+## and its category (-1 for procedural models).
+var names := PackedStringArray()
+var cats := PackedInt32Array()
 
 var _pending: Array[Dictionary] = []
 var _total := 0
@@ -44,8 +48,9 @@ func load_next(count: int) -> float:
 		if mesh == null:
 			push_warning("[Models] could not load %s %s" % [e["path"], e.get("node", "")])
 			continue
-		var id := add_mesh(mesh, e["mask"])
+		var id := add_mesh(mesh, e["mask"], _label(e))
 		var cat: int = e["cat"]
+		cats[id] = cat
 		if not by_cat.has(cat):
 			by_cat[cat] = PackedInt32Array()
 		by_cat[cat].append(id)
@@ -54,17 +59,29 @@ func load_next(count: int) -> float:
 	return 1.0 - float(_pending.size()) / float(_total)
 
 
-func add_mesh(mesh: Mesh, mask: int = 0) -> int:
+func add_mesh(mesh: Mesh, mask: int = 0, label: String = "") -> int:
 	meshes.append(mesh)
 	bounds.append(mesh.get_aabb())
 	road_masks.append(mask)
+	names.append(label)
+	cats.append(-1)
 	return meshes.size() - 1
 
 
 func add_named(name: String, mesh: Mesh) -> int:
-	var id := add_mesh(mesh)
+	var id := add_mesh(mesh, 0, name)
 	named[name] = id
 	return id
+
+
+## "pack.glb: node" or the file name of a single model.
+func _label(e: Dictionary) -> String:
+	var file := String(e["path"]).get_file()
+	return "%s: %s" % [file, e["node"]] if e.has("node") else file
+
+
+func model_name(id: int) -> String:
+	return names[id] if id >= 0 and id < names.size() else ""
 
 
 func ids(cat: int) -> PackedInt32Array:

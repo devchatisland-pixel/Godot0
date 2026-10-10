@@ -132,6 +132,30 @@
 		{
 			"cat": "BARREL",
 			"node": "barrel3"
+		},
+		{
+			"cat": "ROADBLOCK_A",
+			"node": "roadblock_a1"
+		},
+		{
+			"cat": "ROADBLOCK_A",
+			"node": "roadblock_a2"
+		},
+		{
+			"cat": "ROADBLOCK_B",
+			"node": "roadblock_b1"
+		},
+		{
+			"cat": "ROADBLOCK_B",
+			"node": "roadblock_b2"
+		},
+		{
+			"cat": "CONE",
+			"node": "cone"
+		},
+		{
+			"cat": "POLICE_CAR",
+			"node": "police_car"
 		}
 	]
 }

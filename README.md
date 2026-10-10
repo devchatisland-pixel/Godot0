@@ -116,6 +116,18 @@ The fog is made of pictures, not 3D volumes:
 The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
 At night the fog turns dark blue-grey and the night skyline model shows its city lights through it.
 
+## Selecting buildings
+
+Click or tap (without dragging) any building: it glows, a frame and a wave appear on the
+ground, an arrow bobs above it and an information bubble shows its ID (`B0042`), kind
+(code name), model name, category, cell, world position, facing, zone and seed
+(`scripts/world/building_info.gd`). "Copy info" puts it on the clipboard. Esc, the X or a
+click elsewhere clears it. `BuildingPicker.building_selected(info)` is the hook for a
+database or game logic later.
+
+Other additions: burger joints (one per district), nuclear plant and airport on the urban
+island, cinema in place of the east museum, highway roadblocks (`scripts/world/roadblocks.gd`).
+
 ## Day and night
 
 The city runs an automatic day and night cycle (`CityConfig.day_cycle_seconds`, 4 minutes by default; `scripts/world/day_night.gd`).

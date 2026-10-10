@@ -1,0 +1,9 @@
+{
+	"file": "cinema2.glb",
+	"models": [
+		{
+			"cat": "CINEMA2",
+			"node": "cinema"
+		}
+	]
+}

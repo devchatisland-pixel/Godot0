@@ -3,6 +3,9 @@ extends Camera3D
 ## Orthographic isometric camera. Only two things are possible: navigate (pan)
 ## and zoom. Input comes from CameraInput (mouse, touch, trackpad, keyboard).
 
+## Emitted on a click or tap that was not a drag (screen position).
+signal tapped(screen_pos: Vector2)
+
 const KEY_PAN_SPEED := 1.2      # screens per second
 const ZOOM_SMOOTH := 14.0
 const INERTIA_DAMP := 6.0
@@ -30,6 +33,7 @@ func setup(cfg: CityConfig, map_size: int, start: Vector3, start_zoom: float) ->
 	zoom = clampf(start_zoom, _min_zoom, _max_zoom)
 	_zoom_goal = zoom
 	_input = CameraInput.new(self)
+	_input.tapped.connect(func(p: Vector2) -> void: tapped.emit(p))
 	_apply()
 
 

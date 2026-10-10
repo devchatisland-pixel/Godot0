@@ -28,10 +28,13 @@ const FOREST := {"at": Vector2(178, 62), "r": Vector2(34, 17)}
 const SAND_BAND := 6
 ## Where the ferris wheel stands (6x6 plot, at the south beach) and the skyline plots of the urban island.
 const FERRIS_TARGET := Vector2i(146, 221)
-const CLUSTER_PLOT := Vector2i(18, 18)
+## Plots of the urban island: the nuclear plant with its little industry, and the airport.
+const NUCLEAR_PLOT := Vector2i(18, 13)
+const AIRPORT_PLOT := Vector2i(20, 32)
 ## The smallest palm islet: the pirate grave stands on it, the pirate ship lies off its coast.
 const PIRATE_ISLET := Vector2i(250, 92)
-const CLUSTER_TARGETS := [Vector2i(28, 106), Vector2i(28, 162)]
+const NUCLEAR_TARGET := Vector2i(28, 101)
+const AIRPORT_TARGET := Vector2i(28, 152)
 ## The 8 buildings of the industrial zone: sizes in cells.
 const FACTORY_SIZES := [Vector2i(7, 4), Vector2i(6, 4), Vector2i(5, 4), Vector2i(4, 3),
 		Vector2i(4, 3), Vector2i(3, 3), Vector2i(3, 3), Vector2i(3, 3)]
@@ -44,11 +47,12 @@ const SPECS := [
 		"zones": [Zone.QUARTER]},
 	{"kind": Kind.BURGER_KING, "size": Vector2i(4, 4), "count": 1, "near": "quarter_south_center",
 		"zones": [Zone.QUARTER]},
-	# One of each food stall (8 models), spread over the red district instead of the beaches.
-	{"kind": Kind.STALL, "size": Vector2i(2, 2), "variants": true, "gap": 4.0, "same_gap": 4.0,
-		"near": ["quarter_south_center", "quarter_south_center", "quarter_south_center",
-				"quarter_south_center", "quarter_south_center", "quarter_south_center",
-				"quarter_south_center", "quarter_south_center"], "zones": [Zone.QUARTER]},
+	# The drive-in cinema, a bit wider than before.
+	{"kind": Kind.DRIVE_IN, "size": Vector2i(5, 4), "count": 1, "near": "quarter_south_center",
+		"zones": [Zone.QUARTER]},
+	# The poor district has its own burger restaurant.
+	{"kind": Kind.BURGER_JOINT, "size": Vector2i(3, 2), "count": 1, "near": "poor_center",
+		"zones": [Zone.POOR]},
 	{"kind": Kind.HOTEL, "size": Vector2i(3, 3), "seed_base": 4, "variants": true, "same_gap": 12.0,
 		"force_facing": 1,
 		"near": ["quarter_south_center", "quarter_south_center", "quarter_south_center",
@@ -95,8 +99,8 @@ func build() -> void:
 	_build_west_highway()
 	_paint_open_areas()
 	_ferris = _find_plot(FERRIS_TARGET, Vector2i(6, 6), QUARTER)
-	for t in CLUSTER_TARGETS:
-		_clusters.append(_find_plot(t, CLUSTER_PLOT, {}))
+	_clusters.append(_find_plot(NUCLEAR_TARGET, NUCLEAR_PLOT, {}))
+	_clusters.append(_find_plot(AIRPORT_TARGET, AIRPORT_PLOT, {}))
 
 	# Streets of the poor district, the red quarter and the urban island (free land only).
 	var roads := RoadPlanner.new(_cfg, _data, _island, _districts, _rng)
@@ -140,9 +144,9 @@ func build() -> void:
 	_services.build_specs(SPECS, roads.blocks, zones)
 	if _ferris.size.x > 0:
 		_claim(_ferris, Kind.FERRIS_WHEEL, 2, Zone.CIVIC)
-	for k in _clusters.size():
-		if _clusters[k].size.x > 0:
-			_claim(_clusters[k], Kind.URBAN_CLUSTER, 2, Zone.URBAN, k)
+	_build_nuclear_plant(_clusters[0])
+	if _clusters[1].size.x > 0:
+		_claim(_clusters[1], Kind.AIRPORT, 2, Zone.URBAN)
 
 	_build_desert()
 	_build_industrial()
@@ -508,6 +512,22 @@ func _link_urban_clusters() -> void:
 
 
 # --- Features ---------------------------------------------------------------------------------
+## The nuclear plant in the north part of its plot; the rest of the plot is a little
+## industrial yard: containers, barrels, a truck, and two small factories.
+func _build_nuclear_plant(plot: Rect2i) -> void:
+	if plot.size.x <= 0:
+		return
+	_claim(Rect2i(plot.position, Vector2i(plot.size.x, 7)), Kind.NUCLEAR_PLANT, 2, Zone.URBAN)
+	var yard := Rect2i(plot.position + Vector2i(0, 8), Vector2i(plot.size.x, plot.size.y - 8))
+	var k := 0
+	for r in _spots(yard, Zone.URBAN, Vector2i(2, 2), 4, 3.5, 0, 300):
+		_claim(r, Kind.INDUSTRIAL_YARD, 2, Zone.URBAN, k)
+		k += 1
+	for r in _spots(yard, Zone.URBAN, Vector2i(3, 2), 2, 6.0, 0, 300):
+		_claim(r, Kind.INDUSTRIAL, 2, Zone.URBAN, k)
+		k += 1
+
+
 ## A free 6x6-like plot closest to `target` whose cells are all dry open land; for a
 ## blob given, the whole plot must be inside it.
 func _find_plot(target: Vector2i, size: Vector2i, blob: Dictionary) -> Rect2i:

@@ -13,6 +13,7 @@ var library: ModelLibrary
 var camera: IsoCamera
 var streamer: ChunkStreamer
 var day_night: DayNight
+var picker: BuildingPicker
 
 var _phase := Phase.GENERATING
 var _thread := Thread.new()
@@ -113,6 +114,17 @@ func _start_city() -> void:
 	west_bridge.name = "WestBridge"
 	add_child(west_bridge)
 	west_bridge.build(data, library)
+
+	var roadblocks := Roadblocks.new()
+	roadblocks.name = "Roadblocks"
+	add_child(roadblocks)
+	roadblocks.build(data, library)
+
+	# Every building can be clicked: glow and information bubble.
+	picker = BuildingPicker.new()
+	picker.name = "BuildingPicker"
+	add_child(picker)
+	picker.setup(camera, data, library)
 
 	# Start on the centre of the city (zoom out to see the islands).
 	var c := Vector2(data.size, data.size) * 0.5

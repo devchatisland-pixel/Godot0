@@ -1,0 +1,9 @@
+{
+	"file": "airport.glb",
+	"models": [
+		{
+			"cat": "AIRPORT",
+			"node": "airport"
+		}
+	]
+}

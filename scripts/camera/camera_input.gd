@@ -6,6 +6,12 @@ extends RefCounted
 ##   trackpad - two-finger scroll pans, pinch zooms
 
 const WHEEL_STEP := 1.15
+## A press that moves less than this many pixels, and ends within TAP_TIME, is a tap (a click).
+const TAP_SLOP := 10.0
+const TAP_TIME := 0.45
+
+## Emitted when the user taps / clicks without dragging (screen position).
+signal tapped(position: Vector2)
 
 var _cam: IsoCamera
 var _touches := {}          # index -> position
@@ -13,6 +19,9 @@ var _pinch_distance := 0.0
 var _mouse_drag := false
 var _last_time := 0
 var dragging := false
+var _press_moved := 0.0
+var _press_time := 0
+var _touch_multi := false
 
 
 func _init(cam: IsoCamera) -> void:
@@ -56,6 +65,10 @@ func _on_mouse_button(e: InputEventMouseButton) -> bool:
 			if e.pressed:
 				_cam.stop_inertia()
 				_last_time = Time.get_ticks_usec()
+				_press_moved = 0.0
+				_press_time = Time.get_ticks_msec()
+			elif e.button_index == MOUSE_BUTTON_LEFT and _is_tap():
+				tapped.emit(e.position)
 			return true
 	return false
 
@@ -69,6 +82,7 @@ func _wheel_factor(e: InputEventMouseButton) -> float:
 func _on_mouse_motion(e: InputEventMouseMotion) -> bool:
 	if not _mouse_drag:
 		return false
+	_press_moved += e.relative.length()
 	_cam.drag(e.position - e.relative, e.position, _elapsed())
 	return true
 
@@ -76,11 +90,19 @@ func _on_mouse_motion(e: InputEventMouseMotion) -> bool:
 # --- Touch -------------------------------------------------------------------------------------
 func _on_touch(e: InputEventScreenTouch) -> bool:
 	if e.pressed:
+		if _touches.is_empty():
+			_press_moved = 0.0
+			_press_time = Time.get_ticks_msec()
+			_touch_multi = false
+		else:
+			_touch_multi = true
 		_touches[e.index] = e.position
 		_cam.stop_inertia()
 		_last_time = Time.get_ticks_usec()
 	else:
 		_touches.erase(e.index)
+		if _touches.is_empty() and not _touch_multi and _is_tap():
+			tapped.emit(e.position)
 	dragging = not _touches.is_empty()
 	_pinch_distance = _current_pinch()
 	return true
@@ -89,6 +111,7 @@ func _on_touch(e: InputEventScreenTouch) -> bool:
 func _on_touch_drag(e: InputEventScreenDrag) -> bool:
 	if not _touches.has(e.index):
 		_touches[e.index] = e.position
+	_press_moved += e.relative.length()
 	if _touches.size() == 1:
 		_cam.drag(_touches[e.index], e.position, _elapsed())
 		_touches[e.index] = e.position
@@ -115,6 +138,10 @@ func _current_pinch() -> float:
 		return 0.0
 	var keys := _touches.keys()
 	return (_touches[keys[0]] as Vector2).distance_to(_touches[keys[1]])
+
+
+func _is_tap() -> bool:
+	return _press_moved < TAP_SLOP and float(Time.get_ticks_msec() - _press_time) / 1000.0 < TAP_TIME
 
 
 func _elapsed() -> float:

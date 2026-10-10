@@ -32,7 +32,8 @@ const FAR_COLORS := {
 	Kind.RUSSIAN: Color("9a8f86"), Kind.PRISON_WING: Color("b59a78"), Kind.OIL_PUMP: Color("3a3a40"),
 	Kind.STALL: Color("f2a65a"), Kind.FACTORY_BLDG: Color("9a9a9e"),
 	Kind.MCDONALDS: Color("e2b43a"), Kind.BURGER_KING: Color("d6402f"), Kind.URBAN_BLDG: Color("b9bcc6"),
-	Kind.URBAN_CLUSTER: Color("4a4f60"),
+	Kind.URBAN_CLUSTER: Color("4a4f60"), Kind.NUCLEAR_PLANT: Color("b9bcb8"), Kind.CINEMA_MAIN: Color("e98b8b"),
+	Kind.AIRPORT: Color("9aa0aa"), Kind.BURGER_JOINT: Color("d6402f"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -50,6 +51,7 @@ const NAMED := {
 	Kind.POOR_BLDG: ["box"], Kind.RUSSIAN: ["box"], Kind.STALL: ["box"], Kind.FACTORY_BLDG: ["box"], Kind.MCDONALDS: ["box"],
 	Kind.BURGER_KING: ["box"], Kind.URBAN_BLDG: ["box"], Kind.URBAN_CLUSTER: ["box"],
 	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.GRAVE: ["grave"],
+	Kind.NUCLEAR_PLANT: ["box"], Kind.CINEMA_MAIN: ["box"], Kind.AIRPORT: ["box"], Kind.BURGER_JOINT: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -111,6 +113,15 @@ static func place(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatc
 		return
 	batch.add(pick["id"], xform)
 	_place_extras(data, lib, i, kind, pick, batch)
+
+
+## The model and transform used for building `i`, or {} for fillers without a model
+## (plazas, gardens, yards). Same choice as `place`, so the picker highlights the right thing.
+static func pick_for(data: CityData, lib: ModelLibrary, i: int) -> Dictionary:
+	var kind: int = data.b_kind[i]
+	if kind == Kind.PLAZA or kind == Kind.GARDEN or kind == Kind.INDUSTRIAL_YARD:
+		return {}
+	return _pick_model(data, lib, i)
 
 
 # --- Model choice ------------------------------------------------------------------------

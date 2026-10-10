@@ -3,10 +3,6 @@
 	"models": [
 		{
 			"cat": "BIZ_SHOP",
-			"node": "restaurant"
-		},
-		{
-			"cat": "BIZ_SHOP",
 			"node": "shop"
 		},
 		{
@@ -14,7 +10,7 @@
 			"node": "pizzeria"
 		},
 		{
-			"cat": "BIZ_SHOP",
+			"cat": "BURGER_JOINT",
 			"node": "burger"
 		},
 		{

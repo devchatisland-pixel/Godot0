@@ -84,6 +84,14 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.FUTURE)
 		Kind.PIRATE_SHIP:
 			return lib.ids(Cat.PIRATE_SHIP)
+		Kind.NUCLEAR_PLANT:
+			return lib.ids(Cat.NUCLEAR)
+		Kind.CINEMA_MAIN:
+			return lib.ids(Cat.CINEMA2)
+		Kind.AIRPORT:
+			return lib.ids(Cat.AIRPORT)
+		Kind.BURGER_JOINT:
+			return lib.ids(Cat.BURGER_JOINT)
 		Kind.URBAN_CLUSTER:
 			return _variant_of(_union(lib, [Cat.SKYLINE, Cat.SKYLINE2]), seed)
 		Kind.MCDONALDS:
