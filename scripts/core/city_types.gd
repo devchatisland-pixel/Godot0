@@ -26,6 +26,7 @@ enum Zone {
 	FARM,        # fields and farms of the countryside
 	URBAN,       # the third island: massive urbanism, no trees
 	SAND,        # wide beach strip around the mountain forest
+	DEV,         # the small development island (one of each shop)
 }
 
 # --- Road grid values ---------------------------------------------------------

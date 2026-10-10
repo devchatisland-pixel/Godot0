@@ -117,7 +117,7 @@ func _billboards() -> int:
 			if _data.terrain[i] != Terrain.LAND:
 				continue
 			var z := int(_data.zone[i])
-			if z == Zone.NONE or z == Zone.ISLET:
+			if z == Zone.NONE or z == Zone.ISLET or z == Zone.DEV:
 				continue
 			sum[z] = sum.get(z, Vector2.ZERO) + Vector2(x, y)
 			count[z] = count.get(z, 0) + 1

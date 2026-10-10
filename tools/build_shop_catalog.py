@@ -25,26 +25,6 @@ FRONT_YAW = {"-Z": 0.0, "+X": 90.0, "-X": -90.0, "+Z": 180.0}
 # Uniform scale on top of the native units (the mini shop was authored 0.17 units wide).
 SCALE = {"shop-general-mini": 25.0}
 
-# Zones the shop may stand in (names of CityTypes.Zone) and how many of it to place.
-PLACEMENT = {
-    "shop-candy-a": (["QUARTER", "ENTERTAINMENT"], 3),
-    "shop-candy-b": (["QUARTER", "ENTERTAINMENT"], 3),
-    "shop-coffee-a": (["DOWNTOWN", "COMMERCIAL"], 2),
-    "shop-coffee-b": (["DOWNTOWN", "COMMERCIAL"], 3),
-    "shop-flower-a": (["SUBURBAN", "APARTMENT"], 3),
-    "shop-convenience-quickstop": (["INDUSTRIAL", "POOR"], 1),
-    "shop-general-orange-a": (["COMMERCIAL", "QUARTER"], 3),
-    "shop-general-orange-b": (["COMMERCIAL", "QUARTER"], 3),
-    "shop-general-generic": (["COMMERCIAL", "APARTMENT", "SUBURBAN"], 3),
-    "shop-general-brick": (["COMMERCIAL", "APARTMENT", "SUBURBAN"], 3),
-    "shop-general-mini": (["QUARTER", "POOR"], 3),
-    "shop-townhouse-gabled": (["QUARTER", "SUBURBAN"], 3),
-    "shop-townhouse-belgium": (["DOWNTOWN", "COMMERCIAL", "APARTMENT"], 3),
-    "shop-steel-glass": (["COMMERCIAL", "INDUSTRIAL"], 3),
-    "shop-building-multi": (["DOWNTOWN", "APARTMENT"], 3),
-}
-
-
 def read_glb(path):
     d = open(path, "rb").read()
     jl = struct.unpack("<I", d[12:16])[0]
@@ -164,10 +144,9 @@ def main():
     for c in cat:
         i = c["id"]
         size, removed = normalise(f"{src}/models/shops/{i}.glb", f"{out}/models/{i}.glb", c["front"], SCALE.get(i, 1.0))
-        zones, copies = PLACEMENT[i]
         shops.append({
             "id": i, "file": f"res://shops/models/{i}.glb", "category": c["category"], "name": c["name"],
-            "credit": {"title": c["title"], "author": c["author"], "url": c["source_url"], "license": c["license"]}, "size_m": size, "triangles": c["triangles"], "zones": zones, "copies": copies,
+            "credit": {"title": c["title"], "author": c["author"], "url": c["source_url"], "license": c["license"]}, "size_m": size, "triangles": c["triangles"],
             "notes": c["notes"],
         })
         print(f"{i:32s} {size} removed={removed}")
