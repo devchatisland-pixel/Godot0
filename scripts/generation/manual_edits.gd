@@ -172,6 +172,7 @@ static func _find(data: CityData, kind_name: String, at: Vector2i) -> int:
 ## Edits of things that only exist after the props: deleted by place (kind and lot).
 const LATE := [
 	{"kind": "BUS_STOP", "at": Vector2i(140, 194)},
+	{"kind": "BUS_STOP", "at": Vector2i(208, 131)},
 	{"kind": "BILLBOARD", "at": Vector2i(75, 126)},
 	{"kind": "BILLBOARD", "at": Vector2i(199, 179)},
 	{"kind": "BILLBOARD", "at": Vector2i(150, 255)},

@@ -20,9 +20,8 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 	if data.bridge.x >= 0:
 		var x := data.bridge.x - EAST_BACK
 		_block(lib, Cat.ROADBLOCK_A, x, data.bridge.y, true, true)
-		_police_car(lib, x + 2, data.bridge.y, 2.7)
-		_police_car(lib, x - 3, data.bridge.y, -3.7)
-		_tank(lib, x + 4, data.bridge.y)
+		_roadblock_cars(lib, x, data.bridge.y)
+		_tanks_facing_bridge(lib, x, data.bridge.y)
 	if data.west_bridge.x >= 0:
 		var x := data.west_bridge.x + WEST_BACK
 		_block(lib, Cat.ROADBLOCK_B, x, data.west_bridge.z, false)
@@ -56,12 +55,25 @@ func _police_car(lib: ModelLibrary, x: int, row: int, side: float = 2.7) -> void
 	_put(lib, ids[0], Vector3(float(x) - 1.6, 0.0, float(row) + 0.5 + side), PI, CAR_LEN)
 
 
-## The tank on the south verge, its gun towards the traffic coming from the west.
-func _tank(lib: ModelLibrary, x: int, row: int) -> void:
+## The two police cars stand on the highway just beyond the barriers, slanted across the
+## lanes like a real roadblock, noses together: they wait for what comes from the bridge.
+func _roadblock_cars(lib: ModelLibrary, x: int, row: int) -> void:
+	var ids := lib.ids(Cat.POLICE_CAR)
+	if ids.is_empty():
+		return
+	var z := float(row) + 0.5
+	_put(lib, ids[0], Vector3(float(x) + 2.6, 0.0, z - 0.9), PI * 0.5 + 0.5, CAR_LEN)
+	_put(lib, ids[0], Vector3(float(x) + 2.6, 0.0, z + 0.9), PI * 0.5 - 0.5, CAR_LEN)
+
+
+## Five tanks on both verges beyond the roadblock, their guns towards the bridge (east).
+func _tanks_facing_bridge(lib: ModelLibrary, x: int, row: int) -> void:
 	var ids := lib.ids(Cat.TANK)
 	if ids.is_empty():
 		return
-	_put(lib, ids[0], Vector3(float(x) + 0.5, 0.0, float(row) + 0.5 + 4.6), -PI * 0.5, TANK_LEN)
+	var z := float(row) + 0.5
+	for spot in [Vector2(4.5, 4.6), Vector2(7.2, 4.6), Vector2(9.9, 4.6), Vector2(5.8, -4.2), Vector2(8.5, -4.2)]:
+		_put(lib, ids[0], Vector3(float(x) + spot.x, 0.0, z + spot.y), PI * 0.5, TANK_LEN)
 
 
 ## Rectangle (cells) round the Golden Gate checkpoint where no tree grows.
@@ -69,7 +81,7 @@ static func clearing(data: CityData) -> Rect2i:
 	if data.bridge.x < 0:
 		return Rect2i()
 	var x := data.bridge.x - EAST_BACK
-	return Rect2i(x - 7, data.bridge.y - 8, 16, 18)
+	return Rect2i(x - 7, data.bridge.y - 8, 26, 18)
 
 
 ## Puts model `id` on the ground at `at`, scaled so that its longest side is `length`.
