@@ -1,0 +1,9 @@
+{
+	"file": "neon_pacman.glb",
+	"models": [
+		{
+			"cat": "NEON_PACMAN",
+			"node": "neon_pacman"
+		}
+	]
+}

@@ -233,6 +233,8 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `city_night` | Low-poly City Night (keeps its light map; 17 of its buildings) | URBAN2 | more towers of the urban island |
 | `night_towers` | city at night low poly skyscrapers (9 towers, keeps its light map) | NIGHT_TOWER | the tallest towers of the urban island |
 | `cooling` | Cooling Tower (Background) | COOLING, COOLING_HALL | the cooling towers and hall of the nuclear plant |
+| `neon_controller` | Neon game controller | NEON_CONTROLLER | a neon roof sign, very bright at night (on shop B-00257) |
+| `neon_pacman` | Neon Pac-Man (rest pose, no animation) | NEON_PACMAN | a neon roof sign (on the police station B-00685) |
 | `watchtower` | low poly Watchtower (without fences, rails, lamps and trees) | WATCHTOWER | the two forest lookouts |
 | `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |
 | `hungry` | Hungry Jack's restaurant | BURGER_KING | the Burger King of the red district |
@@ -272,6 +274,7 @@ Not used:
 * "Low-poly-night-city-building-skyline" by willis123, CC BY 4.0
 * "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
 * "Pirate Ship" by Oleg Muzyka, CC BY 4.0
+* "neon game controller" by alina_dreiman and "Neon Pac-Man" by patrakeevasveta, CC BY 4.0
 * "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)
 * "XXX Neon Sign" by Jimmy Johansson, CC BY 4.0 (only a front render of it is used, as the XXX texture of the sign atlas)
 * "Pack - Low Poly - 15 Building" by Islide, CC BY 4.0

@@ -27,6 +27,7 @@ var b_facing := PackedByteArray()
 var b_seed := PackedInt32Array()
 var b_height := PackedFloat32Array() # relative height factor (density driven)
 var b_scale := PackedFloat32Array()  # size factor of the model (1 = as placed; ManualEdits changes it)
+var b_sign := PackedByteArray()      # neon sign on the roof: 0 none, else a ModelCatalog.Cat (ManualEdits)
 
 # Chunk index -> building ids whose lot origin is inside the chunk
 var chunk_buildings: Array[PackedInt32Array] = []
@@ -104,6 +105,7 @@ func add_building(r: Rect2i, kind: int, facing: int, seed: int, height: float) -
 	b_seed.append(seed)
 	b_height.append(height)
 	b_scale.append(1.0)
+	b_sign.append(0)
 	return b_kind.size() - 1
 
 
@@ -122,6 +124,7 @@ func remove_buildings(removed: Dictionary) -> void:
 	var s := PackedInt32Array()
 	var h := PackedFloat32Array()
 	var sc := PackedFloat32Array()
+	var sg := PackedByteArray()
 	for i in b_kind.size():
 		if removed.has(i):
 			continue
@@ -132,12 +135,14 @@ func remove_buildings(removed: Dictionary) -> void:
 		s.append(b_seed[i])
 		h.append(b_height[i])
 		sc.append(b_scale[i])
+		sg.append(b_sign[i])
 	b_rect = r
 	b_kind = k
 	b_facing = f
 	b_seed = s
 	b_height = h
 	b_scale = sc
+	b_sign = sg
 
 
 # --- Chunks ------------------------------------------------------------------------------

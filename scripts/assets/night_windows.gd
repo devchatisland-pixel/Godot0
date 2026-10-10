@@ -31,6 +31,10 @@ const PACK_GLOW := {
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
 	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
 }
+## Neon roof signs: dim by day, very bright at night (they glow in their own colours).
+const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN]
+const NEON_DAY := 0.35
+const NEON_NIGHT := 3.0
 ## Night packs keep the lights painted in their emission map (a lit facade where they have none).
 const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
 
@@ -44,6 +48,9 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in [ModelCat.SKYLINE, ModelCat.SKYLINE2, ModelCat.FUTURE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
+	for cat in NEON_PACKS:
+		for id in lib.ids(cat):
+			_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
 	for cat in NIGHT_PACKS:
 		for id in lib.ids(cat):
 			var mesh := lib.meshes[id]
@@ -58,7 +65,9 @@ static func apply(lib: ModelLibrary) -> void:
 
 
 ## Copy of every material of `mesh` whose texture also lights it at night.
-static func _light_facade(mesh: Mesh, energy: float, done: Dictionary) -> void:
+## `keep_emission` keeps the emission colour the material already has (neon signs).
+static func _light_facade(mesh: Mesh, energy: float, done: Dictionary, day: float = 0.0,
+		keep_emission: bool = false) -> void:
 	for s in mesh.get_surface_count():
 		var mat := mesh.surface_get_material(s) as BaseMaterial3D
 		if mat == null:
@@ -70,9 +79,9 @@ static func _light_facade(mesh: Mesh, energy: float, done: Dictionary) -> void:
 				m.emission = Color.BLACK
 				m.emission_texture = mat.albedo_texture
 				m.emission_operator = BaseMaterial3D.EMISSION_OP_ADD
-			else:
+			elif not (keep_emission and mat.emission_enabled):
 				m.emission = mat.albedo_color
-			SignAtlas.register_night(m, 0.0, energy)
+			SignAtlas.register_night(m, day, energy)
 			done[mat] = m
 			done[m] = m
 		mesh.surface_set_material(s, done[mat])

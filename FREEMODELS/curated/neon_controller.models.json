@@ -1,0 +1,9 @@
+{
+	"file": "neon_controller.glb",
+	"models": [
+		{
+			"cat": "NEON_CONTROLLER",
+			"node": "neon_controller"
+		}
+	]
+}

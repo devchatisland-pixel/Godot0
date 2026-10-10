@@ -25,6 +25,8 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	var xform: Transform3D = pick["xform"]
 	var pid: int = pick["id"]
 	var box: AABB = lib.bounds[pid]
+	if data.b_sign[i] != 0:
+		_place_roof_sign(data, lib, i, xform * box, batch)
 	match kind:
 		Kind.STADIUM:
 			# Floodlight masts at the corners of the plot (seen at night).
@@ -116,3 +118,16 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 static func tree_xform(p: Vector3, seed: int) -> Transform3D:
 	var s := 1.1 + float((seed >> 5) & 15) / 15.0 * 0.6
 	return Transform3D(Basis(Vector3.UP, float(seed & 63) * 0.1).scaled(Vector3(s, s, s)), p)
+
+
+## A neon sign standing on the roof (top of the building's box), centred on the lot and
+## turned to the south, which the camera sees.
+static func _place_roof_sign(data: CityData, lib: ModelLibrary, i: int, roof: AABB, batch: InstanceBatch) -> void:
+	var ids := lib.ids(data.b_sign[i])
+	if ids.is_empty():
+		return
+	var r := data.building_rect(i)
+	var at := Vector3(r.position.x + r.size.x * 0.5, roof.end.y, r.position.y + r.size.y * 0.5)
+	var box := lib.bounds[ids[0]]
+	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
+	batch.add(ids[0], Transform3D(Basis(), at - center))

@@ -13,6 +13,7 @@ extends RefCounted
 ##   scale_abs  absolute scale of the model, 1 = its own size (ignores the lot)
 ##   replace  name of the Kind the building becomes (it keeps its lot and its facing)
 ##   delete   true = nothing is drawn any more
+##   roof_sign  name of a ModelCatalog.Cat (a neon sign) put on the roof, facing south
 
 const EDITS := [
 	{"id": 676, "kind": "CRANE", "at": Vector2i(132, 165), "facing": 1},
@@ -29,6 +30,8 @@ const EDITS := [
 	{"id": 995, "kind": "FUTURE_BLDG", "at": Vector2i(36, 137), "delete": true},
 	{"id": 927, "kind": "FUTURE_BLDG", "at": Vector2i(11, 142), "delete": true},
 	{"id": 985, "kind": "FUTURE_BLDG", "at": Vector2i(23, 143), "delete": true},
+	{"id": 257, "kind": "SHOP", "at": Vector2i(137, 102), "roof_sign": "NEON_CONTROLLER"},
+	{"id": 685, "kind": "POLICE", "at": Vector2i(171, 154), "roof_sign": "NEON_PACMAN"},
 	{"id": 653, "kind": "FIRE_STATION", "at": Vector2i(150, 140), "scale": 1.12},
 	{"id": 654, "kind": "POST_OFFICE", "at": Vector2i(133, 152), "scale": 1.12},
 ]
@@ -54,6 +57,8 @@ static func apply(data: CityData) -> int:
 			data.b_scale[id] = e["scale"]
 		if e.has("scale_abs"):
 			data.b_scale[id] = -float(e["scale_abs"])
+		if e.has("roof_sign"):
+			data.b_sign[id] = ModelCatalog.Cat[e["roof_sign"]]
 		if e.has("replace"):
 			data.b_kind[id] = CityTypes.Kind[e["replace"]]
 		if e.get("delete", false):

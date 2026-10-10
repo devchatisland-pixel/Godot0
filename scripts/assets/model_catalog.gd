@@ -30,6 +30,8 @@ enum Cat {
 	NUCLEAR, CINEMA2, AIRPORT, BURGER_JOINT, VILLA, ROADBLOCK_A, ROADBLOCK_B,
 	# Seventh wave: more urban towers, cooling towers, the BT tower, the watchtower
 	URBAN2, NIGHT_TOWER, COOLING, COOLING_HALL, WATCHTOWER,
+	# Eighth wave: neon roof signs
+	NEON_CONTROLLER, NEON_PACMAN,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

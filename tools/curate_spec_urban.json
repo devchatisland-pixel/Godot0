@@ -153,6 +153,40 @@
 					]
 				}
 			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/neon_game_controller.glb",
+			"out": "neon_controller",
+			"keep_emission": true,
+			"texture_max": 128,
+			"comment": "A flat neon sign (standing upright, front towards +Z). Lit strongly at night by NightWindows.",
+			"items": [
+				{
+					"id": "neon_controller",
+					"nodes": [
+						"GLTF_SceneRootNode"
+					],
+					"cat": "NEON_CONTROLLER",
+					"footprint": 2.0
+				}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/neon_pac-man.glb",
+			"out": "neon_pacman",
+			"keep_emission": true,
+			"texture_max": 128,
+			"comment": "Pac-Man and four ghosts in their rest pose (the animation of the file is not used).",
+			"items": [
+				{
+					"id": "neon_pacman",
+					"nodes": [
+						"GLTF_SceneRootNode"
+					],
+					"cat": "NEON_PACMAN",
+					"footprint": 2.8
+				}
+			]
 		}
 	]
 }

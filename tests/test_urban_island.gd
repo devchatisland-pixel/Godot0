@@ -135,6 +135,8 @@ func _check_edits(data: CityData) -> void:
 			_fail("edit B-%05d: facing %d, wanted %d" % [id, data.b_facing[id], e["facing"]])
 		if e.has("scale") and not is_equal_approx(data.b_scale[id], e["scale"]):
 			_fail("edit B-%05d: scale %.2f, wanted %.2f" % [id, data.b_scale[id], e["scale"]])
+		if e.has("roof_sign") and data.b_sign[id] != ModelCatalog.Cat[e["roof_sign"]]:
+			_fail("edit B-%05d: roof sign not set" % id)
 		if e.has("scale_abs") and not is_equal_approx(data.b_scale[id], -float(e["scale_abs"])):
 			_fail("edit B-%05d: absolute scale not set" % id)
 	print("[Test] %d hand edits checked" % ManualEdits.EDITS.size())
@@ -151,10 +153,15 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 	EntertainmentMeshes.build_all(lib)
 	NatureMeshes.build_all(lib)
 	CivicMeshes.build_all(lib)
-	for cat in [ModelCatalog.Cat.URBAN2, ModelCatalog.Cat.NIGHT_TOWER, ModelCatalog.Cat.COOLING,
+	for cat in [ModelCatalog.Cat.NEON_CONTROLLER, ModelCatalog.Cat.NEON_PACMAN, ModelCatalog.Cat.URBAN2, ModelCatalog.Cat.NIGHT_TOWER, ModelCatalog.Cat.COOLING,
 			ModelCatalog.Cat.COOLING_HALL, ModelCatalog.Cat.WATCHTOWER]:
 		if not lib.has_cat(cat):
 			_fail("model category %s is empty" % ModelCatalog.Cat.keys()[cat])
+	for cat in [ModelCatalog.Cat.NEON_CONTROLLER, ModelCatalog.Cat.NEON_PACMAN]:
+		var b := lib.bounds[lib.ids(cat)[0]]
+		print("[Test] neon sign %s: %.1f wide, %.1f high, %.2f thick" % [ModelCatalog.Cat.keys()[cat], b.size.x, b.size.y, b.size.z])
+		if b.size.z > b.size.x or b.position.y < -0.01 or b.position.y > 0.01:
+			_fail("neon sign %s is not a flat sign standing on y = 0" % ModelCatalog.Cat.keys()[cat])
 	var seen := {}
 	var tallest_club := 0.0
 	for k in [Kind.AIRPORT, Kind.NUCLEAR_PLANT, Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER,
