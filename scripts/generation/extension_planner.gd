@@ -19,14 +19,8 @@ const Zone := CityTypes.Zone
 const Kind := CityTypes.Kind
 const Terrain := CityTypes.Terrain
 
-## Round districts: centre and radii in cells of the big map (desert, industrial zone,
-## farmland and forest are in ExtensionFeatures).
-const POOR := {"at": Vector2(122, 76), "r": Vector2(18, 10)}
-const QUARTER := {"at": Vector2(138, 211), "r": Vector2(36, 17)}
 ## Land cells within this distance of the sea in the forest patch become a wide beach.
 const SAND_BAND := 6
-## Where the ferris wheel stands (6x6 plot, at the south beach).
-const FERRIS_TARGET := Vector2i(146, 221)
 ## Buildings placed in the blocks of the districts.
 const SPECS := [
 	{"kind": Kind.RUSSIAN, "size": Vector2i(4, 4), "count": 1, "near": "poor_center",
@@ -87,7 +81,7 @@ func build() -> void:
 	_roads.build_east_highway()
 	_roads.build_west_highway()
 	_paint_open_areas()
-	_ferris = _spots.find_plot(FERRIS_TARGET, Vector2i(6, 6), QUARTER)
+	_ferris = _spots.find_plot(MapLayout.point("ferris"), Vector2i(6, 6), MapLayout.blob("quarter"))
 	_urban = UrbanIslandPlanner.new(_cfg, _data, _island, _districts, _roads)
 	_urban.choose_plots()
 
@@ -95,8 +89,8 @@ func build() -> void:
 	var road_planner := RoadPlanner.new(_cfg, _data, _island, _districts, _rng)
 	var zones := PackedByteArray()
 	var plans := [
-		{"mask": _spots.blob_mask(POOR), "zone": Zone.POOR, "limits": Vector2i(4, 8), "reserved": [] as Array[Rect2i]},
-		{"mask": _spots.blob_mask(QUARTER), "zone": Zone.QUARTER, "limits": Vector2i(4, 9),
+		{"mask": _spots.blob_mask(MapLayout.blob("poor")), "zone": Zone.POOR, "limits": Vector2i(4, 8), "reserved": [] as Array[Rect2i]},
+		{"mask": _spots.blob_mask(MapLayout.blob("quarter")), "zone": Zone.QUARTER, "limits": Vector2i(4, 9),
 				"reserved": [_ferris] as Array[Rect2i]},
 	]
 	for d in plans:
@@ -118,9 +112,9 @@ func build() -> void:
 	block_count = road_planner.blocks.size()
 	_urban.plan_roads()
 	block_count += _urban.block_count
-	_roads.spines(ExtensionFeatures.INDUSTRIAL)
-	_roads.link(_roads.road_nearest_to_city(_spots.blob_rect(ExtensionFeatures.INDUSTRIAL)))
-	_roads.link(_roads.land_nearest_to_city(_spots.blob_rect(ExtensionFeatures.FARM)))
+	_roads.spines(MapLayout.blob("industrial"))
+	_roads.link(_roads.road_nearest_to_city(_spots.blob_rect(MapLayout.blob("industrial"))))
+	_roads.link(_roads.land_nearest_to_city(_spots.blob_rect(MapLayout.blob("farm"))))
 	_urban.link_places()
 
 	# Lots (never over what the core already built), zoning, public buildings.
@@ -175,11 +169,11 @@ func _paint_new_land() -> void:
 
 ## Desert and industrial ground reach the sea without a beach; the forest keeps a wide one.
 func _paint_open_areas() -> void:
-	_paint(ExtensionFeatures.DESERT, Zone.DESERT, 0, true)
-	_paint(ExtensionFeatures.INDUSTRIAL, Zone.INDUSTRIAL, 0, true)
-	_paint(ExtensionFeatures.FARM, Zone.FARM, 0, false)
-	_paint(ExtensionFeatures.FOREST, Zone.NATURE, 225, false)
-	_sand_band(ExtensionFeatures.FOREST)
+	_paint(MapLayout.blob("desert"), Zone.DESERT, 0, true)
+	_paint(MapLayout.blob("industrial"), Zone.INDUSTRIAL, 0, true)
+	_paint(MapLayout.blob("farm"), Zone.FARM, 0, false)
+	_paint(MapLayout.blob("forest"), Zone.NATURE, 225, false)
+	_sand_band(MapLayout.blob("forest"))
 	_thin_core_forest()
 
 

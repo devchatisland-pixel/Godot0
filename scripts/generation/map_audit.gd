@@ -92,6 +92,28 @@ static func fog_hash(data: CityData) -> String:
 	return ctx.finish().hex_encode()
 
 
+## Hash of the whole generated map (every cell layer and every building): two maps with the
+## same hash are the same map. Used to check that a change of the code moves nothing.
+static func data_hash(data: CityData) -> String:
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	for layer: PackedByteArray in [data.terrain, data.zone, data.road, data.elevation, data.forest,
+			data.rocky, data.occupied, data.deco, data.edge, data.b_kind, data.b_facing,
+			data.b_sign, data.b_sign_facing]:
+		ctx.update(layer if not layer.is_empty() else PackedByteArray([0]))
+	ctx.update(data.b_rect.to_byte_array())
+	ctx.update(data.b_seed.to_byte_array())
+	ctx.update(data.b_height.to_byte_array())
+	ctx.update(data.b_scale.to_byte_array())
+	var models := PackedStringArray()
+	var keys := data.b_model.keys()
+	keys.sort()
+	for k in keys:
+		models.append("%s=%s" % [k, data.b_model[k]])
+	ctx.update(("%s %s %s %s" % [data.size, data.bridge, data.west_bridge, ",".join(models)]).to_utf8_buffer())
+	return ctx.finish().hex_encode() + ":" + fog_hash(data)
+
+
 # --- Roads ---------------------------------------------------------------------------------------
 
 ## Connected groups of road cells, biggest first: [{"cells": n, "at": Vector2i (one cell)}].

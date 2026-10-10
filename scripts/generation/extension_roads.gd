@@ -57,7 +57,7 @@ func build_east_highway() -> void:
 ## west-most road; the way west of it must be free.
 func build_west_highway() -> void:
 	var rows := []
-	for y in range(112, 156):
+	for y in range(MapLayout.cells("west_highway_from"), MapLayout.cells("west_highway_to")):
 		for x in range(_data.size):
 			if _data.road[_data.idx(x, y)] != 0:
 				rows.append([x, y])

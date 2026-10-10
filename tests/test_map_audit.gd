@@ -3,6 +3,8 @@ extends SceneTree
 ## Run: godot --headless --script res://tests/test_map_audit.gd
 ##      godot --headless --script res://tests/test_map_audit.gd -- --write   (new baseline)
 ##      ... -- --details   also lists where the road problems are
+##      ... -- --hash      only prints the hash of the whole map (MapAudit.data_hash)
+##      ... -- --same      fails unless the map is exactly the baseline map (for refactorings)
 ## What must be kept (fails when it changes): buildings per kind, trees on the ground, the
 ## zones that touch each other, the fog island. The road problems are printed with the
 ## baseline value beside them; a problem that gets worse fails, and the rebuilt map must
@@ -24,7 +26,19 @@ func _init() -> void:
 	var args := OS.get_cmdline_user_args()
 	var cfg := CityConfig.create()
 	var data := CityGenerator.new(cfg).generate()
+	var map_hash := MapAudit.data_hash(data)
+	print("[Audit] map hash ", map_hash)
+	if args.has("--hash"):
+		quit(0)
+		return
+	if args.has("--same"):
+		var old = JSON.parse_string(FileAccess.get_file_as_string(BASELINE))
+		var same: bool = old is Dictionary and old.get("map_hash", "") == map_hash
+		print("[Test] %s" % ("the map is the same as the baseline" if same else "FAILED: the map is not the baseline map"))
+		quit(0 if same else 1)
+		return
 	var snap := MapAudit.snapshot(data)
+	snap["map_hash"] = map_hash
 	snap["ground_trees"] = _ground_trees(cfg, data)
 	if args.has("--details"):
 		_details(data)

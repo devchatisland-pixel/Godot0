@@ -33,7 +33,7 @@ without a road, 3 highway ends that just stop.
 ## Phases (one pull request each)
 
 0. Audit, baseline and this plan. (done)
-1. `MapLayout` at scale 1: the same map as before, coordinates in one place.
+1. `MapLayout` at scale 1: the same map as before, coordinates in one place. (done; `test_map_audit.gd -- --same` proves it)
 2. `RoadNetwork` at scale 1: the road problems go to zero.
 3. Scale 1.41 with the budgets.
 4. Anchors for props, vehicles and hand edits.

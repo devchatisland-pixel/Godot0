@@ -11,13 +11,7 @@ const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 const Terrain := CityTypes.Terrain
 
-## Where the search for the fire truck starts, and the forest density it needs.
-const TRUCK_AT := Vector2i(172, 70)
 const FOREST_MIN := 150
-## The flying saucer: far from the city and from the secret base, in the south of the desert.
-const UFO_AT := Vector2i(64, 152)
-## The balloon (cell of its centre; it floats, see BuildingPlacer.KIND_LIFT).
-const BALLOON_AT := Vector2i(206, 44)
 ## Zones with fewer cells than this get no billboard.
 const BILLBOARD_MIN_CELLS := 40
 ## Container yards on the BT tower islet (a few only).
@@ -92,7 +86,7 @@ func _fire_truck() -> int:
 			for dx in range(-radius, radius + 1):
 				if maxi(absi(dx), absi(dy)) != radius:
 					continue
-				var r := Rect2i(TRUCK_AT + Vector2i(dx, dy), Vector2i(2, 3))
+				var r := Rect2i(MapLayout.point("fire_truck") + Vector2i(dx, dy), Vector2i(2, 3))
 				var c := r.get_center()
 				if _data.in_bounds(c.x, c.y) and _data.forest[_data.idx(c.x, c.y)] >= FOREST_MIN \
 						and _free(r, Zone.NATURE):
@@ -102,7 +96,7 @@ func _fire_truck() -> int:
 
 
 func _balloon() -> int:
-	var r := Rect2i(BALLOON_AT - Vector2i(1, 1), Vector2i(3, 3))
+	var r := Rect2i(MapLayout.point("balloon") - Vector2i(1, 1), Vector2i(3, 3))
 	_add(r, Kind.BALLOON, 2, 1)
 	return 1
 
@@ -227,7 +221,8 @@ func _containers() -> int:
 ## (the number of the building stays).
 func _post_offices() -> int:
 	var placed := 0
-	for spec: Array in [[Vector2i(122, 76), Zone.POOR], [Vector2i(138, 211), Zone.QUARTER]]:
+	for spec: Array in [[Vector2i(MapLayout.blob("poor")["at"]), Zone.POOR],
+			[Vector2i(MapLayout.blob("quarter")["at"]), Zone.QUARTER]]:
 		var best := -1
 		var best_d := INF
 		for b in _data.building_count():
@@ -258,7 +253,7 @@ func _ufo_and_tanks() -> int:
 	if base.size.x <= 0:
 		return 0
 	var placed := 0
-	var ufo := _near_in_zone(UFO_AT, Vector2i(3, 3), Zone.DESERT)
+	var ufo := _near_in_zone(MapLayout.point("ufo"), Vector2i(3, 3), Zone.DESERT)
 	if ufo.size.x > 0:
 		_add(ufo, Kind.UFO, 2, 1)
 		placed += 1
@@ -276,7 +271,7 @@ func _ufo_and_tanks() -> int:
 
 # --- The BT tower islet: a crane and many containers -----------------------------------------------------
 func _islet() -> int:
-	var at := Vector2i(ExtensionIsland.TOWER_ISLET["at"])
+	var at := Vector2i(MapLayout.blob("tower_islet")["at"])
 	var placed := 0
 	# A crane at the water's edge, on the south side of the islet.
 	for dy in range(8, 0, -1):

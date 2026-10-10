@@ -15,18 +15,13 @@ const FISHING := 2
 const CARGO := 3
 const SUB := 4
 
-## Where the cargo ship looks for sea: west of the industrial port (the quay and cranes).
-const CARGO_TARGET := Vector2i(66, 183)
 ## The submarine: offset from the end of the Golden Gate highway, and rows kept clear of the bridge.
 const SUB_OFFSET := Vector2i(14, -17)
 const BRIDGE_CLEAR := 6
 ## How far a search for sea goes, in cells.
 const REACH := 14
-## Sea north of the main island, where the wooden boat lies.
-const NORTH_SEA := Vector2i(150, 30)
 ## Cells of open sea all round a pirate ship at sea, and the sea beside the graveyard islet.
 const FAR_FROM_LAND := 10
-const GRAVEYARD_SEA := Vector2i(139, 252)
 
 
 static func apply(data: CityData) -> int:
@@ -57,7 +52,7 @@ static func apply(data: CityData) -> int:
 		forbid.append(Rect2i(wb.y - 2, wb.z - BRIDGE_CLEAR, wb.x - wb.y + 6, BRIDGE_CLEAR * 2 + 1))
 
 	var plan: Array = []
-	plan.append([CARGO, CARGO_TARGET, Vector2i(4, 10), 2])
+	plan.append([CARGO, MapLayout.point("cargo_ship"), Vector2i(4, 10), 2])
 	if data.bridge.x >= 0:
 		plan.append([SUB, data.bridge + SUB_OFFSET, Vector2i(4, 9), 2])
 	if quarter_south.x >= 0:
@@ -70,20 +65,20 @@ static func apply(data: CityData) -> int:
 		if k == 0:
 			plan.append([FISHING, out + side, Vector2i(5, 3), 1])
 	# The wooden boat lies off the north coast of the main island.
-	plan.append([WOODEN, NORTH_SEA, Vector2i(3, 4), 2])
+	plan.append([WOODEN, MapLayout.point("north_sea"), Vector2i(3, 4), 2])
 	# A second oil tanker north-west of the nuclear plant.
-	plan.append([CARGO, Vector2i(40, 76), Vector2i(10, 4), 1])
+	plan.append([CARGO, MapLayout.point("tanker"), Vector2i(10, 4), 1])
 	# Four more submarines all round the seas, far from each other.
-	for t in [Vector2i(100, 16), Vector2i(16, 215), Vector2i(190, 262), Vector2i(250, 16)]:
+	for t in MapLayout.points("submarines_a"):
 		plan.append([SUB, t, Vector2i(4, 9), 2])
 	# Four more pirate ships, always far from any beach, and one beside the graveyard islet.
-	for t in [Vector2i(60, 252), Vector2i(130, 266), Vector2i(262, 70), Vector2i(170, 12)]:
+	for t in MapLayout.points("pirate_ships_a"):
 		plan.append([0, t, Vector2i(7, 3), 2, FAR_FROM_LAND, Kind.PIRATE_SHIP])
-	plan.append([0, GRAVEYARD_SEA, Vector2i(7, 3), 2, 0, Kind.PIRATE_SHIP])
+	plan.append([0, MapLayout.point("graveyard_sea"), Vector2i(7, 3), 2, 0, Kind.PIRATE_SHIP])
 	# Three more pirate ships and two more submarines.
-	for t in [Vector2i(80, 20), Vector2i(200, 250), Vector2i(24, 250)]:
+	for t in MapLayout.points("pirate_ships_b"):
 		plan.append([0, t, Vector2i(7, 3), 2, FAR_FROM_LAND, Kind.PIRATE_SHIP])
-	for t in [Vector2i(216, 28), Vector2i(120, 242)]:
+	for t in MapLayout.points("submarines_b"):
 		plan.append([SUB, t, Vector2i(4, 9), 2])
 	var placed := 0
 	for p in plan:

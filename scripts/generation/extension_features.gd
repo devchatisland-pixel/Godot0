@@ -9,15 +9,6 @@ const Zone := CityTypes.Zone
 const Kind := CityTypes.Kind
 const Terrain := CityTypes.Terrain
 
-## Round districts: centre and radii in cells of the big map.
-const DESERT := {"at": Vector2(78, 128), "r": Vector2(22, 36)}
-const INDUSTRIAL := {"at": Vector2(84, 182), "r": Vector2(22, 19)}
-const FARM := {"at": Vector2(202, 190), "r": Vector2(24, 32)}
-const FOREST := {"at": Vector2(178, 62), "r": Vector2(34, 17)}
-## The smallest palm islet: the pirate grave stands on it, the pirate ship lies off its coast.
-const PIRATE_ISLET := Vector2i(250, 92)
-## Where the search for the sea of the pirate ship starts.
-const PIRATE_SEA := Vector2i(255, 208)
 ## The 8 buildings of the industrial zone: sizes in cells.
 const FACTORY_SIZES := [Vector2i(7, 4), Vector2i(6, 4), Vector2i(5, 4), Vector2i(4, 3),
 		Vector2i(4, 3), Vector2i(3, 3), Vector2i(3, 3), Vector2i(3, 3)]
@@ -54,7 +45,7 @@ func build_all(core_forest: Rect2i) -> void:
 ## The desert next to Las Vegas: the secret base (airbase, bunker, radio station), mesas,
 ## ranches and oil pumps, far apart from each other.
 func build_desert() -> void:
-	var c := Vector2i(DESERT["at"])
+	var c := Vector2i(MapLayout.blob("desert")["at"])
 	for size in AIRBASE_SIZES:
 		var r := _spots.find_spot(c + Vector2i(-size.x / 2, -14), size, Zone.DESERT, 16, 2)
 		if r.size.x > 0:
@@ -70,7 +61,7 @@ func build_desert() -> void:
 			var d := Rect2i(tower.position + o, Vector2i(2, 2))
 			if _spots.spot_free(d, Zone.DESERT, 0):
 				_spots.claim(d, Kind.SAT_DISH, 3, Zone.CIVIC)
-	var rect := _spots.blob_rect(DESERT)
+	var rect := _spots.blob_rect(MapLayout.blob("desert"))
 	for r in _spots.spots(rect, Zone.DESERT, Vector2i(6, 4), 2, 20.0, 1):
 		_spots.claim(r, Kind.MESA, 2)
 	var i := 0
@@ -85,7 +76,7 @@ func build_desert() -> void:
 ## Exactly 8 different buildings (variant 0..7), and the port: container yards
 ## and two cranes on the quay.
 func build_industrial() -> void:
-	var rect := _spots.blob_rect(INDUSTRIAL)
+	var rect := _spots.blob_rect(MapLayout.blob("industrial"))
 	for i in FACTORY_SIZES.size():
 		var r := _spots.spots_one(rect, Zone.INDUSTRIAL, FACTORY_SIZES[i], 1)
 		if r.size.x > 0:
@@ -111,7 +102,7 @@ func build_industrial() -> void:
 # --- Farms --------------------------------------------------------------------------------------
 ## Farm houses and barns, then crop fields tiled over the one farmland district.
 func build_farms() -> void:
-	var rect := _spots.blob_rect(FARM)
+	var rect := _spots.blob_rect(MapLayout.blob("farm"))
 	var k := 0
 	for yard in _spots.spots(rect, Zone.FARM, Vector2i(2, 2), 4, 14.0, 2, 600):
 		_spots.claim(yard, Kind.OUTPOST, 2, Zone.CIVIC, k * 3)
@@ -147,7 +138,7 @@ func _shrink_to_fit(x: int, y: int, w: int, h: int) -> Rect2i:
 ## Two wooden lookouts, each in the thick of a forest: one in the north-east wood and
 ## one in the forest of the old city. A tower needs a free 3x3 plot of dense forest.
 func build_watchtowers(core_forest: Rect2i) -> void:
-	var starts: Array[Vector2i] = [Vector2i(FOREST["at"]) + Vector2i(-10, 6), core_forest.get_center()]
+	var starts: Array[Vector2i] = [Vector2i(MapLayout.blob("forest")["at"]) + Vector2i(-10, 6), core_forest.get_center()]
 	for k in starts.size():
 		var r := _forest_spot(starts[k], Vector2i(3, 3), 16)
 		if r.size.x > 0:
@@ -178,7 +169,7 @@ func build_mountains() -> void:
 		if _data.b_kind[b] == Kind.MOUNTAIN:
 			first = _data.building_rect(b).get_center()
 	if first.x < 0:
-		first = Vector2i(FOREST["at"])
+		first = Vector2i(MapLayout.blob("forest")["at"])
 	# Right beside the big one, on its far side from the city (north and east).
 	var seeds := [100, 108]
 	var i := 0
@@ -192,17 +183,17 @@ func build_mountains() -> void:
 ## The pirate grave on the smallest islet, and the pirate ship in the open sea of the
 ## south-east, off the palm islet there: far from the fog of the fog island.
 func build_pirate_islet() -> void:
-	var grave := _spots.find_spot(PIRATE_ISLET, Vector2i.ONE, Zone.ISLET, 3, 0)
+	var grave := _spots.find_spot(MapLayout.point("pirate_islet"), Vector2i.ONE, Zone.ISLET, 3, 0)
 	if grave.size.x > 0:
 		_spots.claim(grave, Kind.GRAVE, 2)
-	var ship := _spots.find_water(PIRATE_SEA, Vector2i(7, 3), 10)
+	var ship := _spots.find_water(MapLayout.point("pirate_sea"), Vector2i(7, 3), 10)
 	if ship.size.x > 0:
 		_spots.claim(ship, Kind.PIRATE_SHIP, 2)
 
 
 ## The prison compound: a big cellhouse, stone wings, a villa and lighthouses.
 func build_prison() -> void:
-	var c := Vector2i(ExtensionIsland.PRISON["at"])
+	var c := Vector2i(MapLayout.blob("prison")["at"])
 	var main := Rect2i()
 	for size in [Vector2i(11, 8), Vector2i(10, 7), Vector2i(9, 6), Vector2i(7, 5)]:
 		main = _spots.find_spot(c - size / 2, size, Zone.PRISON, 6, 0)
@@ -223,13 +214,13 @@ func build_prison() -> void:
 ## Four on the coast of the main island, spread round it, and two at the ends of the prison
 ## island. Each one stands on a dry cell with the sea less than three cells away.
 func build_lighthouses() -> void:
-	var main_at: Vector2 = ExtensionIsland.MAIN["at"]
+	var main_at: Vector2 = MapLayout.blob("main")["at"]
 	for deg in [135.0, 235.0, 330.0, 60.0]:
 		var cell := _coast_cell(main_at, Vector2.from_angle(deg_to_rad(deg)), false)
 		if cell.x >= 0:
 			_spots.claim(Rect2i(cell, Vector2i.ONE), Kind.LIGHTHOUSE, 2)
-	var prison_at: Vector2 = ExtensionIsland.PRISON["at"]
-	var turn: float = ExtensionIsland.PRISON["turn"]
+	var prison_at: Vector2 = MapLayout.blob("prison")["at"]
+	var turn: float = MapLayout.blob("prison")["turn"]
 	for sign in [-1.0, 1.0]:
 		var cell := _coast_cell(prison_at, Vector2.from_angle(turn) * sign, true)
 		if cell.x >= 0:

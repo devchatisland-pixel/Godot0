@@ -16,16 +16,10 @@ const Zone := CityTypes.Zone
 const Kind := CityTypes.Kind
 const Terrain := CityTypes.Terrain
 
-## The nuclear plant: where the search for its plot starts, the plot (plant + yard) and
-## the rows of the plot taken by the plant itself.
-const PLANT_TARGET := Vector2i(30, 96)
 const PLANT_PLOT := Vector2i(18, 13)
 const PLANT_ROWS := 7
-## Rows above this (north end) get no streets and no lots.
-const NUCLEAR_END := 111
 ## The airport plots tried in turn, and the column where the search starts.
 const AIRPORT_PLOTS := [Vector2i(20, 32), Vector2i(18, 28), Vector2i(16, 24)]
-const AIRPORT_COLUMN := 30
 ## Cells either side of the camera's line of sight that stay free of towers.
 const SIGHT_MARGIN := 2
 ## Block size limits of the tower city and the seed offset of the island.
@@ -64,18 +58,18 @@ func _init(cfg: CityConfig, data: CityData, island: ExtensionIsland, districts: 
 # --- Plots ----------------------------------------------------------------------------------
 ## Finds the plots of the plant and the airport (before any road is laid).
 func choose_plots() -> void:
-	var u: Dictionary = ExtensionIsland.URBAN
+	var u: Dictionary = MapLayout.blob("urban")
 	var tip := int(Vector2(u["at"]).y + Vector2(u["r"]).y)
 	for size in AIRPORT_PLOTS:
-		airport = _spots.find_plot(Vector2i(AIRPORT_COLUMN, tip - 4 - size.y / 2), size, {})
+		airport = _spots.find_plot(Vector2i(MapLayout.cells("airport_column"), tip - 4 - size.y / 2), size, {})
 		if airport.size.x > 0:
 			break
-	plant = _spots.find_plot(PLANT_TARGET, PLANT_PLOT, {})
+	plant = _spots.find_plot(MapLayout.point("plant"), PLANT_PLOT, {})
 
 
 ## The rows kept free of streets and lots at the north end.
 func nuclear_rect() -> Rect2i:
-	return Rect2i(0, 0, ExtensionIsland.URBAN_COLUMNS, NUCLEAR_END)
+	return Rect2i(0, 0, MapLayout.cells("urban_columns"), MapLayout.cells("nuclear_end"))
 
 
 # --- Streets ---------------------------------------------------------------------------------
@@ -104,8 +98,8 @@ func plan_roads() -> void:
 func _urban_mask() -> PackedByteArray:
 	var mask := PackedByteArray()
 	mask.resize(_data.size * _data.size)
-	for y in range(NUCLEAR_END, _data.size):
-		for x in range(0, ExtensionIsland.URBAN_COLUMNS):
+	for y in range(MapLayout.cells("nuclear_end"), _data.size):
+		for x in range(0, MapLayout.cells("urban_columns")):
 			var i := _data.idx(x, y)
 			if _island.is_urban_island(x, y) and _data.terrain[i] == Terrain.LAND and _data.road[i] == 0:
 				mask[i] = 1
@@ -163,7 +157,7 @@ func _clear_sight(lots: LotPlanner, rect: Rect2i) -> void:
 	if rect.size.x <= 0:
 		return
 	for y in range(rect.position.y, _data.size):
-		for x in range(rect.position.x, ExtensionIsland.URBAN_COLUMNS):
+		for x in range(rect.position.x, MapLayout.cells("urban_columns")):
 			if _in_front(rect, x, y, SIGHT_MARGIN) and not rect.has_point(Vector2i(x, y)):
 				var i := _data.idx(x, y)
 				if lots.owner[i] == -1:
@@ -217,7 +211,7 @@ func _place_beside(body: Rect2i, size: Vector2i, kind: int, sides: Array, drop: 
 ## The tower in the middle of its islet, which is an industrial zone: three satellite
 ## dishes round it (like the radio tower of the desert) and two little yards.
 func _build_tower_islet() -> void:
-	var at := Vector2i(ExtensionIsland.TOWER_ISLET["at"])
+	var at := Vector2i(MapLayout.blob("tower_islet")["at"])
 	var tower := _spots.find_spot(at - Vector2i(1, 1), Vector2i(3, 3), Zone.INDUSTRIAL, 3, 0)
 	if tower.size.x <= 0:
 		return

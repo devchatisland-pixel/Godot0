@@ -72,6 +72,7 @@
 		"URBAN_BLDG": 69,
 		"WATCHTOWER": 2
 	},
+	"map_hash": "f069054756c49484b2f3f607b6193c74f3da3503d7e6d5f770105bbf7b18fd6d:85a4ef49f9bf399e60d6bb4bf0445edfebba8e7d36d9e6d3ffe2cb16532cc1bf",
 	"roads": {
 		"cells": 3856,
 		"cells_off_network": 544,
