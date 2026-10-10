@@ -1,0 +1,145 @@
+{
+ "source": "low_poly_public_buildings_pack.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "PublicBuilding_Pharmacy",
+   "triangles": 1620,
+   "size": [
+    3.53,
+    2.67,
+    4.41
+   ]
+  },
+  {
+   "index": 1,
+   "node": "PublicBuilding_Bin",
+   "triangles": 328,
+   "size": [
+    0.24,
+    0.47,
+    0.32
+   ]
+  },
+  {
+   "index": 2,
+   "node": "PublicBuilding_Light",
+   "triangles": 130,
+   "size": [
+    0.2,
+    2.05,
+    0.2
+   ]
+  },
+  {
+   "index": 3,
+   "node": "PublicBuilding_Police",
+   "triangles": 5131,
+   "size": [
+    4.44,
+    7.0,
+    9.0
+   ]
+  },
+  {
+   "index": 4,
+   "node": "PublicBuilding_CityHall",
+   "triangles": 5956,
+   "size": [
+    5.41,
+    7.11,
+    9.25
+   ]
+  },
+  {
+   "index": 5,
+   "node": "PublicBuilding_Hospital",
+   "triangles": 8741,
+   "size": [
+    14.6,
+    11.27,
+    23.05
+   ]
+  },
+  {
+   "index": 6,
+   "node": "PublicBuilding_GasStation",
+   "triangles": 11362,
+   "size": [
+    12.22,
+    3.36,
+    12.32
+   ]
+  },
+  {
+   "index": 7,
+   "node": "PublicBuilding_School",
+   "triangles": 11716,
+   "size": [
+    23.09,
+    6.18,
+    22.58
+   ]
+  },
+  {
+   "index": 8,
+   "node": "Collider_GasStation",
+   "triangles": 550,
+   "size": [
+    12.22,
+    3.33,
+    12.32
+   ]
+  },
+  {
+   "index": 9,
+   "node": "Collider_School",
+   "triangles": 881,
+   "size": [
+    23.09,
+    6.18,
+    22.58
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Collider_CityHall",
+   "triangles": 960,
+   "size": [
+    5.36,
+    6.76,
+    9.13
+   ]
+  },
+  {
+   "index": 11,
+   "node": "Collider_Hospital",
+   "triangles": 598,
+   "size": [
+    14.61,
+    11.27,
+    23.05
+   ]
+  },
+  {
+   "index": 12,
+   "node": "Collider_Pharnacy",
+   "triangles": 278,
+   "size": [
+    3.54,
+    2.67,
+    4.47
+   ]
+  },
+  {
+   "index": 13,
+   "node": "Collider_Police",
+   "triangles": 576,
+   "size": [
+    4.42,
+    7.0,
+    8.98
+   ]
+  }
+ ]
+}

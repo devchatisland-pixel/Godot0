@@ -1,0 +1,455 @@
+{
+ "source": "lowpoly_buildings.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "pylon01",
+   "triangles": 82,
+   "size": [
+    1.66,
+    6.69,
+    0.3
+   ]
+  },
+  {
+   "index": 1,
+   "node": "barn01",
+   "triangles": 168,
+   "size": [
+    7.45,
+    5.5,
+    10.19
+   ]
+  },
+  {
+   "index": 2,
+   "node": "house01",
+   "triangles": 150,
+   "size": [
+    4.75,
+    4.57,
+    8.69
+   ]
+  },
+  {
+   "index": 3,
+   "node": "house01_roof",
+   "triangles": 44,
+   "size": [
+    2.02,
+    2.78,
+    7.99
+   ]
+  },
+  {
+   "index": 4,
+   "node": "house01_add",
+   "triangles": 10,
+   "size": [
+    1.7,
+    0.33,
+    3.86
+   ]
+  },
+  {
+   "index": 5,
+   "node": "barn01_add",
+   "triangles": 50,
+   "size": [
+    4.96,
+    3.91,
+    6.63
+   ]
+  },
+  {
+   "index": 6,
+   "node": "barn03",
+   "triangles": 42,
+   "size": [
+    6.85,
+    5.56,
+    6.58
+   ]
+  },
+  {
+   "index": 7,
+   "node": "barrack01",
+   "triangles": 20,
+   "size": [
+    5.25,
+    2.34,
+    2.14
+   ]
+  },
+  {
+   "index": 8,
+   "node": "barrack02",
+   "triangles": 14,
+   "size": [
+    7.31,
+    2.61,
+    3.76
+   ]
+  },
+  {
+   "index": 9,
+   "node": "barrack03",
+   "triangles": 14,
+   "size": [
+    5.73,
+    2.31,
+    3.71
+   ]
+  },
+  {
+   "index": 10,
+   "node": "container01",
+   "triangles": 10,
+   "size": [
+    1.87,
+    1.09,
+    1.1
+   ]
+  },
+  {
+   "index": 11,
+   "node": "utilitybox03",
+   "triangles": 10,
+   "size": [
+    2.13,
+    1.68,
+    0.69
+   ]
+  },
+  {
+   "index": 12,
+   "node": "utilitybox02",
+   "triangles": 10,
+   "size": [
+    1.35,
+    1.71,
+    0.6
+   ]
+  },
+  {
+   "index": 13,
+   "node": "container02",
+   "triangles": 20,
+   "size": [
+    6.08,
+    2.07,
+    2.07
+   ]
+  },
+  {
+   "index": 14,
+   "node": "container03",
+   "triangles": 44,
+   "size": [
+    3.91,
+    1.69,
+    1.7
+   ]
+  },
+  {
+   "index": 15,
+   "node": "ac01",
+   "triangles": 12,
+   "size": [
+    0.87,
+    0.65,
+    0.37
+   ]
+  },
+  {
+   "index": 16,
+   "node": "ac02",
+   "triangles": 10,
+   "size": [
+    0.82,
+    0.57,
+    0.31
+   ]
+  },
+  {
+   "index": 17,
+   "node": "watertank01",
+   "triangles": 112,
+   "size": [
+    3.45,
+    4.95,
+    3.36
+   ]
+  },
+  {
+   "index": 18,
+   "node": "trailer02",
+   "triangles": 20,
+   "size": [
+    5.97,
+    2.33,
+    2.47
+   ]
+  },
+  {
+   "index": 19,
+   "node": "trailer01",
+   "triangles": 26,
+   "size": [
+    5.52,
+    2.57,
+    2.32
+   ]
+  },
+  {
+   "index": 20,
+   "node": "cable_reel01",
+   "triangles": 124,
+   "size": [
+    2.26,
+    2.26,
+    1.4
+   ]
+  },
+  {
+   "index": 21,
+   "node": "generator01",
+   "triangles": 144,
+   "size": [
+    4.66,
+    2.01,
+    1.64
+   ]
+  },
+  {
+   "index": 22,
+   "node": "truck01",
+   "triangles": 260,
+   "size": [
+    5.15,
+    1.91,
+    2.38
+   ]
+  },
+  {
+   "index": 23,
+   "node": "bench01",
+   "triangles": 68,
+   "size": [
+    2.54,
+    0.78,
+    0.73
+   ]
+  },
+  {
+   "index": 24,
+   "node": "utilitybox01",
+   "triangles": 10,
+   "size": [
+    1.24,
+    1.6,
+    0.52
+   ]
+  },
+  {
+   "index": 25,
+   "node": "sign01",
+   "triangles": 20,
+   "size": [
+    0.95,
+    3.03,
+    0.44
+   ]
+  },
+  {
+   "index": 26,
+   "node": "sign02",
+   "triangles": 18,
+   "size": [
+    0.57,
+    2.11,
+    0.21
+   ]
+  },
+  {
+   "index": 27,
+   "node": "sign03",
+   "triangles": 16,
+   "size": [
+    0.66,
+    2.78,
+    0.21
+   ]
+  },
+  {
+   "index": 28,
+   "node": "sign04",
+   "triangles": 16,
+   "size": [
+    0.7,
+    2.69,
+    0.29
+   ]
+  },
+  {
+   "index": 29,
+   "node": "fence02",
+   "triangles": 34,
+   "size": [
+    4.32,
+    1.31,
+    0.29
+   ]
+  },
+  {
+   "index": 30,
+   "node": "fence01",
+   "triangles": 22,
+   "size": [
+    4.09,
+    1.31,
+    0.21
+   ]
+  },
+  {
+   "index": 31,
+   "node": "fence_pole01",
+   "triangles": 10,
+   "size": [
+    0.19,
+    1.26,
+    0.16
+   ]
+  },
+  {
+   "index": 32,
+   "node": "fusebox01",
+   "triangles": 12,
+   "size": [
+    0.41,
+    0.69,
+    0.17
+   ]
+  },
+  {
+   "index": 33,
+   "node": "barrack04",
+   "triangles": 78,
+   "size": [
+    6.69,
+    4.76,
+    6.61
+   ]
+  },
+  {
+   "index": 34,
+   "node": "house02",
+   "triangles": 276,
+   "size": [
+    11.06,
+    5.88,
+    10.49
+   ]
+  },
+  {
+   "index": 35,
+   "node": "board01",
+   "triangles": 12,
+   "size": [
+    2.44,
+    1.29,
+    0.08
+   ]
+  },
+  {
+   "index": 36,
+   "node": "house03",
+   "triangles": 118,
+   "size": [
+    4.32,
+    4.09,
+    4.49
+   ]
+  },
+  {
+   "index": 37,
+   "node": "house03_add",
+   "triangles": 10,
+   "size": [
+    1.55,
+    0.31,
+    3.55
+   ]
+  },
+  {
+   "index": 38,
+   "node": "house03_roof",
+   "triangles": 28,
+   "size": [
+    1.84,
+    2.6,
+    3.65
+   ]
+  },
+  {
+   "index": 39,
+   "node": "wooden_plate02",
+   "triangles": 36,
+   "size": [
+    1.48,
+    0.1,
+    3.39
+   ]
+  },
+  {
+   "index": 40,
+   "node": "wooden_plate01",
+   "triangles": 52,
+   "size": [
+    1.57,
+    0.06,
+    3.07
+   ]
+  },
+  {
+   "index": 41,
+   "node": "metalplate01",
+   "triangles": 14,
+   "size": [
+    1.16,
+    0.05,
+    1.65
+   ]
+  },
+  {
+   "index": 42,
+   "node": "metalplate03",
+   "triangles": 20,
+   "size": [
+    1.18,
+    0.05,
+    2.46
+   ]
+  },
+  {
+   "index": 43,
+   "node": "metalplate02",
+   "triangles": 16,
+   "size": [
+    1.48,
+    0.04,
+    2.08
+   ]
+  },
+  {
+   "index": 44,
+   "node": "pylon_line01",
+   "triangles": 54,
+   "size": [
+    1.53,
+    0.6,
+    12.67
+   ]
+  }
+ ]
+}

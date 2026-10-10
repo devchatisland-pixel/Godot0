@@ -1,0 +1,255 @@
+{
+ "source": "stylized_pirate_island_pack__low_poly_3d_assets.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "085",
+   "triangles": 408,
+   "size": [
+    2.21,
+    0.59,
+    1.57
+   ]
+  },
+  {
+   "index": 1,
+   "node": "084",
+   "triangles": 99,
+   "size": [
+    7.48,
+    3.53,
+    5.48
+   ]
+  },
+  {
+   "index": 2,
+   "node": "083",
+   "triangles": 87,
+   "size": [
+    2.02,
+    3.99,
+    2.02
+   ]
+  },
+  {
+   "index": 3,
+   "node": "082",
+   "triangles": 142,
+   "size": [
+    4.61,
+    3.53,
+    4.61
+   ]
+  },
+  {
+   "index": 4,
+   "node": "081",
+   "triangles": 80,
+   "size": [
+    2.59,
+    2.11,
+    2.59
+   ]
+  },
+  {
+   "index": 5,
+   "node": "080",
+   "triangles": 154,
+   "size": [
+    5.84,
+    6.28,
+    5.84
+   ]
+  },
+  {
+   "index": 6,
+   "node": "079",
+   "triangles": 326,
+   "size": [
+    4.93,
+    3.69,
+    4.93
+   ]
+  },
+  {
+   "index": 7,
+   "node": "078",
+   "triangles": 212,
+   "size": [
+    10.09,
+    4.04,
+    7.17
+   ]
+  },
+  {
+   "index": 8,
+   "node": "077",
+   "triangles": 307,
+   "size": [
+    4.4,
+    6.21,
+    6.89
+   ]
+  },
+  {
+   "index": 9,
+   "node": "076",
+   "triangles": 210,
+   "size": [
+    5.93,
+    1.31,
+    4.17
+   ]
+  },
+  {
+   "index": 10,
+   "node": "075",
+   "triangles": 124,
+   "size": [
+    0.81,
+    0.84,
+    0.83
+   ]
+  },
+  {
+   "index": 11,
+   "node": "074",
+   "triangles": 70,
+   "size": [
+    0.83,
+    1.08,
+    0.84
+   ]
+  },
+  {
+   "index": 12,
+   "node": "073",
+   "triangles": 2673,
+   "size": [
+    12.7,
+    2.49,
+    18.93
+   ]
+  },
+  {
+   "index": 13,
+   "node": "072",
+   "triangles": 554,
+   "size": [
+    11.82,
+    2.64,
+    10.6
+   ]
+  },
+  {
+   "index": 14,
+   "node": "071",
+   "triangles": 216,
+   "size": [
+    5.0,
+    3.48,
+    5.68
+   ]
+  },
+  {
+   "index": 15,
+   "node": "070",
+   "triangles": 450,
+   "size": [
+    3.75,
+    9.56,
+    3.57
+   ]
+  },
+  {
+   "index": 16,
+   "node": "069",
+   "triangles": 734,
+   "size": [
+    7.77,
+    13.2,
+    17.65
+   ]
+  },
+  {
+   "index": 17,
+   "node": "068",
+   "triangles": 881,
+   "size": [
+    16.07,
+    10.91,
+    13.92
+   ]
+  },
+  {
+   "index": 18,
+   "node": "067",
+   "triangles": 756,
+   "size": [
+    12.39,
+    7.16,
+    6.8
+   ]
+  },
+  {
+   "index": 19,
+   "node": "066",
+   "triangles": 409,
+   "size": [
+    4.77,
+    9.81,
+    7.92
+   ]
+  },
+  {
+   "index": 20,
+   "node": "22",
+   "triangles": 390,
+   "size": [
+    1.84,
+    0.96,
+    1.87
+   ]
+  },
+  {
+   "index": 21,
+   "node": "21_3",
+   "triangles": 355,
+   "size": [
+    3.17,
+    5.74,
+    3.02
+   ]
+  },
+  {
+   "index": 22,
+   "node": "21_1",
+   "triangles": 383,
+   "size": [
+    2.89,
+    4.58,
+    3.08
+   ]
+  },
+  {
+   "index": 23,
+   "node": "23",
+   "triangles": 408,
+   "size": [
+    2.21,
+    0.59,
+    1.57
+   ]
+  },
+  {
+   "index": 24,
+   "node": "21_2",
+   "triangles": 253,
+   "size": [
+    1.78,
+    3.25,
+    2.06
+   ]
+  }
+ ]
+}

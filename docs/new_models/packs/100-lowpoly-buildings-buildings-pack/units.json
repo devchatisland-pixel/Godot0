@@ -1,0 +1,1005 @@
+{
+ "source": "100_lowpoly_buildings__buildings_pack.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "Building 18",
+   "triangles": 214,
+   "size": [
+    4.26,
+    3.48,
+    4.26
+   ]
+  },
+  {
+   "index": 1,
+   "node": "Building 33",
+   "triangles": 800,
+   "size": [
+    6.79,
+    7.5,
+    6.01
+   ]
+  },
+  {
+   "index": 2,
+   "node": "Building 12",
+   "triangles": 502,
+   "size": [
+    6.23,
+    6.4,
+    6.23
+   ]
+  },
+  {
+   "index": 3,
+   "node": "Building 49",
+   "triangles": 188,
+   "size": [
+    3.41,
+    7.39,
+    3.33
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Building 44",
+   "triangles": 421,
+   "size": [
+    3.04,
+    5.86,
+    6.26
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Building 10",
+   "triangles": 368,
+   "size": [
+    4.49,
+    3.69,
+    8.36
+   ]
+  },
+  {
+   "index": 6,
+   "node": "Building 28",
+   "triangles": 852,
+   "size": [
+    8.27,
+    3.65,
+    12.19
+   ]
+  },
+  {
+   "index": 7,
+   "node": "Building 31",
+   "triangles": 538,
+   "size": [
+    6.4,
+    7.79,
+    4.27
+   ]
+  },
+  {
+   "index": 8,
+   "node": "Building 70",
+   "triangles": 811,
+   "size": [
+    8.83,
+    9.49,
+    8.0
+   ]
+  },
+  {
+   "index": 9,
+   "node": "Building 50",
+   "triangles": 408,
+   "size": [
+    7.31,
+    7.4,
+    13.02
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Building 15",
+   "triangles": 239,
+   "size": [
+    4.13,
+    3.18,
+    5.84
+   ]
+  },
+  {
+   "index": 11,
+   "node": "Building 13",
+   "triangles": 506,
+   "size": [
+    3.62,
+    3.65,
+    3.61
+   ]
+  },
+  {
+   "index": 12,
+   "node": "Building 32",
+   "triangles": 996,
+   "size": [
+    7.74,
+    7.43,
+    7.69
+   ]
+  },
+  {
+   "index": 13,
+   "node": "Building 35",
+   "triangles": 232,
+   "size": [
+    5.31,
+    7.85,
+    5.31
+   ]
+  },
+  {
+   "index": 14,
+   "node": "Building41",
+   "triangles": 742,
+   "size": [
+    7.69,
+    4.26,
+    12.11
+   ]
+  },
+  {
+   "index": 15,
+   "node": "Building 3",
+   "triangles": 660,
+   "size": [
+    9.37,
+    3.4,
+    6.14
+   ]
+  },
+  {
+   "index": 16,
+   "node": "Building 83",
+   "triangles": 496,
+   "size": [
+    13.21,
+    17.13,
+    11.32
+   ]
+  },
+  {
+   "index": 17,
+   "node": "Building 98",
+   "triangles": 1148,
+   "size": [
+    10.34,
+    22.76,
+    18.1
+   ]
+  },
+  {
+   "index": 18,
+   "node": "Building 55",
+   "triangles": 328,
+   "size": [
+    6.55,
+    13.11,
+    10.82
+   ]
+  },
+  {
+   "index": 19,
+   "node": "Building 43",
+   "triangles": 384,
+   "size": [
+    8.99,
+    9.15,
+    5.65
+   ]
+  },
+  {
+   "index": 20,
+   "node": "Building 57",
+   "triangles": 390,
+   "size": [
+    3.59,
+    10.17,
+    3.58
+   ]
+  },
+  {
+   "index": 21,
+   "node": "Building 59",
+   "triangles": 494,
+   "size": [
+    3.59,
+    13.37,
+    3.58
+   ]
+  },
+  {
+   "index": 22,
+   "node": "Building 19",
+   "triangles": 388,
+   "size": [
+    5.56,
+    3.49,
+    6.38
+   ]
+  },
+  {
+   "index": 23,
+   "node": "Building 65",
+   "triangles": 922,
+   "size": [
+    10.46,
+    12.96,
+    10.34
+   ]
+  },
+  {
+   "index": 24,
+   "node": "Building 88",
+   "triangles": 1630,
+   "size": [
+    10.46,
+    22.68,
+    10.34
+   ]
+  },
+  {
+   "index": 25,
+   "node": "Building 87",
+   "triangles": 1866,
+   "size": [
+    10.46,
+    25.92,
+    12.34
+   ]
+  },
+  {
+   "index": 26,
+   "node": "Building 60",
+   "triangles": 736,
+   "size": [
+    9.72,
+    7.14,
+    9.77
+   ]
+  },
+  {
+   "index": 27,
+   "node": "Building 56",
+   "triangles": 1116,
+   "size": [
+    9.72,
+    10.63,
+    9.77
+   ]
+  },
+  {
+   "index": 28,
+   "node": "Building 100",
+   "triangles": 11080,
+   "size": [
+    17.46,
+    37.61,
+    17.46
+   ]
+  },
+  {
+   "index": 29,
+   "node": "Building 92",
+   "triangles": 16500,
+   "size": [
+    14.1,
+    55.61,
+    14.1
+   ]
+  },
+  {
+   "index": 30,
+   "node": "Building 45",
+   "triangles": 808,
+   "size": [
+    5.65,
+    7.84,
+    7.24
+   ]
+  },
+  {
+   "index": 31,
+   "node": "Building 63",
+   "triangles": 1234,
+   "size": [
+    5.65,
+    11.61,
+    7.24
+   ]
+  },
+  {
+   "index": 32,
+   "node": "Building 25",
+   "triangles": 621,
+   "size": [
+    8.45,
+    4.2,
+    7.0
+   ]
+  },
+  {
+   "index": 33,
+   "node": "Building 58",
+   "triangles": 471,
+   "size": [
+    8.45,
+    4.2,
+    4.2
+   ]
+  },
+  {
+   "index": 34,
+   "node": "Building 42",
+   "triangles": 829,
+   "size": [
+    8.45,
+    7.8,
+    4.2
+   ]
+  },
+  {
+   "index": 35,
+   "node": "Building 52",
+   "triangles": 488,
+   "size": [
+    6.29,
+    10.55,
+    6.29
+   ]
+  },
+  {
+   "index": 36,
+   "node": "Building 46",
+   "triangles": 604,
+   "size": [
+    6.1,
+    13.6,
+    6.04
+   ]
+  },
+  {
+   "index": 37,
+   "node": "Building 47",
+   "triangles": 478,
+   "size": [
+    5.92,
+    6.48,
+    5.83
+   ]
+  },
+  {
+   "index": 38,
+   "node": "Building 61",
+   "triangles": 661,
+   "size": [
+    5.92,
+    6.48,
+    7.89
+   ]
+  },
+  {
+   "index": 39,
+   "node": "Building 51",
+   "triangles": 1454,
+   "size": [
+    9.69,
+    10.4,
+    9.66
+   ]
+  },
+  {
+   "index": 40,
+   "node": "Building 89",
+   "triangles": 2534,
+   "size": [
+    9.69,
+    14.41,
+    17.52
+   ]
+  },
+  {
+   "index": 41,
+   "node": "Building 48",
+   "triangles": 518,
+   "size": [
+    5.61,
+    3.99,
+    8.29
+   ]
+  },
+  {
+   "index": 42,
+   "node": "Building 34",
+   "triangles": 1069,
+   "size": [
+    5.61,
+    3.99,
+    10.65
+   ]
+  },
+  {
+   "index": 43,
+   "node": "Building 99",
+   "triangles": 1348,
+   "size": [
+    10.34,
+    27.55,
+    18.1
+   ]
+  },
+  {
+   "index": 44,
+   "node": "Building 54",
+   "triangles": 228,
+   "size": [
+    5.76,
+    10.79,
+    3.6
+   ]
+  },
+  {
+   "index": 45,
+   "node": "Building 69",
+   "triangles": 320,
+   "size": [
+    5.76,
+    7.19,
+    7.2
+   ]
+  },
+  {
+   "index": 46,
+   "node": "Building 53",
+   "triangles": 686,
+   "size": [
+    12.66,
+    3.62,
+    12.58
+   ]
+  },
+  {
+   "index": 47,
+   "node": "Building 67",
+   "triangles": 728,
+   "size": [
+    7.62,
+    6.87,
+    6.98
+   ]
+  },
+  {
+   "index": 48,
+   "node": "Building 68",
+   "triangles": 819,
+   "size": [
+    6.27,
+    6.87,
+    6.23
+   ]
+  },
+  {
+   "index": 49,
+   "node": "Building 78",
+   "triangles": 768,
+   "size": [
+    3.0,
+    6.0,
+    3.0
+   ]
+  },
+  {
+   "index": 50,
+   "node": "Building 21",
+   "triangles": 852,
+   "size": [
+    3.3,
+    3.3,
+    12.38
+   ]
+  },
+  {
+   "index": 51,
+   "node": "Building 11",
+   "triangles": 356,
+   "size": [
+    7.88,
+    4.11,
+    6.09
+   ]
+  },
+  {
+   "index": 52,
+   "node": "Building 29",
+   "triangles": 1048,
+   "size": [
+    7.88,
+    4.11,
+    6.32
+   ]
+  },
+  {
+   "index": 53,
+   "node": "Building 30",
+   "triangles": 483,
+   "size": [
+    5.42,
+    4.06,
+    10.4
+   ]
+  },
+  {
+   "index": 54,
+   "node": "Building 36",
+   "triangles": 888,
+   "size": [
+    5.49,
+    7.38,
+    10.0
+   ]
+  },
+  {
+   "index": 55,
+   "node": "Building 22",
+   "triangles": 846,
+   "size": [
+    4.15,
+    6.77,
+    4.47
+   ]
+  },
+  {
+   "index": 56,
+   "node": "Building 23",
+   "triangles": 1278,
+   "size": [
+    4.05,
+    8.11,
+    4.45
+   ]
+  },
+  {
+   "index": 57,
+   "node": "Building 37",
+   "triangles": 484,
+   "size": [
+    11.19,
+    3.7,
+    6.43
+   ]
+  },
+  {
+   "index": 58,
+   "node": "Building 40",
+   "triangles": 760,
+   "size": [
+    11.02,
+    6.63,
+    6.18
+   ]
+  },
+  {
+   "index": 59,
+   "node": "Building 9",
+   "triangles": 376,
+   "size": [
+    3.55,
+    3.89,
+    4.48
+   ]
+  },
+  {
+   "index": 60,
+   "node": "Building 4",
+   "triangles": 1294,
+   "size": [
+    3.12,
+    6.72,
+    5.01
+   ]
+  },
+  {
+   "index": 61,
+   "node": "Building 7",
+   "triangles": 274,
+   "size": [
+    5.36,
+    3.79,
+    5.36
+   ]
+  },
+  {
+   "index": 62,
+   "node": "Building 1",
+   "triangles": 937,
+   "size": [
+    5.25,
+    7.02,
+    5.19
+   ]
+  },
+  {
+   "index": 63,
+   "node": "Building 82",
+   "triangles": 628,
+   "size": [
+    9.34,
+    15.25,
+    16.08
+   ]
+  },
+  {
+   "index": 64,
+   "node": "Building 5",
+   "triangles": 832,
+   "size": [
+    4.9,
+    4.45,
+    6.7
+   ]
+  },
+  {
+   "index": 65,
+   "node": "Building 27",
+   "triangles": 959,
+   "size": [
+    5.7,
+    3.32,
+    6.15
+   ]
+  },
+  {
+   "index": 66,
+   "node": "Building 26",
+   "triangles": 758,
+   "size": [
+    5.61,
+    3.5,
+    8.19
+   ]
+  },
+  {
+   "index": 67,
+   "node": "Building 39",
+   "triangles": 591,
+   "size": [
+    5.73,
+    6.24,
+    6.0
+   ]
+  },
+  {
+   "index": 68,
+   "node": "Building 20",
+   "triangles": 804,
+   "size": [
+    3.27,
+    3.58,
+    6.5
+   ]
+  },
+  {
+   "index": 69,
+   "node": "Building 2",
+   "triangles": 932,
+   "size": [
+    3.05,
+    5.06,
+    6.3
+   ]
+  },
+  {
+   "index": 70,
+   "node": "Building 24",
+   "triangles": 636,
+   "size": [
+    6.44,
+    7.97,
+    5.12
+   ]
+  },
+  {
+   "index": 71,
+   "node": "Building 38",
+   "triangles": 524,
+   "size": [
+    6.45,
+    6.44,
+    5.12
+   ]
+  },
+  {
+   "index": 72,
+   "node": "Building 86",
+   "triangles": 690,
+   "size": [
+    11.08,
+    38.71,
+    11.0
+   ]
+  },
+  {
+   "index": 73,
+   "node": "Building 94",
+   "triangles": 1010,
+   "size": [
+    11.33,
+    21.35,
+    11.33
+   ]
+  },
+  {
+   "index": 74,
+   "node": "Building 81",
+   "triangles": 610,
+   "size": [
+    14.11,
+    4.34,
+    21.65
+   ]
+  },
+  {
+   "index": 75,
+   "node": "Building 94.001",
+   "triangles": 1864,
+   "size": [
+    9.11,
+    15.36,
+    15.24
+   ]
+  },
+  {
+   "index": 76,
+   "node": "Building 90",
+   "triangles": 1276,
+   "size": [
+    3.75,
+    3.6,
+    17.34
+   ]
+  },
+  {
+   "index": 77,
+   "node": "Building 95",
+   "triangles": 1252,
+   "size": [
+    11.5,
+    22.25,
+    11.4
+   ]
+  },
+  {
+   "index": 78,
+   "node": "Building 77",
+   "triangles": 1172,
+   "size": [
+    3.59,
+    13.42,
+    3.52
+   ]
+  },
+  {
+   "index": 79,
+   "node": "Building 76",
+   "triangles": 1140,
+   "size": [
+    3.79,
+    12.27,
+    3.73
+   ]
+  },
+  {
+   "index": 80,
+   "node": "Building 79",
+   "triangles": 1632,
+   "size": [
+    7.14,
+    5.91,
+    9.7
+   ]
+  },
+  {
+   "index": 81,
+   "node": "Building 80",
+   "triangles": 660,
+   "size": [
+    4.65,
+    6.45,
+    9.43
+   ]
+  },
+  {
+   "index": 82,
+   "node": "Building 8",
+   "triangles": 613,
+   "size": [
+    4.68,
+    3.36,
+    9.47
+   ]
+  },
+  {
+   "index": 83,
+   "node": "Building 91",
+   "triangles": 3612,
+   "size": [
+    16.14,
+    22.26,
+    14.04
+   ]
+  },
+  {
+   "index": 84,
+   "node": "Building 64",
+   "triangles": 1128,
+   "size": [
+    8.36,
+    6.0,
+    3.69
+   ]
+  },
+  {
+   "index": 85,
+   "node": "Building 62",
+   "triangles": 919,
+   "size": [
+    8.34,
+    3.35,
+    3.69
+   ]
+  },
+  {
+   "index": 86,
+   "node": "Building 66",
+   "triangles": 236,
+   "size": [
+    3.8,
+    6.6,
+    3.95
+   ]
+  },
+  {
+   "index": 87,
+   "node": "Building 17",
+   "triangles": 452,
+   "size": [
+    3.76,
+    3.42,
+    3.89
+   ]
+  },
+  {
+   "index": 88,
+   "node": "Building 14",
+   "triangles": 444,
+   "size": [
+    2.28,
+    2.66,
+    3.88
+   ]
+  },
+  {
+   "index": 89,
+   "node": "Building 96",
+   "triangles": 2264,
+   "size": [
+    15.99,
+    4.77,
+    28.79
+   ]
+  },
+  {
+   "index": 90,
+   "node": "Building 84",
+   "triangles": 340,
+   "size": [
+    5.11,
+    4.21,
+    7.74
+   ]
+  },
+  {
+   "index": 91,
+   "node": "Building 71",
+   "triangles": 864,
+   "size": [
+    5.02,
+    4.21,
+    7.75
+   ]
+  },
+  {
+   "index": 92,
+   "node": "Building 85",
+   "triangles": 484,
+   "size": [
+    3.4,
+    3.96,
+    7.14
+   ]
+  },
+  {
+   "index": 93,
+   "node": "Building 97",
+   "triangles": 5080,
+   "size": [
+    9.84,
+    38.75,
+    21.32
+   ]
+  },
+  {
+   "index": 94,
+   "node": "Building 72",
+   "triangles": 824,
+   "size": [
+    4.67,
+    5.84,
+    5.21
+   ]
+  },
+  {
+   "index": 95,
+   "node": "Building 16",
+   "triangles": 660,
+   "size": [
+    4.66,
+    3.19,
+    5.2
+   ]
+  },
+  {
+   "index": 96,
+   "node": "Building 73",
+   "triangles": 824,
+   "size": [
+    4.67,
+    5.84,
+    5.21
+   ]
+  },
+  {
+   "index": 97,
+   "node": "Building 75",
+   "triangles": 363,
+   "size": [
+    8.07,
+    6.38,
+    6.0
+   ]
+  },
+  {
+   "index": 98,
+   "node": "Building 74",
+   "triangles": 536,
+   "size": [
+    6.06,
+    6.0,
+    6.0
+   ]
+  },
+  {
+   "index": 99,
+   "node": "Building 6",
+   "triangles": 310,
+   "size": [
+    2.68,
+    4.07,
+    2.63
+   ]
+  }
+ ]
+}

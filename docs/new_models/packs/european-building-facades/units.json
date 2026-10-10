@@ -1,0 +1,65 @@
+{
+ "source": "european_building_facades.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "BuildingsHouseOld0202_corner",
+   "triangles": 4606,
+   "size": [
+    8.3,
+    9.75,
+    8.03
+   ]
+  },
+  {
+   "index": 1,
+   "node": "BuildingsHouseOld0202_double",
+   "triangles": 12398,
+   "size": [
+    13.47,
+    9.75,
+    8.43
+   ]
+  },
+  {
+   "index": 2,
+   "node": "BuildingsHouseOld0202_doubleplane",
+   "triangles": 6895,
+   "size": [
+    13.26,
+    9.75,
+    0.77
+   ]
+  },
+  {
+   "index": 3,
+   "node": "BuildingsHouseOld0202_single",
+   "triangles": 2379,
+   "size": [
+    7.85,
+    9.75,
+    5.27
+   ]
+  },
+  {
+   "index": 4,
+   "node": "BuildingsHouseOld0202_singleplane",
+   "triangles": 3692,
+   "size": [
+    8.02,
+    9.75,
+    0.67
+   ]
+  },
+  {
+   "index": 5,
+   "node": "BuildingsHouseOld0202_singleplanedoor",
+   "triangles": 4222,
+   "size": [
+    7.85,
+    9.75,
+    0.77
+   ]
+  }
+ ]
+}

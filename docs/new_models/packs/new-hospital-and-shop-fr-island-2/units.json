@@ -1,0 +1,245 @@
+{
+ "source": "new hospital and shop fr island 2.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "B1_Base",
+   "triangles": 284,
+   "size": [
+    0.06,
+    0.11,
+    0.06
+   ]
+  },
+  {
+   "index": 1,
+   "node": "B1_Details",
+   "triangles": 44,
+   "size": [
+    0.07,
+    0.08,
+    0.07
+   ]
+  },
+  {
+   "index": 2,
+   "node": "B1_Details3",
+   "triangles": 584,
+   "size": [
+    0.05,
+    0.09,
+    0.0
+   ]
+  },
+  {
+   "index": 3,
+   "node": "B1_Details4",
+   "triangles": 2376,
+   "size": [
+    0.05,
+    0.04,
+    0.02
+   ]
+  },
+  {
+   "index": 4,
+   "node": "B2_Base",
+   "triangles": 342,
+   "size": [
+    0.07,
+    0.1,
+    0.07
+   ]
+  },
+  {
+   "index": 5,
+   "node": "B2_Base2",
+   "triangles": 40,
+   "size": [
+    0.07,
+    0.0,
+    0.07
+   ]
+  },
+  {
+   "index": 6,
+   "node": "B2_Details",
+   "triangles": 808,
+   "size": [
+    0.06,
+    0.09,
+    0.06
+   ]
+  },
+  {
+   "index": 7,
+   "node": "B2_Details2",
+   "triangles": 36,
+   "size": [
+    0.03,
+    0.01,
+    0.05
+   ]
+  },
+  {
+   "index": 8,
+   "node": "B3_Base2",
+   "triangles": 32,
+   "size": [
+    0.12,
+    0.01,
+    0.07
+   ]
+  },
+  {
+   "index": 9,
+   "node": "B3_Base",
+   "triangles": 328,
+   "size": [
+    0.12,
+    0.09,
+    0.06
+   ]
+  },
+  {
+   "index": 10,
+   "node": "B3_Details",
+   "triangles": 400,
+   "size": [
+    0.11,
+    0.08,
+    0.05
+   ]
+  },
+  {
+   "index": 11,
+   "node": "B3_Details2",
+   "triangles": 360,
+   "size": [
+    0.09,
+    0.01,
+    0.04
+   ]
+  },
+  {
+   "index": 12,
+   "node": "B4_Base",
+   "triangles": 1294,
+   "size": [
+    0.08,
+    0.13,
+    0.16
+   ]
+  },
+  {
+   "index": 13,
+   "node": "B4_Base2",
+   "triangles": 32,
+   "size": [
+    0.08,
+    0.01,
+    0.14
+   ]
+  },
+  {
+   "index": 14,
+   "node": "B5_Stair",
+   "triangles": 1112,
+   "size": [
+    0.02,
+    0.09,
+    0.05
+   ]
+  },
+  {
+   "index": 15,
+   "node": "B5_Base",
+   "triangles": 1070,
+   "size": [
+    0.08,
+    0.12,
+    0.09
+   ]
+  },
+  {
+   "index": 16,
+   "node": "Person_Scale",
+   "triangles": 760,
+   "size": [
+    0.01,
+    0.02,
+    0.01
+   ]
+  },
+  {
+   "index": 17,
+   "node": "Shop1",
+   "triangles": 1206,
+   "size": [
+    0.09,
+    0.05,
+    0.06
+   ]
+  },
+  {
+   "index": 18,
+   "node": "Hospital",
+   "triangles": 2396,
+   "size": [
+    0.28,
+    0.15,
+    0.18
+   ]
+  },
+  {
+   "index": 19,
+   "node": "Bench2",
+   "triangles": 124,
+   "size": [
+    0.02,
+    0.01,
+    0.01
+   ]
+  },
+  {
+   "index": 20,
+   "node": "Bench1",
+   "triangles": 212,
+   "size": [
+    0.02,
+    0.01,
+    0.01
+   ]
+  },
+  {
+   "index": 21,
+   "node": "StreetLight1",
+   "triangles": 192,
+   "size": [
+    0.01,
+    0.06,
+    0.01
+   ]
+  },
+  {
+   "index": 22,
+   "node": "StreetLight2",
+   "triangles": 464,
+   "size": [
+    0.01,
+    0.06,
+    0.01
+   ]
+  },
+  {
+   "index": 23,
+   "node": "Road",
+   "triangles": 200,
+   "size": [
+    0.98,
+    0.02,
+    0.98
+   ]
+  }
+ ]
+}

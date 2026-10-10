@@ -1,0 +1,445 @@
+{
+ "source": "free_buildings_low_poly.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "mergedBlocks_bricks(Clone)_0",
+   "triangles": 1519,
+   "size": [
+    17.41,
+    2.75,
+    26.8
+   ]
+  },
+  {
+   "index": 1,
+   "node": "mergedBlocks_shield(Clone)_0",
+   "triangles": 1357,
+   "size": [
+    21.63,
+    3.34,
+    26.23
+   ]
+  },
+  {
+   "index": 2,
+   "node": "mergedBlocks_custom21(Clone)_0",
+   "triangles": 338,
+   "size": [
+    5.23,
+    2.58,
+    3.25
+   ]
+  },
+  {
+   "index": 3,
+   "node": "mergedBlocks_glass(Clone)_0",
+   "triangles": 1634,
+   "size": [
+    22.73,
+    3.1,
+    28.86
+   ]
+  },
+  {
+   "index": 4,
+   "node": "mergedBlocks_metalPurple(Clone)_0",
+   "triangles": 3694,
+   "size": [
+    22.44,
+    3.32,
+    28.16
+   ]
+  },
+  {
+   "index": 5,
+   "node": "mergedBlocks_custom24(Clone)_0",
+   "triangles": 264,
+   "size": [
+    5.0,
+    1.8,
+    3.0
+   ]
+  },
+  {
+   "index": 6,
+   "node": "mergedBlocks_custom25(Clone)_0",
+   "triangles": 1044,
+   "size": [
+    5.1,
+    2.2,
+    4.4
+   ]
+  },
+  {
+   "index": 7,
+   "node": "mergedBlocks_custom17(Clone)_0",
+   "triangles": 722,
+   "size": [
+    21.8,
+    3.28,
+    19.15
+   ]
+  },
+  {
+   "index": 8,
+   "node": "mergedBlocks__defaultMat(Clone)_0",
+   "triangles": 2882,
+   "size": [
+    19.82,
+    3.58,
+    24.24
+   ]
+  },
+  {
+   "index": 9,
+   "node": "mergedBlocks_wood(Clone)_0",
+   "triangles": 760,
+   "size": [
+    5.06,
+    1.45,
+    3.06
+   ]
+  },
+  {
+   "index": 10,
+   "node": "mergedBlocks_stoneLight(Clone)_0",
+   "triangles": 1040,
+   "size": [
+    19.6,
+    2.45,
+    25.4
+   ]
+  },
+  {
+   "index": 11,
+   "node": "mergedBlocks_custom27(Clone)_0",
+   "triangles": 483,
+   "size": [
+    21.04,
+    2.47,
+    13.87
+   ]
+  },
+  {
+   "index": 12,
+   "node": "mergedBlocks_custom29(Clone)_0",
+   "triangles": 6320,
+   "size": [
+    20.88,
+    0.64,
+    13.46
+   ]
+  },
+  {
+   "index": 13,
+   "node": "mergedBlocks_custom28(Clone)_0",
+   "triangles": 141,
+   "size": [
+    20.77,
+    2.48,
+    13.67
+   ]
+  },
+  {
+   "index": 14,
+   "node": "mergedBlocks_custom30(Clone)_0",
+   "triangles": 844,
+   "size": [
+    16.16,
+    3.4,
+    16.5
+   ]
+  },
+  {
+   "index": 15,
+   "node": "mergedBlocks_metalDark(Clone)_0",
+   "triangles": 563,
+   "size": [
+    5.2,
+    2.0,
+    19.86
+   ]
+  },
+  {
+   "index": 16,
+   "node": "mergedBlocks_metalLight(Clone)_0",
+   "triangles": 2681,
+   "size": [
+    8.56,
+    2.26,
+    19.82
+   ]
+  },
+  {
+   "index": 17,
+   "node": "mergedBlocks_custom44(Clone)_0",
+   "triangles": 700,
+   "size": [
+    9.0,
+    1.0,
+    9.39
+   ]
+  },
+  {
+   "index": 18,
+   "node": "mergedBlocks_custom43(Clone)_0",
+   "triangles": 388,
+   "size": [
+    15.41,
+    3.87,
+    10.19
+   ]
+  },
+  {
+   "index": 19,
+   "node": "mergedBlocks_dark(Clone)_0",
+   "triangles": 684,
+   "size": [
+    17.22,
+    3.23,
+    29.04
+   ]
+  },
+  {
+   "index": 20,
+   "node": "mergedBlocks_custom14(Clone)_0",
+   "triangles": 120,
+   "size": [
+    5.2,
+    0.8,
+    5.2
+   ]
+  },
+  {
+   "index": 21,
+   "node": "mergedBlocks_custom13(Clone)_0",
+   "triangles": 247,
+   "size": [
+    5.0,
+    1.0,
+    5.42
+   ]
+  },
+  {
+   "index": 22,
+   "node": "mergedBlocks_custom15(Clone)_0",
+   "triangles": 1092,
+   "size": [
+    5.06,
+    0.65,
+    5.13
+   ]
+  },
+  {
+   "index": 23,
+   "node": "mergedBlocks_metal(Clone)_0",
+   "triangles": 2808,
+   "size": [
+    7.17,
+    2.26,
+    19.82
+   ]
+  },
+  {
+   "index": 24,
+   "node": "mergedBlocks_stone(Clone)_0",
+   "triangles": 840,
+   "size": [
+    7.1,
+    2.6,
+    19.76
+   ]
+  },
+  {
+   "index": 25,
+   "node": "mergedBlocks_stoneDark(Clone)_0",
+   "triangles": 646,
+   "size": [
+    7.26,
+    2.0,
+    19.86
+   ]
+  },
+  {
+   "index": 26,
+   "node": "mergedBlocks_custom18(Clone)_0",
+   "triangles": 240,
+   "size": [
+    6.09,
+    1.12,
+    3.65
+   ]
+  },
+  {
+   "index": 27,
+   "node": "mergedBlocks_custom16(Clone)_0",
+   "triangles": 200,
+   "size": [
+    6.0,
+    1.4,
+    3.6
+   ]
+  },
+  {
+   "index": 28,
+   "node": "mergedBlocks_custom19(Clone)_0",
+   "triangles": 350,
+   "size": [
+    6.09,
+    0.8,
+    3.65
+   ]
+  },
+  {
+   "index": 29,
+   "node": "mergedBlocks_custom20(Clone)_0",
+   "triangles": 742,
+   "size": [
+    6.06,
+    0.8,
+    3.1
+   ]
+  },
+  {
+   "index": 30,
+   "node": "mergedBlocks_custom32(Clone)_0",
+   "triangles": 228,
+   "size": [
+    3.16,
+    1.5,
+    3.18
+   ]
+  },
+  {
+   "index": 31,
+   "node": "mergedBlocks_custom31(Clone)_0",
+   "triangles": 588,
+   "size": [
+    3.0,
+    3.29,
+    3.1
+   ]
+  },
+  {
+   "index": 32,
+   "node": "mergedBlocks_bricksDark(Clone)_0",
+   "triangles": 30,
+   "size": [
+    2.0,
+    0.2,
+    2.0
+   ]
+  },
+  {
+   "index": 33,
+   "node": "mergedBlocks_custom34(Clone)_0",
+   "triangles": 184,
+   "size": [
+    3.16,
+    2.85,
+    3.16
+   ]
+  },
+  {
+   "index": 34,
+   "node": "mergedBlocks_custom38(Clone)_0",
+   "triangles": 1192,
+   "size": [
+    14.46,
+    1.2,
+    8.3
+   ]
+  },
+  {
+   "index": 35,
+   "node": "mergedBlocks_metalOrange(Clone)_0",
+   "triangles": 312,
+   "size": [
+    2.76,
+    0.64,
+    0.64
+   ]
+  },
+  {
+   "index": 36,
+   "node": "mergedBlocks_custom48(Clone)_0",
+   "triangles": 1280,
+   "size": [
+    14.61,
+    3.67,
+    9.16
+   ]
+  },
+  {
+   "index": 37,
+   "node": "mergedBlocks_custom40(Clone)_0",
+   "triangles": 284,
+   "size": [
+    4.0,
+    0.78,
+    4.5
+   ]
+  },
+  {
+   "index": 38,
+   "node": "mergedBlocks_custom45(Clone)_0",
+   "triangles": 168,
+   "size": [
+    4.18,
+    1.06,
+    4.22
+   ]
+  },
+  {
+   "index": 39,
+   "node": "mergedBlocks_custom46(Clone)_0",
+   "triangles": 168,
+   "size": [
+    4.18,
+    0.75,
+    4.22
+   ]
+  },
+  {
+   "index": 40,
+   "node": "mergedBlocks_custom41(Clone)_0",
+   "triangles": 248,
+   "size": [
+    4.3,
+    1.11,
+    3.3
+   ]
+  },
+  {
+   "index": 41,
+   "node": "mergedBlocks_custom39(Clone)_0",
+   "triangles": 326,
+   "size": [
+    9.7,
+    1.0,
+    4.86
+   ]
+  },
+  {
+   "index": 42,
+   "node": "mergedBlocks_foliage(Clone)_0",
+   "triangles": 4110,
+   "size": [
+    4.8,
+    0.21,
+    3.8
+   ]
+  },
+  {
+   "index": 43,
+   "node": "mergedBlocks_custom47(Clone)_0",
+   "triangles": 108,
+   "size": [
+    1.2,
+    1.34,
+    1.91
+   ]
+  }
+ ]
+}

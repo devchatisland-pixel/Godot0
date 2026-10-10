@@ -1,0 +1,125 @@
+{
+ "source": "pack_-_low_poly_-_15_building.glb",
+ "units": [
+  {
+   "index": 0,
+   "node": "Object_2",
+   "triangles": 16,
+   "size": [
+    14.43,
+    12.0,
+    18.18
+   ]
+  },
+  {
+   "index": 1,
+   "node": "Object_3",
+   "triangles": 34299,
+   "size": [
+    96.12,
+    20.25,
+    108.15
+   ]
+  },
+  {
+   "index": 2,
+   "node": "Object_4",
+   "triangles": 34496,
+   "size": [
+    99.0,
+    19.25,
+    112.0
+   ]
+  },
+  {
+   "index": 3,
+   "node": "Object_5",
+   "triangles": 4843,
+   "size": [
+    69.43,
+    13.97,
+    75.35
+   ]
+  },
+  {
+   "index": 4,
+   "node": "Object_6",
+   "triangles": 4,
+   "size": [
+    49.5,
+    0.25,
+    17.5
+   ]
+  },
+  {
+   "index": 5,
+   "node": "Object_7",
+   "triangles": 107,
+   "size": [
+    81.0,
+    20.0,
+    104.0
+   ]
+  },
+  {
+   "index": 6,
+   "node": "Object_8",
+   "triangles": 72,
+   "size": [
+    69.18,
+    9.05,
+    76.06
+   ]
+  },
+  {
+   "index": 7,
+   "node": "Object_9",
+   "triangles": 49,
+   "size": [
+    39.14,
+    9.04,
+    32.35
+   ]
+  },
+  {
+   "index": 8,
+   "node": "Object_10",
+   "triangles": 38,
+   "size": [
+    72.0,
+    15.09,
+    20.4
+   ]
+  },
+  {
+   "index": 9,
+   "node": "Object_11",
+   "triangles": 4033,
+   "size": [
+    69.0,
+    13.15,
+    78.0
+   ]
+  },
+  {
+   "index": 10,
+   "node": "Object_12",
+   "triangles": 340,
+   "size": [
+    69.08,
+    0.5,
+    15.08
+   ]
+  },
+  {
+   "index": 11,
+   "node": "Object_13",
+   "triangles": 7016,
+   "size": [
+    93.88,
+    20.5,
+    108.88
+   ]
+  }
+ ]
+}
