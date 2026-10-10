@@ -19,6 +19,9 @@ const LOT_SIZES := {
 	Zone.URBAN: Vector2i(2, 3),
 }
 
+## Share of the lots in the middle of the urban island that get a futuristic tower.
+const FUTURE_SHARE := 0.2
+
 var _cfg: CityConfig
 var _data: CityData
 var _districts: DistrictPlanner
@@ -38,7 +41,11 @@ func _init(cfg: CityConfig, data: CityData, districts: DistrictPlanner,
 	owner.fill(-1)
 
 
-func build(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
+## `rng` replaces the shared random numbers for this call (the urban island has its own).
+func build(blocks: Array[Rect2i], zones: PackedByteArray, rng: RandomNumberGenerator = null) -> void:
+	var shared := _rng
+	if rng != null:
+		_rng = rng
 	for b in blocks.size():
 		var z: int = zones[b]
 		if LOT_SIZES.has(z):
@@ -49,6 +56,7 @@ func build(blocks: Array[Rect2i], zones: PackedByteArray) -> void:
 			_split_lots(blocks[b], range_, lots)
 			for lot in lots:
 				_add_lot(lot, z)
+	_rng = shared
 
 
 ## True in the middle of the urban island (where the futuristic towers stand).
@@ -89,7 +97,9 @@ func _add_lot(lot: Rect2i, zone: int) -> void:
 	var facing := road_facing(_data, lot, _rng.randi())
 	var seed := _rng.randi()
 	var kind := _pick_kind(zone, lot, d, facing, seed)
-	if kind == Kind.SHOP:
+	if zone == Zone.URBAN:
+		facing = _urban_facing(lot, seed)
+	elif kind == Kind.SHOP:
 		# Shops show their front to the camera (an east or south street side when there is one).
 		var visible := road_facing(_data, lot, seed >> 4, true)
 		if visible >= 0:
@@ -98,17 +108,21 @@ func _add_lot(lot: Rect2i, zone: int) -> void:
 	mark(lot, id)
 
 
+## Towers of the urban island show their front to the camera: east or south, towards the
+## street when one runs there (never north or west, whatever the street says).
+func _urban_facing(lot: Rect2i, seed: int) -> int:
+	var f := road_facing(_data, lot, seed >> 4, true)
+	if f == 1 or f == 2:
+		return f
+	return 1 if (seed >> 7) & 1 == 1 else 2
+
+
 func _pick_kind(zone: int, lot: Rect2i, d: float, facing: int, seed: int) -> int:
 	var h := float(seed & 0xffff) / 65536.0
 	var area := lot.get_area()
 	if zone == Zone.URBAN:
-		# Futuristic towers fill the middle of the island (3x3 lots or more), normal towers
-		# stand in front of them and around.
-		var u: Dictionary = ExtensionIsland.URBAN
-		var at: Vector2 = u["at"]
-		var r: Vector2 = u["r"]
-		var n := Vector2((lot.get_center().x - at.x) / r.x, (lot.get_center().y - at.y) / r.y).length()
-		if mini(lot.size.x, lot.size.y) >= 3 and h < (0.8 if n < 0.92 else 0.45):
+		# Towers of three packs (ModelPools), with a few futuristic ones in the middle (3x3 lots).
+		if mini(lot.size.x, lot.size.y) >= 3 and _urban_core(lot.get_center()) and h < FUTURE_SHARE:
 			return Kind.FUTURE_BLDG
 		return Kind.URBAN_BLDG
 	if facing < 0: # no road access: courtyard

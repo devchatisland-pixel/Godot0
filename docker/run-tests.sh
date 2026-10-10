@@ -8,6 +8,9 @@ cd /project
 echo "== Generation test"
 godot --headless --script res://tests/test_generation.gd
 
+echo "== Urban island, BT tower islet, watchtowers"
+godot --headless --script res://tests/test_urban_island.gd
+
 echo "== Top-down zoning map -> /out/map.png"
 godot --headless --script res://tests/debug_map.gd -- /out/map.png
 

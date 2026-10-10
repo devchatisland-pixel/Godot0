@@ -29,7 +29,10 @@ const PACK_GLOW := {
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
 	ModelCat.METAL_BRIDGE: 0.4, ModelCat.PIRATE_SHIP: 0.3, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
+	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.BT_TOWER: 0.45, ModelCat.WATCHTOWER: 0.2,
 }
+## Night packs keep the lights painted in their emission map (a lit facade where they have none).
+const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
 
 
 static func apply(lib: ModelLibrary) -> void:
@@ -41,6 +44,17 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in [ModelCat.SKYLINE, ModelCat.SKYLINE2, ModelCat.FUTURE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
+	for cat in NIGHT_PACKS:
+		for id in lib.ids(cat):
+			var mesh := lib.meshes[id]
+			var has_lights := false
+			for s in mesh.get_surface_count():
+				var mat := mesh.surface_get_material(s) as BaseMaterial3D
+				has_lights = has_lights or (mat != null and mat.emission_enabled)
+			if has_lights:
+				_light_skyline(mesh, done)
+			else:
+				_light_facade(mesh, 0.45, done)
 
 
 ## Copy of every material of `mesh` whose texture also lights it at night.

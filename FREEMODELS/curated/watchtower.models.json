@@ -1,0 +1,9 @@
+{
+	"file": "watchtower.glb",
+	"models": [
+		{
+			"cat": "WATCHTOWER",
+			"node": "watchtower"
+		}
+	]
+}

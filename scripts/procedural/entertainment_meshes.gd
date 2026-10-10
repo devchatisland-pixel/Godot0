@@ -7,7 +7,6 @@ extends RefCounted
 const GOLD := Color("e8b33a")
 const PURPLE := Color("5a3482")
 const MAGENTA := Color("8e3a9a")
-const NIGHT := Color("2f2540")
 const PINK := Color("ff4fd8")
 const CYAN := Color("4ff0ff")
 const YELLOW := Color("ffe14f")
@@ -17,15 +16,22 @@ const WHITE := Color("f4f2f8")
 const WINDOW := Color("3d4566")
 const ASPHALT := Color("4c4f5e")
 const STEEL := Color("c9c6d6")
+## Painted Las Vegas facades (the neon buildings used to be near black).
+const SAND := Color("ecd2a2")
+const CORAL := Color("ee8a70")
+const TURQUOISE := Color("52c4c8")
+const CREAM := Color("f6e8c8")
+const AMBER := Color("f2b765")
+const LIT := Color("ffd36b")
 
 
 static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("casino", casino())
-	lib.add_named("club_a", club(PINK, "neon_xxx", 0.8))
-	lib.add_named("club_b", club(GREEN, "neon_bar", 1.2))
-	lib.add_named("club_c", club(CYAN, "neon_club", 1.0))
-	lib.add_named("club_tower", club_tower(MAGENTA, CYAN, "neon_club"))
-	lib.add_named("club_tower_b", club_tower(Color("ff9a2f"), PINK, "neon_xxx"))
+	lib.add_named("club_a", club(PINK, "neon_xxx", 0.8, CORAL))
+	lib.add_named("club_b", club(GREEN, "neon_bar", 1.0, TURQUOISE))
+	lib.add_named("club_c", club(CYAN, "neon_club", 0.9, SAND))
+	lib.add_named("club_tower", club_tower(MAGENTA, CYAN, "neon_club", AMBER))
+	lib.add_named("club_tower_b", club_tower(Color("ff9a2f"), PINK, "neon_xxx", TURQUOISE))
 	lib.add_named("club_bar", small_bar())
 	lib.add_named("chapel", chapel())
 	lib.add_named("resort", resort())
@@ -38,11 +44,11 @@ static func casino() -> ArrayMesh:
 	var k := MeshKit.new()
 	var base := Vector3(-1.35, 0, -1.2)
 	var base_size := Vector3(2.7, 0.6, 2.2)
-	k.box(base, base_size, PURPLE, NIGHT)
-	k.windows(base, base_size, 2, 7, Color("c78bff"))
+	k.box(base, base_size, PURPLE, CREAM)
+	k.windows(base, base_size, 2, 7, LIT)
 	var top := Vector3(-0.9, 0.6, -0.9)
 	var top_size := Vector3(1.8, 0.7, 1.5)
-	k.box(top, top_size, MAGENTA, NIGHT)
+	k.box(top, top_size, MAGENTA, CREAM)
 	k.windows(top, top_size, 2, 5, YELLOW)
 	# Golden stepped dome with a spire.
 	var dome := Vector3(0, 1.3, -0.15)
@@ -82,14 +88,23 @@ static func _outline(k: MeshKit, min_c: Vector3, size: Vector3, color: Color) ->
 	k.box(Vector3(min_c.x + size.x, y, min_c.z), Vector3(t, t, size.z), color)
 
 
+## Thin gold bands round a box every `step` (the painted Vegas look).
+static func _bands(k: MeshKit, min_c: Vector3, size: Vector3, color: Color, step: float) -> void:
+	var y := min_c.y + step
+	while y < min_c.y + size.y - 0.08:
+		k.box(Vector3(min_c.x - 0.012, y, min_c.z - 0.012), Vector3(size.x + 0.024, 0.04, size.z + 0.024), color)
+		y += step
+
+
 # --- Neon club (2x2): neon sign over the door ------------------------------------------------
-static func club(tube: Color, sign_region: String, height: float) -> ArrayMesh:
+static func club(tube: Color, sign_region: String, height: float, paint: Color) -> ArrayMesh:
 	var k := MeshKit.new()
 	var body := Vector3(-0.8, 0, -0.8)
 	var body_size := Vector3(1.6, height, 1.4)
-	k.box(body, body_size, NIGHT, Color("231b30"))
-	k.windows(body, body_size, int(height / 0.4), 4, Color("6b4f8f"), 1)
-	k.box(Vector3(-0.3, 0, 0.6), Vector3(0.6, 0.3, 0.05), Color("15101e"))
+	k.box(body, body_size, paint, CREAM)
+	k.windows(body, body_size, maxi(2, int(height / 0.35)), 4, LIT, 1)
+	_bands(k, body, body_size, GOLD, 0.35)
+	k.box(Vector3(-0.3, 0, 0.6), Vector3(0.6, 0.3, 0.05), PURPLE)
 	k.neon(true)
 	_outline(k, body, body_size, tube)
 	k.neon(false)
@@ -98,12 +113,13 @@ static func club(tube: Color, sign_region: String, height: float) -> ArrayMesh:
 
 
 # --- Neon tower (2x2): slim tall club with glowing strips and a sign on the roof ---------------
-static func club_tower(tube: Color, strip: Color, sign_region: String) -> ArrayMesh:
+static func club_tower(tube: Color, strip: Color, sign_region: String, paint: Color) -> ArrayMesh:
 	var k := MeshKit.new()
 	var body := Vector3(-0.5, 0, -0.5)
-	var size := Vector3(1.0, 2.6, 1.0)
-	k.box(body, size, NIGHT, Color("15101e"))
-	k.windows(body, size, 9, 3, Color("6b4f8f"), 1)
+	var size := Vector3(1.0, 1.9, 1.0)
+	k.box(body, size, paint, CREAM)
+	k.windows(body, size, 6, 3, LIT, 1)
+	_bands(k, body, size, GOLD, 0.48)
 	k.neon(true)
 	for x in [-0.5, 0.5]:
 		k.box(Vector3(x - 0.02, 0.0, 0.5), Vector3(0.04, size.y, 0.03), strip)
@@ -119,7 +135,7 @@ static func small_bar() -> ArrayMesh:
 	var k := MeshKit.new()
 	var body := Vector3(-0.4, 0, -0.38)
 	var size := Vector3(0.8, 0.5, 0.7)
-	k.box(body, size, Color("3a2d52"), Color("231b30"))
+	k.box(body, size, Color("e9967a"), CREAM)
 	k.windows(body, size, 1, 3, Color("ffb25c"))
 	k.box(Vector3(-0.45, 0.28, 0.32), Vector3(0.9, 0.04, 0.26), PINK)
 	k.neon(true)
@@ -152,13 +168,13 @@ static func resort() -> ArrayMesh:
 	var k := MeshKit.new()
 	var podium := Vector3(-1.7, 0, -1.4)
 	var podium_size := Vector3(3.4, 0.5, 2.9)
-	k.box(podium, podium_size, PURPLE, NIGHT)
-	k.windows(podium, podium_size, 1, 10, Color("ffd36b"))
+	k.box(podium, podium_size, CORAL, CREAM)
+	k.windows(podium, podium_size, 1, 10, LIT)
 	for x in [-1.25, 0.35]:
 		var t := Vector3(x, 0.5, -1.15)
-		k.box(t, Vector3(0.9, 1.9, 1.1), MAGENTA, NIGHT)
+		k.box(t, Vector3(0.9, 1.9, 1.1), TURQUOISE, CREAM)
 		k.windows(t, Vector3(0.9, 1.9, 1.1), 7, 3, Color("ffe14f"))
-		k.box(t + Vector3(0.1, 1.9, 0.1), Vector3(0.7, 0.5, 0.9), PURPLE, NIGHT)
+		k.box(t + Vector3(0.1, 1.9, 0.1), Vector3(0.7, 0.5, 0.9), SAND, CREAM)
 		k.cylinder(t + Vector3(0.45, 2.4, 0.55), 0.25, 0.0, 0.5, 8, GOLD)
 	k.cylinder(Vector3(0, 0.5, 0.3), 0.7, 0.55, 0.3, 14, GOLD)
 	k.cylinder(Vector3(0, 0.8, 0.3), 0.5, 0.0, 0.5, 14, GOLD)

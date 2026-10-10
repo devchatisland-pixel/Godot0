@@ -1,0 +1,73 @@
+{
+	"file": "city_night.glb",
+	"models": [
+		{
+			"cat": "URBAN2",
+			"node": "city_night_01_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_02_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_03_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_05_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_06_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_07_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_08_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_09_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_12_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_13_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_14_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_16_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_17_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_18_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_20_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_72_b"
+		},
+		{
+			"cat": "URBAN2",
+			"node": "city_night_75_b"
+		}
+	]
+}

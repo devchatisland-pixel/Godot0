@@ -1,0 +1,41 @@
+{
+	"file": "night_towers.glb",
+	"models": [
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_a"
+		},
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_b"
+		},
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_c"
+		},
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_d"
+		},
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_e"
+		},
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_f"
+		},
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_g"
+		},
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_h"
+		},
+		{
+			"cat": "NIGHT_TOWER",
+			"node": "tower_i"
+		}
+	]
+}

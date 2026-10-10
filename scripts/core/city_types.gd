@@ -101,6 +101,11 @@ enum Kind {
 	CINEMA_MAIN,      # the big cinema (replaces the old city hall plot)
 	AIRPORT,          # small airport of the urban island
 	BURGER_JOINT,     # one cartoon burger restaurant per district
+	COOLING_TOWER,    # cooling tower of the nuclear plant
+	COOLING_HALL,     # long low hall beside the cooling towers
+	BT_TOWER,         # the lone tower on its own islet
+	HELIPAD,          # concrete pad with a lit H (beside the BT tower)
+	WATCHTOWER,       # wooden lookout in the forests
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -116,6 +121,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.FACTORY_BLDG, Kind.MCDONALDS, Kind.BURGER_KING, Kind.URBAN_CLUSTER,
 	Kind.PIRATE_SHIP, Kind.GRAVE,
 	Kind.NUCLEAR_PLANT, Kind.CINEMA_MAIN, Kind.AIRPORT, Kind.BURGER_JOINT,
+	Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER, Kind.HELIPAD, Kind.WATCHTOWER,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

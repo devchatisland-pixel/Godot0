@@ -12,7 +12,13 @@ const MAIN := {"at": Vector2(141, 133), "r": Vector2(80, 94)}
 ## How ragged the coast of the big island is, compared with the core island.
 const COAST_ROUGHNESS := 0.5
 ## The urban island (third island) west of the main one, joined by the metal bridge.
-const URBAN := {"at": Vector2(28, 133), "r": Vector2(19, 44)}
+const URBAN := {"at": Vector2(30, 138), "r": Vector2(23, 52)}
+## A lobe of land at its north end, wide enough for the nuclear plant and its cooling towers.
+const URBAN_NORTH := {"at": Vector2(34, 96), "r": Vector2(21, 13)}
+## Columns of the map the urban island may use (west of the metal bridge).
+const URBAN_COLUMNS := 60
+## The tiny islet of the BT tower, off the south end of the urban island.
+const TOWER_ISLET := {"at": Vector2(18, 204), "r": Vector2(9, 5.5)}
 ## Palm islets: centre and radius in cells.
 const PALM_ISLETS := [
 	{"at": Vector2(70, 252), "r": 4.5}, {"at": Vector2(150, 259), "r": 5.0},
@@ -40,7 +46,14 @@ func is_buildable(x: int, y: int) -> bool:
 
 
 func is_urban_island(x: int, y: int) -> bool:
-	return _ellipse_t(Vector2(x, y), URBAN["at"], URBAN["r"], 0.0) < 1.15
+	var p := Vector2(x, y)
+	if _ellipse_t(p, URBAN["at"], URBAN["r"], 0.0) < 1.15:
+		return true
+	return _ellipse_t(p, URBAN_NORTH["at"], URBAN_NORTH["r"], 0.0) < 1.15
+
+
+func is_tower_islet(x: int, y: int) -> bool:
+	return _ellipse_t(Vector2(x, y), TOWER_ISLET["at"], TOWER_ISLET["r"], 0.0) < 1.15
 
 
 func is_prison_island(x: int, y: int) -> bool:
@@ -75,12 +88,8 @@ func _build_extended_elevation() -> void:
 		for x in size:
 			var t := _ellipse_t(Vector2(x, y), main_at, main_r, 0.0)
 			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x, y) * _cfg.coast_noise * COAST_ROUGHNESS)
-	var urban_at: Vector2 = URBAN["at"]
-	var urban_r: Vector2 = URBAN["r"]
-	for y in range(maxi(int(urban_at.y - urban_r.y * 1.3), 0), mini(int(urban_at.y + urban_r.y * 1.3), size)):
-		for x in range(maxi(int(urban_at.x - urban_r.x * 1.4), 0), mini(int(urban_at.x + urban_r.x * 1.4), size)):
-			var t := _ellipse_t(Vector2(x, y), urban_at, urban_r, 0.0)
-			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x * 1.4, y * 1.4) * 0.12)
+	for lobe in [URBAN, URBAN_NORTH, TOWER_ISLET]:
+		_raise_lobe(coast, lobe["at"], lobe["r"])
 	for it in PALM_ISLETS:
 		_islet(coast, it["at"], Vector2(it["r"], it["r"]), 0.0, 0.3, 0.05, 3.0)
 	_islet(coast, PRISON["at"], PRISON["r"], PRISON["turn"], 0.4, 0.15, 2.7)
@@ -90,6 +99,15 @@ func _build_extended_elevation() -> void:
 			var i := y * size + x
 			if edge < 6:
 				height[i] = minf(height[i], -0.3 + edge * 0.03)
+
+
+## A lobe of land: a rounded ellipse with a slightly ragged coast.
+func _raise_lobe(coast: FastNoiseLite, at: Vector2, r: Vector2) -> void:
+	var size := _data.size
+	for y in range(maxi(int(at.y - r.y * 1.3), 0), mini(int(at.y + r.y * 1.3), size)):
+		for x in range(maxi(int(at.x - r.x * 1.4), 0), mini(int(at.x + r.x * 1.4), size)):
+			var t := _ellipse_t(Vector2(x, y), at, r, 0.0)
+			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x * 1.4, y * 1.4) * 0.12)
 
 
 func _islet(coast: FastNoiseLite, at: Vector2, r: Vector2, turn: float, lift: float,

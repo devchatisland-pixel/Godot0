@@ -13,6 +13,11 @@ const SHOTS := [
 	{"zoom": 26.0, "at": Kind.MCDONALDS},
 	{"zoom": 40.0, "at": Kind.PRISON},
 	{"zoom": 40.0, "at": Kind.MOUNTAIN},
+	{"zoom": 60.0, "at": Kind.AIRPORT},
+	{"zoom": 45.0, "at": Kind.NUCLEAR_PLANT},
+	{"zoom": 30.0, "at": Kind.BT_TOWER, "night": true},
+	{"zoom": 22.0, "at": Kind.WATCHTOWER},
+	{"zoom": 30.0, "at": Kind.NIGHTCLUB},
 ]
 
 var _dir := "user://"
@@ -68,7 +73,7 @@ func _place(data: CityData, at, base: Vector3) -> Vector3:
 		"west_bridge":
 			return Vector3(data.west_bridge.x - 6, 0, data.west_bridge.z)
 		"urban":
-			return Vector3(28, 0, 133)
+			return Vector3(28, 0, 138)
 		"port":
 			return Vector3(84, 0, 182)
 	return _find(data, at, base)

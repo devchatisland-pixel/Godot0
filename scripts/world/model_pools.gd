@@ -79,7 +79,15 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.RUSSIAN:
 			return lib.ids(Cat.RUSSIAN)
 		Kind.URBAN_BLDG:
-			return lib.ids(Cat.URBAN)
+			return _urban_towers(lib)
+		Kind.COOLING_TOWER:
+			return lib.ids(Cat.COOLING)
+		Kind.COOLING_HALL:
+			return lib.ids(Cat.COOLING_HALL)
+		Kind.BT_TOWER:
+			return lib.ids(Cat.BT_TOWER)
+		Kind.WATCHTOWER:
+			return lib.ids(Cat.WATCHTOWER)
 		Kind.FUTURE_BLDG:
 			return lib.ids(Cat.FUTURE)
 		Kind.PIRATE_SHIP:
@@ -144,6 +152,13 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.STADIUM:
 			return lib.ids(Cat.STADIUM)
 	return PackedInt32Array()
+
+
+## Towers of the urban island: the blackthorn blocks, the night city and the night
+## skyscrapers; every lot picks its own among those that fit.
+static func _urban_towers(lib: ModelLibrary) -> PackedInt32Array:
+	var out := _union(lib, [Cat.URBAN, Cat.URBAN2, Cat.NIGHT_TOWER])
+	return out if not out.is_empty() else lib.ids(Cat.URBAN)
 
 
 ## Low houses on small lots, mid-rise on big ones, a few towers here and there.

@@ -17,7 +17,7 @@ const FAR_COLORS := {
 	Kind.POLICE: Color("c8d2ea"), Kind.CITY_HALL: Color("e6dcc6"),
 	Kind.STADIUM: Color("bcbacb"), Kind.FOUNTAIN: Color("d8d3c4"),
 	Kind.BANK: Color("5b7fc4"), Kind.CHURCH: Color("9d8f86"),
-	Kind.CASINO: Color("8e3a9a"), Kind.NIGHTCLUB: Color("4a3a66"),
+	Kind.CASINO: Color("8e3a9a"), Kind.NIGHTCLUB: Color("e8a98a"),
 	Kind.FERRIS_WHEEL: Color("f4f2f8"), Kind.DRIVE_IN: Color("4c4f5e"),
 	Kind.LIGHTHOUSE: Color("d23b2f"), Kind.TELECOM_TOWER: Color("d23b2f"),
 	Kind.SAT_DISH: Color("f4f2f8"), Kind.MESA: Color("c98a4b"), Kind.POND: Color("5fb7e0"),
@@ -34,6 +34,8 @@ const FAR_COLORS := {
 	Kind.MCDONALDS: Color("e2b43a"), Kind.BURGER_KING: Color("d6402f"), Kind.URBAN_BLDG: Color("b9bcc6"),
 	Kind.URBAN_CLUSTER: Color("4a4f60"), Kind.NUCLEAR_PLANT: Color("b9bcb8"), Kind.CINEMA_MAIN: Color("e98b8b"),
 	Kind.AIRPORT: Color("9aa0aa"), Kind.BURGER_JOINT: Color("d6402f"),
+	Kind.COOLING_TOWER: Color("c9c6bd"), Kind.COOLING_HALL: Color("b9b6ad"), Kind.BT_TOWER: Color("c7c3bb"),
+	Kind.HELIPAD: Color("9aa0aa"), Kind.WATCHTOWER: Color("8a6a45"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -52,6 +54,8 @@ const NAMED := {
 	Kind.BURGER_KING: ["box"], Kind.URBAN_BLDG: ["box"], Kind.URBAN_CLUSTER: ["box"],
 	Kind.FUTURE_BLDG: ["box"], Kind.PIRATE_SHIP: ["box"], Kind.GRAVE: ["grave"],
 	Kind.NUCLEAR_PLANT: ["box"], Kind.CINEMA_MAIN: ["box"], Kind.AIRPORT: ["box"], Kind.BURGER_JOINT: ["box"],
+	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["box"], Kind.WATCHTOWER: ["box"],
+	Kind.HELIPAD: ["helipad_pad"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -64,17 +68,21 @@ const SEED_VARIANTS: Array[int] = [Kind.MUSEUM, Kind.HOTEL]
 ## Small props that keep their modelled size instead of filling the lot.
 const FIXED_SIZE: Array[int] = [
 	Kind.LIGHTHOUSE, Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
-	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE,
+	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE, Kind.HELIPAD,
 ]
 ## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
-const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6}
+const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6, Kind.HELIPAD: 2.6}
+## Las Vegas buildings are drawn at most this much bigger than modelled (they were skyscraper size).
+const VEGAS_MAX_FILL := 1.2
+## Cooling towers beside the nuclear plant, the BT tower and the watchtowers: largest scale.
+const COOLING_SCALE := 2.2
+const WATCHTOWER_SCALE := 1.35
 ## Positions of the vehicles in the STALL list (the others are kiosks).
 const STALL_VEHICLES: Array[int] = [0, 6, 7]
 ## Seed of the mountain of the core forest: the biggest of the three.
 const BIG_MOUNTAIN_SEED := 16
-## The U.N. tower is half the size it was; its emblem is a bit smaller than the tower is wide.
+## The U.N. tower is half the size it was.
 const UN_SCALE := 1.5
-const UN_EMBLEM := 0.38
 ## Futuristic towers of the urban island: a bit wider than their lot allows for others, much taller.
 const FUTURE_STRETCH := 1.5
 ## Las Vegas buildings by the short side of their lot: small bars and chapels,
@@ -98,7 +106,7 @@ static func place(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatc
 	var kind: int = data.b_kind[i]
 	if kind == Kind.PLAZA or kind == Kind.GARDEN or kind == Kind.INDUSTRIAL_YARD:
 		if not far:
-			_place_filler(data, lib, i, kind, batch)
+			BuildingExtras.place_filler(data, lib, i, kind, batch)
 		return
 	var pick := _pick_model(data, lib, i)
 	if pick.is_empty():
@@ -112,7 +120,7 @@ static func place(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatc
 		batch.add_box(t, Color(c.r + j, c.g + j, c.b + j))
 		return
 	batch.add(pick["id"], xform)
-	_place_extras(data, lib, i, kind, pick, batch)
+	BuildingExtras.place_extras(data, lib, i, kind, pick, batch)
 
 
 ## The model and transform used for building `i`, or {} for fillers without a model
@@ -144,6 +152,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 		var fill := 1.0
 		if not FIXED_SIZE.has(kind):
 			fill = clampf(_named_room(lib, nid, r, facing), 0.5, MAX_FILL)
+		if kind == Kind.NIGHTCLUB:
+			fill = minf(fill, VEGAS_MAX_FILL)
 		fill *= KIND_SCALE.get(kind, 1.0)
 		if kind == Kind.MOUNTAIN and seed == BIG_MOUNTAIN_SEED:
 			fill *= 1.4
@@ -184,6 +194,12 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int) -> Dictionary
 			scale = 1.2 if STALL_VEHICLES.has(lib.ids(Cat.STALL).find(id)) else 2.4
 		Kind.UN_HQ:
 			scale = minf(room, UN_SCALE)
+		Kind.COOLING_TOWER, Kind.COOLING_HALL:
+			scale = minf(room, COOLING_SCALE)
+		Kind.BT_TOWER:
+			scale = minf(room, 1.0)
+		Kind.WATCHTOWER:
+			scale = minf(room, WATCHTOWER_SCALE)
 		Kind.FUTURE_BLDG:
 			scale = minf(room, 1.15)
 			stretch = FUTURE_STRETCH
@@ -282,113 +298,3 @@ static func _fit(lib: ModelLibrary, id: int, r: Rect2i, facing: int, scale: floa
 		var depth_room := (r.size.y - fp.y) if o.y != 0 else (r.size.x - fp.x)
 		origin += Vector3(o.x, 0, o.y) * maxf(depth_room, 0.0) * 0.5 * push
 	return Transform3D(basis, origin)
-
-
-# --- Extras --------------------------------------------------------------------------------
-## Helipad of the main hospital model: offset (x, z) from the roof centre and
-## size, as fractions of the model width / depth.
-const HELIPAD := Vector3(0.0, 0.0, 0.3)
-
-static func _place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
-		pick: Dictionary, batch: InstanceBatch) -> void:
-	var r := data.building_rect(i)
-	var seed: int = data.b_seed[i]
-	var back := (int(data.b_facing[i]) + 2) % 4
-	var o := CityTypes.FACING_OFFSETS[back]
-	var lot_center := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
-	var to_back := Vector3(o.x * r.size.x, 0, o.y * r.size.y) * 0.5
-	var side := Vector3(-o.y, 0, o.x) * (0.6 if seed & 1 else -0.6)
-	var xform: Transform3D = pick["xform"]
-	var pid: int = pick["id"]
-	var box: AABB = lib.bounds[pid]
-	match kind:
-		Kind.STADIUM:
-			# Floodlight masts at the corners of the plot (seen at night).
-			var lights := lib.named_id("stadium_lights")
-			var h := box.size.y * xform.basis.get_scale().y * 1.6
-			batch.add(lights, Transform3D(Basis.from_scale(Vector3(r.size.x, h, r.size.y)), lot_center))
-		Kind.MCDONALDS:
-			# Golden arches over the front, lit at night.
-			var w := box.size.x * 0.5
-			var at := Vector3(box.get_center().x, box.end.y + 0.02, box.get_center().z + box.size.z * 0.3)
-			batch.add(lib.named_id("golden_arches"), xform * Transform3D(Basis.from_scale(Vector3(w, w, w)), at))
-		Kind.UN_HQ:
-			if ModelPools.is_pack_model(lib, pid, Cat.UN_TOWER):
-				# Emblem and name high on the front of the tower.
-				var front := Vector3(box.get_center().x, box.size.y * 0.66, box.end.z + 0.01)
-				var w := box.size.x * UN_EMBLEM
-				batch.add(lib.named_id("un_signs"), xform * Transform3D(Basis.from_scale(Vector3(w, w, w)), front))
-		Kind.MAIN_HOSPITAL:
-			if ModelPools.is_pack_model(lib, pid, Cat.HOSPITAL_MAIN):
-				# Lit red H over the helipad of the roof.
-				var pad := Vector3(box.get_center().x + box.size.x * HELIPAD.x, box.end.y + 0.01,
-						box.get_center().z + box.size.z * HELIPAD.y)
-				var w := box.size.x * HELIPAD.z
-				batch.add(lib.named_id("helipad_h"), xform * Transform3D(Basis.from_scale(Vector3(w, 1, w)), pad))
-		Kind.HOUSE:
-			if lib.has_cat(Cat.TREE):
-				var trees := lib.ids(Cat.TREE)
-				var p := lot_center + to_back * 0.75 + side * float(mini(r.size.x, r.size.y)) * 0.6
-				batch.add(trees[seed % trees.size()], _tree_xform(p, seed))
-		Kind.INDUSTRIAL:
-			if lib.has_cat(Cat.INDUSTRIAL_PROP) and seed % 3 == 0:
-				var props := lib.ids(Cat.INDUSTRIAL_PROP)
-				var p := lot_center + to_back * 0.7 + side
-				var prop := props[(seed >> 3) % props.size()]
-				if lib.bounds[prop].size.x < 1.0 and lib.bounds[prop].size.z < 1.0:
-					batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 3) * PI * 0.5), p))
-
-
-## Trees on gardens, a tree on plazas and props on industrial yards.
-static func _place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, batch: InstanceBatch) -> void:
-	var r := data.building_rect(i)
-	var seed: int = data.b_seed[i]
-	if kind == Kind.INDUSTRIAL_YARD:
-		_place_yard(lib, r, seed, batch)
-		return
-	var trees := lib.ids(Cat.TREE)
-	if trees.is_empty():
-		trees = PackedInt32Array([lib.named_id("tree")])
-	var count := 1 if kind == Kind.PLAZA else mini(4, r.get_area())
-	for t in count:
-		var h := CityTypes.hash2(i, t, seed)
-		var p := Vector3(r.position.x + 0.3 + float(h & 255) / 255.0 * (r.size.x - 0.6), 0,
-				r.position.y + 0.3 + float((h >> 8) & 255) / 255.0 * (r.size.y - 0.6))
-		batch.add(trees[h % trees.size()], _tree_xform(p, h))
-
-
-## Industrial yard: stacked containers, oil barrels or a truck (cartoon pack), else the Kenney props.
-static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: InstanceBatch) -> void:
-	var c := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
-	var turn := Basis(Vector3.UP, (seed & 1) * PI * 0.5)
-	match seed % 3:
-		0:
-			var boxes := lib.ids(Cat.CONTAINER)
-			if not boxes.is_empty():
-				for i in 3:
-					var p := c + turn * Vector3(0.0, 0.0, (i - 1) * 0.55)
-					var s := Basis.from_scale(Vector3(1.5, 1.5, 1.5))
-					batch.add(boxes[(seed >> 3) % boxes.size()], Transform3D(turn * s, p))
-					if i == 1:
-						batch.add(boxes[(seed >> 5) % boxes.size()], Transform3D(turn * s, p + Vector3(0, 0.62, 0)))
-				return
-		1:
-			var barrels := lib.ids(Cat.BARREL)
-			if not barrels.is_empty():
-				for i in 5:
-					var p := c + Vector3(float(i % 3) - 1.0, 0.0, float(i / 3) - 0.5) * 0.4
-					batch.add(barrels[(seed >> (3 + i)) % barrels.size()], Transform3D(Basis.from_scale(Vector3(1.8, 1.8, 1.8)), p))
-				return
-		_:
-			var trucks := lib.ids(Cat.TRUCK)
-			if not trucks.is_empty():
-				batch.add(trucks[0], Transform3D(turn * Basis.from_scale(Vector3(1.3, 1.3, 1.3)), c))
-				return
-	var props := lib.ids(Cat.INDUSTRIAL_PROP)
-	if not props.is_empty():
-		batch.add(props[seed % props.size()], Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c))
-
-
-static func _tree_xform(p: Vector3, seed: int) -> Transform3D:
-	var s := 1.1 + float((seed >> 5) & 15) / 15.0 * 0.6
-	return Transform3D(Basis(Vector3.UP, float(seed & 63) * 0.1).scaled(Vector3(s, s, s)), p)

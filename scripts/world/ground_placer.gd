@@ -115,7 +115,7 @@ static func _place_forest(data: CityData, x: int, y: int, trees: PackedInt32Arra
 		var hh := CityTypes.hash2(x, y, 31 + t)
 		var p := Vector3(x + 0.15 + float(hh & 255) / 255.0 * 0.7, 0,
 				y + 0.15 + float((hh >> 8) & 255) / 255.0 * 0.7)
-		batch.add(trees[hh % trees.size()], BuildingPlacer._tree_xform(p, hh))
+		batch.add(trees[hh % trees.size()], BuildingExtras.tree_xform(p, hh))
 
 
 ## One mesh on the cell with probability `chance`, jittered, random size and turn.
@@ -136,5 +136,5 @@ static func _place_park_tree(data: CityData, x: int, y: int, trees: PackedInt32A
 		if h % 100 >= 55:
 			continue
 		var p := Vector3(x + 0.15 + float(h & 255) / 255.0 * 0.7, 0, y + 0.15 + float((h >> 8) & 255) / 255.0 * 0.7)
-		var xf := BuildingPlacer._tree_xform(p, h)
+		var xf := BuildingExtras.tree_xform(p, h)
 		batch.add(trees[(h >> 4) % trees.size()], Transform3D(xf.basis.scaled(Vector3(1.3, 1.3, 1.3)), p))

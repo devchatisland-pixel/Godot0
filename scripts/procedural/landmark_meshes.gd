@@ -1,7 +1,7 @@
 class_name LandmarkMeshes
 extends RefCounted
 ## Stadium (fallback) and its floodlights, park fountain and lake, the lit
-## helipad of the main hospital and the generic meshes
+## helipad of the main hospital, the ground helipad and the generic meshes
 ## used for the far level of detail and as fallback when a kit is missing.
 
 const STONE := Color("e6dcc6")
@@ -26,6 +26,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("tree", fallback_tree())
 	lib.add_named("stadium_lights", stadium_lights())
 	lib.add_named("helipad_h", helipad_h())
+	lib.add_named("helipad_pad", helipad_pad())
 
 
 # --- Stadium: oval stands, pitch and floodlights (5x4 cells) --------------------------------
@@ -127,6 +128,27 @@ static func helipad_h() -> ArrayMesh:
 	for i in 10:
 		var a := TAU * i / 10.0
 		k.block(Vector3(cos(a) * 0.47, 0.0, sin(a) * 0.47), Vector3(0.05, 0.03, 0.05), Color.WHITE)
+	k.glow(false)
+	return k.commit()
+
+
+## Ground helipad (1 cell across, scaled by the placer): concrete slab, painted ring,
+## red neon H and a ring of lights that glow at night.
+static func helipad_pad() -> ArrayMesh:
+	var k := MeshKit.new()
+	var red := Color("ff2a3a")
+	k.cylinder(Vector3.ZERO, 0.5, 0.5, 0.04, 28, Color("8f929e"), Color("a9acb8"))
+	k.disc(Vector3(0, 0.045, 0), Vector2(0.43, 0.43), 28, Color("c9ccd6"))
+	k.disc(Vector3(0, 0.05, 0), Vector2(0.37, 0.37), 28, Color("8f929e"))
+	k.neon(true)
+	k.box(Vector3(-0.2, 0.055, -0.22), Vector3(0.09, 0.01, 0.44), red)
+	k.box(Vector3(0.11, 0.055, -0.22), Vector3(0.09, 0.01, 0.44), red)
+	k.box(Vector3(-0.11, 0.055, -0.045), Vector3(0.22, 0.01, 0.09), red)
+	k.neon(false)
+	k.glow(true)
+	for i in 12:
+		var a := TAU * i / 12.0
+		k.block(Vector3(cos(a) * 0.46, 0.045, sin(a) * 0.46), Vector3(0.04, 0.03, 0.04), Color.WHITE)
 	k.glow(false)
 	return k.commit()
 

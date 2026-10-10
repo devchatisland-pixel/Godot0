@@ -9,7 +9,8 @@ extends SceneTree
 ##   godot --rendering-driver opengl3 --script res://tools/curate_models.gd [-- <out> ...]
 ## With pack names ("out") after "--", only those packs are rebuilt.
 
-const SPEC := "res://tools/curate_spec.json"
+## Every tools/curate_spec*.json is read; their "packs" lists are joined.
+const SPEC_DIR := "res://tools"
 const OUT_DIR := "res://FREEMODELS/curated"
 
 var _tex_max := 512
@@ -26,14 +27,29 @@ var _mat_cache := {}
 
 func _init() -> void:
 	await process_frame
-	var spec: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(SPEC))
-	_default_tex_max = int(spec.get("texture_max", 512))
+	var packs := _read_specs()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT_DIR))
 	var only := OS.get_cmdline_user_args()
-	for pack in spec["packs"]:
+	for pack in packs:
 		if only.is_empty() or only.has(pack["out"]):
 			await _curate(pack)
 	quit()
+
+
+## The packs of all spec files (the first file gives the default texture size).
+func _read_specs() -> Array:
+	var packs := []
+	var files := []
+	for f in DirAccess.get_files_at(SPEC_DIR):
+		if f.begins_with("curate_spec") and f.ends_with(".json"):
+			files.append(f)
+	files.sort()
+	for f in files:
+		var spec: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(SPEC_DIR.path_join(f)))
+		if f == "curate_spec.json":
+			_default_tex_max = int(spec.get("texture_max", 512))
+		packs.append_array(spec["packs"])
+	return packs
 
 
 func _curate(pack: Dictionary) -> void:

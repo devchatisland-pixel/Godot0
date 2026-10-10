@@ -1,0 +1,13 @@
+{
+	"file": "cooling.glb",
+	"models": [
+		{
+			"cat": "COOLING",
+			"node": "cooling_tower"
+		},
+		{
+			"cat": "COOLING_HALL",
+			"node": "cooling_hall"
+		}
+	]
+}

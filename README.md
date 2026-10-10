@@ -39,8 +39,8 @@ Then open **http://localhost:8080**. This is the fast multi-threaded build, rend
 docker compose run --build --rm tests
 ```
 
-This runs the generation test, the chunk benchmark and a top-down map. It also takes 10 screenshots of key places (downtown, hospital, school, stadium, city hall, suburbs, industry) without needing a GPU.
-Everything is written to `./docker-out/` (`map.png`, `shot_0.png` ... `shot_9.png`). The screenshots use software rendering, so this step takes a few minutes.
+This runs the generation test, the urban island test (airport, nuclear plant, BT tower islet, watchtowers; it prints a text map of the island), the chunk benchmark and a top-down map. It also takes 14 screenshots of key places (downtown, urban island, port, McDonald's, prison, mountain, airport, nuclear plant, BT tower at night, a watchtower, a Vegas club) without needing a GPU.
+Everything is written to `./docker-out/` (`map.png`, `shot_0.png` ... `shot_13.png`). The screenshots use software rendering, so this step takes a few minutes.
 
 ### Files
 
@@ -76,7 +76,9 @@ not squares. On screen north-west is up. Special buildings are kept far from eac
 | left | **Sports corner** | the big stadium (own plot, floodlit at night) |
 | south-east | **Farmland** | the one farming district: crop fields (wheat, corn, plowed soil, green rows) with farms and a country road |
 | everywhere | **Hotels** | nine different hotels, one of each model: four in the city, five in the red district |
-| far west, across the metal bridge | **Urban island** | the third island: very dense, with about 45 big futuristic towers (from the night skyline pack, the biggest buildings of the island) standing together in the middle, normal towers in front of them hiding their bases, two night skyline blocks, few roads, no trees |
+| far west, across the metal bridge | **Urban island** | the third island, long from north to south, planned end to end (`urban_island_planner.gd`): the **airport** at the south end (the left end on screen) with nothing built in front of it, the **tower city** in the middle (towers of three packs, all showing their front to the camera, a few futuristic ones in the centre), and the **nuclear plant** at the north end (the right end) with its cooling towers and hall beside it, a small yard and only low industry in front. No trees |
+| just south of the urban island | **BT tower islet** | a tiny islet with the BT tower alone and a lit helipad |
+| the two forests | **Watchtowers** | two simplified wooden lookouts, one in the north-east forest and one in the forest of the old city |
 | far north-west, at sea | **Prison island** | a long rocky island far from the coast: a very big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses |
 | east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke (twice the area of before, same buildings). A three-lane highway leads to the Golden Gate (no roadblocks, the deck is level with the road; the fog stays clear only over the bridge itself and covers the island from its coast). "SEASON 2" floats over it |
 | coast | **Beaches, rocky shores, islets** | six lighthouses, each on a real coast cell (four round the main island, two on the prison island), and palm islets; on the smallest one a pirate grave, with the pirate ship anchored off its coast |
@@ -96,12 +98,12 @@ How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same 
 
 7. **`core_embed.gd`** copies the finished core city into the 272×272 map.
 8. **`extension_island.gd`** raises the rounded main island around it (the core keeps its own streets, shores and forests), the urban island, palm islets and the prison island.
-9. **`extension_planner.gd`** works only on free land, with round blobs: the two highways (east to the Golden Gate, west to the metal bridge); the poor district, the red district and the urban island (BSP streets and lots, shapes cut round); the desert with the base, the industrial zone and port, the farmland, the sand band, two more mountains, beach stalls and the prison compound. Everything is linked to the old city by the shortest road.
+9. **`extension_planner.gd`** works only on free land, with round blobs, and calls its helpers: `extension_roads.gd` (the two highways, east to the Golden Gate and west to the metal bridge, and the shortest-road links), `extension_spots.gd` (free plots and spots), `urban_island_planner.gd` (the urban island, with its own random numbers), `extension_features.gd` (the desert with the base, the industrial zone and port, the farmland, two more mountains, the watchtowers, the prison compound, the lighthouses). The poor and red districts get BSP streets and lots with round shapes. Everything is linked to the old city by the shortest road.
 10. **`fog_island_shaper.gd`**: the island in the fog, placed right after the end of the east highway.
 
 Which family of models a building uses (Kenney, photo towers, New York, cartoon shops, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
 
-To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA`, `PLOTS` or `HINTS` in `district_planner.gd` (core city), or the blobs at the top of `extension_planner.gd` and `MAIN` / `URBAN` / `PRISON` in `extension_island.gd` (everything around). The size of the fog island is `FogIslandShaper.SIZE`.
+To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA`, `PLOTS` or `HINTS` in `district_planner.gd` (core city), or the blobs at the top of `extension_planner.gd` and `extension_features.gd`, and `MAIN` / `URBAN` / `URBAN_NORTH` / `TOWER_ISLET` / `PRISON` in `extension_island.gd` (everything around). The plots of the airport and the nuclear plant are at the top of `urban_island_planner.gd`. The size of the fog island is `FogIslandShaper.SIZE`.
 
 ### The fog island
 
@@ -218,6 +220,11 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `night_skyline` | low-poly night city skyline (keeps its light map) | SKYLINE | the hidden city of the fog island, a block of the urban island |
 | `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the second skyline block of the urban island |
 | `urban` | City Buildings - BlackThornProd | URBAN | the towers of the urban island |
+| `city_night` | Low-poly City Night (keeps its light map; 17 of its buildings) | URBAN2 | more towers of the urban island |
+| `night_towers` | city at night low poly skyscrapers (9 towers, keeps its light map) | NIGHT_TOWER | the tallest towers of the urban island |
+| `cooling` | Cooling Tower (Background) | COOLING, COOLING_HALL | the cooling towers and hall of the nuclear plant |
+| `bt_tower` | BT TOWER (cut out of its town by a world rectangle) | BT_TOWER | the lone tower of its islet |
+| `watchtower` | low poly Watchtower (without fences, rails, lamps and trees) | WATCHTOWER | the two forest lookouts |
 | `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |
 | `hungry` | Hungry Jack's restaurant | BURGER_KING | the Burger King of the red district |
 | `metal_bridge` | stylised metal bridge | METAL_BRIDGE | the bridge to the urban island |
@@ -256,6 +263,7 @@ Not used:
 * "Low-poly-night-city-building-skyline" by willis123, CC BY 4.0
 * "Stylised Low Poly - City Metal Bridge" by remidoes3d, CC BY 4.0
 * "Pirate Ship" by Oleg Muzyka, CC BY 4.0
+* "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)
 * "XXX Neon Sign" by Jimmy Johansson, CC BY 4.0 (only a front render of it is used, as the XXX texture of the sign atlas)
 * "Pack - Low Poly - 15 Building" by Islide, CC BY 4.0
 * "[Free] Buildings Low Poly" by GraphOrigin, CC BY 4.0
@@ -272,7 +280,7 @@ put them back in `FREEMODELS/_incoming/` to rebuild the curated packs.
 **Rebuild after changing the spec** (needs a display, or `xvfb-run` on Linux):
 
 ```
-godot --rendering-driver opengl3 --script res://tools/curate_models.gd                # all packs
+godot --rendering-driver opengl3 --script res://tools/curate_models.gd                # all packs (every tools/curate_spec*.json)
 godot --rendering-driver opengl3 --script res://tools/curate_models.gd -- crane       # one pack
 godot --rendering-driver opengl3 --script res://tools/model_sheet.gd -- FREEMODELS/curated/quarter.glb sheet.png
 ```
@@ -292,7 +300,8 @@ scripts/
   data/       city_data.gd        packed city layers + buildings + chunk index
   generation/ city_generator.gd   pipeline: island_shaper, district_planner, road_planner,
                                   lot_planner, service_planner, landmark_planner, core_embed,
-                                  extension_island, extension_planner, fog_island_shaper
+                                  extension_island, extension_planner (+ extension_roads, extension_spots,
+                                  extension_features, urban_island_planner), fog_island_shaper
   assets/     model_catalog.gd (scan + classify + curated lists), model_library.gd (load, merge, mesh ids),
               night_windows.gd (window glow of the Kenney kits)
   procedural/ mesh_kit.gd (low-poly builder), sign_atlas.gd (signs + night materials),
@@ -321,6 +330,7 @@ textures/     signs.png, fog_noise.png, fog_puffs.png, season2.png
 ```
 godot --headless --import                                         # first import of the models
 godot --headless --script res://tests/test_generation.gd          # generation smoke test
+godot --headless --script res://tests/test_urban_island.gd        # urban island, BT islet, watchtowers; prints a text map
 godot --headless --script res://tests/debug_map.gd -- map.png     # top-down zoning map
 godot --headless --script res://tests/bench_chunks.gd             # chunk build cost / draw calls
 godot -- --capture <dir>                                          # screenshots of key places

@@ -1,0 +1,53 @@
+{
+	"comment": "Wave 7: towers for the urban island, cooling towers of the nuclear plant, the BT tower islet and the forest watchtowers. Read by tools/curate_models.gd together with curate_spec.json.",
+	"packs": [
+		{
+			"src": "res://FREEMODELS/_incoming/low-poly_city_night.glb", "out": "city_night",
+			"scale": 4.0, "max_height": 8.0, "keep_emission": true, "texture_max": 512,
+			"auto": {"cat": "URBAN2", "max": 30, "min_ratio": 1.0, "min_tris": 150},
+			"exclude": ["city_night_15", "city_night_19", "city_night_68", "city_night_69", "city_night_70", "city_night_71", "city_night_74"]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/city_at_night_low_poly_skyscrapers.glb", "out": "night_towers",
+			"scale": 1.8, "max_height": 8.0, "keep_emission": true, "texture_max": 256,
+			"items": [
+				{"id": "tower_a", "nodes": ["Cube"], "cat": "NIGHT_TOWER"},
+				{"id": "tower_b", "nodes": ["Cube_001"], "cat": "NIGHT_TOWER"},
+				{"id": "tower_c", "nodes": ["Cube_002"], "cat": "NIGHT_TOWER"},
+				{"id": "tower_d", "nodes": ["Cube_003"], "cat": "NIGHT_TOWER"},
+				{"id": "tower_e", "nodes": ["Cube_004"], "cat": "NIGHT_TOWER"},
+				{"id": "tower_f", "nodes": ["Cube_005"], "cat": "NIGHT_TOWER"},
+				{"id": "tower_g", "nodes": ["Cube_006"], "cat": "NIGHT_TOWER"},
+				{"id": "tower_h", "nodes": ["Cube_007"], "cat": "NIGHT_TOWER"},
+				{"id": "tower_i", "nodes": ["Cube_008"], "cat": "NIGHT_TOWER"}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/cooling_tower_background.glb", "out": "cooling",
+			"texture_max": 256,
+			"items": [
+				{"id": "cooling_tower", "nodes": ["Circle"], "cat": "COOLING", "footprint": 2.0},
+				{"id": "cooling_hall", "nodes": ["Cube"], "cat": "COOLING_HALL", "footprint": 3.0}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/bt_tower.glb", "out": "bt_tower",
+			"comment": "The scene is a whole town; only the shaft and its base are cut out, by world rectangle.",
+			"texture_max": 512,
+			"items": [
+				{"id": "bt_tower", "region": [-12.0, -10.0, 9.0, 10.2], "cat": "BT_TOWER", "height": 10.0}
+			]
+		},
+		{
+			"src": "res://FREEMODELS/_incoming/low_poly__watchtower.glb", "out": "watchtower",
+			"comment": "Simplified: legs, braces, stairs, floor, hut and door. Fences (22k triangles), rails, lamps, moon and trees are left out.",
+			"texture_max": 256,
+			"items": [
+				{"id": "watchtower", "cat": "WATCHTOWER", "footprint": 1.8,
+					"nodes": ["direct", "direct2", "direct3", "direct4", "direct5", "direct6", "direct7",
+						"Cube_018", "Cube_019", "Cube_020", "step", "handle", "handle2", "wooden floor",
+						"Hut", "Window", "door", "walldoor", "roofbos"]}
+			]
+		}
+	]
+}

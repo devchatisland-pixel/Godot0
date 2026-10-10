@@ -1,0 +1,9 @@
+{
+	"file": "bt_tower.glb",
+	"models": [
+		{
+			"cat": "BT_TOWER",
+			"node": "bt_tower"
+		}
+	]
+}

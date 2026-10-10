@@ -30,6 +30,8 @@ const NAMES := {
 	"SKYSCRAPER": "Skyscraper", "GAS_STATION": "Gas station", "POST_OFFICE": "Post office",
 	"PIRATE_SHIP": "Pirate ship", "GRAVE": "Pirate grave", "FIELD": "Crop field",
 	"OUTPOST": "Farm or ranch building", "INDUSTRIAL_YARD": "Industrial yard", "SHOP": "Shop",
+	"AIRPORT": "Airport", "COOLING_TOWER": "Cooling tower", "COOLING_HALL": "Cooling hall",
+	"BT_TOWER": "BT tower", "HELIPAD": "Helipad", "WATCHTOWER": "Watchtower",
 }
 const FACINGS := ["N", "E", "S", "W"]
 
