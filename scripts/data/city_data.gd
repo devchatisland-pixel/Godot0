@@ -190,6 +190,9 @@ func build_chunk_index() -> void:
 		chunk_buildings[cy * side + cx].append(i)
 		if b_kind[i] != CityTypes.Kind.PLAZA and b_kind[i] != CityTypes.Kind.GARDEN:
 			var r := building_rect(i)
+			# A lot cleared into a park (ManualEdits "park") stays free for the trees.
+			if b_kind[i] == CityTypes.Kind.EMPTY and zone[idx(r.position.x, r.position.y)] == CityTypes.Zone.PARK:
+				continue
 			for y in range(r.position.y, r.end.y):
 				for x in range(r.position.x, r.end.x):
 					occupied[y * size + x] = 1

@@ -53,8 +53,7 @@ func _in_front(r: Rect2i, p: Vector2i) -> bool:
 func _check_places(data: CityData, by_kind: Dictionary) -> void:
 	var airport := _rect(data, Kind.AIRPORT, by_kind)
 	var plant := _rect(data, Kind.NUCLEAR_PLANT, by_kind)
-	if airport.size.x == 0:
-		_fail("no airport")
+	# The airport was taken away by hand (ManualEdits.DELETED_KINDS).
 	if plant.size.x == 0:
 		_fail("no nuclear plant")
 	var urban_tip := int(Vector2(ExtensionIsland.URBAN["at"]).y)
@@ -199,7 +198,7 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 			_fail("neon sign %s is not a flat sign standing on y = 0" % ModelCatalog.Cat.keys()[cat])
 	var seen := {}
 	var tallest_club := 0.0
-	for k in [Kind.AIRPORT, Kind.NUCLEAR_PLANT, Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER,
+	for k in [Kind.NUCLEAR_PLANT, Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER,
 			Kind.WATCHTOWER, Kind.SAT_DISH, Kind.BOAT, Kind.URBAN_BLDG, Kind.FUTURE_BLDG, Kind.NIGHTCLUB]:
 		for b in by_kind.get(k, []):
 			var pick := BuildingPlacer.pick_for(data, lib, b)

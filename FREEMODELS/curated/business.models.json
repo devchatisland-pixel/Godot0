@@ -16,10 +16,6 @@
 		{
 			"cat": "CINEMA",
 			"node": "cinema"
-		},
-		{
-			"cat": "MALL",
-			"node": "shopping_center"
 		}
 	]
 }

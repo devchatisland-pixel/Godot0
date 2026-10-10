@@ -4,30 +4,6 @@
 		{
 			"cat": "POOR_SLAB",
 			"node": "slab"
-		},
-		{
-			"cat": "POOR_BLOCK",
-			"node": "panel0"
-		},
-		{
-			"cat": "POOR_BLOCK",
-			"node": "panel1"
-		},
-		{
-			"cat": "POOR_BLOCK",
-			"node": "panel2"
-		},
-		{
-			"cat": "POOR_BLOCK",
-			"node": "panel3"
-		},
-		{
-			"cat": "POOR_BLOCK",
-			"node": "panel4"
-		},
-		{
-			"cat": "POOR_BLOCK",
-			"node": "panel5"
 		}
 	]
 }
