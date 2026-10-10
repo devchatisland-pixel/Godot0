@@ -56,16 +56,16 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 	# The airport was taken away by hand (ManualEdits.DELETED_KINDS).
 	if plant.size.x == 0:
 		_fail("no nuclear plant")
-	var urban_tip := int(Vector2(ExtensionIsland.URBAN["at"]).y)
+	var urban_tip := int(Vector2(MapLayout.blob("urban")["at"]).y)
 	if airport.size.x > 0 and airport.end.y < urban_tip + 38:
 		_fail("airport is not at the south end: rows %d-%d" % [airport.position.y, airport.end.y])
-	if plant.size.x > 0 and plant.get_center().y > UrbanIslandPlanner.NUCLEAR_END:
+	if plant.size.x > 0 and plant.get_center().y > MapLayout.cells("nuclear_end"):
 		_fail("plant is not at the north end: centre row %d" % plant.get_center().y)
 	# Nothing in front of the airport; only low industry in front of the plant.
 	for b in data.building_count():
 		var r := data.building_rect(b)
 		var k: int = data.b_kind[b]
-		if r.position.x >= ExtensionIsland.URBAN_COLUMNS or r.position.y > 215:
+		if r.position.x >= MapLayout.cells("urban_columns") or r.position.y > MapLayout.cells("urban_south_end"):
 			continue
 		if airport.size.x > 0 and k != Kind.AIRPORT and r.position.y <= airport.end.y and _in_front(airport, r.position) \
 				and _in_front(airport, r.end - Vector2i.ONE):
@@ -73,8 +73,8 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 		if plant.size.x > 0 and _in_front(plant, r.get_center()) and [Kind.URBAN_BLDG, Kind.FUTURE_BLDG,
 				Kind.URBAN_CLUSTER, Kind.SKYSCRAPER].has(k):
 			_fail("tower B-%05d at %s stands in front of the plant" % [b, r])
-		if plant.size.x > 0 and r.position.y < UrbanIslandPlanner.NUCLEAR_END \
-				and r.position.x < ExtensionIsland.URBAN_COLUMNS \
+		if plant.size.x > 0 and r.position.y < MapLayout.cells("nuclear_end") \
+				and r.position.x < MapLayout.cells("urban_columns") \
 				and [Kind.URBAN_BLDG, Kind.FUTURE_BLDG].has(k):
 			_fail("%s B-%05d at %s is in the nuclear rows" % [CityTypes.Kind.keys()[k], b, r])
 	if by_kind.get(Kind.NUCLEAR_PLANT, []).size() < 2:
@@ -82,7 +82,7 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 	if not by_kind.has(Kind.COOLING_HALL):
 		_fail("no cooling hall")
 	var bt := _rect(data, Kind.BT_TOWER, by_kind)
-	var islet := ExtensionIsland.TOWER_ISLET["at"] as Vector2
+	var islet := MapLayout.blob("tower_islet")["at"] as Vector2
 	var dishes := 0
 	for b in by_kind.get(Kind.SAT_DISH, []):
 		if islet.distance_to(Vector2(data.building_rect(b).get_center())) < 12.0:
@@ -130,7 +130,7 @@ func _check_boats(data: CityData, by_kind: Dictionary) -> void:
 	for b in by_kind.get(Kind.BOAT, []):
 		var s: int = data.b_seed[b]
 		# Two cargo ships: keep the one that lies nearer to the industrial port.
-		var port := Vector2(ExtensionFeatures.INDUSTRIAL["at"])
+		var port := Vector2(MapLayout.blob("industrial")["at"])
 		if not seeds.has(s) or Vector2(data.building_rect(b).get_center()).distance_to(port) \
 				< Vector2((seeds[s] as Rect2i).get_center()).distance_to(port):
 			seeds[s] = data.building_rect(b)
@@ -138,7 +138,7 @@ func _check_boats(data: CityData, by_kind: Dictionary) -> void:
 	if seeds.size() != 5:
 		_fail("expected 5 different boats, found %d" % seeds.size())
 		return
-	var port := Vector2(ExtensionFeatures.INDUSTRIAL["at"])
+	var port := Vector2(MapLayout.blob("industrial")["at"])
 	if Vector2((seeds[BoatSites.CARGO] as Rect2i).get_center()).distance_to(port) > 35.0:
 		_fail("the cargo ship is not near the industrial port")
 	var d := Vector2((seeds[BoatSites.SUB] as Rect2i).get_center()).distance_to(Vector2(data.bridge))

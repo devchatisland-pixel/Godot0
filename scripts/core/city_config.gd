@@ -13,6 +13,8 @@ var map_size: int = 272
 ## The original city is generated on a grid of this size and embedded in the
 ## middle of the bigger map; the rounded island and its new districts grow around it.
 var core_size: int = 128
+## Size factor of the layout of the big map (MapLayout): 1 = the 272-cell map.
+var map_scale := 1.0
 ## Cells per streaming chunk (the unit of loading / unloading).
 var chunk_size: int = 32
 ## Folder scanned recursively for .glb / .gltf models.

@@ -14,6 +14,7 @@ func _init(cfg: CityConfig, progress: Callable = Callable()) -> void:
 
 func generate() -> CityData:
 	var t0 := Time.get_ticks_msec()
+	MapLayout.set_scale(_cfg.map_scale)
 	# The city as it was (generated alone on its own grid), then the map around it.
 	var core := _generate_core()
 	var core_data: CityData = core["data"]

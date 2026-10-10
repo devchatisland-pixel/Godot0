@@ -6,31 +6,8 @@ extends IslandShaper
 ## a prison island far from the shore. Terrain, mainland and forest are then
 ## worked out for the whole map, keeping what the core already has.
 
-## The main island: a rounded ellipse (centre and radii in cells of the big map).
-## The core city sits inside it, a little to the west of the middle.
-const MAIN := {"at": Vector2(141, 133), "r": Vector2(80, 94)}
 ## How ragged the coast of the big island is, compared with the core island.
 const COAST_ROUGHNESS := 0.5
-## The urban island (third island) west of the main one, joined by the metal bridge.
-const URBAN := {"at": Vector2(30, 138), "r": Vector2(23, 52)}
-## A lobe of land at its north end, wide enough for the nuclear plant and its cooling towers.
-const URBAN_NORTH := {"at": Vector2(34, 96), "r": Vector2(21, 13)}
-## Columns of the map the urban island may use (west of the metal bridge).
-const URBAN_COLUMNS := 60
-## The tiny islet of the BT tower, in the sea north of the urban island.
-const TOWER_ISLET := {"at": Vector2(24, 64), "r": Vector2(10, 6.5)}
-## Palm islets: centre and radius in cells.
-const PALM_ISLETS := [
-	{"at": Vector2(70, 252), "r": 4.5}, {"at": Vector2(150, 259), "r": 5.0},
-	{"at": Vector2(236, 246), "r": 4.0}, {"at": Vector2(250, 92), "r": 3.5},
-]
-## The development island, alone in the empty south-west corner of the sea, far from the
-## fog island: one of each shop in a row (see shops/CATALOG.md). Flat, no trees, nothing
-## else is built there.
-const DEV_ISLAND := {"at": Vector2(42, 228), "r": Vector2(36, 12)}
-## The prison island: centre, radii (long and short side) and turn in radians.
-## Far out in the north-west, well away from the coast of the main island.
-const PRISON := {"at": Vector2(34, 38), "r": Vector2(15.0, 10.0), "turn": 0.45}
 
 ## The finished core city and its elevation, embedded at `offset` cells.
 var core: CityData
@@ -51,21 +28,21 @@ func is_buildable(x: int, y: int) -> bool:
 
 func is_urban_island(x: int, y: int) -> bool:
 	var p := Vector2(x, y)
-	if _ellipse_t(p, URBAN["at"], URBAN["r"], 0.0) < 1.15:
+	if _ellipse_t(p, MapLayout.blob("urban")["at"], MapLayout.blob("urban")["r"], 0.0) < 1.15:
 		return true
-	return _ellipse_t(p, URBAN_NORTH["at"], URBAN_NORTH["r"], 0.0) < 1.15
+	return _ellipse_t(p, MapLayout.blob("urban_north")["at"], MapLayout.blob("urban_north")["r"], 0.0) < 1.15
 
 
 func is_tower_islet(x: int, y: int) -> bool:
-	return _ellipse_t(Vector2(x, y), TOWER_ISLET["at"], TOWER_ISLET["r"], 0.0) < 1.15
+	return _ellipse_t(Vector2(x, y), MapLayout.blob("tower_islet")["at"], MapLayout.blob("tower_islet")["r"], 0.0) < 1.15
 
 
 func is_dev_island(x: int, y: int) -> bool:
-	return _ellipse_t(Vector2(x, y), DEV_ISLAND["at"], DEV_ISLAND["r"], 0.0) < 1.15
+	return _ellipse_t(Vector2(x, y), MapLayout.blob("dev_island")["at"], MapLayout.blob("dev_island")["r"], 0.0) < 1.15
 
 
 func is_prison_island(x: int, y: int) -> bool:
-	return _ellipse_t(Vector2(x, y), PRISON["at"], PRISON["r"], PRISON["turn"]) < 1.12
+	return _ellipse_t(Vector2(x, y), MapLayout.blob("prison")["at"], MapLayout.blob("prison")["r"], MapLayout.blob("prison")["turn"]) < 1.12
 
 
 ## True where (x, y) lies on land in the core city's own grid.
@@ -90,17 +67,17 @@ func _build_extended_elevation() -> void:
 	coast.fractal_type = FastNoiseLite.FRACTAL_FBM
 	coast.fractal_octaves = 4
 	coast.frequency = 4.0 / float(_cfg.core_size)
-	var main_at: Vector2 = MAIN["at"]
-	var main_r: Vector2 = MAIN["r"]
+	var main_at: Vector2 = MapLayout.blob("main")["at"]
+	var main_r: Vector2 = MapLayout.blob("main")["r"]
 	for y in size:
 		for x in size:
 			var t := _ellipse_t(Vector2(x, y), main_at, main_r, 0.0)
 			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x, y) * _cfg.coast_noise * COAST_ROUGHNESS)
-	for lobe in [URBAN, URBAN_NORTH, TOWER_ISLET, DEV_ISLAND]:
+	for lobe in [MapLayout.blob("urban"), MapLayout.blob("urban_north"), MapLayout.blob("tower_islet"), MapLayout.blob("dev_island")]:
 		_raise_lobe(coast, lobe["at"], lobe["r"])
-	for it in PALM_ISLETS:
+	for it in MapLayout.palm_islets():
 		_islet(coast, it["at"], Vector2(it["r"], it["r"]), 0.0, 0.3, 0.05, 3.0)
-	_islet(coast, PRISON["at"], PRISON["r"], PRISON["turn"], 0.4, 0.15, 2.7)
+	_islet(coast, MapLayout.blob("prison")["at"], MapLayout.blob("prison")["r"], MapLayout.blob("prison")["turn"], 0.4, 0.15, 2.7)
 	for y in size:
 		for x in size:
 			var edge := minf(minf(x, y), minf(size - 1 - x, size - 1 - y))

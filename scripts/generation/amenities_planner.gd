@@ -254,7 +254,7 @@ func _fences() -> void:
 	# The facility of the BT tower islet: everything built on the islet, grown by one cell.
 	var islet := Rect2i()
 	var any := false
-	var at := Vector2i(ExtensionIsland.TOWER_ISLET["at"])
+	var at := Vector2i(MapLayout.blob("tower_islet")["at"])
 	for b in _data.building_count():
 		var r := _data.building_rect(b)
 		if _data.b_kind[b] != Kind.EMPTY and absi(r.get_center().x - at.x) < 16 and absi(r.get_center().y - at.y) < 10:
@@ -270,7 +270,8 @@ func _fences() -> void:
 		var r2 := _data.building_rect(b)
 		var part := k == Kind.NUCLEAR_PLANT or k == Kind.COOLING_HALL or k == Kind.INDUSTRIAL_YARD \
 				or k == Kind.FIRE_TRUCK or k == Kind.INDUSTRIAL
-		if part and r2.position.y >= 84 and r2.end.y <= 108 and r2.position.x < 60:
+		if part and r2.position.y >= MapLayout.cells("plant_yard_from") and r2.end.y <= MapLayout.cells("plant_yard_to") \
+				and r2.position.x < MapLayout.cells("urban_columns"):
 			plant = r2 if not has else plant.merge(r2)
 			has = true
 	if has:

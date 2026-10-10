@@ -32,7 +32,7 @@ static func apply(data: CityData) -> int:
 		var y := airport.end.y + 1
 		while y + lot <= data.size:
 			var x := 0
-			while x + lot <= ExtensionIsland.URBAN_COLUMNS:
+			while x + lot <= MapLayout.cells("urban_columns"):
 				var r := Rect2i(x, y, lot, lot)
 				if _free(data, taken, r):
 					var seed := CityTypes.hash2(x, y, 901)

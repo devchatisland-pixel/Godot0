@@ -61,7 +61,7 @@ func build(blocks: Array[Rect2i], zones: PackedByteArray, rng: RandomNumberGener
 
 ## True in the middle of the urban island (where the futuristic towers stand).
 func _urban_core(c: Vector2i) -> bool:
-	var u: Dictionary = ExtensionIsland.URBAN
+	var u: Dictionary = MapLayout.blob("urban")
 	var at: Vector2 = u["at"]
 	var r: Vector2 = u["r"]
 	return Vector2((c.x - at.x) / r.x, (c.y - at.y) / r.y).length() < 0.92
