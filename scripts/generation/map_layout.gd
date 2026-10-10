@@ -127,13 +127,13 @@ static func palm_islets() -> Array:
 
 
 static func point(name: String) -> Vector2i:
-	return _scaled(POINTS[name])
+	return scaled(POINTS[name])
 
 
 static func points(name: String) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
 	for p: Vector2i in POINT_LISTS[name]:
-		out.append(_scaled(p))
+		out.append(scaled(p))
 	return out
 
 
@@ -141,5 +141,23 @@ static func cells(name: String) -> int:
 	return roundi(float(CELLS[name]) * scale)
 
 
-static func _scaled(p: Vector2i) -> Vector2i:
+## A length of the first map (cells) on this map.
+static func span(n: int) -> int:
+	return maxi(1, roundi(float(n) * scale))
+
+
+## Block limits (short side, long side) of the first map on this map.
+static func block_limits(v: Vector2i) -> Vector2i:
+	return Vector2i(span(v.x), span(v.y))
+
+
+## Lot size range (min, max) of the first map on this map. The smallest lot grows less than
+## the biggest one, so that there are a few lots too many rather than too few: BuildingBudget
+## then clears the surplus.
+static func lot_range(v: Vector2i) -> Vector2i:
+	return Vector2i(maxi(1, roundi(float(v.x) * scale)), maxi(1, roundi(float(v.y) * scale)))
+
+
+## A cell (or a shift in cells) of the first map on this map.
+static func scaled(p: Vector2i) -> Vector2i:
 	return Vector2i(roundi(p.x * scale), roundi(p.y * scale))

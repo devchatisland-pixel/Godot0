@@ -49,7 +49,7 @@ static func apply(data: CityData) -> int:
 		var c := Vector2((s["hut"] as Rect2i).get_center())
 		var apart := true
 		for o in chosen:
-			if Vector2((o["hut"] as Rect2i).get_center()).distance_to(c) < MIN_GAP:
+			if Vector2((o["hut"] as Rect2i).get_center()).distance_to(c) < MIN_GAP * MapLayout.scale:
 				apart = false
 		if apart:
 			chosen.append(s)
@@ -58,7 +58,7 @@ static func apply(data: CityData) -> int:
 	# Two more sites close to the first one (the fishing boat lies off it).
 	if not chosen.is_empty():
 		var around := Vector2((chosen[0]["hut"] as Rect2i).get_center())
-		var near: Array = found.filter(func(f): return Vector2((f["hut"] as Rect2i).get_center()).distance_to(around) < 45.0)
+		var near: Array = found.filter(func(f): return Vector2((f["hut"] as Rect2i).get_center()).distance_to(around) < 45.0 * MapLayout.scale)
 		near.sort_custom(func(a, b): return Vector2((a["hut"] as Rect2i).get_center()).distance_to(around) < Vector2((b["hut"] as Rect2i).get_center()).distance_to(around))
 		var extra := 0
 		for s in near:
