@@ -45,7 +45,7 @@ text = "shop-candy-b"
 font_size = 48
 
 [node name="shop-coffee-a" parent="." instance=ExtResource("3_m")]
-transform = Transform3D(0.0142, 0, 0, 0, 0.0142, 0, 0, 0, 0.0142, 4.0000, 0.0003, 0.0000)
+transform = Transform3D(0.0488, 0, 0, 0, 0.0488, 0, 0, 0, 0.0488, 4.0024, 0.0009, -0.0781)
 
 [node name="Label_shop-coffee-a" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0.6, 0, -0.6, 0.8, 4.0, 0.02, 0.9)

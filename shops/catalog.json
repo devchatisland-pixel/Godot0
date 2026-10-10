@@ -29,6 +29,7 @@
       2.203
     ],
     "one_tile_scale": 0.1984,
+    "front": "+X",
     "notes": "Ice-cream/candy stall with pink & yellow canopy.",
     "sub_models": [
       "Object"
@@ -75,6 +76,7 @@
       2.357
     ],
     "one_tile_scale": 0.164,
+    "front": "+Z",
     "notes": "Candy shop with candy_1 prop; origin is off-centre (bbox x -2.3..3.8).",
     "sub_models": [
       "Cube",
@@ -120,22 +122,23 @@
     "meshes": 30,
     "materials": 21,
     "size": [
-      70.6,
+      20.5,
       6.018,
-      70.6
+      9.599
     ],
     "bbox_min": [
-      -35.3,
+      -10.3,
       -0.018,
-      -35.3
+      -3.2
     ],
     "bbox_max": [
-      35.3,
+      10.2,
       6.0,
-      35.3
+      6.399
     ],
-    "one_tile_scale": 0.0142,
-    "notes": "Tiny coffee stall/cart sitting on a huge 70x70 grey ground plane (17k tris). Delete the plane before use or it will cover ~70 tiles.",
+    "one_tile_scale": 0.0488,
+    "front": "+Z",
+    "notes": "Coffee stall between two dark blocks. The original 70x70 ground plane (mesh Object_20) was removed from this copy; bbox is now 20.5 x 6 x 9.6.",
     "sub_models": [
       "Cube",
       "Object",
@@ -208,6 +211,7 @@
       3.467
     ],
     "one_tile_scale": 0.1595,
+    "front": "+X",
     "notes": "255 small meshes (plants/flowers). Contains a Camera node and a pavement mesh.",
     "sub_models": [
       "Object",
@@ -275,6 +279,7 @@
       6.022
     ],
     "one_tile_scale": 0.0832,
+    "front": "+X",
     "notes": "Biggest file (6.3 MB, 65k tris). Includes asphalt slab + parked car; origin far from 0 (x 2..12). Heavy for a city tile.",
     "sub_models": [
       "asfalt",
@@ -394,6 +399,7 @@
       3.928
     ],
     "one_tile_scale": 0.1304,
+    "front": "-X",
     "notes": "Same author/style as shop-general-orange-b. Italian node names.",
     "sub_models": [
       "base",
@@ -496,6 +502,7 @@
       2.698
     ],
     "one_tile_scale": 0.1698,
+    "front": "-X",
     "notes": "Variant of shop-general-orange-a (adds AC unit, plants, extra awnings).",
     "sub_models": [
       "base",
@@ -582,6 +589,7 @@
       1.433
     ],
     "one_tile_scale": 0.2707,
+    "front": "+Z",
     "notes": "Single textured mesh 'ShopBuilding' + a Collider mesh (hide/remove Collider). License is Sketchfab Standard, not CC-BY.",
     "sub_models": [
       "ShopBuilding",
@@ -626,6 +634,7 @@
       3.626
     ],
     "one_tile_scale": 0.1379,
+    "front": "+Z",
     "notes": "Brick shop with balcony on a large white ground plane (remove it); contains Camera, Sun, Plane, Text nodes.",
     "sub_models": [
       "Object",
@@ -692,6 +701,7 @@
       0.084
     ],
     "one_tile_scale": 5.8824,
+    "front": "+Z",
     "notes": "Corner shop with blue awning and glass front. Authored tiny: 0.17 units wide, needs ~6x scale-up just to be 1 tile.",
     "sub_models": [
       "pCube1",
@@ -767,6 +777,7 @@
       1.741
     ],
     "one_tile_scale": 0.3648,
+    "front": "+Z",
     "notes": "Step-gabled house with red roof and hanging SHOP sign. 170 tris, single material - cheapest model.",
     "sub_models": [
       "shop",
@@ -806,6 +817,7 @@
       2.552
     ],
     "one_tile_scale": 0.2041,
+    "front": "-X",
     "notes": "Grey flat roof, glass front, red louvres/shutters. Pivot is centred vertically (y -1.6..1.8): needs lifting to sit on ground.",
     "sub_models": [
       "SHOP",
@@ -850,6 +862,7 @@
       5.012
     ],
     "one_tile_scale": 0.1122,
+    "front": "+Z",
     "notes": "Coffee shop with cup + COFFEE sign on roof, lamp post, fence, on a dark base slab. 12k tris; floats at y 0.68 min.",
     "sub_models": [
       "Plane",
@@ -922,6 +935,7 @@
       7.2
     ],
     "one_tile_scale": 0.1075,
+    "front": "+Z",
     "notes": "Tall grey townhouse, untextured single material, 543 tris, 12.5 tall.",
     "sub_models": [
       "MAIN",
@@ -961,6 +975,7 @@
       2.136
     ],
     "one_tile_scale": 0.1462,
+    "front": "+X",
     "notes": "Pink/grey multi-storey building with striped awning and green base. 36 Cube meshes, 19 materials; pivot centred (y -2.85..3.9).",
     "sub_models": [
       "Cube",
