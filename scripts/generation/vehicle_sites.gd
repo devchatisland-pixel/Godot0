@@ -56,7 +56,6 @@ func _run() -> void:
 	_city_hall_cars()
 	_fire_station_truck()
 	_container_tanker()
-	_nuclear_plant_convoy()
 	_desert()
 	_bus_stops()
 	_prison_helicopters()
@@ -462,20 +461,6 @@ func _in_front(id: String, b: int, why: String) -> void:
 	if CityTypes.hash2(r.position.x, r.position.y, 6) & 1 == 1:
 		head = -head
 	_add(id, p, head, why)
-
-
-## Fuel tanker, two silver box trailers, an orange crane flatbed and a brown semi trailer on
-## the free ground round the nuclear plant.
-func _nuclear_plant_convoy() -> void:
-	var pb := _biggest(Kind.NUCLEAR_PLANT)
-	if pb < 0:
-		push_warning("[Vehicles] no nuclear plant")
-		return
-	var plant := _d.building_rect(pb)
-	var ids := ["p54_18_tanker_fuel", "p54_50_trailer_box_silver", "p54_50_trailer_box_silver",
-			"p54_09_flatbed_crane_orange", "p54_52_trailer_semi_brown"]
-	for k in ids.size():
-		_beside(ids[k], plant, "near the nuclear plant", 100 + k * 7, 1.0, 6.0)
 
 
 # --- Desert, buses -----------------------------------------------------------------------------
