@@ -112,13 +112,13 @@ static func runway_extension() -> ArrayMesh:
 	var x0 := -9.09
 	var w := 6.88
 	k.box(Vector3(x0, 0.0, -16.0), Vector3(w, 0.06, 9.37), asphalt)
-	k.box(Vector3(x0, 0.0, 16.0), Vector3(w, 0.06, 6.5), asphalt)
+	k.box(Vector3(x0, 0.0, 16.0), Vector3(w, 0.06, 2.5), asphalt)
 	var z := -15.0
 	while z < -7.6:
 		k.box(Vector3(x0 + w * 0.5 - 0.1, 0.061, z), Vector3(0.2, 0.004, 0.9), LINE)
 		z += 1.8
-	z = 17.0
-	while z < 22.0:
+	z = 16.6
+	while z < 18.0:
 		k.box(Vector3(x0 + w * 0.5 - 0.1, 0.061, z), Vector3(0.2, 0.004, 0.9), LINE)
 		z += 1.8
 	return k.commit()

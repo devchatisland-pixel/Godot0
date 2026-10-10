@@ -188,9 +188,9 @@ func _build_plant() -> void:
 		return
 	var body := Rect2i(plant.position, Vector2i(plant.size.x, PLANT_ROWS))
 	_spots.claim(body, Kind.NUCLEAR_PLANT, 2, Zone.URBAN)
-	# One tower on each side when both fit, the hall below the east tower.
-	_place_beside(body, Vector2i(5, 5), Kind.COOLING_TOWER, [1, -1], 0)
-	_place_beside(body, Vector2i(5, 5), Kind.COOLING_TOWER, [-1, 1], 0)
+	# A second, smaller nuclear plant stands where the east cooling tower was; the west one
+	# is gone; the hall stays below.
+	_place_beside(body, Vector2i(5, 5), Kind.NUCLEAR_PLANT, [1, -1], 0)
 	_place_beside(body, Vector2i(7, 3), Kind.COOLING_HALL, [1, -1], PLANT_ROWS + 1)
 	var yard := Rect2i(plant.position + Vector2i(0, PLANT_ROWS + 1), Vector2i(plant.size.x, plant.size.y - PLANT_ROWS - 1))
 	var k := 0

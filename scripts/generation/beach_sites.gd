@@ -12,6 +12,8 @@ const Terrain := CityTypes.Terrain
 const SITES := 5
 const MIN_GAP := 50.0
 const PIERS := 3
+## Minimum distance of the two extra piers from the other huts.
+const EXTRA_GAP := 9.0
 ## Cells of a pier over the sea, and its width.
 const PIER_WATER := 3
 const PIER_WIDTH := 2
@@ -53,10 +55,27 @@ static func apply(data: CityData) -> int:
 			chosen.append(s)
 			if chosen.size() >= SITES:
 				break
+	# Two more sites close to the first one (the fishing boat lies off it).
+	if not chosen.is_empty():
+		var around := Vector2((chosen[0]["hut"] as Rect2i).get_center())
+		var near: Array = found.filter(func(f): return Vector2((f["hut"] as Rect2i).get_center()).distance_to(around) < 45.0)
+		near.sort_custom(func(a, b): return Vector2((a["hut"] as Rect2i).get_center()).distance_to(around) < Vector2((b["hut"] as Rect2i).get_center()).distance_to(around))
+		var extra := 0
+		for s in near:
+			var c := Vector2((s["hut"] as Rect2i).get_center())
+			var apart := true
+			for o in chosen:
+				if Vector2((o["hut"] as Rect2i).get_center()).distance_to(c) < EXTRA_GAP:
+					apart = false
+			if apart:
+				chosen.append(s)
+				extra += 1
+				if extra >= 2:
+					break
 	for k in chosen.size():
 		var s: Dictionary = chosen[k]
 		data.add_building(s["hut"], Kind.BEACH_HUT, s["facing"], CityTypes.hash2(k, 17, SEED), 0.5)
-		if k < PIERS:
+		if k < PIERS or k >= SITES:
 			data.add_building(s["pier"], Kind.PIER, s["facing"], CityTypes.hash2(k, 23, SEED), 0.5)
 	return chosen.size()
 

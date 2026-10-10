@@ -23,6 +23,9 @@ extends RefCounted
 ##   clear_quay  radius: sand instead of quay ground (rocky = 2) within that many cells of the building
 ##   sign     name of a ModelCatalog.Cat (a neon sign); BuildingExtras.SIGNS says where it goes
 
+## Edit index -> building number it was applied to (filled by `apply`; read by the tests).
+static var resolved := {}
+
 const EDITS := [
 	{"id": 676, "kind": "CRANE", "at": Vector2i(132, 165), "facing": 1},
 	{"id": 646, "kind": "CINEMA_MAIN", "at": Vector2i(139, 143), "scale": 0.45},
@@ -58,6 +61,9 @@ const EDITS := [
 	{"id": 863, "kind": "QUARTER_BLDG", "at": Vector2i(165, 208), "replace": "HOSPITAL"},
 	{"id": 1114, "kind": "LIGHTHOUSE", "at": Vector2i(93, 202), "clear_quay": 6},
 	{"id": -1, "kind": "POOR_BLDG", "at": Vector2i(129, 77), "delete": true},
+	{"id": -1, "kind": "URBAN_BLDG", "at": Vector2i(37, 182), "scale": 1.6},
+	{"id": -1, "kind": "OIL_PUMP", "at": Vector2i(80, 131), "delete": true},
+	{"id": -1, "kind": "OUTPOST", "at": Vector2i(80, 134), "move_to": Vector2i(80, 101)},
 	{"id": 653, "kind": "FIRE_STATION", "at": Vector2i(150, 140), "scale": 1.12},
 	{"id": 654, "kind": "POST_OFFICE", "at": Vector2i(133, 152), "scale": 1.12},
 ]
@@ -67,9 +73,14 @@ const EDITS := [
 static func apply(data: CityData) -> int:
 	var names := CityTypes.Kind.keys()
 	var applied := 0
-	for e in EDITS:
+	resolved.clear()
+	for n in EDITS.size():
+		var e: Dictionary = EDITS[n]
 		var id: int = e["id"]
-		if id < 0:
+		# The number is only a hint: when it points at something else (numbers move when the
+		# urban island changes), the building is looked up by its kind and lot.
+		if id < 0 or id >= data.building_count() or data.b_kind[id] != CityTypes.Kind[e["kind"]] \
+				or data.building_rect(id).position != e["at"]:
 			id = _find(data, e["kind"], e["at"])
 			if id < 0:
 				push_warning("[Edits] no %s at %s: skipped" % [e["kind"], e["at"]])
@@ -94,6 +105,7 @@ static func apply(data: CityData) -> int:
 				continue
 			_move_ground(data, r, lot, e.get("old_ground", ""))
 			data.set_building_rect(id, lot)
+		resolved[n] = id
 		if e.has("facing"):
 			data.b_facing[id] = e["facing"]
 		if e.has("scale"):

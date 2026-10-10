@@ -34,8 +34,11 @@ static func apply(data: CityData) -> Dictionary:
 	for b in data.building_count():
 		if data.b_kind[b] != Kind.EMPTY:
 			p._mark(data.building_rect(b))
-	return {"truck": p._fire_truck(), "billboards": p._billboards(), "balloon": p._balloon(),
-			"cinema": p._cinema(), "containers": p._containers(), "post": p._post_offices(),
+	# The cinema first: its fountain must not lose its place to a billboard.
+	var cinema := p._cinema()
+	var grave := p._graveyard()
+	return {"cinema": cinema, "graveyard": grave, "plant": p._plant(), "truck": p._fire_truck(), "billboards": p._billboards(), "balloon": p._balloon(),
+			"containers": p._containers(), "post": p._post_offices(),
 			"ufo": p._ufo_and_tanks(), "islet": p._islet(), "vegas": p._vegas()}
 
 
@@ -112,7 +115,7 @@ func _billboards() -> int:
 			if _data.terrain[i] != Terrain.LAND:
 				continue
 			var z := int(_data.zone[i])
-			if z == Zone.NONE:
+			if z == Zone.NONE or z == Zone.ISLET:
 				continue
 			sum[z] = sum.get(z, Vector2.ZERO) + Vector2(x, y)
 			count[z] = count.get(z, 0) + 1
@@ -152,10 +155,27 @@ func _cinema() -> int:
 		return 0
 	var placed := 0
 	# A fountain in front of it (the front is the south side).
-	var fountain := _near(Vector2i(cinema.get_center().x, cinema.end.y + 3), Vector2i(3, 3), -1, 5, true)
+	var fountain := _near(Vector2i(cinema.get_center().x, cinema.end.y + 3), Vector2i(2, 2), -1, 10, true)
 	if fountain.size.x > 0:
 		_add(fountain, Kind.FOUNTAIN, 2, 1)
 		placed += 1
+	else:
+		# The city is built right up to the cinema: the nearest small lot in front of it
+		# becomes the fountain (its number stays).
+		var at := Vector2(cinema.get_center().x, cinema.end.y + 3)
+		var best := -1
+		var best_d := 9.0
+		for b in _data.building_count():
+			var k: int = _data.b_kind[b]
+			var r := _data.building_rect(b)
+			if (k == Kind.SHOP or k == Kind.OFFICE or k == Kind.APARTMENT or k == Kind.HOUSE) 					and r.size.x >= 2 and r.size.y >= 2 and r.position.y >= cinema.end.y:
+				var d := Vector2(r.get_center()).distance_to(at)
+				if d < best_d:
+					best_d = d
+					best = b
+		if best >= 0:
+			_data.b_kind[best] = Kind.FOUNTAIN
+			placed += 1
 	# Buildings behind it: rows of offices north of the cinema.
 	for size: int in [3, 2]:
 		var y: int = cinema.position.y - size - 1
@@ -307,3 +327,38 @@ func _street_side(r: Rect2i) -> int:
 
 func _faces_street(r: Rect2i) -> bool:
 	return _street_side(r) >= 0
+
+
+# --- The graveyard on the tiny islet of the south -------------------------------------------------------
+func _graveyard() -> int:
+	var r := _near(Vector2i(151, 256), Vector2i(3, 2), -1, 3)
+	if r.size.x <= 0:
+		return 0
+	_add(r, Kind.CEMETERY, 2, 1)
+	return 1
+
+
+# --- The nuclear plant: more containers and a fire truck ---------------------------------------------------
+func _plant() -> int:
+	var plant := Rect2i()
+	for b in _data.building_count():
+		if _data.b_kind[b] == Kind.NUCLEAR_PLANT and (plant.size.x <= 0 or _data.building_rect(b).size.x > plant.size.x):
+			plant = _data.building_rect(b)
+	if plant.size.x <= 0:
+		return 0
+	var placed := 0
+	var yards := 0
+	for y in range(plant.position.y + 6, plant.end.y + 14):
+		for x in range(plant.position.x - 6, plant.end.x + 10):
+			if yards >= 14 or x % 7 == 6 or y % 7 == 6:
+				continue
+			var r := Rect2i(x, y, 2, 2)
+			if _free(r, Zone.URBAN):
+				_add(r, Kind.INDUSTRIAL_YARD, 2, (CityTypes.hash2(x, y, 12) & 0xfffff) * 3)
+				yards += 1
+				placed += 1
+	var truck := _near(Vector2i(plant.position.x - 3, plant.end.y + 3), Vector2i(2, 3), Zone.URBAN, 8)
+	if truck.size.x > 0:
+		_add(truck, Kind.FIRE_TRUCK, 2, 2)
+		placed += 1
+	return placed

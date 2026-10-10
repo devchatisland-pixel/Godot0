@@ -78,8 +78,8 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 				and r.position.x < ExtensionIsland.URBAN_COLUMNS \
 				and [Kind.URBAN_BLDG, Kind.FUTURE_BLDG].has(k):
 			_fail("%s B-%05d at %s is in the nuclear rows" % [CityTypes.Kind.keys()[k], b, r])
-	if not by_kind.has(Kind.COOLING_TOWER) or by_kind[Kind.COOLING_TOWER].size() < 2:
-		_fail("fewer than 2 cooling towers")
+	if by_kind.get(Kind.NUCLEAR_PLANT, []).size() < 2:
+		_fail("fewer than 2 nuclear plants")
 	if not by_kind.has(Kind.COOLING_HALL):
 		_fail("no cooling hall")
 	var bt := _rect(data, Kind.BT_TOWER, by_kind)
@@ -130,7 +130,11 @@ func _check_boats(data: CityData, by_kind: Dictionary) -> void:
 	var seeds := {}
 	for b in by_kind.get(Kind.BOAT, []):
 		var s: int = data.b_seed[b]
-		seeds[s] = data.building_rect(b)
+		# Two cargo ships: keep the one that lies nearer to the industrial port.
+		var port := Vector2(ExtensionFeatures.INDUSTRIAL["at"])
+		if not seeds.has(s) or Vector2(data.building_rect(b).get_center()).distance_to(port) \
+				< Vector2((seeds[s] as Rect2i).get_center()).distance_to(port):
+			seeds[s] = data.building_rect(b)
 		print("[Test] boat %d at %s" % [s, data.building_rect(b)])
 	if seeds.size() != 5:
 		_fail("expected 5 different boats, found %d" % seeds.size())
@@ -146,10 +150,12 @@ func _check_boats(data: CityData, by_kind: Dictionary) -> void:
 
 ## Every hand edit (ManualEdits) was applied: the kind, facing and scale are the wanted ones.
 func _check_edits(data: CityData) -> void:
-	for e in ManualEdits.EDITS:
-		var id: int = e["id"]
-		if id < 0:
-			continue # looked up by place
+	for n in ManualEdits.EDITS.size():
+		var e: Dictionary = ManualEdits.EDITS[n]
+		if not ManualEdits.resolved.has(n):
+			_fail("edit %d (%s at %s) was not applied" % [n, e["kind"], e["at"]])
+			continue
+		var id: int = ManualEdits.resolved[n]
 		var want: String = "EMPTY" if e.get("delete", false) else e.get("replace", e["kind"])
 		if CityTypes.Kind.keys()[data.b_kind[id]] != want:
 			_fail("edit B-%05d: expected %s, found %s" % [id, want, CityTypes.Kind.keys()[data.b_kind[id]]])

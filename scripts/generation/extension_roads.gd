@@ -35,11 +35,21 @@ func build_east_highway() -> void:
 		return
 	var x := start.x
 	var last := x
-	while x < _data.size - 2 and _data.terrain[_data.idx(x, start.y)] == Terrain.LAND:
-		_lane(x, start.y)
+	# The lanes go on over the beach, so that the asphalt touches the bridge at the water.
+	while x < _data.size - 2 and _data.terrain[_data.idx(x, start.y)] >= Terrain.BEACH:
+		_lane(x, start.y, true)
 		last = x
 		x += 1
 	_data.bridge = Vector2i(last + 1, start.y)
+	# And into the city: the single road of the core is widened to three lanes as far as the
+	# land beside it is free, up to the first street that crosses it.
+	var w := start.x - 1
+	while w > 0 and _data.road[_data.idx(w, start.y)] != 0:
+		_lane(w, start.y, true)
+		var m := _data.road_mask(w, start.y)
+		if (m & CityTypes.DIR_N) != 0 or (m & CityTypes.DIR_S) != 0:
+			break
+		w -= 1
 
 
 ## West: from the west-most street of the core to the west coast, then over the
@@ -90,12 +100,13 @@ func _clear_way_west(x: int, y: int) -> int:
 
 
 ## One column of the three-lane highway (the middle lane is the row itself).
-func _lane(x: int, y: int) -> void:
+func _lane(x: int, y: int, beach: bool = false) -> void:
 	for dy in range(-1, 2):
 		if not _data.in_bounds(x, y + dy):
 			continue
 		var i := _data.idx(x, y + dy)
-		if _data.terrain[i] == Terrain.LAND and _data.road[i] == 0 \
+		var dry: bool = _data.terrain[i] >= Terrain.BEACH if beach else _data.terrain[i] == Terrain.LAND
+		if dry and _data.road[i] == 0 \
 				and (_spots.is_open(i) or _data.zone[i] == Zone.URBAN):
 			_data.road[i] = CityTypes.ROAD_AVENUE
 			network[i] = 1

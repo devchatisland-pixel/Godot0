@@ -78,7 +78,11 @@ const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.
 ## Things that float: height above the ground (in cells).
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
-const MODEL_BOOST := {"france.glb: blue2": 2.0}
+const MODEL_BOOST := {
+	"france.glb: red0": 1.5, "france.glb: red1": 1.5, "france.glb: red2": 1.5, "france.glb: red3": 1.5,
+	"france.glb: red4": 1.5, "france.glb: red5": 1.5, "france.glb: red6": 1.5,
+	"france.glb: blue0": 1.5, "france.glb: blue1": 1.5, "france.glb: blue2": 2.0,
+}
 ## Las Vegas buildings are drawn at most this much bigger than modelled (they were skyscraper size).
 const VEGAS_MAX_FILL := 1.2
 ## Cooling towers beside the nuclear plant, the BT tower and the watchtowers: largest scale.
