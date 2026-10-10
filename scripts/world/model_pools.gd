@@ -6,8 +6,8 @@ extends RefCounted
 ##   commercial Kenney mid-rise, New York street buildings, cartoon shops
 ##   Las Vegas  neon clubs, cartoon diners and cafes
 ##   apartments Kenney blocks, New York brick buildings, a panel block
-##   quarter    the white and red low-poly town, with French houses and villas mixed in
-##   suburbs    Kenney houses, colourful cartoon houses, French red and blue houses
+##   quarter    the white and red low-poly town, with colourful houses mixed in
+##   suburbs    Kenney houses, colourful cartoon houses
 ##   poor       grey panel blocks and slabs, garages; one big Russian block
 ##   industrial Kenney factories, the big brick works and the concrete factory
 ## Every choice comes from the building seed: deterministic and thread safe.
@@ -199,7 +199,7 @@ static func _urban_towers(lib: ModelLibrary) -> PackedInt32Array:
 
 ## Low houses on small lots, mid-rise on big ones, a few towers here and there.
 static func _quarter(lib: ModelLibrary, r: Rect2i, roll: float) -> PackedInt32Array:
-	# French villas, red and blue, and colourful town houses break the white and red.
+	# Colourful houses and town houses break the white and red.
 	if roll > 0.62 and lib.has_cat(Cat.HOUSE2) and r.get_area() <= 6:
 		return lib.ids(Cat.HOUSE2)
 	if roll > 0.78 and lib.has_cat(Cat.TOWN2):

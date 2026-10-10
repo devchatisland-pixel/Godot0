@@ -71,8 +71,8 @@ not squares. On screen north-west is up. Special buildings are kept far from eac
 | below the park | **Civic center** | the main city hall and the police headquarters (each on its own plot), the bank, fire station, post office |
 | right of the park | **United Nations** | the U.N. tower (half the size it was) with a small emblem, on its own plot where everyone sees it |
 | left of the park | **Shopping streets** | the main hospital, the shopping center, hotels, New York street buildings, mini hotels, cartoon shops and restaurants (half of them replaced by normal shops, burgers and pizzerias drawn extra big, pizzerias rare); three pharmacies and many more shops, all facing the camera |
-| right / bottom | **Residential** | houses with gardens (Kenney, cartoon, French red and blue), the main school with its sports ground, the big church (far from the U.N.), the cemetery, gas stations |
-| south | **Red district** | white and red low-rise town, bigger than before, mixed with French villas and colourful houses; the drive-in cinema, a crane, McDonald's and Burger King, the big ferris wheel at the beach, and one of each food stall (ice cream kiosks, and half-size food trucks) |
+| right / bottom | **Residential** | houses with gardens (Kenney, cartoon), the main school with its sports ground, the big church (far from the U.N.), the cemetery, gas stations |
+| south | **Red district** | white and red low-rise town, bigger than before, mixed with colourful houses; the drive-in cinema, a crane, McDonald's and Burger King, the big ferris wheel at the beach, and one of each food stall (ice cream kiosks, and half-size food trucks) |
 | left | **Sports corner** | the big stadium (own plot, floodlit at night) |
 | south-east | **Farmland** | the one farming district: crop fields (wheat, corn, plowed soil, green rows) with farms and a country road |
 | everywhere | **Hotels** | nine different hotels, one of each model: four in the city, five in the red district |
@@ -279,7 +279,6 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `future` | night skyline pack, cut into 11 towers | FUTURE | the futuristic towers of the urban island |
 | `pirate` | pirate ship | PIRATE_SHIP | anchored beside the smallest islet |
 | `carto` | CartoCity pack | BANK_PACK, HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, BARRIER, CONE, TRUCK, CONTAINER, BARREL | the bank, colourful houses and shops, mini hotels, the orange barriers and cones of the bridge, industrial props |
-| `france` | 15 low-poly buildings (cut by position) | HOUSE2, MANSION, PRISON_BLOCK | French red and blue houses, stone blocks and villas of the prison island |
 | `accommodations` | low poly accommodations buildings | HOTEL_PACK, HOUSE2, TOWN2 | the two big hotels, villas, small apartment blocks |
 | `free_mini` | free low-poly buildings (cut by position) | CHURCH_PACK, GAS_PACK, SHOP2, HOTEL_SMALL, TOWN2 | the big church, a gas station, bars, boutiques, mini hotels |
 | `street` | low-poly city street buildings | SHOP2, STALL | textured shop blocks, ice cream stalls and food trucks |
@@ -288,7 +287,7 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `russian` | Russian building | RUSSIAN | the one big urban ghetto block |
 | `industrial` | low-poly industrial building | FACTORY, RUIN | the concrete factory (industrial zone) |
 
-Three packs (`france`, `free_mini`, `poor`) store one object per material for the whole town, so `curate_models.gd` can cut them with a `"region": [x0, z0, x1, z1]` rectangle (world space, optional `ymin` / `ymax`) instead of a node name.
+Two packs (`free_mini`, `poor`) store one object per material for the whole town, so `curate_models.gd` can cut them with a `"region": [x0, z0, x1, z1]` rectangle (world space, optional `ymin` / `ymax`) instead of a node name.
 Pizzerias of the business pack are their own category (BIZ_PIZZA) and stay rare.
 
 Not used:
