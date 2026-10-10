@@ -121,7 +121,7 @@ At night the fog turns dark blue-grey and the night skyline model shows its city
 ## Beaches, park and borders
 
 * **Beach huts and piers** (`beach_sites.gd`): five thatched huts on sandy beaches of the main island,
-  three of them with a wooden pier running into the sea (`pirate_huts`, `pier_old`, `pier_game` packs).
+  three of them with a wooden pier running into the sea (`pirate_huts`, `pier_old` packs).
 * **Central park** (`amenities_planner.gd`): wide paths from the streets through the lake, a ring path round
   it, diagonal paths to the corners, benches along the arms, flowerbeds and a playground.
 * **Boardwalk** along the beach of the red district, with lamps that glow at night.
@@ -270,7 +270,7 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `neon_controller` | Neon game controller | NEON_CONTROLLER | a neon roof sign, very bright at night (on shop B-00257) |
 | `neon_pacman` | Neon Pac-Man (rest pose, no animation) | NEON_PACMAN | a neon roof sign (on the police station B-00685) |
 | `pirate_huts` | Stylized Pirate Island Pack (huts and pavilions only, no boats) | BEACH_HUT | huts on the beaches |
-| `pier_old`, `pier_game` | Old pier, Pier (Game ready model) | PIER | piers beside the huts |
+| `pier_old` | Old pier | PIER | piers beside the huts |
 | `boat_simple`, `boat_wooden`, `boat_fishing`, `boat_cargo`, `boat_sub` | the five boat files | BOAT_* | one boat of each at sea |
 | `watchtower` | low poly Watchtower (without fences, rails, lamps and trees) | WATCHTOWER | the two forest lookouts |
 | `mcdonalds` | McDonald's building | MCDONALDS | the McDonald's of the red district (with procedural golden arches) |

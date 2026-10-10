@@ -38,6 +38,8 @@ const EDITS := [
 	{"id": 663, "kind": "HOTEL", "at": Vector2i(120, 129), "replace": "CITY_HALL", "rect": [120, 129, 3, 5]},
 	{"id": 664, "kind": "HOTEL", "at": Vector2i(170, 164), "scale_abs": 1.0},
 	{"id": 901, "kind": "HOTEL", "at": Vector2i(123, 210), "facing": 2},
+	{"id": 903, "kind": "HOTEL", "at": Vector2i(154, 214), "facing": 2},
+	{"id": 902, "kind": "HOTEL", "at": Vector2i(151, 199), "delete": true},
 	{"id": -1, "kind": "OIL_PUMP", "at": Vector2i(73, 109), "delete": true},
 	{"id": 1047, "kind": "AIRBASE", "at": Vector2i(69, 113), "rect": [75, 108, 5, 16], "facing": 1,
 		"old_ground": "DESERT"},

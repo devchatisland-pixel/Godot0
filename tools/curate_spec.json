@@ -1096,13 +1096,6 @@
           "cat": "TOWN2"
         },
         {
-          "id": "flat9",
-          "nodes": [
-            "PublicBuilding_9"
-          ],
-          "cat": "TOWN2"
-        },
-        {
           "id": "flat10",
           "nodes": [
             "PublicBuilding_10"
