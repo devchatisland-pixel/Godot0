@@ -14,6 +14,16 @@ const HOSPITAL_PAD := Vector3(0.0, 0.0, 0.3)
 const JET_SCALE := 0.85
 ## The emblem of the U.N. tower is a bit smaller than the tower is wide.
 const UN_EMBLEM := 0.38
+## Zones of houses, where the gardens are fenced lawns: one house in TREE_EVERY_HOUSE keeps
+## its tree, one garden in TREE_EVERY_GARDEN gets a single tree.
+const SPARSE_TREE_ZONES: Array[int] = [CityTypes.Zone.SUBURBAN, CityTypes.Zone.APARTMENT]
+const TREE_EVERY_HOUSE := 6
+const TREE_EVERY_GARDEN := 4
+
+
+static func _sparse_trees(data: CityData, r: Rect2i) -> bool:
+	var c := r.get_center()
+	return SPARSE_TREE_ZONES.has(data.zone_at(c.x, c.y))
 
 static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 		pick: Dictionary, batch: InstanceBatch) -> void:
@@ -62,7 +72,7 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 				var w := box.size.x * HOSPITAL_PAD.z
 				batch.add(lib.named_id("helipad_h"), xform * Transform3D(Basis.from_scale(Vector3(w, 1, w)), pad))
 		Kind.HOUSE:
-			if lib.has_cat(Cat.TREE):
+			if lib.has_cat(Cat.TREE) and (not _sparse_trees(data, r) or absi(seed >> 4) % TREE_EVERY_HOUSE == 0):
 				var trees := lib.ids(Cat.TREE)
 				var p := lot_center + to_back * 0.75 + side * float(mini(r.size.x, r.size.y)) * 0.6
 				batch.add(trees[seed % trees.size()], tree_xform(p, seed))
@@ -86,6 +96,8 @@ static func place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, b
 	if trees.is_empty():
 		trees = PackedInt32Array([lib.named_id("tree")])
 	var count := 1 if kind == Kind.PLAZA else mini(4, r.get_area())
+	if kind == Kind.GARDEN and _sparse_trees(data, r):
+		count = 1 if absi(seed >> 4) % TREE_EVERY_GARDEN == 0 else 0
 	for t in count:
 		var h := CityTypes.hash2(i, t, seed)
 		var p := Vector3(r.position.x + 0.3 + float(h & 255) / 255.0 * (r.size.x - 0.6), 0,

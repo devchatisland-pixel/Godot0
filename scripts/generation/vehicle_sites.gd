@@ -15,6 +15,9 @@ const Zone := CityTypes.Zone
 const CELLS_PER_METRE := 0.17
 
 const CITY_ZONES: Array[int] = [Zone.DOWNTOWN, Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN]
+## The regular cars (street sedans, the off-road SUV, the cinema parking lot) are not put on
+## the map for now; their models stay in the catalog. True puts them back.
+const REGULAR_CARS := false
 const STREET_CARS: Array[String] = ["m8_long_sedan_black", "m8_long_sedan_silver", "m8_long_sedan_charcoal"]
 
 var out: Array[Dictionary] = []
@@ -39,17 +42,10 @@ static func plan(data: CityData, lengths_m: Dictionary = {}) -> Array[Dictionary
 
 
 func _run() -> void:
-	_taken.resize(_d.size * _d.size)
-	for b in _d.building_count():
-		if _d.b_kind[b] == Kind.EMPTY:
-			continue
-		var r := _d.building_rect(b)
-		for y in range(r.position.y, r.end.y):
-			for x in range(r.position.x, r.end.x):
-				if _d.in_bounds(x, y):
-					_taken[_d.idx(x, y)] = 1
-	_street_sedans()
-	_forest_suv()
+	_mark_buildings()
+	if REGULAR_CARS:
+		_street_sedans()
+		_forest_suv()
 	_farm_machines()
 	_industrial_zones()
 	_hospital_ambulance()
@@ -58,7 +54,21 @@ func _run() -> void:
 	_container_tanker()
 	_desert()
 	_prison_helicopters()
-	_cinema_parking()
+	if REGULAR_CARS:
+		_cinema_parking()
+
+
+## Marks the lots of all buildings but `skip` as taken.
+func _mark_buildings(skip: int = -1) -> void:
+	_taken.resize(_d.size * _d.size)
+	for b in _d.building_count():
+		if _d.b_kind[b] == Kind.EMPTY or b == skip:
+			continue
+		var r := _d.building_rect(b)
+		for y in range(r.position.y, r.end.y):
+			for x in range(r.position.x, r.end.x):
+				if _d.in_bounds(x, y):
+					_taken[_d.idx(x, y)] = 1
 
 
 # --- Streets -----------------------------------------------------------------------------
@@ -265,7 +275,7 @@ func _farm_machines() -> void:
 				Vector2(1, 0), "next to the barn")
 	var fr := _d.building_rect(field)
 	var c := Vector2(fr.position) + Vector2(fr.size) * 0.5
-	_add("p54_43_tractor_vintage_trailer", c + Vector2(-1.0, -0.9), Vector2(1, 0), "in an agricultural field")
+	_add("p54_43_tractor_vintage_trailer", c + Vector2(-1.0, -0.9), Vector2(-1, 0), "in an agricultural field")
 	_add("p54_21_harvester_olive", c + Vector2(0.9, 1.0), Vector2(1, 0), "in an agricultural field")
 
 
@@ -464,8 +474,18 @@ func _in_front(id: String, b: int, why: String) -> void:
 
 # --- Desert, buses -----------------------------------------------------------------------------
 
-## A motorhome in the middle of nowhere and a wreck elsewhere in the desert.
-func _desert() -> void:
+## Cells of the desert, the clearest first (no road, building or water around them), every
+## third cell; the lot of building `skip` counts as free. ManualEdits.swap_base reads them.
+static func desert_spots(data: CityData, skip: int = -1) -> Array[Vector2i]:
+	var s := VehicleSites.new(data)
+	s._mark_buildings(skip)
+	var out: Array[Vector2i] = []
+	for e in s._desert_scored():
+		out.append(e["c"])
+	return out
+
+
+func _desert_scored() -> Array[Dictionary]:
 	var scored: Array[Dictionary] = []
 	for y in range(4, _d.size - 4, 3):
 		for x in range(4, _d.size - 4, 3):
@@ -475,11 +495,22 @@ func _desert() -> void:
 		if a["r"] != b["r"]:
 			return a["r"] > b["r"]
 		return CityTypes.hash2(a["c"].x, a["c"].y, 71) < CityTypes.hash2(b["c"].x, b["c"].y, 71))
+	return scored
+
+
+## A motorhome in the middle of nowhere (where the secret base stood, when it moved: see
+## ManualEdits.swap_base) and a wreck elsewhere in the desert.
+func _desert() -> void:
+	var scored := _desert_scored()
 	if scored.is_empty():
 		push_warning("[Vehicles] no desert")
 		return
 	var rv: Vector2i = scored[0]["c"]
-	_add("p54_31_rv_class_a_beige", Vector2(rv) + Vector2(0.5, 0.5), Vector2(1, 0), "middle of the desert")
+	var why := "middle of the desert"
+	if _d.rv_spot.x >= 0:
+		rv = Vector2i(_d.rv_spot.floor())
+		why = "where the secret base stood"
+	_add("p54_31_rv_class_a_beige", Vector2(rv) + Vector2(0.5, 0.5), Vector2(1, 0), why)
 	for s in scored:
 		var c: Vector2i = s["c"]
 		if s["r"] >= 3 and Vector2(c).distance_to(Vector2(rv)) > 18.0 and _free(c.x, c.y):

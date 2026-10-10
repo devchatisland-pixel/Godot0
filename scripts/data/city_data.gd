@@ -25,6 +25,9 @@ var deco := PackedByteArray()
 ## Closeness to the other biome across the desert border (AmenitiesPlanner): low nibble
 ## 1..4 (4 = at the border), bit 0x80 = the cell is desert.
 var edge := PackedByteArray()
+## Garden fences (GardenFences): bit 1 = a fence on the north side of the cell, bit 2 = on
+## its west side (the south and east sides are the north and west sides of the next cells).
+var fence_edge := PackedByteArray()
 
 # Buildings / lots (index = building id)
 var b_rect := PackedInt32Array()     # x, y, w, h (4 ints per building)
@@ -34,6 +37,7 @@ var b_seed := PackedInt32Array()
 var b_height := PackedFloat32Array() # relative height factor (density driven)
 var b_scale := PackedFloat32Array()  # size factor of the model (1 = as placed; ManualEdits changes it)
 var b_sign_facing := PackedByteArray() # facing the sign was set up for (the sign does not turn with the building)
+var b_lay := PackedByteArray()       # 1 = a flat model (crop field) is laid along the facing (ManualEdits)
 ## Building id -> name of the model it must use (ManualEdits "model").
 var b_model := {}
 var b_sign := PackedByteArray()      # neon sign on the building: 0 none, else a ModelCatalog.Cat (ManualEdits)
@@ -52,6 +56,9 @@ var bridge := Vector2i(-1, -1)
 ## West bridge: (x of the main island's west-most land, x of the urban island's east-most land,
 ## row); x < 0 = none. Drawn by WestBridge with the metal bridge model.
 var west_bridge := Vector3i(-1, -1, -1)
+## Where the motorhome of the desert stands (cells): the place the secret base left when it
+## took the motorhome's spot (ManualEdits.swap_base); x < 0 = VehicleSites picks it.
+var rv_spot := Vector2(-1, -1)
 ## The island hidden in the fog, east of the map (FogIslandShaper).
 var fog: FogIslandShaper
 
@@ -69,6 +76,7 @@ func _init(p_size: int, p_chunk: int) -> void:
 	occupied.resize(n)
 	deco.resize(n)
 	edge.resize(n)
+	fence_edge.resize(n)
 
 
 # --- Cell access -----------------------------------------------------------------
@@ -120,6 +128,7 @@ func add_building(r: Rect2i, kind: int, facing: int, seed: int, height: float) -
 	b_scale.append(1.0)
 	b_sign.append(0)
 	b_sign_facing.append(facing)
+	b_lay.append(0)
 	return b_kind.size() - 1
 
 
@@ -147,6 +156,7 @@ func remove_buildings(removed: Dictionary) -> void:
 	var sc := PackedFloat32Array()
 	var sg := PackedByteArray()
 	var sf := PackedByteArray()
+	var la := PackedByteArray()
 	for i in b_kind.size():
 		if removed.has(i):
 			continue
@@ -159,6 +169,7 @@ func remove_buildings(removed: Dictionary) -> void:
 		sc.append(b_scale[i])
 		sg.append(b_sign[i])
 		sf.append(b_sign_facing[i])
+		la.append(b_lay[i])
 	b_rect = r
 	b_kind = k
 	b_facing = f
@@ -167,6 +178,7 @@ func remove_buildings(removed: Dictionary) -> void:
 	b_scale = sc
 	b_sign = sg
 	b_sign_facing = sf
+	b_lay = la
 
 
 # --- Chunks ------------------------------------------------------------------------------
