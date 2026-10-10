@@ -11,6 +11,9 @@ godot --headless --script res://tests/test_generation.gd
 echo "== Urban island, BT tower islet, watchtowers"
 godot --headless --script res://tests/test_urban_island.gd
 
+echo "== Map audit (buildings, zones, fog island, road problems)"
+godot --headless --script res://tests/test_map_audit.gd
+
 echo "== Shops placement"
 godot --headless --script res://tests/test_shops.gd
 
