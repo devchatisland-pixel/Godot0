@@ -1,0 +1,384 @@
+{
+ "version": 1,
+ "orientation": "front=-Z, up=+Y, origin at ground centre, approx. metres",
+ "shops": [
+  {
+   "id": "shop-candy-a",
+   "file": "res://shops/models/shop-candy-a.glb",
+   "category": "Candy",
+   "name": "Candy Shop (canopy)",
+   "credit": {
+    "title": "Candy Shop",
+    "author": "Ivan Norman",
+    "url": "https://sketchfab.com/3d-models/candy-shop-51411d40093346b8ac1b6d1224fd8b25",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 4.41,
+    "depth": 5.04,
+    "height": 5.47
+   },
+   "triangles": 1895,
+   "zones": [
+    "QUARTER",
+    "ENTERTAINMENT"
+   ],
+   "copies": 3,
+   "notes": "Ice-cream/candy stall with pink & yellow canopy.",
+   "_x": 89.075
+  },
+  {
+   "id": "shop-candy-b",
+   "file": "res://shops/models/shop-candy-b.glb",
+   "category": "Candy",
+   "name": "Low Poly Candy Shop",
+   "credit": {
+    "title": "Low Poly Candy Shop",
+    "author": "Anggo Ari Wibowo",
+    "url": "https://sketchfab.com/3d-models/low-poly-candy-shop-d9cd96eb8e2249eea112d7f9b13e3425",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.1,
+    "depth": 4.24,
+    "height": 5.47
+   },
+   "triangles": 1363,
+   "zones": [
+    "QUARTER",
+    "ENTERTAINMENT"
+   ],
+   "copies": 3,
+   "notes": "Candy shop with candy_1 prop; origin is off-centre (bbox x -2.3..3.8).",
+   "_x": 98.33
+  },
+  {
+   "id": "shop-coffee-a",
+   "file": "res://shops/models/shop-coffee-a.glb",
+   "category": "Coffee",
+   "name": "Coffee Shop (stall)",
+   "credit": {
+    "title": "Coffee Shop",
+    "author": "mohdrafey2207",
+    "url": "https://sketchfab.com/3d-models/coffee-shop-fa7e884d363847619f89f8ee21fa8742",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 20.5,
+    "depth": 9.6,
+    "height": 6.02
+   },
+   "triangles": 17333,
+   "zones": [
+    "DOWNTOWN",
+    "COMMERCIAL"
+   ],
+   "copies": 2,
+   "notes": "Coffee stall between two dark blocks. The original 70x70 ground plane (mesh Object_20) was removed from this copy; bbox is now 20.5 x 6 x 9.6.",
+   "_x": 115.63
+  },
+  {
+   "id": "shop-flower-a",
+   "file": "res://shops/models/shop-flower-a.glb",
+   "category": "Flower",
+   "name": "Flower Shop (game asset)",
+   "credit": {
+    "title": "Flower Shop - Game Asset",
+    "author": "maloy02",
+    "url": "https://sketchfab.com/3d-models/flower-shop-game-asset-f1eaee257ef5422eb896a08541b4e821",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.27,
+    "depth": 4.05,
+    "height": 2.46
+   },
+   "triangles": 9261,
+   "zones": [
+    "SUBURBAN",
+    "APARTMENT"
+   ],
+   "copies": 3,
+   "notes": "255 small meshes (plants/flowers). Contains a Camera node and a pavement mesh.",
+   "_x": 35.285
+  },
+  {
+   "id": "shop-convenience-quickstop",
+   "file": "res://shops/models/shop-convenience-quickstop.glb",
+   "category": "Convenience",
+   "name": "Jay and Silent Bob Quick Stop",
+   "credit": {
+    "title": "Jay And Silent Bob Quick Stop",
+    "author": "Kris Kovac",
+    "url": "https://sketchfab.com/3d-models/jay-and-silent-bob-quick-stop-49e19755f4ae4688b9b07c82cf4e0699",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 12.02,
+    "depth": 10.26,
+    "height": 6.21
+   },
+   "triangles": 64834,
+   "zones": [
+    "INDUSTRIAL",
+    "POOR"
+   ],
+   "copies": 1,
+   "notes": "Biggest file (6.3 MB, 65k tris). Includes asphalt slab + parked car; origin far from 0 (x 2..12). Heavy for a city tile.",
+   "_x": 135.89
+  },
+  {
+   "id": "shop-general-orange-a",
+   "file": "res://shops/models/shop-general-orange-a.glb",
+   "category": "General",
+   "name": "Low Poly Shop (orange awning)",
+   "credit": {
+    "title": "Low Poly Shop",
+    "author": "Virginia Vidonis",
+    "url": "https://sketchfab.com/3d-models/low-poly-shop-0013cf5979c846449c817a2439fd8705",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 7.67,
+    "depth": 3.89,
+    "height": 3.33
+   },
+   "triangles": 1789,
+   "zones": [
+    "COMMERCIAL",
+    "QUARTER"
+   ],
+   "copies": 3,
+   "notes": "Same author/style as shop-general-orange-b. Italian node names.",
+   "_x": 70.13499999999999
+  },
+  {
+   "id": "shop-general-orange-b",
+   "file": "res://shops/models/shop-general-orange-b.glb",
+   "category": "General",
+   "name": "2nd Low Poly Shop (orange awning)",
+   "credit": {
+    "title": "2nd  Low Poly Shop",
+    "author": "Virginia Vidonis",
+    "url": "https://sketchfab.com/3d-models/2nd-low-poly-shop-bc65e31bcdd24d2392e7ea4babebcdc2",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 5.89,
+    "depth": 4.37,
+    "height": 3.31
+   },
+   "triangles": 1799,
+   "zones": [
+    "COMMERCIAL",
+    "QUARTER"
+   ],
+   "copies": 3,
+   "notes": "Variant of shop-general-orange-a (adds AC unit, plants, extra awnings).",
+   "_x": 59.355
+  },
+  {
+   "id": "shop-general-generic",
+   "file": "res://shops/models/shop-general-generic.glb",
+   "category": "General",
+   "name": "Low Poly Generic Shop",
+   "credit": {
+    "title": "Low poly generic shop",
+    "author": "assetfactory",
+    "url": "https://sketchfab.com/3d-models/low-poly-generic-shop-58797c167b834d7ab982afa82f693415",
+    "license": "SKETCHFAB Standard"
+   },
+   "size_m": {
+    "width": 3.69,
+    "depth": 2.48,
+    "height": 2.64
+   },
+   "triangles": 5026,
+   "zones": [
+    "COMMERCIAL",
+    "APARTMENT",
+    "SUBURBAN"
+   ],
+   "copies": 3,
+   "notes": "Single textured mesh 'ShopBuilding' + a Collider mesh (hide/remove Collider). License is Sketchfab Standard, not CC-BY.",
+   "_x": 50.565
+  },
+  {
+   "id": "shop-general-brick",
+   "file": "res://shops/models/shop-general-brick.glb",
+   "category": "General",
+   "name": "Low Poly Shop (brick, balcony)",
+   "credit": {
+    "title": "low poly shop",
+    "author": "Natisis94",
+    "url": "https://sketchfab.com/3d-models/low-poly-shop-0c0665681ce6471c9393795e8a13fa88",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 3.89,
+    "depth": 5.23,
+    "height": 2.1
+   },
+   "triangles": 6002,
+   "zones": [
+    "COMMERCIAL",
+    "APARTMENT",
+    "SUBURBAN"
+   ],
+   "copies": 3,
+   "notes": "Brick shop with balcony on a large white ground plane (remove it); contains Camera, Sun, Plane, Text nodes.",
+   "_x": 26.205
+  },
+  {
+   "id": "shop-general-mini",
+   "file": "res://shops/models/shop-general-mini.glb",
+   "category": "General",
+   "name": "Low-Poly Shop (mini)",
+   "credit": {
+    "title": "Low-Poly Shop",
+    "author": "reginald7",
+    "url": "https://sketchfab.com/3d-models/low-poly-shop-e41e8060496a4693a9f62f5a4dd5b252",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 4.26,
+    "depth": 3.77,
+    "height": 1.96
+   },
+   "triangles": 1362,
+   "zones": [
+    "QUARTER",
+    "POOR"
+   ],
+   "copies": 3,
+   "notes": "Corner shop with blue awning and glass front. Authored tiny: 0.17 units wide, needs ~6x scale-up just to be 1 tile.",
+   "_x": 18.13
+  },
+  {
+   "id": "shop-townhouse-gabled",
+   "file": "res://shops/models/shop-townhouse-gabled.glb",
+   "category": "Townhouse",
+   "name": "Shop (gabled townhouse)",
+   "credit": {
+    "title": "shop",
+    "author": "linus1178",
+    "url": "https://sketchfab.com/3d-models/shop-e89a9be0af324355b85278feb4f9da8f",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 2.3,
+    "depth": 2.74,
+    "height": 2.48
+   },
+   "triangles": 170,
+   "zones": [
+    "QUARTER",
+    "SUBURBAN"
+   ],
+   "copies": 3,
+   "notes": "Step-gabled house with red roof and hanging SHOP sign. 170 tris, single material - cheapest model.",
+   "_x": 43.57
+  },
+  {
+   "id": "shop-steel-glass",
+   "file": "res://shops/models/shop-steel-glass.glb",
+   "category": "General",
+   "name": "Shop (steel & glass)",
+   "credit": {
+    "title": "Shop",
+    "author": "bystryakov.yuriy",
+    "url": "https://sketchfab.com/3d-models/shop-23e3cdb766bd40ac9c63fddfd2d39856",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 4.9,
+    "depth": 3.91,
+    "height": 3.42
+   },
+   "triangles": 448,
+   "zones": [
+    "COMMERCIAL",
+    "INDUSTRIAL"
+   ],
+   "copies": 3,
+   "notes": "Grey flat roof, glass front, red louvres/shutters. Pivot is centred vertically (y -1.6..1.8): needs lifting to sit on ground.",
+   "_x": 80.42
+  },
+  {
+   "id": "shop-coffee-b",
+   "file": "res://shops/models/shop-coffee-b.glb",
+   "category": "Coffee",
+   "name": "Shop - Free model (coffee shop)",
+   "credit": {
+    "title": "Shop - Free model",
+    "author": "Astro0960",
+    "url": "https://sketchfab.com/3d-models/shop-free-model-a10e5b0977cc41c6b115a568ee18772b",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 8.05,
+    "depth": 8.91,
+    "height": 6.86
+   },
+   "triangles": 12366,
+   "zones": [
+    "DOWNTOWN",
+    "COMMERCIAL"
+   ],
+   "copies": 3,
+   "notes": "Coffee shop with cup + COFFEE sign on roof, lamp post, fence, on a dark base slab. 12k tris; floats at y 0.68 min.",
+   "_x": 158.425
+  },
+  {
+   "id": "shop-townhouse-belgium",
+   "file": "res://shops/models/shop-townhouse-belgium.glb",
+   "category": "Townhouse",
+   "name": "Nivelles Shop 1 (Belgium)",
+   "credit": {
+    "title": "Nivelles Shop 1 [Belgium]",
+    "author": "Lost Gecko",
+    "url": "https://sketchfab.com/3d-models/nivelles-shop-1-belgium-209c0097e5ab46fd8be7ca5d904479e9",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 8.0,
+    "depth": 9.3,
+    "height": 12.51
+   },
+   "triangles": 543,
+   "zones": [
+    "DOWNTOWN",
+    "COMMERCIAL",
+    "APARTMENT"
+   ],
+   "copies": 3,
+   "notes": "Tall grey townhouse, untextured single material, 543 tris, 12.5 tall.",
+   "_x": 170.45000000000002
+  },
+  {
+   "id": "shop-building-multi",
+   "file": "res://shops/models/shop-building-multi.glb",
+   "category": "Building",
+   "name": "Building (multi-part cubes)",
+   "credit": {
+    "title": "Building",
+    "author": "Codracer13",
+    "url": "https://sketchfab.com/3d-models/building-6f57edbc41024402ac4035b6b89661e5",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 4.5,
+    "depth": 6.84,
+    "height": 6.75
+   },
+   "triangles": 1060,
+   "zones": [
+    "DOWNTOWN",
+    "APARTMENT"
+   ],
+   "copies": 3,
+   "notes": "Pink/grey multi-storey building with striped awning and green base. 36 Cube meshes, 19 materials; pivot centred (y -2.85..3.9).",
+   "_x": 148.15
+  }
+ ]
+}
