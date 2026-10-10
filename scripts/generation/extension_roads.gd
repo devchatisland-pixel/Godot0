@@ -41,15 +41,7 @@ func build_east_highway() -> void:
 		last = x
 		x += 1
 	_data.bridge = Vector2i(last + 1, start.y)
-	# And into the city: the single road of the core is widened to three lanes as far as the
-	# land beside it is free, up to the first street that crosses it.
-	var w := start.x - 1
-	while w > 0 and _data.road[_data.idx(w, start.y)] != 0:
-		_lane(w, start.y, true)
-		var m := _data.road_mask(w, start.y)
-		if (m & CityTypes.DIR_N) != 0 or (m & CityTypes.DIR_S) != 0:
-			break
-		w -= 1
+	# In the city the three lanes are already there (LandmarkPlanner), from a crossing street.
 
 
 ## West: from the west-most street of the core to the west coast, then over the
@@ -63,6 +55,24 @@ func build_west_highway() -> void:
 				rows.append([x, y])
 				break
 	rows.sort_custom(func(a, b): return a[0] < b[0])
+	# The row of the west-most road with a clear way to the coast is where the highway wants
+	# to be; it is built on the nearest row where it meets a street that crosses it (a proper
+	# junction), or on that row itself when there is none.
+	var wanted := -1
+	for cand in rows:
+		if _clear_way_west(cand[0], cand[1]) >= 0:
+			wanted = cand[1]
+			break
+	if wanted < 0:
+		return
+	rows.sort_custom(func(a, b):
+		var ca := _crosses(a[0], a[1])
+		var cb := _crosses(b[0], b[1])
+		if ca != cb:
+			return ca
+		var da := absi(a[1] - wanted)
+		var db := absi(b[1] - wanted)
+		return da < db if da != db else a[0] < b[0])
 	for cand in rows:
 		var y: int = cand[1]
 		var x: int = cand[0]
@@ -84,6 +94,12 @@ func build_west_highway() -> void:
 				_lane(ux, y)
 		_data.west_bridge = Vector3i(coast, urban, y)
 		return
+
+
+## True when the road at (x, y) crosses the three rows of a highway and goes on beyond them.
+func _crosses(x: int, y: int) -> bool:
+	return _data.is_road(x, y - 1) and _data.is_road(x, y + 1) \
+			and (_data.is_road(x, y - 2) or _data.is_road(x, y + 2))
 
 
 ## The last land column (west-most) of the way west from (x, y), or -1 when blocked.

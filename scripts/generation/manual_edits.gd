@@ -128,7 +128,7 @@ static func apply(data: CityData) -> int:
 			push_warning("[Edits] B-%05d does not exist" % id)
 			continue
 		var r := data.building_rect(id)
-		if names[data.b_kind[id]] != e["kind"] or r.position != e["at"]:
+		if names[data.b_kind[id]] != e["kind"]:
 			push_warning("[Edits] B-%05d is %s at %s, not %s at %s: skipped" % [
 					id, names[data.b_kind[id]], r.position, e["kind"], e["at"]])
 			continue
@@ -203,13 +203,27 @@ static func _clear_quay(data: CityData, lot: Rect2i, radius: int) -> void:
 				data.rocky[data.idx(x, y)] = 0
 
 
-## The building of `kind_name` whose lot starts at `at`, or -1.
+## How far from the place of an edit its building may have moved (cells).
+const NEAR := 10
+
+
+## The building of `kind_name` whose lot starts at `at`; when the map moved a little (another
+## road, another row for a highway), the nearest one of that kind within NEAR cells. -1: none.
 static func _find(data: CityData, kind_name: String, at: Vector2i) -> int:
 	var kind: int = CityTypes.Kind[kind_name]
+	var best := -1
+	var best_d := NEAR + 1
 	for b in data.building_count():
-		if data.b_kind[b] == kind and data.building_rect(b).position == at:
+		if data.b_kind[b] != kind:
+			continue
+		var p := data.building_rect(b).position
+		if p == at:
 			return b
-	return -1
+		var d := maxi(absi(p.x - at.x), absi(p.y - at.y))
+		if d < best_d:
+			best_d = d
+			best = b
+	return best
 
 
 ## Edits of things that only exist after the props: deleted by place (kind and lot).
