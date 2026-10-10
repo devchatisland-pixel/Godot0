@@ -43,6 +43,7 @@ func generate() -> CityData:
 	print("[City] %d towers added south of the airport" % fill)
 	var edits := ManualEdits.apply(data)
 	print("[City] %d hand edits applied" % edits)
+	print("[City] secret base and motorhome swapped: ", ManualEdits.swap_base(data))
 	var piers := BeachSites.apply(data)
 	print("[City] %d piers" % piers)
 	var boats := BoatSites.apply(data)
@@ -56,6 +57,7 @@ func generate() -> CityData:
 	# The urban island is rebuilt last, so that nothing else of the map depends on it.
 	print("[City] urban island: ", UrbanIslandRebuild.apply(data))
 	AmenitiesPlanner.apply(data)
+	print("[City] garden fences: ", GardenFences.apply(data))
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	var services: Dictionary = core["services"].duplicate()

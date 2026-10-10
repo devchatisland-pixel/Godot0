@@ -79,6 +79,9 @@ const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
 const MODEL_BOOST := {}
+## Schools are drawn this much bigger (all round); tanks this much smaller.
+const SCHOOL_SCALE := 1.1
+const TANK_SHRINK := 0.9
 ## Las Vegas buildings are drawn at most this much bigger than modelled (they were skyscraper size).
 const VEGAS_MAX_FILL := 1.2
 ## Cooling towers beside the nuclear plant, the BT tower and the watchtowers: largest scale.
@@ -158,7 +161,7 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 		candidates = PackedInt32Array([forced])
 	if kind == Kind.FIELD and candidates.is_empty():
 		var fid := lib.named_id(NAMED[kind][absi(seed >> 2) % 4])
-		return {"id": fid, "xform": _fit_field(lib, fid, r)}
+		return {"id": fid, "xform": _fit_field(lib, fid, r, _laid_across(data, i, facing))}
 	if candidates.is_empty() and NAMED.has(kind):
 		var names: Array = NAMED[kind]
 		if kind == Kind.NIGHTCLUB:
@@ -182,7 +185,7 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 				Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5))
 		return {"id": bid, "xform": t}
 	if kind == Kind.FIELD:
-		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r)}
+		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r, _laid_across(data, i, facing))}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
 	var swapped := false
 	if kind == Kind.FUTURE_BLDG:
@@ -215,6 +218,10 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 			stretch = clampf(LANDMARK_HEIGHT / h, 1.0, 1.5)
 		Kind.CRANE:
 			scale = 1.0
+		Kind.SCHOOL, Kind.MAIN_SCHOOL:
+			scale = minf(room, MAX_FILL) * SCHOOL_SCALE
+		Kind.TANK:
+			scale = minf(room, 1.0) * TANK_SHRINK
 		Kind.STALL:
 			# Kiosks are big enough to see; the three vehicles (ice cream truck, food truck, caravan)
 			# are half that size.
@@ -294,9 +301,16 @@ static func _room(lib: ModelLibrary, id: int, r: Rect2i, facing: int) -> float:
 
 
 ## A crop field stretched over its whole lot, long side along the long side of the lot.
-static func _fit_field(lib: ModelLibrary, id: int, r: Rect2i) -> Transform3D:
+## True when field `i` is laid along its facing (ManualEdits "lay") and that turns it a
+## quarter from the way it fits its lot (facing east or west).
+static func _laid_across(data: CityData, i: int, facing: int) -> bool:
+	return data.b_lay[i] == 1 and facing % 2 == 1
+
+
+## Field model stretched over lot `r`; `across` turns it a quarter (its rows the other way).
+static func _fit_field(lib: ModelLibrary, id: int, r: Rect2i, across: bool = false) -> Transform3D:
 	var b := lib.bounds[id]
-	var turn := (r.size.x > r.size.y) != (b.size.x > b.size.z)
+	var turn := ((r.size.x > r.size.y) != (b.size.x > b.size.z)) != across
 	var fx := b.size.z if turn else b.size.x
 	var fz := b.size.x if turn else b.size.z
 	var basis := Basis(Vector3.UP, PI * 0.5 if turn else 0.0) * Basis.from_scale(

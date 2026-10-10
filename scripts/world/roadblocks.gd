@@ -11,9 +11,11 @@ const EAST_BACK := 13
 const WEST_BACK := 11
 ## Longest side of each model once placed, in cells.
 const BARRIER_LEN := 1.05
-const CAR_LEN := 0.85
+const CAR_LEN := 0.98
 const CONE_LEN := 0.15
-const TANK_LEN := 2.2
+const TANK_LEN := 1.98
+## Height of the west barriers (R-15 to R-17) as a share of their modelled height.
+const WEST_BARRIER_HEIGHT := 0.5
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
@@ -37,7 +39,8 @@ func _block(lib: ModelLibrary, cat: int, x: int, row: int, with_cones: bool, sam
 	for k in 3:
 		var id := ids[0 if same_model else k % ids.size()]
 		var z := float(row) + 0.5 + float(k - 1)
-		_put(lib, id, Vector3(float(x) + 0.5, 0.0, z), PI * 0.5, BARRIER_LEN, "Roadblock barrier")
+		_put(lib, id, Vector3(float(x) + 0.5, 0.0, z), PI * 0.5, BARRIER_LEN, "Roadblock barrier",
+				1.0 if with_cones else WEST_BARRIER_HEIGHT)
 	if with_cones:
 		var cones := lib.ids(Cat.CONE)
 		if not cones.is_empty():
@@ -97,13 +100,13 @@ static func clearing(data: CityData) -> Rect2i:
 
 
 ## Puts model `id` on the ground at `at`, scaled so that its longest side is `length`.
-func _put(lib: ModelLibrary, id: int, at: Vector3, yaw: float, length: float, title: String = "Roadblock piece") -> void:
+func _put(lib: ModelLibrary, id: int, at: Vector3, yaw: float, length: float, title: String = "Roadblock piece", height: float = 1.0) -> void:
 	var box := lib.bounds[id]
 	var longest := maxf(box.size.x, box.size.z)
 	if longest <= 0.0:
 		return
 	var s := length / longest
-	var basis := Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3.ONE * s)
+	var basis := Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3(s, s * height, s))
 	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
 	var mi := MeshInstance3D.new()
 	mi.mesh = lib.meshes[id]

@@ -19,6 +19,7 @@ extends RefCounted
 ##   model    name of the model to draw, as the library names it (e.g. "building-type-n.glb")
 ##   clear_quay  radius: sand instead of quay ground (rocky = 2) within that many cells of the building
 ##   sign     name of a ModelCatalog.Cat (a neon sign); BuildingExtras.SIGNS says where it goes
+##   lay      true = a flat model (crop field) is laid along `facing` instead of the long side
 
 ## Edit index -> building number it was applied to (filled by `apply`; read by the tests
 ## and by BuildingBudget).
@@ -53,6 +54,8 @@ const EDITS := [
 	# Shopping center: a casino stands in a park where it was.
 	{"kind": "SHOPPING_CENTER", "near": Vector2i(100, 138), "replace": "CASINO", "size": [3, 3],
 		"old_ground": "PARK"},
+	# The corn field of the farm next to the tractor faces west.
+	{"kind": "FIELD", "near": Vector2i(196, 174), "facing": 3, "lay": true},
 ]
 
 ## Kinds taken away everywhere: the airport, the urban ghetto block and the wings of the prison.
@@ -98,6 +101,8 @@ static func apply(data: CityData) -> int:
 			_clear_quay(data, lot, int(e["clear_quay"]))
 		if e.has("model"):
 			data.b_model[id] = e["model"]
+		if e.get("lay", false):
+			data.b_lay[id] = 1
 		if e.has("sign"):
 			data.b_sign[id] = ModelCatalog.Cat[e["sign"]]
 		if e.has("replace"):
@@ -207,3 +212,43 @@ static func _balloon_cells(data: CityData) -> Array[Vector2i]:
 	if mountain >= 0:
 		out.append(data.building_rect(mountain).get_center())
 	return out
+
+
+# --- The secret base and the motorhome trade places ----------------------------------------------
+## Free room kept round the base lot: its fence (3 cells) and the tanks outside the gates.
+const BASE_MARGIN := 7
+
+
+## The secret base moves to the spot of the motorhome (the clearest cell of the desert, as
+## VehicleSites chose it), and the motorhome goes where the base stood. Run after `apply`,
+## before the props (the tanks of the gates and the fence follow the base). False when no
+## spot of the desert has room for the base.
+static func swap_base(data: CityData) -> bool:
+	var base := _nearest(data, "AIRBASE", Vector2i(data.size / 2, data.size / 2))
+	if base < 0:
+		return false
+	var old := data.building_rect(base)
+	for c in VehicleSites.desert_spots(data, base):
+		var lot := Rect2i(c - old.size / 2, old.size)
+		if not _lot_is_free(data, base, lot.grow(BASE_MARGIN)) or not _all_desert(data, lot.grow(BASE_MARGIN)):
+			continue
+		var zone := data.zone[data.idx(old.position.x, old.position.y)]
+		for y in range(old.position.y, old.end.y):
+			for x in range(old.position.x, old.end.x):
+				data.zone[data.idx(x, y)] = CityTypes.Zone.DESERT
+		for y in range(lot.position.y, lot.end.y):
+			for x in range(lot.position.x, lot.end.x):
+				data.zone[data.idx(x, y)] = zone
+		data.set_building_rect(base, lot)
+		data.rv_spot = Vector2(old.get_center()) + Vector2(0.5, 0.5)
+		return true
+	push_warning("[Edits] no room in the desert for the secret base: it stays where it is")
+	return false
+
+
+static func _all_desert(data: CityData, r: Rect2i) -> bool:
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			if data.zone[data.idx(x, y)] != CityTypes.Zone.DESERT:
+				return false
+	return true

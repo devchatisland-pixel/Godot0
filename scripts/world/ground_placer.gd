@@ -7,6 +7,11 @@ extends RefCounted
 
 const Cat := ModelCatalog.Cat
 const Zone := CityTypes.Zone
+## Height (cells) of the wooden garden fences and of the chain-link fence of the base, and
+## the thickness the models are flattened to at most.
+const WOOD_FENCE_HEIGHT := 0.2
+const CHAIN_FENCE_HEIGHT := 0.42
+const FENCE_THICKNESS := 0.05
 ## Where the bulb hangs under the arm of the Kenney street light (model space).
 const BULB_OFFSET := Vector3(0.0, 0.64, -0.17)
 
@@ -35,9 +40,12 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 	var bridge := _bridge_clearing(data)
 	var checkpoint := Roadblocks.clearing(data)
 	var ts := data.tree_share
+	var wood := lib.named_id("wood_fence")
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var i := y * data.size + x
+			if data.fence_edge[i] != 0 and wood >= 0:
+				_place_garden_fence(lib, wood, x, y, data.fence_edge[i], batch)
 			var road: int = data.road[i]
 			if road != 0:
 				_place_road(data, lib, x, y, road, road_rot, lights, batch)
@@ -95,13 +103,47 @@ static func _place_deco(data: CityData, lib: ModelLibrary, x: int, y: int, deco:
 			batch.add(lib.named_id("playground"), Transform3D(Basis(), at))
 		AmenitiesPlanner.BOARD:
 			batch.add(lib.named_id("plank"), Transform3D(Basis(), at))
-		AmenitiesPlanner.FENCE_X:
-			batch.add(lib.named_id("fence"), Transform3D(Basis(), at))
-		AmenitiesPlanner.FENCE_Z:
-			batch.add(lib.named_id("fence"), Transform3D(Basis(Vector3.UP, PI * 0.5), at))
+		AmenitiesPlanner.FENCE_X, AmenitiesPlanner.FENCE_Z:
+			var along := Vector3(0.5, 0, 0) if deco == AmenitiesPlanner.FENCE_X else Vector3(0, 0, 0.5)
+			var chain := lib.named_id("chain_fence")
+			if chain >= 0:
+				batch.add(chain, fence_xform(lib, chain, at - along, at + along, CHAIN_FENCE_HEIGHT))
+			else:
+				var yaw := 0.0 if deco == AmenitiesPlanner.FENCE_X else PI * 0.5
+				batch.add(lib.named_id("fence"), Transform3D(Basis(Vector3.UP, yaw), at))
 		AmenitiesPlanner.BOARD_LAMP:
 			batch.add(lib.named_id("plank"), Transform3D(Basis(), at))
 			batch.add(lib.named_id("boardwalk_lamp"), Transform3D(Basis(), at))
+
+
+## The wooden fences on the north and west sides of a cell (GardenFences).
+static func _place_garden_fence(lib: ModelLibrary, id: int, x: int, y: int, sides: int, batch: InstanceBatch) -> void:
+	var corner := Vector3(x, 0, y)
+	if sides & GardenFences.NORTH:
+		batch.add(id, fence_xform(lib, id, corner, corner + Vector3(1, 0, 0), WOOD_FENCE_HEIGHT))
+	if sides & GardenFences.WEST:
+		batch.add(id, fence_xform(lib, id, corner, corner + Vector3(0, 0, 1), WOOD_FENCE_HEIGHT))
+
+
+## Stretches fence model `id` from `a` to `b` (on the ground, along X or Z): its longest
+## horizontal side runs along the segment, it stands `height` cells high and is at most
+## FENCE_THICKNESS thick.
+static func fence_xform(lib: ModelLibrary, id: int, a: Vector3, b: Vector3, height: float) -> Transform3D:
+	var box: AABB = lib.bounds[id]
+	var long_x := box.size.x >= box.size.z
+	var length := maxf(box.size.x if long_x else box.size.z, 0.001)
+	var depth := maxf(box.size.z if long_x else box.size.x, 0.001)
+	var up := height / maxf(box.size.y, 0.001)
+	# Model space: scale its own long side and depth, then turn it onto the segment.
+	var scale := Vector3(a.distance_to(b) / length, up, minf(up, FENCE_THICKNESS / depth))
+	if not long_x:
+		scale = Vector3(scale.z, scale.y, scale.x)
+	var turn := 0.0 if long_x else -PI * 0.5
+	if absf(b.z - a.z) > absf(b.x - a.x):
+		turn += PI * 0.5
+	var basis := Basis(Vector3.UP, turn) * Basis.from_scale(scale)
+	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
+	return Transform3D(basis, (a + b) * 0.5 - basis * center)
 
 
 ## Dry tufts and a few rocks where the desert meets the meadow (`edge`: closeness 1..4 in the
