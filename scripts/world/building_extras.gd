@@ -162,13 +162,21 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		at.y = body.position.y + body.size.y * float(spec["height"])
 		at.z = body.end.z + 0.02
 	else:
-		# A parapet sign: flush with the edge of the roof the sign faces (south, or east when
-		# it is turned 90 degrees), centred along that edge.
-		if absf(sin(float(spec.get("yaw", 0.0)))) > 0.5:
-			at.x = body.end.x - ROOF_EDGE_INSET
+		# A parapet sign: on the flat roof of the model (not on the box of the whole model, which
+		# also holds annexes and masts), flush with the roof edge the sign faces (south, or east
+		# when it is turned 90 degrees), centred along that edge and no longer than it.
+		var roof := _roof(lib, pid, xform)
+		var rr: Rect2 = roof["rect"]
+		var east := absf(sin(float(spec.get("yaw", 0.0)))) > 0.5
+		var edge_len := rr.size.y if east else rr.size.x
+		s = minf(s, edge_len * 0.92 / model.size.x)
+		if east:
+			at.x = rr.end.x - ROOF_EDGE_INSET
+			at.z = rr.get_center().y
 		else:
-			at.z = body.end.z - ROOF_EDGE_INSET
-		at.y = _roof_height(lib, pid, xform, Vector2(at.x, at.z), model.size.x * s * 0.5)
+			at.x = rr.get_center().x
+			at.z = rr.end.y - ROOF_EDGE_INSET
+		at.y = roof["y"]
 	var turn := Basis(Vector3.UP, float(spec.get("yaw", 0.0)))
 	batch.add(ids[0], Transform3D(turn * Basis.from_scale(Vector3(s, s, s)), at - turn * (local_center * s)))
 	var halo := lib.named_id("neon_halo_%d" % cat)
@@ -179,17 +187,36 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 				at + back - turn * (local_center * Vector3(h, h, s))))
 
 
-## Height of the highest point of the model under a square window of half-width `half`
-## around `center` (the roof under a sign); the top of its box when nothing is there.
-static func _roof_height(lib: ModelLibrary, id: int, xform: Transform3D, center: Vector2, half: float) -> float:
-	var top := -INF
+## The flat roof of a model placed with `xform`: {"y": height, "rect": Rect2 in x, z}. The roof
+## level is the height (above the middle of the model) holding the most vertices; its rect is
+## the box of the vertices at that level.
+static func _roof(lib: ModelLibrary, id: int, xform: Transform3D) -> Dictionary:
 	var mesh := lib.meshes[id]
-	for s in mesh.get_surface_count():
-		var verts: PackedVector3Array = mesh.surface_get_arrays(s)[Mesh.ARRAY_VERTEX]
+	var pts := PackedVector3Array()
+	var top := -INF
+	for sf in mesh.get_surface_count():
+		var verts: PackedVector3Array = mesh.surface_get_arrays(sf)[Mesh.ARRAY_VERTEX]
 		for v in verts:
 			var p := xform * v
-			if absf(p.x - center.x) <= half and absf(p.z - center.y) <= half:
-				top = maxf(top, p.y)
-	if top == -INF:
-		top = (xform * lib.bounds[id]).end.y
-	return top
+			pts.append(p)
+			top = maxf(top, p.y)
+	var counts := {}
+	var best_key := 0
+	for p in pts:
+		if p.y < top * 0.5:
+			continue
+		var key := int(round(p.y * 50.0))
+		counts[key] = counts.get(key, 0) + 1
+		if counts[key] > counts.get(best_key, 0):
+			best_key = key
+	var level := float(best_key) / 50.0
+	var lo := Vector2(INF, INF)
+	var hi := Vector2(-INF, -INF)
+	for p in pts:
+		if absf(p.y - level) <= 0.03:
+			lo = Vector2(minf(lo.x, p.x), minf(lo.y, p.z))
+			hi = Vector2(maxf(hi.x, p.x), maxf(hi.y, p.z))
+	if lo.x == INF:
+		var b := xform * lib.bounds[id]
+		return {"y": b.end.y, "rect": Rect2(b.position.x, b.position.z, b.size.x, b.size.z)}
+	return {"y": level, "rect": Rect2(lo, hi - lo)}
