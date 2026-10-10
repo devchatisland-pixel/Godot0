@@ -14,10 +14,13 @@ import sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-DEFAULT_JSON = os.path.expanduser(
-    "~/.local/share/godot/app_userdata/Isometric Island City/poly_heatmap.json")
-FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+DEFAULT_JSON = next((p for p in (
+    os.path.expanduser("~/.local/share/godot/app_userdata/Isometric Island City/poly_heatmap.json"),
+    os.path.expandvars("%APPDATA%/Godot/app_userdata/Isometric Island City/poly_heatmap.json"))
+    if os.path.exists(p)), "poly_heatmap.json")
+FONTS = [("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+         ("C:/Windows/Fonts/arial.ttf", "C:/Windows/Fonts/arialbd.ttf")]
+FONT, BOLD = next(((a, b) for a, b in FONTS if os.path.exists(a)), FONTS[0])
 PX = 4
 SIDE = 560
 TOP = 70
