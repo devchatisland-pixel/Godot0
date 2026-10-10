@@ -18,10 +18,11 @@ static var scale := 1.0
 const BLOBS := {
 	# Islands.
 	"main": {"at": Vector2(141, 133), "r": Vector2(80, 94)},
-	# The urban island (third island) west of the main one, joined by the metal bridge.
-	"urban": {"at": Vector2(30, 138), "r": Vector2(23, 52)},
+	# The urban island (third island) west of the main one, joined by the metal bridge. Small
+	# (30 % of the area it had) and packed with towers (UrbanIslandRebuild).
+	"urban": {"at": Vector2(37, 138), "r": Vector2(12, 26)},
 	# A lobe of land at its north end, wide enough for the nuclear plant and its cooling towers.
-	"urban_north": {"at": Vector2(34, 96), "r": Vector2(21, 13)},
+	"urban_north": {"at": Vector2(39, 105), "r": Vector2(15, 9)},
 	# The tiny islet of the BT tower, in the sea north of the urban island.
 	"tower_islet": {"at": Vector2(24, 64), "r": Vector2(10, 6.5)},
 	# The development island, alone in the empty south-west corner of the sea, far from the
@@ -53,7 +54,7 @@ const POINTS := {
 	# Where the ferris wheel stands (6x6 plot, at the south beach).
 	"ferris": Vector2i(146, 221),
 	# Where the search for the plot of the nuclear plant starts.
-	"plant": Vector2i(30, 96),
+	"plant": Vector2i(39, 105),
 	# Where the search for the forest fire truck starts.
 	"fire_truck": Vector2i(172, 70),
 	# The flying saucer: far from the city and from the secret base, in the south of the desert.
