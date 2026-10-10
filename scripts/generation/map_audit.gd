@@ -85,9 +85,11 @@ static func fog_hash(data: CityData) -> String:
 	ctx.update(fog.colors)
 	var rel := PackedStringArray()
 	for b in fog.buildings:
-		rel.append("%s %s %s" % [(b[0] as Vector2) - fog.origin, b[1], b[2]])
+		var p: Vector2 = (b[0] as Vector2) - fog.origin
+		rel.append("%.2f %.2f %s %s" % [p.x, p.y, b[1], b[2]])
 	for t in fog.trees:
-		rel.append("%s %s %s" % [(t[0] as Vector2) - fog.origin, t[1], t[2]])
+		var p: Vector2 = (t[0] as Vector2) - fog.origin
+		rel.append("%.2f %.2f %s %s" % [p.x, p.y, t[1], t[2]])
 	ctx.update("\n".join(rel).to_utf8_buffer())
 	return ctx.finish().hex_encode()
 
@@ -116,6 +118,23 @@ static func data_hash(data: CityData) -> String:
 
 # --- Roads ---------------------------------------------------------------------------------------
 
+## True when (x, y) carries traffic: a road cell, or the deck of the metal bridge to the urban
+## island (the bridge is a model, not road cells).
+static func is_link(data: CityData, x: int, y: int) -> bool:
+	if data.is_road(x, y):
+		return true
+	var wb := data.west_bridge
+	return wb.x >= 0 and absi(y - wb.z) <= 1 and x > wb.y and x < wb.x
+
+
+## True when column x of row y is at the head of one of the two big bridges.
+static func at_bridge_head(data: CityData, x: int, y: int) -> bool:
+	var wb := data.west_bridge
+	if wb.x >= 0 and absi(y - wb.z) <= 1 and (absi(x - wb.x) <= 2 or absi(x - wb.y) <= 2):
+		return true
+	return data.bridge.x >= 0 and absi(y - data.bridge.y) <= 1 and absi(x - data.bridge.x) <= 2
+
+
 ## Connected groups of road cells, biggest first: [{"cells": n, "at": Vector2i (one cell)}].
 static func road_components(data: CityData) -> Array[Dictionary]:
 	var seen := PackedByteArray()
@@ -131,10 +150,11 @@ static func road_components(data: CityData) -> Array[Dictionary]:
 			var n := 0
 			while not stack.is_empty():
 				var c: Vector2i = stack.pop_back()
-				n += 1
+				if data.is_road(c.x, c.y):
+					n += 1
 				for o in CityTypes.FACING_OFFSETS:
 					var q: Vector2i = c + o
-					if data.is_road(q.x, q.y) and seen[data.idx(q.x, q.y)] == 0:
+					if is_link(data, q.x, q.y) and seen[data.idx(q.x, q.y)] == 0:
 						seen[data.idx(q.x, q.y)] = 1
 						stack.append(q)
 			out.append({"cells": n, "at": Vector2i(x, y)})
@@ -196,6 +216,7 @@ static func overlapping_buildings(data: CityData) -> PackedInt32Array:
 
 
 ## Buildings of the street zones with no road within `reach` cells of their lot: [building id].
+## The compound of the nuclear plant, at the north end of the urban island, is left out.
 static func lots_without_road(data: CityData, reach: int = 2) -> PackedInt32Array:
 	var names := CityTypes.Kind.keys()
 	var out := PackedInt32Array()
@@ -204,6 +225,9 @@ static func lots_without_road(data: CityData, reach: int = 2) -> PackedInt32Arra
 			continue
 		var r := data.building_rect(b)
 		if not STREET_ZONES.has(data.zone_at(r.position.x, r.position.y)):
+			continue
+		# The compound of the nuclear plant has no streets on purpose (UrbanIslandPlanner).
+		if r.position.x < MapLayout.cells("urban_columns") and r.end.y <= MapLayout.cells("nuclear_end"):
 			continue
 		var found := false
 		for y in range(r.position.y - reach, r.end.y + reach):
@@ -215,12 +239,49 @@ static func lots_without_road(data: CityData, reach: int = 2) -> PackedInt32Arra
 	return out
 
 
-## Road cells that are a dead end (one neighbour only) and not at a bridge head.
+## Cells of the dead end at `tip`, back to its first junction (the junction left out).
+static func dead_end_length(data: CityData, tip: Vector2i) -> int:
+	var n := 1
+	var prev := tip
+	var cur := tip
+	while n < 64:
+		var next := Vector2i(-1, -1)
+		var ways := 0
+		for o in CityTypes.FACING_OFFSETS:
+			var q: Vector2i = cur + o
+			if q != prev and data.is_road(q.x, q.y):
+				ways += 1
+				next = q
+		if ways != 1:
+			break
+		var deg := 0
+		for o in CityTypes.FACING_OFFSETS:
+			if data.is_road(next.x + o.x, next.y + o.y):
+				deg += 1
+		if deg != 2:
+			break
+		n += 1
+		prev = cur
+		cur = next
+	return n
+
+
+## Dead ends shorter than `min_length` cells: stubs, a bug. The longer ones are cul-de-sacs.
+static func stubs(data: CityData, min_length: int = 3) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	for tip in dead_ends(data):
+		if dead_end_length(data, tip) < min_length:
+			out.append(tip)
+	return out
+
+
+## Road cells that are a dead end (one neighbour or none), the heads of the two big bridges
+## left out.
 static func dead_ends(data: CityData) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
 	for y in data.size:
 		for x in data.size:
-			if not data.is_road(x, y):
+			if not data.is_road(x, y) or at_bridge_head(data, x, y):
 				continue
 			var m := data.road_mask(x, y)
 			if m == CityTypes.DIR_N or m == CityTypes.DIR_E or m == CityTypes.DIR_S or m == CityTypes.DIR_W or m == 0:
@@ -251,25 +312,30 @@ static func is_highway_lane(data: CityData, x: int, y: int) -> bool:
 	return true
 
 
-static func _in_highway(data: CityData, x: int, y: int) -> bool:
-	for dy in range(-1, 2):
-		if is_highway_lane(data, x, y + dy):
-			return true
-	return false
+## 1 on the cells of the highways (the three lanes of every run found by `highways`).
+static func highway_mask(data: CityData) -> PackedByteArray:
+	var mask := PackedByteArray()
+	mask.resize(data.size * data.size)
+	for h in highways(data):
+		for x in range(int(h["from"]), int(h["to"]) + 1):
+			for dy in range(-1, 2):
+				mask[data.idx(x, int(h["row"]) + dy)] = 1
+	return mask
 
 
 ## 2x2 squares of road outside the highways, counted by their top-left cell: two streets side
-## by side, drawn as a carpet of junction tiles (the texture bug of the wide roads).
+## by side, drawn as a carpet of junction tiles (the texture bug of the wide roads). A square
+## with two cells or more on a highway is the mouth of a road that joins it, not a bug.
 static func fat_roads(data: CityData) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
+	var hw_mask := highway_mask(data)
 	for y in data.size - 1:
 		for x in data.size - 1:
 			if data.is_road(x, y) and data.is_road(x + 1, y) and data.is_road(x, y + 1) and data.is_road(x + 1, y + 1):
 				var hw := 0
 				for c: Vector2i in [Vector2i(x, y), Vector2i(x + 1, y), Vector2i(x, y + 1), Vector2i(x + 1, y + 1)]:
-					if _in_highway(data, c.x, c.y):
-						hw += 1
-				if hw < 4:
+					hw += hw_mask[data.idx(c.x, c.y)]
+				if hw < 2:
 					out.append(Vector2i(x, y))
 	return out
 
@@ -297,6 +363,8 @@ static func highways(data: CityData) -> Array[Dictionary]:
 
 
 static func _highway_end(data: CityData, x: int, y: int, dir: int) -> String:
+	if at_bridge_head(data, x, y):
+		return "bridge"
 	# A bridge: the lanes themselves carry the flag near the end, or the cell beyond is water.
 	for k in range(0, 3):
 		var bx := x - dir * k
@@ -357,7 +425,8 @@ static func snapshot(data: CityData) -> Dictionary:
 			"under_buildings": buildings_on_roads(data).size(),
 			"overlapping_buildings": overlapping_buildings(data).size(),
 			"lots_without_road": lots_without_road(data).size(),
-			"dead_ends": dead_ends(data).size(),
+			"stubs": stubs(data).size(),
+			"cul_de_sacs": dead_ends(data).size() - stubs(data).size(),
 			"diagonal_gaps": diagonal_gaps(data).size(),
 			"fat_roads": fat_roads(data).size(),
 			"highways": hw,

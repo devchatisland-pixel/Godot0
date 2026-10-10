@@ -40,6 +40,7 @@ func generate() -> CityData:
 
 	var fill := UrbanFill.apply(data)
 	print("[City] %d towers added south of the airport" % fill)
+	print("[City] road network: ", RoadNetwork.apply(data))
 	var edits := ManualEdits.apply(data)
 	print("[City] %d hand edits applied" % edits)
 	var huts := BeachSites.apply(data)

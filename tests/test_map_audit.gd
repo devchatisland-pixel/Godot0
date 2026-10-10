@@ -3,6 +3,7 @@ extends SceneTree
 ## Run: godot --headless --script res://tests/test_map_audit.gd
 ##      godot --headless --script res://tests/test_map_audit.gd -- --write   (new baseline)
 ##      ... -- --details   also lists where the road problems are
+##      ... -- --write-roads   renews only the road counters and the map hash of the baseline
 ##      ... -- --hash      only prints the hash of the whole map (MapAudit.data_hash)
 ##      ... -- --same      fails unless the map is exactly the baseline map (for refactorings)
 ## What must be kept (fails when it changes): buildings per kind, trees on the ground, the
@@ -12,12 +13,17 @@ extends SceneTree
 
 const BASELINE := "res://tests/baseline/map_snapshot.json"
 ## Set to true once the roads are rebuilt: every road problem then fails the test.
-const STRICT := false
+const STRICT := true
 ## Road counters that are problems (lower is better, zero is the goal).
 const PROBLEMS: Array[String] = [
 	"cells_off_network", "on_water", "under_buildings", "overlapping_buildings",
-	"lots_without_road", "dead_ends", "diagonal_gaps", "fat_roads",
+	"lots_without_road", "stubs", "diagonal_gaps", "fat_roads",
 ]
+
+## Buildings of a kind may differ from the baseline by this many, or this share, until the
+## budgets of phase 3 set the counts (docs/map_rebuild_plan.md).
+const KIND_SLACK := 4
+const KIND_SLACK_SHARE := 0.08
 
 var _fails := 0
 
@@ -42,6 +48,18 @@ func _init() -> void:
 	snap["ground_trees"] = _ground_trees(cfg, data)
 	if args.has("--details"):
 		_details(data)
+	if args.has("--write-roads"):
+		# The roads changed on purpose: only their counters and the hash of the map are renewed.
+		var kept = JSON.parse_string(FileAccess.get_file_as_string(BASELINE))
+		kept["roads"] = snap["roads"]
+		kept["map_hash"] = snap["map_hash"]
+		kept["size"] = snap["size"]
+		var fw := FileAccess.open(BASELINE, FileAccess.WRITE)
+		fw.store_string(JSON.stringify(kept, "\t") + "\n")
+		fw.close()
+		print("[Audit] roads of the baseline renewed in ", BASELINE)
+		quit(0)
+		return
 	if args.has("--write"):
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(BASELINE.get_base_dir()))
 		var f := FileAccess.open(BASELINE, FileAccess.WRITE)
@@ -90,8 +108,13 @@ func _compare(snap: Dictionary, base: Dictionary) -> void:
 	var kinds: Dictionary = snap["kinds"]
 	var base_kinds: Dictionary = base["kinds"]
 	for k in base_kinds:
-		if int(kinds.get(k, 0)) != int(base_kinds[k]):
-			_fail("%s: %d buildings, the baseline has %d" % [k, kinds.get(k, 0), base_kinds[k]])
+		var now := int(kinds.get(k, 0))
+		var was := int(base_kinds[k])
+		if now == was:
+			continue
+		print("[Audit]   %-18s %4d buildings (baseline %d)" % [k, now, was])
+		if absi(now - was) > maxi(KIND_SLACK, int(was * KIND_SLACK_SHARE)) or (now == 0) != (was == 0):
+			_fail("%s: %d buildings, the baseline has %d" % [k, now, was])
 	for k in kinds:
 		if not base_kinds.has(k):
 			_fail("%s: %d buildings, none in the baseline" % [k, kinds[k]])
@@ -127,6 +150,7 @@ func _compare(snap: Dictionary, base: Dictionary) -> void:
 			_fail("roads: %s went from %d to %d" % [p, was, now])
 		elif STRICT and now > 0:
 			_fail("roads: %s is %d, must be 0" % [p, now])
+	print("[Audit]   %-22s %5d   (kept: dead ends of 3 cells or more)" % ["cul_de_sacs", int(roads.get("cul_de_sacs", 0))])
 	for h in roads["highways"]:
 		print("[Audit]   highway row %d, x %d..%d: west end %s, east end %s" % [
 				h["row"], h["from"], h["to"], h["west"], h["east"]])
@@ -143,7 +167,8 @@ func _compare(snap: Dictionary, base: Dictionary) -> void:
 func _details(data: CityData) -> void:
 	print("[Audit] road groups: ", MapAudit.road_components(data).slice(0, 12))
 	print("[Audit] roads on water: ", MapAudit.roads_on_water(data).slice(0, 40))
-	print("[Audit] dead ends: ", MapAudit.dead_ends(data).slice(0, 60))
+	print("[Audit] stubs: ", MapAudit.stubs(data).slice(0, 60))
+	print("[Audit] dead ends: ", MapAudit.dead_ends(data).slice(0, 200))
 	print("[Audit] diagonal gaps: ", MapAudit.diagonal_gaps(data).slice(0, 60))
 	print("[Audit] fat roads: ", MapAudit.fat_roads(data).slice(0, 60))
 	var names := CityTypes.Kind.keys()
