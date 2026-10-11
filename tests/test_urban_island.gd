@@ -51,8 +51,9 @@ func _in_front(r: Rect2i, p: Vector2i) -> bool:
 
 
 func _check_places(data: CityData, by_kind: Dictionary) -> void:
-	# The island: two plants of one size showing the same face, and nothing but towers else
-	# (UrbanIslandRebuild): no street, no fence, no yard, no vehicle.
+	# The island: two plants of one size showing the same face, fenced, on a street; towers
+	# along the streets, the yard by the plant road (UrbanIslandRebuild), and only the police
+	# car and the fire truck of the plant road.
 	var plants: Array = by_kind.get(Kind.NUCLEAR_PLANT, [])
 	if plants.size() != 2:
 		_fail("expected 2 nuclear plants, found %d" % plants.size())
@@ -75,8 +76,8 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 		if k == Kind.EMPTY or not MapLayout.on_urban_island(r.get_center()) 				or data.terrain[data.idx(r.get_center().x, r.get_center().y)] != CityTypes.Terrain.LAND:
 			continue
 		on_island += 1
-		if k != Kind.FUTURE_BLDG and k != Kind.NUCLEAR_PLANT:
-			_fail("%s B-%05d at %s on the urban island: only towers and the plants belong there" % [
+		if k != Kind.FUTURE_BLDG and k != Kind.NUCLEAR_PLANT and k != Kind.INDUSTRIAL_YARD:
+			_fail("%s B-%05d at %s on the urban island: only towers, the plants and their yard belong there" % [
 					CityTypes.Kind.keys()[k], b, r])
 		if k == Kind.FUTURE_BLDG:
 			for p in plants:
@@ -93,16 +94,19 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 				roads += 1
 			if data.deco[i] == AmenitiesPlanner.FENCE_X or data.deco[i] == AmenitiesPlanner.FENCE_Z:
 				fences += 1
-	if roads > 0:
-		_fail("%d road cells on the urban island" % roads)
-	if fences > 0:
-		_fail("%d fence pieces on the urban island" % fences)
-	# No vehicle of the catalog stands on the island.
+	if roads < 30:
+		_fail("only %d road cells on the urban island" % roads)
+	if fences < 20:
+		_fail("only %d fence pieces on the urban island (the plants are fenced)" % fences)
+	# Only the vehicles of the plant road stand on the island.
 	var cars := 0
 	for v in VehicleSites.plan(data):
 		if MapLayout.on_urban_island(Vector2i(v["at"] as Vector2)):
 			cars += 1
-			_fail("vehicle %s (%s) stands on the urban island" % [v["id"], v["why"]])
+			if not ["police_us_cruiser", "p54_33_fire_truck"].has(v["id"]):
+				_fail("vehicle %s (%s) stands on the urban island" % [v["id"], v["why"]])
+	if cars != 2:
+		_fail("expected the police car and the fire truck on the plant road, found %d vehicles" % cars)
 	# The south end: the lots are filled, not left empty (the airport is gone).
 	var urban_tip := int(Vector2(MapLayout.blob("urban")["at"]).y)
 	var south := 0
@@ -140,8 +144,8 @@ func _check_towers(data: CityData, by_kind: Dictionary) -> void:
 				_fail("urban tower B-%05d faces %d (must be east or south)" % [b, f])
 			variants[data.b_seed[b] % 97] = true
 	print("[Test] urban towers: %d, seed variety %d" % [towers, variants.size()])
-	# 169 towers are built; ManualEdits.DELETED_URBAN_TOWERS takes 67 away by hand.
-	if towers < 100:
+	# UrbanIslandRebuild.TOWER_COUNT towers stand along the streets of the island.
+	if towers < 50:
 		_fail("too few towers on the urban island: %d" % towers)
 
 

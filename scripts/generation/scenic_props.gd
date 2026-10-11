@@ -1,8 +1,8 @@
 class_name ScenicProps
 extends RefCounted
 ## A few single props put by hand on the finished map (drawn by MapVehicles):
-##   - on the beach between a lighthouse and the north watchtower: an umbrella, two deck chairs
-##     and a beach ball;
+##   - on the beach between a lighthouse and the north watchtower: two deck chairs and a beach
+##     ball;
 ##   - one deck chair on a beach near the north-east lighthouse (not on its own sand strip);
 ##   - a billboard on the border of the central park, by a downtown tower.
 ## Pure data in, a list of placements out: {"file", "title", "at": Vector3, "yaw", "length"}
@@ -13,7 +13,6 @@ const Zone := CityTypes.Zone
 
 const BALL := "res://props/beach/beach_ball.glb"
 const CHAIR := "res://props/beach/deck_chair.glb"
-const UMBRELLA := "res://FREEMODELS/kenney_city-kit-commercial_2.1/Models/GLB format/detail-parasol-a.glb"
 const BILLBOARD := "res://props/park/park_billboard.glb"
 
 ## The beach between these two (top-left cells of their lots): lighthouse, watchtower.
@@ -29,7 +28,7 @@ const BILLBOARD_WIDTH := 4.5
 ## Sizes in cells (a little bigger than life, so they can be seen).
 const BALL_LEN := 0.16
 const CHAIR_LEN := 0.45
-const UMBRELLA_LEN := 0.8
+
 
 var out: Array[Dictionary] = []
 var _d: CityData
@@ -55,7 +54,7 @@ static func plan(data: CityData) -> Array[Dictionary]:
 
 
 # --- Beach ---------------------------------------------------------------------------------------
-## Umbrella, two deck chairs facing the sea and a ball, on the beach cell nearest to the middle
+## Two deck chairs facing the sea and a ball, on the beach cell nearest to the middle
 ## of BEACH_FROM - BEACH_TO.
 func _beach_set() -> void:
 	var a := _anchor(Kind.LIGHTHOUSE, BEACH_FROM)
@@ -69,7 +68,6 @@ func _beach_set() -> void:
 	var sea := _to_sea(c)
 	var side := Vector3(-sea.z, 0, sea.x)
 	var face := atan2(sea.x, sea.z)
-	_add(UMBRELLA, "Beach umbrella", p, 0.0, UMBRELLA_LEN)
 	_add(CHAIR, "Deck chair", p + side * 0.28 + sea * 0.3, face, CHAIR_LEN)
 	_add(CHAIR, "Deck chair", p - side * 0.28 + sea * 0.3, face, CHAIR_LEN)
 	_add(BALL, "Beach ball", p + sea * 0.7 + side * 0.45, 0.0, BALL_LEN)
