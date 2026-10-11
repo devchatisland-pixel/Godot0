@@ -36,8 +36,7 @@ const HIDDEN_ALLOWED := 0.5
 ## used. Tower g is drawn as the night city tower that replaces it (BuildingPlacer), a lower
 ## one. The names are the ones of the model library.
 const RAMP := [
-	["future.glb: tower_h", 6.2], ["future.glb: tower_g", 7.5], ["future.glb: tower_l", 10.2],
-	["future.glb: tower_e", 10.7], ["future.glb: tower_f", 12.6], ["future.glb: tower_b", 14.3],
+	["future.glb: tower_g", 7.5], ["future.glb: tower_l", 10.2], ["future.glb: tower_b", 14.3],
 	["future.glb: tower_a", 17.9],
 ]
 ## Cost of a cell of one plant that hides the other, in land cells of sight.

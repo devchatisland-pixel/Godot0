@@ -96,11 +96,9 @@ const BIG_MOUNTAIN_SEED := 16
 const UN_SCALE := 1.5
 ## Futuristic towers of the urban island: a bit wider than their lot allows for others, much taller.
 const FUTURE_STRETCH := 1.5
-## The futuristic tower (model name ends with this) that always shows its south face.
-const TOWER_FACING_SOUTH := "tower_e"
 ## Futuristic towers that look bad: drawn as this model of the night city instead (stretched like it).
 const BAD_FUTURE_TOWERS := ["tower_g", "tower_k"]
-const FUTURE_REPLACEMENT := "city_night.glb: city_night_02_b"
+const FUTURE_REPLACEMENT := "city_night.glb: city_night_03_b"
 ## Las Vegas buildings by the short side of their lot: small bars and chapels,
 ## clubs, then neon towers and resorts that fill bigger lots.
 const VEGAS_BY_SIZE := {
@@ -196,8 +194,6 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 	var swapped := false
 	if kind == Kind.FUTURE_BLDG:
 		var model := lib.model_name(id)
-		if model.ends_with(TOWER_FACING_SOUTH):
-			facing = 2 # this tower is only good looking from the south
 		for bad in BAD_FUTURE_TOWERS:
 			var good := lib.names.find(FUTURE_REPLACEMENT)
 			if model.ends_with(bad) and good >= 0:
