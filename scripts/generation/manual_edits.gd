@@ -61,6 +61,30 @@ const EDITS := [
 ## Kinds taken away everywhere: the airport, the urban ghetto block and the wings of the prison.
 const DELETED_KINDS := ["AIRPORT", "RUSSIAN", "PRISON_WING"]
 
+## Futuristic towers of the urban island taken away by hand: the top-left cell of their lot on
+## the final map (the island is rebuilt last, so these cells are final).
+const DELETED_URBAN_TOWERS: Array[Vector2i] = [
+	Vector2i(55,225), Vector2i(52,227), Vector2i(62,214), Vector2i(65,197),
+	Vector2i(60,198), Vector2i(58,194), Vector2i(48,202), Vector2i(37,181),
+	Vector2i(36,196), Vector2i(36,200), Vector2i(37,204), Vector2i(44,212),
+	Vector2i(48,212), Vector2i(58,210), Vector2i(41,177), Vector2i(35,144),
+	Vector2i(35,147), Vector2i(38,148), Vector2i(50,161), Vector2i(41,154),
+	Vector2i(53,157), Vector2i(57,157), Vector2i(61,157), Vector2i(72,146),
+	Vector2i(70,142), Vector2i(47,144), Vector2i(41,139),
+]
+
+## Other buildings taken away by hand: kind and top-left cell of the lot on the final map.
+const DELETED_AT := [
+	["BALLOON", Vector2i(250, 141)],
+	["HOTEL", Vector2i(206, 302)],
+	["HOTEL", Vector2i(182, 301)],
+	["PIER", Vector2i(138, 291)],
+]
+## Buildings drawn at another size by hand: kind, top-left cell of the lot, size factor.
+const RESIZED_AT := [
+	["BOAT", Vector2i(211, 40), 0.5],
+]
+
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
 const BALLOON_MOUNTAIN := Vector2i(177, 101)
@@ -252,3 +276,23 @@ static func _all_desert(data: CityData, r: Rect2i) -> bool:
 			if data.zone[data.idx(x, y)] != CityTypes.Zone.DESERT:
 				return false
 	return true
+
+
+## Deletes the buildings of DELETED_URBAN_TOWERS and DELETED_AT, resizes those of RESIZED_AT (run after the urban island is rebuilt).
+## Returns how many were found.
+static func delete_urban_towers(data: CityData) -> int:
+	var found := 0
+	for b in data.building_count():
+		var at := data.building_rect(b).position
+		if data.b_kind[b] == CityTypes.Kind.FUTURE_BLDG and DELETED_URBAN_TOWERS.has(at):
+			data.b_kind[b] = CityTypes.Kind.EMPTY
+			found += 1
+		for d in DELETED_AT:
+			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
+				data.b_kind[b] = CityTypes.Kind.EMPTY
+				found += 1
+		for d in RESIZED_AT:
+			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
+				data.b_scale[b] = d[2]
+				found += 1
+	return found
