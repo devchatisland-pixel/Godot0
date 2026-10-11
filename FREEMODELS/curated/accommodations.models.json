@@ -2,14 +2,6 @@
 	"file": "accommodations.glb",
 	"models": [
 		{
-			"cat": "HOTEL_PACK",
-			"node": "hotel_star"
-		},
-		{
-			"cat": "HOTEL_PACK",
-			"node": "hotel_big"
-		},
-		{
 			"cat": "VILLA",
 			"node": "villa3"
 		},

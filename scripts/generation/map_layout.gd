@@ -53,8 +53,6 @@ const POINTS := {
 	"ferris": Vector2i(146, 221),
 	# Where the search for the plot of the nuclear plant starts.
 	"plant": Vector2i(39, 105),
-	# Where the search for the forest fire truck starts.
-	"fire_truck": Vector2i(172, 70),
 	# The flying saucer: far from the city and from the secret base, in the south of the desert.
 	"ufo": Vector2i(64, 152),
 	# The balloon (cell of its centre; it floats).
@@ -65,6 +63,17 @@ const POINTS := {
 	"tanker": Vector2i(40, 76),
 	# Sea north of the main island, where the wooden boat lies.
 	"north_sea": Vector2i(150, 30),
+}
+
+## Cells picked by hand on the map as it is (the dev inspector): not scaled.
+const FIXED_POINTS := {
+	# The forest fire truck and the north-east watchtower stand together here (their old
+	# place, near the north-east beach, is the concert camp now).
+	"fire_truck": Vector2i(150, 80),
+	"watchtower": Vector2i(150, 80),
+	# The concert camp near the north-east beach: its two opposite corners (cells included).
+	"concert_from": Vector2i(200, 50),
+	"concert_to": Vector2i(210, 60),
 }
 
 const POINT_LISTS := {
@@ -118,6 +127,8 @@ static func palm_islets() -> Array:
 
 
 static func point(name: String) -> Vector2i:
+	if FIXED_POINTS.has(name):
+		return FIXED_POINTS[name]
 	return scaled(POINTS[name])
 
 

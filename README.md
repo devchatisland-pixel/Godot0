@@ -313,6 +313,7 @@ Not used:
 * "Low Poly UFO Scene" by EdwinRC (CC BY 4.0), "Highway" by Genkidonky (CC BY 4.0)
 * "Pier (Game ready model)" by BlackBox613 and "Old pier" by smitecraft.swe, CC BY 4.0
 * "neon game controller" by alina_dreiman and "Neon Pac-Man" by patrakeevasveta, CC BY 4.0
+* "LOWPOLY CITY STREET PACK BUILDINGS STYLIZED" by haykel-shaba, CC BY 4.0 (the stage, floodlights, bleachers and crowd barriers of the concert camp; raw file kept out of git)
 * "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)
 * "XXX Neon Sign" by Jimmy Johansson, CC BY 4.0 (only a front render of it is used, as the XXX texture of the sign atlas)
 * "[Free] Buildings Low Poly" by GraphOrigin, CC BY 4.0

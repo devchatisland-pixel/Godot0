@@ -454,16 +454,6 @@
           "cat": "SHOP2"
         },
         {
-          "id": "m4",
-          "region": [
-            -6.8,
-            -14.0,
-            -0.2,
-            -8.8
-          ],
-          "cat": "HOTEL_SMALL"
-        },
-        {
           "id": "m5",
           "region": [
             1.7,
@@ -472,16 +462,6 @@
             -8.8
           ],
           "cat": "SHOP2"
-        },
-        {
-          "id": "m6",
-          "region": [
-            10.1,
-            -14.0,
-            16.0,
-            -8.8
-          ],
-          "cat": "HOTEL_SMALL"
         },
         {
           "id": "m7",
@@ -691,37 +671,9 @@
           "cat": "TOWN2"
         },
         {
-          "id": "hotel0",
-          "nodes": [
-            "Cube_011"
-          ],
-          "cat": "HOTEL_SMALL"
-        },
-        {
           "id": "hotel1",
           "nodes": [
             "Cube_014"
-          ],
-          "cat": "HOTEL_SMALL"
-        },
-        {
-          "id": "hotel2",
-          "nodes": [
-            "Cube_016"
-          ],
-          "cat": "HOTEL_SMALL"
-        },
-        {
-          "id": "hotel3",
-          "nodes": [
-            "Cube_024"
-          ],
-          "cat": "HOTEL_SMALL"
-        },
-        {
-          "id": "hotel4",
-          "nodes": [
-            "Cube_031"
           ],
           "cat": "HOTEL_SMALL"
         },
@@ -826,7 +778,7 @@
       ],
       "texture_max": 256
     },
-        {
+    {
       "src": "res://FREEMODELS/_incoming/city_street_pack.glb",
       "out": "street",
       "scale": 0.2,
@@ -937,20 +889,6 @@
       "out": "accommodations",
       "scale": 0.4,
       "items": [
-        {
-          "id": "hotel_star",
-          "nodes": [
-            "PublicBuilding_1"
-          ],
-          "cat": "HOTEL_PACK"
-        },
-        {
-          "id": "hotel_big",
-          "nodes": [
-            "PublicBuilding_2"
-          ],
-          "cat": "HOTEL_PACK"
-        },
         {
           "id": "villa3",
           "nodes": [
@@ -1078,7 +1016,7 @@
       ],
       "texture_max": 384
     },
-        {
+    {
       "src": "res://FREEMODELS/_incoming/industrial_building.glb",
       "out": "industrial",
       "footprint": 6.0,
@@ -1224,7 +1162,7 @@
         }
       ]
     },
-        {
+    {
       "src": "res://FREEMODELS/_incoming/night_skyline_2.glb",
       "out": "future",
       "keep_emission": true,
@@ -1362,6 +1300,128 @@
           "footprint": 3.2
         }
       ]
-    }
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/street_stylized.glb",
+      "out": "concert",
+      "comment": "Music festival stage and its props, from LOWPOLY CITY STREET PACK BUILDINGS STYLIZED (haykel-shaba, CC-BY-4.0). One scale for all so they keep their sizes.",
+      "scale": 0.0019,
+      "texture_max": 256,
+      "items": [
+        {
+          "id": "concert_stage",
+          "nodes": [
+            "Cube.009",
+            "Cube.011",
+            "Cube.020",
+            "Cube.022",
+            "Cube.024",
+            "Cube.025",
+            "Cube.030",
+            "Cube.031",
+            "Cube.033",
+            "Cube.035",
+            "Cube.036",
+            "Cube.037",
+            "Cube.038",
+            "Cube.040",
+            "Cube.041",
+            "Cube.042",
+            "Cube.048",
+            "Cube.049",
+            "Cube.050",
+            "Cube.054",
+            "Cube.055",
+            "Cube.056",
+            "Cube.057",
+            "Cube.058",
+            "Cube.059",
+            "Cube.060",
+            "Cube.061",
+            "Cube.062",
+            "Cube.063",
+            "Cube.064",
+            "Cube.065",
+            "Cube.066",
+            "Cube.067",
+            "Cube.068",
+            "Cube.069",
+            "Cube.070",
+            "Cube.071",
+            "Cube.072",
+            "Cube.073",
+            "Cube.074",
+            "Cube.075",
+            "Cube.076",
+            "Cube.077",
+            "Cube.078",
+            "Cube.079",
+            "Cube.080",
+            "Cube.081",
+            "Cube.082",
+            "Cube.083",
+            "Cube.084",
+            "Cube.085",
+            "Cube.086",
+            "Cube.087",
+            "Cube.088",
+            "Cube.089",
+            "Cube.090",
+            "Cube.091",
+            "Cube.092",
+            "Cube.094",
+            "Cube.240",
+            "Cylinder",
+            "Cylinder.001",
+            "Cylinder.004",
+            "Cylinder.005",
+            "Cylinder.006",
+            "Cylinder.007",
+            "Cylinder.008",
+            "Cylinder.011",
+            "Cylinder.012",
+            "MUSICSTORE_LOD1.001",
+            "MUSICSTORE_LOD1.002",
+            "MUSICSTORE_LOD1.003",
+            "MUSICSTORE_LOD1.004",
+            "MUSICSTORE_LOD1.005",
+            "MUSICSTORE_LOD1.006",
+            "MUSICSTORE_LOD1.007",
+            "Plane.006",
+            "Plane.007",
+            "Plane.008",
+            "Plane.009",
+            "Plane.010",
+            "Plane.011",
+            "Plane.012",
+            "Plane.013",
+            "Plane.014",
+            "Plane.015"
+          ],
+          "cat": "CONCERT_STAGE"
+        },
+        {
+          "id": "floodlight",
+          "nodes": [
+            "Cube.189"
+          ],
+          "cat": "FLOODLIGHT"
+        },
+        {
+          "id": "bleacher",
+          "nodes": [
+            "Cube.029"
+          ],
+          "cat": "BLEACHER"
+        },
+        {
+          "id": "crowd_barrier",
+          "nodes": [
+            "Cube.026"
+          ],
+          "cat": "CROWD_BARRIER"
+        }
       ]
+    }
+  ]
 }

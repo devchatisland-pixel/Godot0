@@ -31,7 +31,7 @@ const NAMES := {
 	"PIRATE_SHIP": "Pirate ship", "GRAVE": "Pirate grave", "FIELD": "Crop field",
 	"OUTPOST": "Farm or ranch building", "INDUSTRIAL_YARD": "Industrial yard", "SHOP": "Shop",
 	"AIRPORT": "Airport", "COOLING_TOWER": "Cooling tower", "COOLING_HALL": "Cooling hall",
-	"BT_TOWER": "BT tower", "WATCHTOWER": "Watchtower", "EMPTY": "Cleared lot", "BEACH_HUT": "Beach hut", "PIER": "Pier", "BOAT": "Boat", "FIRE_TRUCK": "Forest fire truck (CCF)", "BALLOON": "Hot air balloon", "BILLBOARD": "Billboard", "UFO": "Flying saucer", "TANK": "Tank", "BUS_STOP": "Bus stop",
+	"BT_TOWER": "BT tower", "WATCHTOWER": "Watchtower", "EMPTY": "Cleared lot", "BEACH_HUT": "Beach hut", "PIER": "Pier", "BOAT": "Boat", "FIRE_TRUCK": "Forest fire truck (CCF)", "BALLOON": "Hot air balloon", "BILLBOARD": "Billboard", "UFO": "Flying saucer", "TANK": "Tank", "BUS_STOP": "Bus stop", "CONCERT": "Concert camp",
 }
 const FACINGS := ["N", "E", "S", "W"]
 

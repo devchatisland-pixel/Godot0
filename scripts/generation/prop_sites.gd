@@ -80,18 +80,21 @@ func _near(near: Vector2i, size: Vector2i, zone: int, reach: int, in_park: bool 
 
 
 # --- Fire truck, balloon, billboards --------------------------------------------------------------
+## At its point, beside the north-east watchtower: in the forest if there is some right there,
+## else on the nearest free nature ground.
 func _fire_truck() -> int:
-	for radius in 24:
-		for dy in range(-radius, radius + 1):
-			for dx in range(-radius, radius + 1):
-				if maxi(absi(dx), absi(dy)) != radius:
-					continue
-				var r := Rect2i(MapLayout.point("fire_truck") + Vector2i(dx, dy), Vector2i(2, 3))
-				var c := r.get_center()
-				if _data.in_bounds(c.x, c.y) and _data.forest[_data.idx(c.x, c.y)] >= FOREST_MIN \
-						and _free(r, Zone.NATURE):
-					_add(r, Kind.FIRE_TRUCK, 2, 1)
-					return 1
+	for step: Array in [[4, FOREST_MIN], [24, 0]]:
+		for radius in int(step[0]):
+			for dy in range(-radius, radius + 1):
+				for dx in range(-radius, radius + 1):
+					if maxi(absi(dx), absi(dy)) != radius:
+						continue
+					var r := Rect2i(MapLayout.point("fire_truck") + Vector2i(dx, dy) - Vector2i(1, 1), Vector2i(2, 3))
+					var c := r.get_center()
+					if _data.in_bounds(c.x, c.y) and _data.forest[_data.idx(c.x, c.y)] >= int(step[1]) \
+							and _free(r, Zone.NATURE):
+						_add(r, Kind.FIRE_TRUCK, 2, 1)
+						return 1
 	return 0
 
 
