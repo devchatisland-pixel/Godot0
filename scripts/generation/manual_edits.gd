@@ -24,6 +24,9 @@ extends RefCounted
 ## Edit index -> building number it was applied to (filled by `apply`; read by the tests
 ## and by BuildingBudget).
 static var resolved := {}
+## Building numbers deleted by DELETED_URBAN_TOWERS / DELETED_AT (filled by `delete_urban_towers`):
+## they win over an entry of EDITS that changed the same building (read by the tests).
+static var hand_deleted := {}
 
 const EDITS := [
 	{"kind": "CRANE", "near": Vector2i(132, 165), "facing": 1},
@@ -282,14 +285,17 @@ static func _all_desert(data: CityData, r: Rect2i) -> bool:
 ## Returns how many were found.
 static func delete_urban_towers(data: CityData) -> int:
 	var found := 0
+	hand_deleted.clear()
 	for b in data.building_count():
 		var at := data.building_rect(b).position
 		if data.b_kind[b] == CityTypes.Kind.FUTURE_BLDG and DELETED_URBAN_TOWERS.has(at):
 			data.b_kind[b] = CityTypes.Kind.EMPTY
+			hand_deleted[b] = true
 			found += 1
 		for d in DELETED_AT:
 			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
 				data.b_kind[b] = CityTypes.Kind.EMPTY
+				hand_deleted[b] = true
 				found += 1
 		for d in RESIZED_AT:
 			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:

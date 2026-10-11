@@ -55,7 +55,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		if mid < 0:
 			continue
 		var at: Vector2 = p["at"]
-		var s := VehicleSites.CELLS_PER_METRE * POLICE_SCALE.get(String(p["id"]), 1.0)
+		var s: float = VehicleSites.CELLS_PER_METRE * POLICE_SCALE.get(String(p["id"]), 1.0)
 		var mi := MeshInstance3D.new()
 		mi.mesh = lib.meshes[mid]
 		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * s),
