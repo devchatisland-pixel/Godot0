@@ -59,6 +59,8 @@ var west_bridge := Vector3i(-1, -1, -1)
 ## Where the motorhome of the desert stands (cells): the place the secret base left when it
 ## took the motorhome's spot (ManualEdits.swap_base); x < 0 = VehicleSites picks it.
 var rv_spot := Vector2(-1, -1)
+## The central park round the pond (AmenitiesPlanner); GroundPlacer grows fewer trees there.
+var central_park := Rect2i()
 ## The island hidden in the fog, east of the map (FogIslandShaper).
 var fog: FogIslandShaper
 

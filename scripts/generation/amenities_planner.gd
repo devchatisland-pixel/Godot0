@@ -76,6 +76,7 @@ func _park() -> void:
 		for x in range(c.x - PARK_REACH, c.x + PARK_REACH):
 			if _data.in_bounds(x, y) and _data.zone[_data.idx(x, y)] == Zone.PARK:
 				park = park.expand(Vector2i(x, y))
+	_data.central_park = park.grow(1)
 	# Two wide paths cross the park through the lake; a ring path goes round the lake.
 	for x in range(park.position.x, park.end.x):
 		_path(Vector2i(x, c.y - 1))
@@ -253,6 +254,10 @@ func _fences() -> void:
 			_clear_fence_line(f["rect"])
 			var gates: Array = f["gates"]
 			_fence_ring(f["rect"], [gates[0], gates[0] + Vector2i(0, 1), gates[1], gates[1] + Vector2i(1, 0)])
+	# The jail: metal fence round the prison lot.
+	for b in _data.building_count():
+		if _data.b_kind[b] == Kind.PRISON:
+			_fence_ring(_data.building_rect(b).grow(1), [])
 	# The facility of the BT tower islet: everything built on the islet, grown by one cell.
 	var islet := Rect2i()
 	var any := false
