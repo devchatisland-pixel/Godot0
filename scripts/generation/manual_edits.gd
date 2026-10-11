@@ -24,7 +24,7 @@ extends RefCounted
 ## Edit index -> building number it was applied to (filled by `apply`; read by the tests
 ## and by BuildingBudget).
 static var resolved := {}
-## Building numbers deleted by DELETED_URBAN_TOWERS / DELETED_AT (filled by `delete_urban_towers`):
+## Building numbers deleted by DELETED_AT (filled by `delete_by_hand`):
 ## they win over an entry of EDITS that changed the same building (read by the tests).
 static var hand_deleted := {}
 
@@ -64,31 +64,6 @@ const EDITS := [
 ## Kinds taken away everywhere: the airport, the urban ghetto block and the wings of the prison.
 const DELETED_KINDS := ["AIRPORT", "RUSSIAN", "PRISON_WING"]
 
-## Futuristic towers of the urban island taken away by hand: the top-left cell of their lot on
-## the final map (the island is rebuilt last, so these cells are final).
-const DELETED_URBAN_TOWERS: Array[Vector2i] = [
-	Vector2i(55,225), Vector2i(52,227), Vector2i(62,214), Vector2i(65,197),
-	Vector2i(60,198), Vector2i(58,194), Vector2i(48,202), Vector2i(37,181),
-	Vector2i(36,196), Vector2i(36,200), Vector2i(37,204), Vector2i(44,212),
-	Vector2i(48,212), Vector2i(58,210), Vector2i(41,177), Vector2i(35,144),
-	Vector2i(35,147), Vector2i(38,148), Vector2i(50,161), Vector2i(41,154),
-	Vector2i(53,157), Vector2i(57,157), Vector2i(61,157), Vector2i(72,146),
-	Vector2i(70,142), Vector2i(47,144), Vector2i(41,139),
-	# Second batch.
-	Vector2i(42,220), Vector2i(48,226), Vector2i(55,222), Vector2i(52,219),
-	Vector2i(39,215), Vector2i(55,211), Vector2i(52,203), Vector2i(51,210),
-	Vector2i(57,198), Vector2i(39,171), Vector2i(45,200), Vector2i(44,141),
-	Vector2i(44,156), Vector2i(37,152), Vector2i(42,174), Vector2i(48,199),
-	Vector2i(40,205), Vector2i(52,223), Vector2i(45,137),
-	# Third batch.
-	Vector2i(49,222), Vector2i(58,222), Vector2i(45,223), Vector2i(44,208),
-	Vector2i(58,206), Vector2i(45,204), Vector2i(42,198), Vector2i(42,191),
-	Vector2i(36,192), Vector2i(39,194), Vector2i(42,187), Vector2i(50,184),
-	Vector2i(51,181), Vector2i(58,181), Vector2i(59,175), Vector2i(47,155),
-	Vector2i(47,164), Vector2i(44,152), Vector2i(65,182), Vector2i(65,186),
-	Vector2i(65,190),
-]
-
 ## Other buildings taken away by hand: kind and top-left cell of the lot on the final map.
 const DELETED_AT := [
 	["BALLOON", Vector2i(250, 141)],
@@ -100,6 +75,19 @@ const DELETED_AT := [
 	["SHOP", Vector2i(170, 191)],
 	["BILLBOARD", Vector2i(168, 187)],
 	["OIL_PUMP", Vector2i(93, 168)],
+	["BILLBOARD", Vector2i(260, 85)],
+	["BILLBOARD", Vector2i(276, 256)],
+	["TANK", Vector2i(100, 143)],
+	["INDUSTRIAL", Vector2i(28, 94)],
+	["INDUSTRIAL", Vector2i(38, 94)],
+	["INDUSTRIAL", Vector2i(29, 83)],
+	["INDUSTRIAL_YARD", Vector2i(32, 86)],
+	["INDUSTRIAL_YARD", Vector2i(28, 88)],
+	["INDUSTRIAL_YARD", Vector2i(37, 86)],
+	["BOAT", Vector2i(167, 338)],
+	["BOAT", Vector2i(21, 300)],
+	["OIL_PUMP", Vector2i(121, 140)],
+	["OUTPOST", Vector2i(122, 145)],
 ]
 ## Cleared lots that get a farm building back: top-left cell, model (as the library names it).
 const FARM_BUILDINGS_AT := [
@@ -314,17 +302,13 @@ static func _all_desert(data: CityData, r: Rect2i) -> bool:
 	return true
 
 
-## Deletes the buildings of DELETED_URBAN_TOWERS and DELETED_AT, resizes those of RESIZED_AT (run after the urban island is rebuilt).
+## Deletes the buildings of DELETED_AT, resizes those of RESIZED_AT (run after the urban island is rebuilt).
 ## Returns how many were found.
-static func delete_urban_towers(data: CityData) -> int:
+static func delete_by_hand(data: CityData) -> int:
 	var found := 0
 	hand_deleted.clear()
 	for b in data.building_count():
 		var at := data.building_rect(b).position
-		if data.b_kind[b] == CityTypes.Kind.FUTURE_BLDG and DELETED_URBAN_TOWERS.has(at):
-			data.b_kind[b] = CityTypes.Kind.EMPTY
-			hand_deleted[b] = true
-			found += 1
 		for d in DELETED_AT:
 			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
 				data.b_kind[b] = CityTypes.Kind.EMPTY

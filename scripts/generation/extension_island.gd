@@ -73,8 +73,9 @@ func _build_extended_elevation() -> void:
 		for x in size:
 			var t := _ellipse_t(Vector2(x, y), main_at, main_r, 0.0)
 			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x, y) * _cfg.coast_noise * COAST_ROUGHNESS)
-	for lobe in [MapLayout.blob("urban"), MapLayout.blob("urban_north"), MapLayout.blob("tower_islet"), MapLayout.blob("dev_island")]:
-		_raise_lobe(coast, lobe["at"], lobe["r"])
+	for lobe in [MapLayout.blob("urban"), MapLayout.blob("urban_north"), MapLayout.blob("tower_islet")]:
+		_rough_lobe(coast, lobe["at"], lobe["r"])
+	_raise_lobe(coast, MapLayout.blob("dev_island")["at"], MapLayout.blob("dev_island")["r"])
 	for it in MapLayout.palm_islets():
 		_islet(coast, it["at"], Vector2(it["r"], it["r"]), 0.0, 0.3, 0.05, 3.0)
 	_islet(coast, MapLayout.blob("prison")["at"], MapLayout.blob("prison")["r"], MapLayout.blob("prison")["turn"], 0.4, 0.15, 2.7)
@@ -93,6 +94,44 @@ func _raise_lobe(coast: FastNoiseLite, at: Vector2, r: Vector2) -> void:
 		for x in range(maxi(int(at.x - r.x * 1.4), 0), mini(int(at.x + r.x * 1.4), size)):
 			var t := _ellipse_t(Vector2(x, y), at, r, 0.0)
 			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x * 1.4, y * 1.4) * 0.12)
+
+
+## A lobe with a natural coast, like the prison island: bays and capes cut by two layers of
+## noise. The noise only ever cuts inwards (the land stays inside 1.15 of the ellipse, where
+## the zone tests of the island look), and never on the lots of the nuclear plants
+## (UrbanIslandRebuild.PLANT_LOTS), which keep their place.
+## Strength and frequency (times the coast noise) of the two layers, and the most a cape may
+## add (the land stays inside 1.15 of the ellipse: 1 - 1.15^2 + 0.3 < 0).
+const ROUGH_COAST := Vector2(0.4, 0.16)
+const ROUGH_FREQ := Vector2(2.7, 6.5)
+const ROUGH_CAPE := 0.3
+## The middle of a lobe (t below this) and a strip along the spine of the urban island (from
+## the middle of its south lobe to the middle of its north lobe, this many cells either side)
+## are never cut, so the island stays in one piece.
+const ROUGH_CORE := 0.6
+const SPINE_HALF_WIDTH := 6.0
+
+
+func _rough_lobe(coast: FastNoiseLite, at: Vector2, r: Vector2) -> void:
+	var size := _data.size
+	var keep: Array[Rect2i] = []
+	for lot: Rect2i in UrbanIslandRebuild.PLANT_LOTS:
+		keep.append(lot.grow(3))
+	var spine_a: Vector2 = MapLayout.blob("urban")["at"]
+	var spine_b: Vector2 = MapLayout.blob("urban_north")["at"]
+	for y in range(maxi(int(at.y - r.y * 1.3), 0), mini(int(at.y + r.y * 1.3), size)):
+		for x in range(maxi(int(at.x - r.x * 1.4), 0), mini(int(at.x + r.x * 1.4), size)):
+			var t := _ellipse_t(Vector2(x, y), at, r, 0.0)
+			var n := minf(coast.get_noise_2d(x * ROUGH_FREQ.x, y * ROUGH_FREQ.x) * ROUGH_COAST.x 					+ coast.get_noise_2d(x * ROUGH_FREQ.y + 311.0, y * ROUGH_FREQ.y) * ROUGH_COAST.y, ROUGH_CAPE)
+			if t < ROUGH_CORE:
+				n = maxf(n, 0.0)
+			var p := Vector2(x, y) + Vector2(0.5, 0.5)
+			if p.distance_to(Geometry2D.get_closest_point_to_segment(p, spine_a, spine_b)) < SPINE_HALF_WIDTH:
+				n = maxf(n, 0.15)
+			for k in keep:
+				if k.has_point(Vector2i(x, y)):
+					n = maxf(n, 0.15)
+			_raise(x, y, 1.0 - t * t + n)
 
 
 func _islet(coast: FastNoiseLite, at: Vector2, r: Vector2, turn: float, lift: float,

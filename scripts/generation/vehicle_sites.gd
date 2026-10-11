@@ -58,6 +58,7 @@ func _run() -> void:
 	_ranch_wreck()
 	_drive_in_cars()
 	_prison_helicopters()
+	_plant_road()
 	if REGULAR_CARS:
 		_cinema_parking()
 
@@ -681,6 +682,28 @@ func _clear_radius(c: Vector2i, max_r: int) -> int:
 
 
 # --- Prison island, cinema -----------------------------------------------------------------------
+
+## The street in front of the southern nuclear plant of the urban island: a police car and a
+## fire truck parked on it (UrbanIslandRebuild lays the street and the yard beside it).
+func _plant_road() -> void:
+	var plant := Rect2i()
+	for b in _d.building_count():
+		var r := _d.building_rect(b)
+		if _d.b_kind[b] == Kind.NUCLEAR_PLANT and MapLayout.on_urban_island(r.get_center()) 				and (plant.size.x == 0 or r.position.y > plant.position.y):
+			plant = r
+	if plant.size.x == 0:
+		return
+	var spots: Array[Vector2i] = []
+	for x in range(plant.position.x + 3, plant.end.x - 2):
+		var m := _d.road_mask(x, plant.end.y)
+		if _d.is_road(x, plant.end.y) and m == (CityTypes.DIR_E | CityTypes.DIR_W):
+			spots.append(Vector2i(x, plant.end.y))
+	if spots.size() < 2:
+		push_warning("[Vehicles] no straight road in front of the plant")
+		return
+	_add_on_road("police_us_cruiser", spots[1], "on the road of the power plant")
+	_add_on_road("p54_33_fire_truck", spots[spots.size() - 2], "on the road of the power plant")
+
 
 ## Prison island: a military helicopter hovering over the sea between the main island and
 ## the prison island, another one on the ground beside the lighthouse of the island, and an

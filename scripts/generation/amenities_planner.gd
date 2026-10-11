@@ -254,6 +254,10 @@ func _fences() -> void:
 			_clear_fence_line(f["rect"])
 			var gates: Array = f["gates"]
 			_fence_ring(f["rect"], [gates[0], gates[0] + Vector2i(0, 1), gates[1], gates[1] + Vector2i(1, 0)])
+	# The nuclear plants of the urban island (their street runs along the south side).
+	for b in _data.building_count():
+		if _data.b_kind[b] == Kind.NUCLEAR_PLANT and MapLayout.on_urban_island(_data.building_rect(b).get_center()):
+			_fence_ring(_data.building_rect(b).grow(1), [])
 	# The jail: metal fence round the prison lot.
 	for b in _data.building_count():
 		if _data.b_kind[b] == Kind.PRISON:
