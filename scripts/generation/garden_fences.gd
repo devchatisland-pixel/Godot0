@@ -1,7 +1,7 @@
 class_name GardenFences
 extends RefCounted
 ## Wooden fences round the gardens of the suburbs: every house, small block and garden lot of
-## the SUBURBAN zone gets a fence along the border of its lot, with a gate in the middle of
+## the SUBURBAN and CIVIC zones gets a fence along the border of its lot, with a gate in the middle of
 ## its front side. Lots side by side share one fence. Written into CityData.fence_edge
 ## (GroundPlacer draws it); nothing else of the map changes.
 
@@ -9,6 +9,8 @@ const Kind := CityTypes.Kind
 
 ## Kinds whose lot is fenced (a house with its garden, or the garden alone).
 const FENCED: Array[int] = [Kind.HOUSE, Kind.APARTMENT, Kind.GARDEN]
+## Every house is fenced; small blocks and gardens only in these zones (suburbs, civic land).
+const ZONES: Array[int] = [CityTypes.Zone.SUBURBAN, CityTypes.Zone.CIVIC]
 ## Values of CityData.fence_edge.
 const NORTH := 1
 const WEST := 2
@@ -23,7 +25,7 @@ static func apply(data: CityData) -> int:
 			continue
 		var r := data.building_rect(b)
 		var c := r.get_center()
-		if data.zone_at(c.x, c.y) != CityTypes.Zone.SUBURBAN:
+		if data.b_kind[b] != Kind.HOUSE and not ZONES.has(data.zone_at(c.x, c.y)):
 			continue
 		_fence_lot(data, r, data.b_facing[b])
 		lots += 1

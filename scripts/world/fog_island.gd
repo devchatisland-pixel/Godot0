@@ -86,7 +86,8 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	var fog := data.fog
 	if data.bridge.x < 0 or fog.bridge_land_x < 0.0:
 		return
-	var x0 := float(data.bridge.x) - 0.6
+	# From the start of the last highway cell: the deck covers the end of the road there.
+	var x0 := float(data.bridge.x) - 1.0
 	var x1 := fog.bridge_land_x + 1.0
 	var z := float(data.bridge.y) + 0.5
 	var ids := lib.ids(Cat.METAL_BRIDGE)

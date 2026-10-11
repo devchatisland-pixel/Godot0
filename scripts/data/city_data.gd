@@ -56,9 +56,6 @@ var bridge := Vector2i(-1, -1)
 ## West bridge: (x of the main island's west-most land, x of the urban island's east-most land,
 ## row); x < 0 = none. Drawn by WestBridge with the metal bridge model.
 var west_bridge := Vector3i(-1, -1, -1)
-## Where the motorhome of the desert stands (cells): the place the secret base left when it
-## took the motorhome's spot (ManualEdits.swap_base); x < 0 = VehicleSites picks it.
-var rv_spot := Vector2(-1, -1)
 ## The central park round the pond (AmenitiesPlanner); GroundPlacer grows fewer trees there.
 var central_park := Rect2i()
 ## The island hidden in the fog, east of the map (FogIslandShaper).

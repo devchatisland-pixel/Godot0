@@ -7,9 +7,13 @@ extends RefCounted
 const Kind := CityTypes.Kind
 const Cat := ModelCatalog.Cat
 
-## Helipad of the main hospital model: offset (x, z) from the roof centre and
-## size, as fractions of the model width / depth.
-const HOSPITAL_PAD := Vector3(0.0, 0.0, 0.3)
+## Helipad of the main hospital model: offset (x, z) from the centre of the model's box and
+## size, as fractions of the model width / depth; HOSPITAL_ROOF is the height of the roof as a
+## share of the box height. Measured on public_main.glb's hospital (box 4.74 x 2.317 x 3.0):
+## the roof is at 2.013 (the blue units above it reach 2.317) and its painted helipad is a
+## circle 1.15 across centred at x 0, z -0.358. The lit H sits on it, a little smaller.
+const HOSPITAL_PAD := Vector3(0.0, -0.1193, 0.219)
+const HOSPITAL_ROOF := 0.8688
 ## Size of the F-111 jets of the airbase (the model is 1.3 cells across).
 const JET_SCALE := 0.85
 ## The emblem of the U.N. tower is a bit smaller than the tower is wide.
@@ -67,7 +71,8 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 		Kind.MAIN_HOSPITAL:
 			if ModelPools.is_pack_model(lib, pid, Cat.HOSPITAL_MAIN):
 				# Lit red H over the helipad of the roof.
-				var pad := Vector3(box.get_center().x + box.size.x * HOSPITAL_PAD.x, box.end.y + 0.01,
+				var pad := Vector3(box.get_center().x + box.size.x * HOSPITAL_PAD.x,
+						box.position.y + box.size.y * HOSPITAL_ROOF + 0.005,
 						box.get_center().z + box.size.z * HOSPITAL_PAD.y)
 				var w := box.size.x * HOSPITAL_PAD.z
 				batch.add(lib.named_id("helipad_h"), xform * Transform3D(Basis.from_scale(Vector3(w, 1, w)), pad))

@@ -55,6 +55,8 @@ func _run() -> void:
 	_fire_station_truck()
 	_container_tanker()
 	_desert()
+	_ranch_wreck()
+	_drive_in_cars()
 	_prison_helicopters()
 	if REGULAR_CARS:
 		_cinema_parking()
@@ -427,13 +429,13 @@ func _hospital_ambulance() -> void:
 		push_warning("[Vehicles] no hospital")
 
 
-## A Japanese police car and a US cruiser side by side in front of the city hall.
+## A US police cruiser in front of the city hall.
 func _city_hall_cars() -> void:
 	var b := _biggest(Kind.CITY_HALL)
 	if b < 0:
 		push_warning("[Vehicles] no city hall")
 		return
-	var ids := ["police_jp_black", "police_us_cruiser"]
+	var ids := ["police_us_cruiser"]
 	var r := _d.building_rect(b)
 	var o := CityTypes.FACING_OFFSETS[_d.b_facing[b]]
 	var c := Vector2(r.position) + Vector2(r.size) * 0.5
@@ -441,7 +443,7 @@ func _city_hall_cars() -> void:
 	var front := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + 0.55)
 	var head := Vector2(1, 0) if o.y != 0 else Vector2(0, 1)
 	for k in ids.size():
-		var p := front + head * (float(k) - 0.5) * 1.15
+		var p := front + head * (float(k) - float(ids.size() - 1) * 0.5) * 1.15
 		_add(ids[k], p, head, "in front of the city hall")
 
 
@@ -489,7 +491,8 @@ func _nearest_kind(kind: int, cell: Vector2i) -> int:
 func _police_hq_car() -> void:
 	var b := _biggest(Kind.POLICE_HQ)
 	if b >= 0:
-		_in_front("police_us_cruiser", b, "in front of the main police station")
+		# On the paved front yard (ManualEdits.finish), a little further out than the others.
+		_in_front("police_us_cruiser", b, "in front of the main police station", POLICE_HQ_GAP)
 	else:
 		push_warning("[Vehicles] no main police station")
 
@@ -512,15 +515,16 @@ func _bunker_cars() -> void:
 
 ## Distance (cells) from the front of a lot to the middle of a car parked in front of it.
 const FRONT_GAP := 0.35
+const POLICE_HQ_GAP := 0.45
 
 
 ## Parked on the front side of building `b`, along the road that runs there.
-func _in_front(id: String, b: int, why: String) -> void:
+func _in_front(id: String, b: int, why: String, gap: float = FRONT_GAP) -> void:
 	var r := _d.building_rect(b)
 	var o := CityTypes.FACING_OFFSETS[_d.b_facing[b]]
 	var c := Vector2(r.position) + Vector2(r.size) * 0.5
 	var half := Vector2(r.size) * 0.5
-	var p := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + FRONT_GAP)
+	var p := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + gap)
 	# The road in front of a building runs across the way it looks.
 	var head := Vector2(1, 0) if o.y != 0 else Vector2(0, 1)
 	if CityTypes.hash2(r.position.x, r.position.y, 6) & 1 == 1:
@@ -529,6 +533,48 @@ func _in_front(id: String, b: int, why: String) -> void:
 
 
 # --- Desert, buses -----------------------------------------------------------------------------
+
+## A rusted chassis wreck beside the farm building at RANCH_WRECK.
+const RANCH_WRECK := Vector2i(298, 238)
+
+
+func _ranch_wreck() -> void:
+	var b := _nearest_kind(Kind.OUTPOST, RANCH_WRECK)
+	if b >= 0:
+		_beside("p54_12_wreck_chassis", _d.building_rect(b), "beside the farm building", 131, 0.4, 3.0)
+
+
+## The drive-in cinema: real cars (the lightest of the catalog) in two rows on its lot, their
+## noses towards the screen at the back (the drive-in model is the screen and its lot).
+const DRIVE_IN_CARS: Array[String] = ["p54_24_sedan_hardtop_teal", "p54_03_sedan_classic_maroon",
+		"p54_04_sedan_modern_silver", "p54_01_suv_offroad_navy", "p54_02_van_conversion_white"]
+## Rows (share of the lot depth from its back edge) and cars per row.
+const DRIVE_IN_ROWS: Array[float] = [0.36, 0.6]
+const DRIVE_IN_PER_ROW := 6
+
+
+func _drive_in_cars() -> void:
+	for b in _d.building_count():
+		if _d.b_kind[b] != Kind.DRIVE_IN:
+			continue
+		var r := _d.building_rect(b)
+		var o := Vector2(CityTypes.FACING_OFFSETS[_d.b_facing[b]])
+		var side := Vector2(-o.y, o.x)
+		var depth := float(r.size.y if o.y != 0 else r.size.x)
+		var width := float(r.size.x if o.y != 0 else r.size.y)
+		var back := Vector2(r.position) + Vector2(r.size) * 0.5 - o * depth * 0.5
+		var k := 0
+		for row in DRIVE_IN_ROWS.size():
+			for i in DRIVE_IN_PER_ROW:
+				k += 1
+				var h := CityTypes.hash2(b, k, 451)
+				if h % 6 == 0:
+					continue   # an empty spot
+				var u := (float(i) + 0.5) / float(DRIVE_IN_PER_ROW) - 0.5
+				var p := back + o * depth * DRIVE_IN_ROWS[row] + side * u * width * 0.86
+				out.append({"id": DRIVE_IN_CARS[(h >> 3) % DRIVE_IN_CARS.size()], "at": p,
+						"yaw": atan2(o.x, o.y), "why": "at the drive-in cinema"})
+
 
 ## Cells of the desert, the clearest first (no road, building or water around them), every
 ## third cell; the lot of building `skip` counts as free. ManualEdits.swap_base reads them.
@@ -561,18 +607,63 @@ func _desert() -> void:
 	if scored.is_empty():
 		push_warning("[Vehicles] no desert")
 		return
-	var rv: Vector2i = scored[0]["c"]
-	var why := "middle of the desert"
-	if _d.rv_spot.x >= 0:
-		rv = Vector2i(_d.rv_spot.floor())
-		why = "where the secret base stood"
-	_add("p54_31_rv_class_a_beige", Vector2(rv) + Vector2(0.5, 0.5), Vector2(1, 0), why)
+	var rv := _rv_spot(scored)
+	_add("p54_31_rv_class_a_beige", Vector2(rv) + Vector2(0.5, 0.5), Vector2(1, 0), "middle of the south of the desert")
 	for s in scored:
 		var c: Vector2i = s["c"]
 		if s["r"] >= 3 and Vector2(c).distance_to(Vector2(rv)) > 18.0 and _free(c.x, c.y):
 			_add("p54_12_wreck_chassis", Vector2(c) + Vector2(0.5, 0.5), Vector2(0, 1), "in the desert")
 			return
 	push_warning("[Vehicles] no spot for the wreck")
+
+
+## The motorhome: in the south half of the desert, as far from roads and buildings as it gets
+## (the clear radius), away from the secret base and the flying saucer, and near the middle of
+## that half. `scored`: desert cells, clearest first (_desert_scored).
+const RV_AWAY_BASE := 30.0
+const RV_AWAY_UFO := 20.0
+
+
+func _rv_spot(scored: Array[Dictionary]) -> Vector2i:
+	var sum := Vector2.ZERO
+	var n := 0
+	for y in _d.size:
+		for x in _d.size:
+			if _d.zone[_d.idx(x, y)] == Zone.DESERT and _d.is_land(x, y):
+				sum += Vector2(x, y)
+				n += 1
+	var middle := sum / float(maxi(n, 1))
+	var south := Vector2.ZERO
+	var ns := 0
+	for e in scored:
+		if float(e["c"].y) >= middle.y:
+			south += Vector2(e["c"])
+			ns += 1
+	if ns > 0:
+		middle = south / float(ns)
+	var avoid: Array = []
+	for b in _d.building_count():
+		if _d.b_kind[b] == Kind.AIRBASE:
+			avoid.append([Vector2(_d.building_rect(b).get_center()), RV_AWAY_BASE])
+		elif _d.b_kind[b] == Kind.UFO:
+			avoid.append([Vector2(_d.building_rect(b).get_center()), RV_AWAY_UFO])
+	var best: Vector2i = scored[0]["c"]
+	var best_key := -INF
+	for e in scored:
+		var c := Vector2(e["c"])
+		if c.y < middle.y - 6.0:
+			continue
+		var ok := true
+		for a in avoid:
+			if c.distance_to(a[0]) < a[1]:
+				ok = false
+		if not ok:
+			continue
+		var key := float(e["r"]) * 10.0 - c.distance_to(middle)
+		if key > best_key:
+			best_key = key
+			best = e["c"]
+	return best
 
 
 ## Largest r <= max_r so that no road, building or water lies within r cells (square) of `c`.
