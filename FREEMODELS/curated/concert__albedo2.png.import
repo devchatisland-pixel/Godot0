@@ -2,19 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpuu37pya80te"
-path="res://.godot/imported/carto__albedo32.png-29e7229f944b8a53f079d4dfc4ce8936.ctex"
+uid="uid://chp5kf3slimfp"
+path="res://.godot/imported/concert__albedo2.png-949667b8fb764826e339f58057e1b324.ctex"
 metadata={
 "vram_texture": false
 }
 generator_parameters={
-"md5": "dbd97920739dc5af1d3db1ed7aec5372"
+"md5": "b527a16d6738d5993866683b0483ee75"
 }
 
 [deps]
 
-source_file="res://FREEMODELS/curated/carto__albedo32.png"
-dest_files=["res://.godot/imported/carto__albedo32.png-29e7229f944b8a53f079d4dfc4ce8936.ctex"]
+source_file="res://FREEMODELS/curated/concert__albedo2.png"
+dest_files=["res://.godot/imported/concert__albedo2.png-949667b8fb764826e339f58057e1b324.ctex"]
 
 [params]
 

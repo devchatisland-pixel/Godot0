@@ -35,6 +35,9 @@ const ZONE_COLORS := {
 const PATH := Color("e6d9b0")
 const BOARDWALK := Color("a8794a")
 const DRY_GRASS := Color("c7bb78")
+## Mud of the concert camp and the earth footpath that leads to it.
+const MUD := Color("6b4f33")
+const TRAIL := Color("a08060")
 
 ## Sea colour, also used as background so the ocean looks endless.
 const DEEP_SEA := Color(0.16, 0.45, 0.66)
@@ -103,6 +106,10 @@ func _zone_texture(data: CityData) -> ImageTexture:
 			var deco: int = data.deco[i]
 			if deco == AmenitiesPlanner.PATH:
 				c = PATH
+			elif deco == AmenitiesPlanner.MUD:
+				c = MUD
+			elif deco == AmenitiesPlanner.TRAIL:
+				c = TRAIL
 			elif deco == AmenitiesPlanner.BOARD or deco == AmenitiesPlanner.BOARD_LAMP:
 				c = BOARDWALK
 			elif data.edge[i] != 0:

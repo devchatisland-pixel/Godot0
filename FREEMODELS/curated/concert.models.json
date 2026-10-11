@@ -1,0 +1,21 @@
+{
+	"file": "concert.glb",
+	"models": [
+		{
+			"cat": "CONCERT_STAGE",
+			"node": "concert_stage"
+		},
+		{
+			"cat": "FLOODLIGHT",
+			"node": "floodlight"
+		},
+		{
+			"cat": "BLEACHER",
+			"node": "bleacher"
+		},
+		{
+			"cat": "CROWD_BARRIER",
+			"node": "crowd_barrier"
+		}
+	]
+}

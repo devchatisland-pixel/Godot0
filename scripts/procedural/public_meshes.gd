@@ -1,7 +1,7 @@
 class_name PublicMeshes
 extends RefCounted
 ## Public buildings modelled in the Kenney style: the two museums, the post
-## office, the cemetery and the two grand hotels. Centred on their lot, base
+## office and the cemetery. Centred on their lot, base
 ## at y = 0, front towards +Z, long buildings modelled along X. The building
 ## placer scales them to fill their lot. Windows and lamps glow at night.
 
@@ -23,8 +23,6 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("museum_history", museum_history())
 	lib.add_named("post_office", post_office())
 	lib.add_named("cemetery", cemetery())
-	lib.add_named("hotel_a", hotel(Color("e9dcc8"), Color("7a2338"), false))
-	lib.add_named("hotel_b", hotel(Color("5b7fc4"), Color("2b3550"), true))
 	lib.add_named("golden_arches", golden_arches())
 	lib.add_named("grave", grave())
 
@@ -169,41 +167,6 @@ static func cemetery() -> ArrayMesh:
 	k.box(Vector3(-0.14, 0.2, -1.195), Vector3(0.28, 0.5, 0.01), Color("ffd28a"))
 	for z in [-0.6, 0.6, 1.6]:
 		k.block(Vector3(0.35, 0.02, z), Vector3(0.05, 0.4, 0.05), WHITE)
-	k.glow(false)
-	return k.commit()
-
-
-# --- Grand hotel (3x3): podium with a canopy and sign, tower with a lit crown ----------------
-static func hotel(wall: Color, accent: Color, pool: bool) -> ArrayMesh:
-	var k := MeshKit.new()
-	k.box(Vector3(-1.45, 0, -1.45), Vector3(2.9, 0.02, 2.9), PAVING)
-	var podium := Vector3(-1.3, 0.02, -1.2)
-	k.box(podium, Vector3(2.6, 0.6, 2.2), accent, ROOF)
-	k.windows(podium, Vector3(2.6, 0.6, 2.2), 1, 7, Color("ffe1a8"))
-	var tower := Vector3(-0.9, 0.62, -1.0)
-	var tower_size := Vector3(1.8, 4.2, 1.5)
-	k.box(tower, tower_size, wall, DARK)
-	k.windows(tower, tower_size, 14, 6, WINDOW)
-	# Gold canopy over the entrance, red carpet, flags.
-	k.box(Vector3(-0.6, 0.32, 1.0), Vector3(1.2, 0.05, 0.4), GOLD)
-	k.box(Vector3(-0.15, 0.021, 1.0), Vector3(0.3, 0.004, 0.42), Color("b3202f"))
-	for x in [-1.2, -0.95, 0.95, 1.2]:
-		k.block(Vector3(x, 0.02, 1.3), Vector3(0.025, 0.7, 0.025), WHITE)
-		k.box(Vector3(x + 0.013, 0.56, 1.29), Vector3(0.18, 0.11, 0.01), accent.lightened(0.2))
-	k.front_sign(0.0, 0.62, 0.52, 1.5, "sign_hotel")
-	var top := 0.62 + tower_size.y
-	if pool:
-		k.box(Vector3(-0.8, top, -0.9), Vector3(1.6, 0.04, 1.3), PAVING)
-		k.box(Vector3(-0.5, top + 0.04, -0.6), Vector3(1.0, 0.01, 0.6), Color("4fd2f0"))
-	else:
-		k.box(Vector3(-0.7, top, -0.8), Vector3(1.4, 0.3, 1.1), accent, DARK)
-		k.cylinder(Vector3(0, top + 0.3, -0.25), 0.4, 0.0, 0.5, 4, GOLD)
-	# Lit crown and the outline of the tower top.
-	k.glow(true)
-	k.box(Vector3(-0.92, top - 0.12, 0.5), Vector3(1.84, 0.05, 0.02), WHITE)
-	k.box(Vector3(-0.92, top - 0.12, -1.02), Vector3(1.84, 0.05, 0.02), WHITE)
-	k.box(Vector3(0.9, top - 0.12, -1.0), Vector3(0.02, 0.05, 1.5), WHITE)
-	k.box(Vector3(-0.92, top - 0.12, -1.0), Vector3(0.02, 0.05, 1.5), WHITE)
 	k.glow(false)
 	return k.commit()
 

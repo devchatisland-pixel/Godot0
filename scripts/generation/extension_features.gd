@@ -135,18 +135,22 @@ func _shrink_to_fit(x: int, y: int, w: int, h: int) -> Rect2i:
 
 
 # --- Watchtowers --------------------------------------------------------------------------------
-## Two wooden lookouts, each in the thick of a forest: one in the north-east wood and
-## one in the forest of the old city. A tower needs a free 3x3 plot of dense forest.
+## Two wooden lookouts: one at MapLayout "watchtower" (beside the forest fire truck) and one
+## in the forest of the old city. A tower needs a free 3x3 plot of nature, of dense forest
+## when there is some close by.
 func build_watchtowers(core_forest: Rect2i) -> void:
-	var starts: Array[Vector2i] = [Vector2i(MapLayout.blob("forest")["at"]) + Vector2i(-10, 6), core_forest.get_center()]
+	var starts: Array[Vector2i] = [MapLayout.point("watchtower") - Vector2i(1, 1), core_forest.get_center()]
 	for k in starts.size():
-		var r := _forest_spot(starts[k], Vector2i(3, 3), 16)
+		# The first one must stand at its point: dense forest only if it is right there.
+		var r := _forest_spot(starts[k], Vector2i(3, 3), 3 if k == 0 else 16)
+		if k == 0 and r.size.x == 0:
+			r = _forest_spot(starts[k], Vector2i(3, 3), 16, 0)
 		if r.size.x > 0:
 			_spots.claim(r, Kind.WATCHTOWER, 2, -1, k)
 
 
-## The free plot of nature ground nearest to `near` whose centre has a dense forest.
-func _forest_spot(near: Vector2i, size: Vector2i, max_radius: int) -> Rect2i:
+## The free plot of nature ground nearest to `near` whose centre has at least `min_forest`.
+func _forest_spot(near: Vector2i, size: Vector2i, max_radius: int, min_forest: int = WATCHTOWER_FOREST) -> Rect2i:
 	for radius in max_radius + 1:
 		for dy in range(-radius, radius + 1):
 			for dx in range(-radius, radius + 1):
@@ -154,7 +158,7 @@ func _forest_spot(near: Vector2i, size: Vector2i, max_radius: int) -> Rect2i:
 					continue
 				var r := Rect2i(near + Vector2i(dx, dy), size)
 				var c := r.get_center()
-				if not _data.in_bounds(c.x, c.y) or _data.forest[_data.idx(c.x, c.y)] < WATCHTOWER_FOREST:
+				if not _data.in_bounds(c.x, c.y) or _data.forest[_data.idx(c.x, c.y)] < min_forest:
 					continue
 				if _spots.spot_free(r, Zone.NATURE, 1):
 					return r

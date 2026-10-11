@@ -18,6 +18,8 @@ const SHOTS := [
 	{"zoom": 30.0, "at": Kind.BT_TOWER, "night": true},
 	{"zoom": 22.0, "at": Kind.WATCHTOWER},
 	{"zoom": 30.0, "at": Kind.NIGHTCLUB},
+	{"zoom": 16.0, "at": Kind.CONCERT},
+	{"zoom": 16.0, "at": Kind.FIRE_TRUCK},
 ]
 
 var _dir := "user://"

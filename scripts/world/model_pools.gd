@@ -111,7 +111,8 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.BURGER_KING:
 			return lib.ids(Cat.BURGER_KING)
 		Kind.HOTEL:
-			return _variant_of(_union(lib, [Cat.HOTEL_PACK, Cat.HOTEL_SMALL]), seed)
+			# A single hotel model is kept (the lightest one), every hotel lot draws it.
+			return lib.ids(Cat.HOTEL_SMALL)
 		Kind.FACTORY_BLDG:
 			return _variant_of(_eight_factories(lib), seed)
 		Kind.PRISON_WING:

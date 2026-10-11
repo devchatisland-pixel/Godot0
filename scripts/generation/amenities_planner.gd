@@ -22,6 +22,8 @@ const BOARD := 7
 const BOARD_LAMP := 8
 const FENCE_X := 9      # a piece of fence along X
 const FENCE_Z := 10     # a piece of fence along Z
+const MUD := 11         # trodden ground of the concert camp (ConcertSite)
+const TRAIL := 12       # the footpath from the concert camp to the nearest street
 
 ## Half-width of the area searched for the park round its lake.
 const PARK_REACH := 48

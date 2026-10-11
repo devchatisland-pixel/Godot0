@@ -57,6 +57,8 @@ func generate() -> CityData:
 	# The urban island is rebuilt last, so that nothing else of the map depends on it.
 	print("[City] urban island: ", UrbanIslandRebuild.apply(data))
 	print("[City] buildings deleted or resized by hand (expect 27 + 4 + 1 = 32): ", ManualEdits.delete_urban_towers(data))
+	# The concert camp clears what stands on its square, after the budget has counted it.
+	ConcertSite.apply(data)
 	AmenitiesPlanner.apply(data)
 	print("[City] garden fences: ", GardenFences.apply(data))
 	data.build_chunk_index()
