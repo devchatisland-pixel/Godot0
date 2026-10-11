@@ -30,7 +30,8 @@ static var hand_deleted := {}
 
 const EDITS := [
 	{"kind": "CRANE", "near": Vector2i(132, 165), "facing": 1},
-	{"kind": "CINEMA_MAIN", "near": Vector2i(139, 143), "scale": 0.45},
+	# Drawn at 0.45 of its 8x8 lot; finish() shrinks the lot to its middle 4x4 (same model size).
+	{"kind": "CINEMA_MAIN", "near": Vector2i(139, 143), "scale": 0.9},
 	{"kind": "BANK", "near": Vector2i(139, 157), "scale": 0.6},
 	# A hotel becomes a park with trees, another one the city hall.
 	{"kind": "HOTEL", "near": Vector2i(164, 129), "delete": true, "park": true},
@@ -48,7 +49,6 @@ const EDITS := [
 		"model": "building-type-n.glb", "sign": "NEON_CONTROLLER"},
 	{"kind": "POLICE", "near": Vector2i(171, 154), "sign": "NEON_PACMAN"},
 	{"kind": "POLICE_HQ", "near": Vector2i(118, 148), "scale": 0.75},
-	{"kind": "BURGER_JOINT", "near": Vector2i(110, 153), "scale_abs": 1.0},
 	{"kind": "QUARTER_BLDG", "near": Vector2i(165, 208), "replace": "HOSPITAL"},
 	{"kind": "LIGHTHOUSE", "near": Vector2i(93, 202), "clear_quay": 6},
 	{"kind": "OUTPOST", "near": Vector2i(80, 134), "shift": Vector2i(0, -33)},
@@ -80,6 +80,13 @@ const DELETED_URBAN_TOWERS: Array[Vector2i] = [
 	Vector2i(57,198), Vector2i(39,171), Vector2i(45,200), Vector2i(44,141),
 	Vector2i(44,156), Vector2i(37,152), Vector2i(42,174), Vector2i(48,199),
 	Vector2i(40,205), Vector2i(52,223), Vector2i(45,137),
+	# Third batch.
+	Vector2i(49,222), Vector2i(58,222), Vector2i(45,223), Vector2i(44,208),
+	Vector2i(58,206), Vector2i(45,204), Vector2i(42,198), Vector2i(42,191),
+	Vector2i(36,192), Vector2i(39,194), Vector2i(42,187), Vector2i(50,184),
+	Vector2i(51,181), Vector2i(58,181), Vector2i(59,175), Vector2i(47,155),
+	Vector2i(47,164), Vector2i(44,152), Vector2i(65,182), Vector2i(65,186),
+	Vector2i(65,190),
 ]
 
 ## Other buildings taken away by hand: kind and top-left cell of the lot on the final map.
@@ -88,11 +95,23 @@ const DELETED_AT := [
 	["HOTEL", Vector2i(206, 302)],
 	["HOTEL", Vector2i(182, 301)],
 	["PIER", Vector2i(138, 291)],
+	["SHOP", Vector2i(172, 185)],
+	["SHOP", Vector2i(170, 190)],
+	["SHOP", Vector2i(170, 191)],
+	["BILLBOARD", Vector2i(168, 187)],
+	["OIL_PUMP", Vector2i(93, 168)],
 ]
 ## Cleared lots that get a farm building back: top-left cell, model (as the library names it).
 const FARM_BUILDINGS_AT := [
 	[Vector2i(265, 283), "outpost.glb: water_tank"],
 ]
+## Oil pumps added side by side with the one whose lot starts at OIL_FIELD (to its east, else
+## its west).
+const OIL_FIELD := Vector2i(99, 209)
+const EXTRA_OIL_PUMPS := 2
+## Small shops round the main cinema (it stood alone in its block): how many, lot size.
+const CINEMA_SHOPS := 4
+const CINEMA_SHOP_SIZE := Vector2i(2, 2)
 ## The fire station whose front yard is cleared for its fire truck (VehicleSites).
 const MAIN_FIRE_STATION := Vector2i(229, 177)
 ## How far in front of it no tree grows (cells).
@@ -261,8 +280,8 @@ static func _balloon_cells(data: CityData) -> Array[Vector2i]:
 const BASE_MARGIN := 7
 
 
-## The secret base moves to the spot of the motorhome (the clearest cell of the desert, as
-## VehicleSites chose it), and the motorhome goes where the base stood. Run after `apply`,
+## The secret base moves to the clearest spot of the desert (where the motorhome used to
+## stand; VehicleSites now puts the motorhome in the south of the desert). Run after `apply`,
 ## before the props (the tanks of the gates and the fence follow the base). False when no
 ## spot of the desert has room for the base.
 static func swap_base(data: CityData) -> bool:
@@ -282,7 +301,6 @@ static func swap_base(data: CityData) -> bool:
 			for x in range(lot.position.x, lot.end.x):
 				data.zone[data.idx(x, y)] = zone
 		data.set_building_rect(base, lot)
-		data.rv_spot = Vector2(old.get_center()) + Vector2(0.5, 0.5)
 		return true
 	push_warning("[Edits] no room in the desert for the secret base: it stays where it is")
 	return false
@@ -333,12 +351,68 @@ static func finish(data: CityData) -> int:
 				data.b_kind[b] = CityTypes.Kind.OUTPOST
 				data.b_model[b] = f[1]
 				data.b_facing[b] = 2
+	# Every burger joint becomes a McDonald's.
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.BURGER_JOINT:
+			data.b_kind[b] = CityTypes.Kind.MCDONALDS
+	_add_oil_pumps(data)
+	_cinema_shops(data)
+	# The main police station: its front yard is paved like its lot (its patrol car parks there).
+	var hq := _nearest(data, "POLICE_HQ", Vector2i(data.size / 2, data.size / 2))
+	if hq >= 0:
+		for c in front_yard(data, hq, 1):
+			data.zone[data.idx(c.x, c.y)] = CityTypes.Zone.CIVIC
+			data.forest[data.idx(c.x, c.y)] = 0
 	var fs := _nearest(data, "FIRE_STATION", MAIN_FIRE_STATION)
 	if fs >= 0:
 		# No forest grows on the ground in front of it (across the road too).
 		for c in front_yard(data, fs, FIRE_YARD_DEPTH, 1):
 			data.forest[data.idx(c.x, c.y)] = 0
 	return turned
+
+
+## EXTRA_OIL_PUMPS oil pumps in a row with the pump at OIL_FIELD, on free desert.
+static func _add_oil_pumps(data: CityData) -> void:
+	var pump := _nearest(data, "OIL_PUMP", OIL_FIELD)
+	if pump < 0:
+		return
+	var r := data.building_rect(pump)
+	var added := 0
+	for side in [1, -1]:
+		var k := 1
+		while added < EXTRA_OIL_PUMPS and k <= EXTRA_OIL_PUMPS:
+			var lot := Rect2i(r.position + Vector2i(side * k * r.size.x, 0), r.size)
+			if not _lot_is_free(data, -1, lot):
+				break
+			data.add_building(lot, CityTypes.Kind.OIL_PUMP, 2, data.b_seed[pump] + k * side, 0.5)
+			added += 1
+			k += 1
+	if added < EXTRA_OIL_PUMPS:
+		push_warning("[Edits] only %d oil pumps added beside the one at %s" % [added, OIL_FIELD])
+
+
+## The main cinema stood alone in the middle of its big square lot: the lot shrinks to the
+## middle half (the model keeps its size: the edit draws it at 0.9 of the smaller lot) and
+## small shops stand in the corners of the square, facing outwards.
+static func _cinema_shops(data: CityData) -> void:
+	var cinema := _nearest(data, "CINEMA_MAIN", Vector2i(data.size / 2, data.size / 2))
+	if cinema < 0:
+		return
+	var r := data.building_rect(cinema)
+	if r.size.x < 6 or r.size.y < 6:
+		return
+	var inner := Rect2i(r.position + r.size / 4, r.size / 2)
+	data.set_building_rect(cinema, inner)
+	var s := CINEMA_SHOP_SIZE
+	var corners := [[r.position, 0], [Vector2i(r.end.x - s.x, r.position.y), 0],
+			[Vector2i(r.position.x, r.end.y - s.y), 2], [r.end - s, 2]]
+	for k in mini(CINEMA_SHOPS, corners.size()):
+		var lot := Rect2i(corners[k][0], s)
+		if not _lot_is_free(data, -1, lot):
+			continue
+		var c := lot.get_center()
+		var b := data.add_building(lot, CityTypes.Kind.SHOP, corners[k][1], CityTypes.hash2(c.x, c.y, 717), 0.3)
+		data.b_scale[b] = 0.8
 
 
 ## Free cells (no road) up to `depth` cells in front of building `b`, `widen` cells wider than

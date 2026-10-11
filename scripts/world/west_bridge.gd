@@ -8,7 +8,10 @@ extends Node3D
 const Cat := ModelCatalog.Cat
 ## Longest span, in cells.
 const SPAN := 9.0
-const WIDTH := 3.0
+## Width of the whole model (cells): its deck covers DECK_SHARE of it (1.55 of 1.628 on
+## metal_bridge.glb), so the deck is exactly as wide as the three-lane highway (3 cells).
+const DECK_SHARE := 0.952
+const WIDTH := 3.0 / DECK_SHARE
 ## Truss height limit (cells): the model is squashed so it stays low.
 const MAX_HEIGHT := 1.6
 const DECK_FRACTION := 0.0917
@@ -22,7 +25,9 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		return
 	var box := lib.bounds[ids[0]]
 	var x_far := float(wb.y) + 0.5   # urban island side
-	var x_near := float(wb.x) + 0.5  # main island side
+	# Main island side: to the end of the coast cell, so the deck covers the end of the road
+	# there and meets the highway asphalt.
+	var x_near := float(wb.x) + 1.0
 	var length := x_near - x_far
 	var count := maxi(1, ceili(length / SPAN))
 	var span := length / float(count)

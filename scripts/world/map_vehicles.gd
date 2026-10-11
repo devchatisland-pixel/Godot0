@@ -70,3 +70,32 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		})
 		placed += 1
 	print("[Vehicles] %d vehicles placed" % placed)
+	_build_props(data, lib)
+
+
+## The single props of ScenicProps (beach umbrella and chairs, the park billboard): each one
+## stands on the ground, scaled so that its longest side is the planned length.
+func _build_props(data: CityData, lib: ModelLibrary) -> void:
+	var n := 0
+	for p in ScenicProps.plan(data):
+		var id := lib.load_named("prop:" + String(p["file"]).get_file(), p["file"])
+		if id < 0:
+			continue
+		var box := lib.bounds[id]
+		var longest := maxf(box.size.x, box.size.z)
+		if longest <= 0.0:
+			continue
+		var basis := Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * (float(p["length"]) / longest))
+		var bottom := Vector3(box.get_center().x, box.position.y, box.get_center().z)
+		var mi := MeshInstance3D.new()
+		mi.mesh = lib.meshes[id]
+		mi.transform = Transform3D(basis, p["at"] - basis * bottom)
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.name = "Prop_%d" % n
+		add_child(mi)
+		mi.set_meta("pick", {
+			"uid": "P-%03d" % n, "number": n, "title": p["title"], "kind": "PROP",
+			"model": String(p["file"]).get_file(), "category": "Prop", "note": "",
+		})
+		n += 1
+	print("[Props] %d props placed" % n)

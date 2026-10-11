@@ -140,7 +140,8 @@ func _check_towers(data: CityData, by_kind: Dictionary) -> void:
 				_fail("urban tower B-%05d faces %d (must be east or south)" % [b, f])
 			variants[data.b_seed[b] % 97] = true
 	print("[Test] urban towers: %d, seed variety %d" % [towers, variants.size()])
-	if towers < 120:
+	# 169 towers are built; ManualEdits.DELETED_URBAN_TOWERS takes 67 away by hand.
+	if towers < 100:
 		_fail("too few towers on the urban island: %d" % towers)
 
 

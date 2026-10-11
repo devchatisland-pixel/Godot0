@@ -44,6 +44,10 @@ func _run() -> void:
 	if bi >= 0 and bi + 1 < args.size():
 		await _single(main, int(args[bi + 1]))
 		return
+	var spots := args.find("--spots")
+	if spots >= 0 and spots + 1 < args.size():
+		await _spots(main, args[spots + 1])
+		return
 	var base := cam.target
 	# `--shots 4,10` takes only these shots (numbers of SHOTS).
 	var only := PackedStringArray()
@@ -131,4 +135,30 @@ func _single(main: Node, id: int) -> void:
 		await get_tree().process_frame
 	get_viewport().get_texture().get_image().save_png(_dir.path_join("building.png"))
 	print("[Capture] building ", id, " saved")
+	get_tree().quit()
+
+
+## `--spots "x,z,zoom;x,z,zoom"`: one shot per cell (spot_0.png, spot_1.png, ...) by day; a
+## fourth value 1 takes it at night.
+func _spots(main: Node, list: String) -> void:
+	var cam: IsoCamera = main.camera
+	var n := 0
+	for item in list.split(";", false):
+		var v := item.split(",")
+		cam.target = Vector3(float(v[0]), 0, float(v[1]))
+		cam.zoom = float(v[2])
+		cam.set("_zoom_goal", float(v[2]))
+		var frames := 0
+		while frames < 900:
+			await get_tree().process_frame
+			frames += 1
+			if frames > 30 and main.streamer.pending_jobs() == 0:
+				break
+		if main.day_night != null:
+			main.day_night.set_phase(0.78 if v.size() > 3 and v[3] == "1" else 0.2)
+		for k in 5:
+			await get_tree().process_frame
+		get_viewport().get_texture().get_image().save_png(_dir.path_join("spot_%d.png" % n))
+		print("[Capture] spot ", n, " at ", item)
+		n += 1
 	get_tree().quit()

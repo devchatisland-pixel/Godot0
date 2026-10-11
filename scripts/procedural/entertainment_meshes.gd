@@ -238,17 +238,7 @@ static func drive_in() -> ArrayMesh:
 	k.neon(false)
 	# Projection booth and its beam light.
 	k.box(Vector3(-0.25, 0.02, 1.0), Vector3(0.5, 0.3, 0.35), Color("e8e4d8"), Color("8f86a6"))
-	# Rows of cars, all turned towards the screen, with their parking lights.
-	var car_colors := [Color("d9474f"), Color("4569b8"), Color("f1eff6"), Color("e8b33a"), Color("5c9d4c")]
-	for row in 3:
-		for i in 7:
-			var h := CityTypes.hash2(row, i, 77)
-			if h % 5 == 0:
-				continue # empty spot
-			var c: Color = car_colors[h % car_colors.size()]
-			var p := Vector3(-1.5 + i * 0.5, 0.02, -0.4 + row * 0.6)
-			k.block(p, Vector3(0.2, 0.08, 0.34), c)
-			k.block(p + Vector3(0, 0.08, 0.03), Vector3(0.16, 0.06, 0.16), c.darkened(0.25))
+	# No cars in the model: real catalog cars park on the lot (VehicleSites._drive_in_cars).
 	# Lamp posts around the lot, a string of bulbs over the entrance.
 	for p in [Vector3(-1.85, 0, -1.3), Vector3(1.85, 0, -1.3), Vector3(-1.85, 0, 1.3), Vector3(1.85, 0, 1.3)]:
 		k.block(p, Vector3(0.04, 0.6, 0.04), STEEL)
