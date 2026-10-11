@@ -1,7 +1,7 @@
 {
-	"buildings": 1608,
+	"buildings": 1609,
 	"fog_hash": "4c412b0bc9e6c96adf10ef7e5e3ab9413ba19a2d4a392a183dd391154c2f5791",
-	"ground_trees": 6340,
+	"ground_trees": 6309,
 	"kinds": {
 		"AIRBASE": 1,
 		"APARTMENT": 68,
@@ -18,6 +18,7 @@
 		"CHURCH": 1,
 		"CINEMA_MAIN": 1,
 		"CITY_HALL": 1,
+		"CONCERT": 1,
 		"CRANE": 2,
 		"DRIVE_IN": 1,
 		"FACTORY_BLDG": 8,
@@ -68,7 +69,7 @@
 		"UN_HQ": 1,
 		"WATCHTOWER": 2
 	},
-	"map_hash": "8a59114b6c0f230d8362f35ee0ffe179a222f46a87a64bfbdaa8d454d360eb0e:4c412b0bc9e6c96adf10ef7e5e3ab9413ba19a2d4a392a183dd391154c2f5791",
+	"map_hash": "e9123715415549279451ab13081669b05c74750bb6de4e75f7372d253cfabc35:4c412b0bc9e6c96adf10ef7e5e3ab9413ba19a2d4a392a183dd391154c2f5791",
 	"roads": {
 		"cells": 5248,
 		"cells_off_network": 0,
