@@ -190,6 +190,8 @@ func _check_edits(data: CityData) -> void:
 			_fail("edit %d (%s near %s) was not applied" % [n, e["kind"], e["near"]])
 			continue
 		var id: int = ManualEdits.resolved[n]
+		if ManualEdits.hand_deleted.has(id):
+			continue   # deleted by hand afterwards (DELETED_AT): that wins over the edit
 		var want: String = "EMPTY" if e.get("delete", false) else e.get("replace", e["kind"])
 		if CityTypes.Kind.keys()[data.b_kind[id]] != want:
 			_fail("edit B-%05d: expected %s, found %s" % [id, want, CityTypes.Kind.keys()[data.b_kind[id]]])
