@@ -15,9 +15,9 @@ const Zone := CityTypes.Zone
 const CELLS_PER_METRE := 0.17
 
 const CITY_ZONES: Array[int] = [Zone.DOWNTOWN, Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN]
-## The regular cars (street sedans, the off-road SUV, the cinema parking lot) are not put on
-## the map for now; their models stay in the catalog. True puts them back.
-const REGULAR_CARS := false
+## The regular cars (street sedans, the off-road SUV, the cinema parking lot) are put on the
+## map; false takes them away (their models stay in the catalog).
+const REGULAR_CARS := true
 const STREET_CARS: Array[String] = ["m8_long_sedan_black", "m8_long_sedan_silver", "m8_long_sedan_charcoal"]
 
 var out: Array[Dictionary] = []
