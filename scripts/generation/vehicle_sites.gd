@@ -50,6 +50,8 @@ func _run() -> void:
 	_industrial_zones()
 	_hospital_ambulance()
 	_city_hall_cars()
+	_police_hq_car()
+	_bunker_cars()
 	_fire_station_truck()
 	_container_tanker()
 	_desert()
@@ -169,7 +171,11 @@ func _length(id: String) -> float:
 # --- Free ground -------------------------------------------------------------------------
 
 func _free(x: int, y: int) -> bool:
-	return _d.is_land(x, y) and _d.road[_d.idx(x, y)] == 0 and _taken[_d.idx(x, y)] == 0
+	if not _d.is_land(x, y):
+		return false
+	var i := _d.idx(x, y)
+	var deco := _d.deco[i]
+	return _d.road[i] == 0 and _taken[i] == 0 			and deco != AmenitiesPlanner.FENCE_X and deco != AmenitiesPlanner.FENCE_Z
 
 
 ## True when a vehicle of `length` cells centred on `at`, nose along `heading`, lies only
@@ -251,6 +257,10 @@ func _forest_suv() -> void:
 		push_warning("[Vehicles] no forest road for the SUV")
 
 
+## The farm building the wheel loader is parked in front of (top-left cell of its lot).
+const LOADER_RANCH := Vector2i(268, 283)
+
+
 ## The tractor and the harvester together on the biggest crop field, the loader beside the
 ## farm building nearest to it. Falls back to one machine in each of three fields when
 ## there is no farm building.
@@ -269,10 +279,9 @@ func _farm_machines() -> void:
 	if barn < 0 or field < 0:
 		_farm_machines_auto()
 		return
-	var br := _d.building_rect(barn)
-	if not _beside("p54_41_loader_claw_yellow", br, "next to the barn", 61, 0.6, 3.0):
-		_add("p54_41_loader_claw_yellow", Vector2(br.position.x + br.size.x * 0.5, br.end.y + 0.8),
-				Vector2(1, 0), "next to the barn")
+	var ranch := _nearest_kind(Kind.OUTPOST, LOADER_RANCH)
+	if ranch >= 0:
+		_in_front("p54_41_loader_claw_yellow", ranch, "in front of the ranch")
 	var fr := _d.building_rect(field)
 	var c := Vector2(fr.position) + Vector2(fr.size) * 0.5
 	_add("p54_43_tractor_vintage_trailer", c + Vector2(-1.0, -0.9), Vector2(-1, 0), "in an agricultural field")
@@ -418,13 +427,13 @@ func _hospital_ambulance() -> void:
 		push_warning("[Vehicles] no hospital")
 
 
-## Two Japanese cars and a police car in a row in front of the city hall.
+## A Japanese police car and a US cruiser side by side in front of the city hall.
 func _city_hall_cars() -> void:
 	var b := _biggest(Kind.CITY_HALL)
 	if b < 0:
 		push_warning("[Vehicles] no city hall")
 		return
-	var ids := ["police_jp_black", "police_jp_patrol", "police_us_cruiser"]
+	var ids := ["police_jp_black", "police_us_cruiser"]
 	var r := _d.building_rect(b)
 	var o := CityTypes.FACING_OFFSETS[_d.b_facing[b]]
 	var c := Vector2(r.position) + Vector2(r.size) * 0.5
@@ -432,7 +441,7 @@ func _city_hall_cars() -> void:
 	var front := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + 0.55)
 	var head := Vector2(1, 0) if o.y != 0 else Vector2(0, 1)
 	for k in ids.size():
-		var p := front + head * (float(k) - 1.0) * 1.15
+		var p := front + head * (float(k) - 0.5) * 1.15
 		_add(ids[k], p, head, "in front of the city hall")
 
 
@@ -452,10 +461,57 @@ func _biggest(kind: int) -> int:
 
 func _fire_station_truck() -> void:
 	var best := _biggest(Kind.FIRE_STATION)
-	if best >= 0:
-		_in_front("p54_33_fire_truck", best, "in front of the biggest fire station")
-	else:
+	if best < 0:
 		push_warning("[Vehicles] no fire station")
+		return
+	_in_front("p54_33_fire_truck", best, "in front of the biggest fire station")
+	# The main fire station: its fire truck in the front yard (ManualEdits clears the trees).
+	var main := _nearest_kind(Kind.FIRE_STATION, ManualEdits.MAIN_FIRE_STATION)
+	if main >= 0 and main != best:
+		_in_front("p54_33_fire_truck", main, "in front of the main fire station")
+
+
+## Building of `kind` whose lot starts nearest to `cell` (-1 when there is none).
+func _nearest_kind(kind: int, cell: Vector2i) -> int:
+	var best := -1
+	var best_d := INF
+	for b in _d.building_count():
+		if _d.b_kind[b] != kind:
+			continue
+		var d := Vector2(_d.building_rect(b).position).distance_to(Vector2(cell))
+		if d < best_d:
+			best_d = d
+			best = b
+	return best
+
+
+## A US police cruiser in front of the main police station.
+func _police_hq_car() -> void:
+	var b := _biggest(Kind.POLICE_HQ)
+	if b >= 0:
+		_in_front("police_us_cruiser", b, "in front of the main police station")
+	else:
+		push_warning("[Vehicles] no main police station")
+
+
+## Two Japanese police cars side by side in front of the bunker of the secret base.
+func _bunker_cars() -> void:
+	var b := _biggest(Kind.BUNKER)
+	if b < 0:
+		return
+	var r := _d.building_rect(b)
+	var o := CityTypes.FACING_OFFSETS[_d.b_facing[b]]
+	var c := Vector2(r.position) + Vector2(r.size) * 0.5
+	var half := Vector2(r.size) * 0.5
+	var front := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + 0.6)
+	var side := Vector2(1, 0) if o.y != 0 else Vector2(0, 1)
+	for k in 2:
+		# Noses towards the bunker.
+		_add("police_jp_black", front + side * (float(k) - 0.5) * 0.7, -Vector2(o), "in front of the bunker")
+
+
+## Distance (cells) from the front of a lot to the middle of a car parked in front of it.
+const FRONT_GAP := 0.35
 
 
 ## Parked on the front side of building `b`, along the road that runs there.
@@ -464,7 +520,7 @@ func _in_front(id: String, b: int, why: String) -> void:
 	var o := CityTypes.FACING_OFFSETS[_d.b_facing[b]]
 	var c := Vector2(r.position) + Vector2(r.size) * 0.5
 	var half := Vector2(r.size) * 0.5
-	var p := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + 0.55)
+	var p := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + FRONT_GAP)
 	# The road in front of a building runs across the way it looks.
 	var head := Vector2(1, 0) if o.y != 0 else Vector2(0, 1)
 	if CityTypes.hash2(r.position.x, r.position.y, 6) & 1 == 1:
@@ -535,57 +591,56 @@ func _clear_radius(c: Vector2i, max_r: int) -> int:
 
 # --- Prison island, cinema -----------------------------------------------------------------------
 
-## Two military helicopters on the north shore of the prison island (the Alcatraz-like one).
+## Prison island: a military helicopter hovering over the sea between the main island and
+## the prison island, another one on the ground beside the lighthouse of the island, and an
+## armoured car (Rosomak) next to it.
+const HELI_LIFT := 3.0
+## The lighthouse of the prison island (top-left cell of its lot).
+const PRISON_LIGHTHOUSE := Vector2i(29, 46)
+
+
 func _prison_helicopters() -> void:
 	var b := _biggest(Kind.PRISON)
 	if b < 0:
 		push_warning("[Vehicles] no prison island")
 		return
-	var seen := {}
-	var stack: Array[Vector2i] = [_d.building_rect(b).position]
-	var land: Array[Vector2i] = []
-	while not stack.is_empty() and land.size() < 20000:
-		var c: Vector2i = stack.pop_back()
-		if seen.has(c) or not _d.is_land(c.x, c.y):
-			continue
-		seen[c] = true
-		land.append(c)
-		for o in CityTypes.FACING_OFFSETS:
-			stack.append(c + o)
-	if land.is_empty():
-		return
-	var top := land[0].y
-	for c in land:
-		top = mini(top, c.y)
 	var id := "p54_46_helicopter_military"
-	var len := _length(id)
-	var placed: Array[Vector2] = []
-	for pass_n in 2:
-		# Pass 0 wants free ground; pass 1 takes the northernmost land cells whatever is there.
-		for reach in range(2, 9):
-			if placed.size() >= 2:
-				break
-			var cands := land.filter(func(c: Vector2i) -> bool: return c.y <= top + reach)
-			cands.sort_custom(func(a: Vector2i, c: Vector2i) -> bool:
-				if a.y != c.y:
-					return a.y < c.y
-				return CityTypes.hash2(a.x, a.y, 91) < CityTypes.hash2(c.x, c.y, 91))
-			for c: Vector2i in cands:
-				var p := Vector2(c) + Vector2(0.5, 0.5)
-				var apart := true
-				for q in placed:
-					if q.distance_to(p) < 6.0:
-						apart = false
-				if not apart or (pass_n == 0 and not _fits(p, Vector2(1, 0), len)):
-					continue
-				placed.append(p)
-				_add(id, p, Vector2(1, 0), "on the north shore of the prison island")
-				if placed.size() >= 2:
-					break
-		if placed.size() >= 2:
+	var prison := Vector2(_d.building_rect(b).get_center())
+	# In the air: halfway across the water from the prison island towards the city.
+	var air := _over_strait(prison, Vector2(_d.size, _d.size) * 0.5)
+	if air.x >= 0:
+		out.append({"id": id, "at": air, "yaw": atan2(-1.0, 0.0), "why": "over the sea, off the prison island",
+				"lift": HELI_LIFT})
+	# On the ground beside the lighthouse of the prison island.
+	var light := _nearest_kind(Kind.LIGHTHOUSE, PRISON_LIGHTHOUSE)
+	if light < 0:
+		push_warning("[Vehicles] no lighthouse on the prison island")
+		return
+	var n := out.size()
+	if not _beside(id, _d.building_rect(light), "next to the lighthouse of the prison island", 93, 0.6, 4.0):
+		return
+	var heli: Vector2 = out[n]["at"]
+	var spot := Rect2i(Vector2i(heli.floor()) - Vector2i(1, 1), Vector2i(3, 3))
+	_beside("rosomak_apc", spot, "next to the helicopter of the prison island", 97, 0.4, 3.0)
+
+
+## Middle of the water met going from `from` towards `to` (first sea after the land of
+## `from`, up to the next land), or (-1, -1).
+func _over_strait(from: Vector2, to: Vector2) -> Vector2:
+	var dir := (to - from).normalized()
+	var p := from
+	var sea_start := Vector2(-1, -1)
+	for i in int(from.distance_to(to) * 2.0):
+		p += dir * 0.5
+		var c := Vector2i(p.floor())
+		if not _d.in_bounds(c.x, c.y):
 			break
-	if placed.size() < 2:
-		push_warning("[Vehicles] only %d helicopter(s) on the prison island" % placed.size())
+		var land := _d.is_land(c.x, c.y)
+		if not land and sea_start.x < 0:
+			sea_start = p
+		elif land and sea_start.x >= 0:
+			return (sea_start + p) * 0.5
+	return Vector2(-1, -1)
 
 
 const PARKING_CARS: Array[String] = [

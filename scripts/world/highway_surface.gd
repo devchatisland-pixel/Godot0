@@ -8,6 +8,8 @@ const TEXTURE := preload("res://textures/highway.jpg")
 ## Longest panel along the road (cells), and its height above the ground.
 const SEGMENT := 12
 const LIFT := 0.04
+## Shortest run of lane cells (along X) that is a highway.
+const MIN_RUN := 3
 
 
 func build(data: CityData) -> void:
@@ -19,9 +21,17 @@ func build(data: CityData) -> void:
 				x += 1
 				continue
 			var start := x
-			while x < data.size and _lane(data, x, y) and x - start < SEGMENT:
+			while x < data.size and _lane(data, x, y):
 				x += 1
-			segments.append(Vector3(start, y, x - start))
+			# An avenue running north-south also has three avenue cells one above the other, but
+			# only for one or two cells across: no highway there (its lanes would run across it).
+			if x - start < MIN_RUN:
+				continue
+			var at := start
+			while at < x:
+				var n := mini(SEGMENT, x - at)
+				segments.append(Vector3(at, y, n))
+				at += n
 	if segments.is_empty():
 		return
 	var mat := StandardMaterial3D.new()

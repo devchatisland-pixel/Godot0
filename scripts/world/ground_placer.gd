@@ -12,6 +12,8 @@ const Zone := CityTypes.Zone
 const WOOD_FENCE_HEIGHT := 0.2
 const CHAIN_FENCE_HEIGHT := 0.42
 const FENCE_THICKNESS := 0.05
+## Share of the trees kept in the central park (36 % fewer).
+const CENTRAL_PARK_TREES := 0.64
 ## Where the bulb hangs under the arm of the Kenney street light (model space).
 const BULB_OFFSET := Vector3(0.0, 0.64, -0.17)
 
@@ -228,10 +230,14 @@ static func _scatter(x: int, y: int, chance: float, jitter_scale: float, mesh: i
 
 
 static func _place_park_tree(data: CityData, x: int, y: int, trees: PackedInt32Array, batch: InstanceBatch) -> void:
-	# The central park is a dense wood: up to two big trees per cell.
+	# The central park is a wood: up to two big trees per cell, CENTRAL_PARK_TREES of the
+	# usual number there (fewer polygons); other parks keep them all.
+	var share := 55.0 * data.tree_share
+	if data.central_park.has_point(Vector2i(x, y)):
+		share *= CENTRAL_PARK_TREES
 	for t in 2:
 		var h := CityTypes.hash2(x, y, 517 + t)
-		if h % 100 >= int(55.0 * data.tree_share):
+		if h % 100 >= int(share):
 			continue
 		var p := Vector3(x + 0.15 + float(h & 255) / 255.0 * 0.7, 0, y + 0.15 + float((h >> 8) & 255) / 255.0 * 0.7)
 		var xf := BuildingExtras.tree_xform(p, h)

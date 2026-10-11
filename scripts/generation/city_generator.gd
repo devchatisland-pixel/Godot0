@@ -44,6 +44,7 @@ func generate() -> CityData:
 	var edits := ManualEdits.apply(data)
 	print("[City] %d hand edits applied" % edits)
 	print("[City] secret base and motorhome swapped: ", ManualEdits.swap_base(data))
+	print("[City] bunker moved beside the secret base: ", ManualEdits.move_bunker(data))
 	var piers := BeachSites.apply(data)
 	print("[City] %d piers" % piers)
 	var boats := BoatSites.apply(data)
@@ -56,7 +57,8 @@ func generate() -> CityData:
 	print("[City] building budget: ", BuildingBudget.apply(data))
 	# The urban island is rebuilt last, so that nothing else of the map depends on it.
 	print("[City] urban island: ", UrbanIslandRebuild.apply(data))
-	print("[City] buildings deleted or resized by hand (expect 27 + 4 + 1 = 32): ", ManualEdits.delete_urban_towers(data))
+	print("[City] buildings deleted or resized by hand (expect 46 + 4 + 1 = 51): ", ManualEdits.delete_urban_towers(data))
+	print("[City] houses turned from west to east: ", ManualEdits.finish(data))
 	# The concert camp clears what stands on its square, after the budget has counted it.
 	ConcertSite.apply(data)
 	AmenitiesPlanner.apply(data)

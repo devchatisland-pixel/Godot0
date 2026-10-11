@@ -87,7 +87,7 @@ func _tanks_facing_bridge(lib: ModelLibrary, x: int, row: int) -> void:
 	if ids.is_empty():
 		return
 	var z := float(row) + 0.5
-	for spot in [Vector2(4.5, 4.6), Vector2(7.2, 4.6), Vector2(9.9, 4.6), Vector2(5.8, -4.2), Vector2(8.5, -4.2)]:
+	for spot in [Vector2(12.6, 4.6), Vector2(7.2, 4.6), Vector2(9.9, 4.6), Vector2(5.8, -4.2), Vector2(8.5, -4.2)]:
 		_put(lib, ids[0], Vector3(float(x) + spot.x, 0.0, z + spot.y), PI * 0.5, TANK_LEN, "Tank (roadblock)")
 
 

@@ -74,6 +74,12 @@ const DELETED_URBAN_TOWERS: Array[Vector2i] = [
 	Vector2i(35,147), Vector2i(38,148), Vector2i(50,161), Vector2i(41,154),
 	Vector2i(53,157), Vector2i(57,157), Vector2i(61,157), Vector2i(72,146),
 	Vector2i(70,142), Vector2i(47,144), Vector2i(41,139),
+	# Second batch.
+	Vector2i(42,220), Vector2i(48,226), Vector2i(55,222), Vector2i(52,219),
+	Vector2i(39,215), Vector2i(55,211), Vector2i(52,203), Vector2i(51,210),
+	Vector2i(57,198), Vector2i(39,171), Vector2i(45,200), Vector2i(44,141),
+	Vector2i(44,156), Vector2i(37,152), Vector2i(42,174), Vector2i(48,199),
+	Vector2i(40,205), Vector2i(52,223), Vector2i(45,137),
 ]
 
 ## Other buildings taken away by hand: kind and top-left cell of the lot on the final map.
@@ -83,6 +89,15 @@ const DELETED_AT := [
 	["HOTEL", Vector2i(182, 301)],
 	["PIER", Vector2i(138, 291)],
 ]
+## Cleared lots that get a farm building back: top-left cell, model (as the library names it).
+const FARM_BUILDINGS_AT := [
+	[Vector2i(265, 283), "outpost.glb: water_tank"],
+]
+## The fire station whose front yard is cleared for its fire truck (VehicleSites).
+const MAIN_FIRE_STATION := Vector2i(229, 177)
+## How far in front of it no tree grows (cells).
+const FIRE_YARD_DEPTH := 5
+
 ## Buildings drawn at another size by hand: kind, top-left cell of the lot, size factor.
 const RESIZED_AT := [
 	["BOAT", Vector2i(211, 40), 0.5],
@@ -302,3 +317,73 @@ static func delete_urban_towers(data: CityData) -> int:
 				data.b_scale[b] = d[2]
 				found += 1
 	return found
+
+
+## Last hand changes, once the buildings are final: houses that face west turn east, the
+## cleared lots of FARM_BUILDINGS_AT get a farm building back, and no tree grows in the front
+## yard of the main fire station. Returns how many houses turned.
+static func finish(data: CityData) -> int:
+	var turned := 0
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.HOUSE and data.b_facing[b] == 3:
+			data.b_facing[b] = 1
+			turned += 1
+		for f in FARM_BUILDINGS_AT:
+			if data.b_kind[b] == CityTypes.Kind.EMPTY and data.building_rect(b).position == f[0]:
+				data.b_kind[b] = CityTypes.Kind.OUTPOST
+				data.b_model[b] = f[1]
+				data.b_facing[b] = 2
+	var fs := _nearest(data, "FIRE_STATION", MAIN_FIRE_STATION)
+	if fs >= 0:
+		# No forest grows on the ground in front of it (across the road too).
+		for c in front_yard(data, fs, FIRE_YARD_DEPTH, 1):
+			data.forest[data.idx(c.x, c.y)] = 0
+	return turned
+
+
+## Free cells (no road) up to `depth` cells in front of building `b`, `widen` cells wider than
+## the lot on each side.
+static func front_yard(data: CityData, b: int, depth: int, widen: int = 0) -> Array[Vector2i]:
+	var r := data.building_rect(b)
+	var o := CityTypes.FACING_OFFSETS[data.b_facing[b]]
+	var out: Array[Vector2i] = []
+	for y in range(r.position.y - depth, r.end.y + depth):
+		for x in range(r.position.x - depth, r.end.x + depth):
+			var c := Vector2i(x, y)
+			if r.has_point(c) or not data.in_bounds(x, y) or data.road[data.idx(x, y)] != 0:
+				continue
+			# On the front side: beyond the lot that way, level with it the other way.
+			var ahead := (o.x > 0 and x >= r.end.x) or (o.x < 0 and x < r.position.x) 					or (o.y > 0 and y >= r.end.y) or (o.y < 0 and y < r.position.y)
+			var level := (o.x != 0 and y >= r.position.y - widen and y < r.end.y + widen) 					or (o.y != 0 and x >= r.position.x - widen and x < r.end.x + widen)
+			if ahead and level:
+				out.append(c)
+	return out
+
+
+# --- The bunker beside the secret base -------------------------------------------------------------
+## The bunker moves just outside the fence of the secret base (east side first, then north),
+## its front turned away from the base. Run after swap_base, before the props.
+static func move_bunker(data: CityData) -> bool:
+	var base := _nearest(data, "AIRBASE", Vector2i(data.size / 2, data.size / 2))
+	var bunker := _nearest(data, "BUNKER", Vector2i(data.size / 2, data.size / 2))
+	if base < 0 or bunker < 0:
+		return false
+	var ring: Rect2i = AmenitiesPlanner.base_fence(data.building_rect(base))["rect"]
+	var old := data.building_rect(bunker)
+	var c := ring.get_center()
+	var tries := [
+		[Rect2i(ring.end.x + 1, c.y - old.size.y / 2, old.size.x, old.size.y), 1],
+		[Rect2i(c.x - old.size.x / 2, ring.position.y - old.size.y - 1, old.size.x, old.size.y), 0],
+		[Rect2i(ring.end.x + 1, ring.position.y, old.size.x, old.size.y), 1],
+	]
+	for t in tries:
+		var lot: Rect2i = t[0]
+		if not _lot_is_free(data, bunker, lot.grow(1)):
+			continue
+		var outside := data.zone_at(old.position.x - 1, old.position.y)
+		_move_ground(data, old, lot, CityTypes.Zone.keys()[outside])
+		data.set_building_rect(bunker, lot)
+		data.b_facing[bunker] = t[1]
+		return true
+	push_warning("[Edits] no room for the bunker beside the secret base")
+	return false

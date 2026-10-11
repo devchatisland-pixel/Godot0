@@ -59,7 +59,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		var mi := MeshInstance3D.new()
 		mi.mesh = lib.meshes[mid]
 		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * s),
-				Vector3(at.x, 0.0, at.y))
+				Vector3(at.x, float(p.get("lift", 0.0)), at.y))
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
 		add_child(mi)

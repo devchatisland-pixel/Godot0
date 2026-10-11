@@ -74,7 +74,8 @@ const FIXED_SIZE: Array[int] = [
 	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE, Kind.BT_TOWER,
 ]
 ## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
-const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6, Kind.LIGHTHOUSE: 1.65}
+const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6, Kind.LIGHTHOUSE: 1.65,
+		Kind.SCHOOL: 1.17}  # regular schools 17 % bigger
 ## Things that float: height above the ground (in cells).
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
