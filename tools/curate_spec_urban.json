@@ -15,6 +15,7 @@
 				"min_tris": 150
 			},
 			"exclude": [
+				"city_night_02",
 				"city_night_15",
 				"city_night_19",
 				"city_night_68",
