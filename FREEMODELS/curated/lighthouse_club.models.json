@@ -1,0 +1,13 @@
+{
+	"file": "lighthouse_club.glb",
+	"models": [
+		{
+			"cat": "LIGHTHOUSE_CLUB",
+			"node": "lighthouse_club"
+		},
+		{
+			"cat": "NEON_LIGHTHOUSE",
+			"node": "lighthouse_club_neon"
+		}
+	]
+}

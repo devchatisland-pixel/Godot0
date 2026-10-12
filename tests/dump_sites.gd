@@ -23,4 +23,14 @@ func _init() -> void:
 			print("[Site] #%d %s zone=%s at=%s size=%s seed=%d facing=%d model=%s" % [b, name, Zone.keys()[z],
 					r.position, r.size, data.b_seed[b], data.b_facing[b], data.b_model.get(b, "")])
 	print("[Site] industrial yards: %d in %s" % [yards, yard_box])
+	# The checkpoint of the fog island must stand on land, the bridge landing west of it.
+	var fog := data.fog
+	var at := FogBaseSites.CHECKPOINT_AT
+	var wet := 0
+	for y in range(int(at.y) - 7, int(at.y) + 6):
+		for x in range(int(at.x) - 8, int(at.x) + 8):
+			if fog.elevation[y * FogIslandShaper.SIZE + x] <= 128:
+				wet += 1
+	print("[Site] bridge lands at fog x %.1f; checkpoint at %s, %d cells of its box in the sea" % [
+			fog.bridge_land_x - fog.origin.x, at, wet])
 	quit(0)

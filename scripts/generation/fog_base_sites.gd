@@ -1,7 +1,7 @@
 class_name FogBaseSites
 extends RefCounted
 ## The military base of the fog island: where everything stands, in local cells of the island
-## (FogIslandShaper; x east, y south). Three parts, joined by roads from the bridge:
+## (FogIslandShaper; x east, y south). Its parts, joined by roads from the bridge:
 ##   - the air base in the north: a long runway, an apron with a row of F-14, the staff
 ##     building, a radar, air defence at both ends, a fire truck and a tow truck, and the
 ##     helipad with its helicopter;
@@ -9,7 +9,10 @@ extends RefCounted
 ##     barracks, and the vehicle park (each kind of vehicle in its own block, side by side);
 ##   - the nuclear plant in the south-east, which the army is there to protect: a barracks
 ##     and armoured cars round it;
-##   - jeeps round the base and Humvees out on its roads.
+##   - jeeps round the base and Humvees out on its roads;
+##   - the checkpoint where the road leaves the Golden Gate: the military post of the pack
+##     (walls, two gates with barriers, guard posts, watchtowers, garage), the road through
+##     its gates, and the five vehicles that guarded the end of the bridge parked inside.
 ## Pure data: FogIslandShaper paints PADS on the ground, FogBase draws ROADS and plan().
 
 const Cat := ModelCatalog.Cat
@@ -26,6 +29,7 @@ const PADS := [
 	[Rect2(32, 81, 62, 12), DIRT],        # tents
 	[Rect2(32, 99, 46, 11), TARMAC],      # vehicle park
 	[Rect2(100, 102, 30, 26), CONCRETE],  # nuclear plant
+	[Rect2(18.8, 89.7, 14.4, 11.1), CONCRETE], # checkpoint (CHECKPOINT_AT + the box of the post)
 ]
 
 ## Roads drawn with the highway texture: [from, to (centre line, along x or y), width].
@@ -33,7 +37,9 @@ const ROADS := [
 	[Vector2(42, 54.5), Vector2(130, 54.5), 4.0],   # runway
 	[Vector2(62, 56.5), Vector2(62, 61), 2.0],      # taxiways
 	[Vector2(110, 56.5), Vector2(110, 61), 2.0],
-	[Vector2(15, 96), Vector2(97.5, 96), 3.0],      # from the bridge through the camp
+	[Vector2(15, 96), Vector2(18.8, 96), 3.0],      # from the bridge to the checkpoint,
+	[Vector2(18.8, 96), Vector2(33.2, 96), 1.5],    # between the walls of its two gates,
+	[Vector2(33.2, 96), Vector2(97.5, 96), 3.0],    # then through the camp
 	[Vector2(96, 75), Vector2(96, 110), 3.0],       # air base - plant
 	[Vector2(96, 110), Vector2(100, 110), 3.0],
 ]
@@ -75,14 +81,26 @@ const JEEPS := [
 	[Vector2(89.5, 67.5), Vector2(0, -1)], [Vector2(53.5, 66.0), Vector2(-1, 0)],
 	[Vector2(113.5, 121.5), Vector2(1, 0)], [Vector2(70.5, 104.5), Vector2(0, -1)],
 ]
-## Grey Humvees: one where the bridge lands (the sand one stands at the other end of the
-## bridge, VehicleSites), the others out on the roads of the base, not parked.
+## Grey Humvees out on the roads of the base, not parked (the one that stood where the bridge
+## lands is in the checkpoint; the sand one stands at the other end of the bridge, VehicleSites).
 const HUMVEES := [
-	[Vector2(19.5, 93.6), Vector2(-1, 0)],
 	[Vector2(41.0, 96.7), Vector2(1, 0)], [Vector2(66.0, 95.3), Vector2(-1, 0)],
 	[Vector2(88.0, 96.7), Vector2(1, 0)], [Vector2(95.3, 81.0), Vector2(0, 1)],
 	[Vector2(96.7, 104.0), Vector2(0, -1)], [Vector2(75.0, 61.0), Vector2(1, 0)],
 ]
+## The checkpoint (checkpoint.glb): where the middle of the road between its two gates is.
+## The model runs 7.2 cells either side along the road, 6.2 north and 4.7 south of it.
+const CHECKPOINT_AT := Vector2(26, 96)
+## The five vehicles that guarded the end of the bridge, inside the checkpoint (cells from
+## CHECKPOINT_AT): the two T-55 and the two BRDM side by side in the north yard (where the
+## vehicle shelter of the pack stood: it is left out), their noses to the road; the grey
+## Humvee in the south yard beside the garage (where the tank of the pack stood), its nose to
+## the road, ready to drive out.
+const CHECKPOINT_PARK := [
+	[Cat.TANK_T55, Vector2(-2.3, -2.9)], [Cat.TANK_T55, Vector2(-1.15, -2.9)],
+	[Cat.APC_BRDM, Vector2(0.1, -2.6)], [Cat.APC_BRDM, Vector2(1.05, -2.6)],
+]
+const CHECKPOINT_HUMVEE := Vector2(-1.3, 2.5)
 ## The fire truck stands beside the staff building of the air base, the tow truck on the apron.
 const FIRE_TRUCK := "p54_33_fire_truck"
 const TOW_TRUCK := "p54_08_tow_truck_yellow"
@@ -118,10 +136,11 @@ static func plan() -> Array[Dictionary]:
 	_add(out, Cat.BASE_HALL, Vector2(82, 86.5), south, HALL_SCALE)
 	_add(out, Cat.RADAR, Vector2(90, 84), south)
 	_add(out, Cat.SAM_NASAMS, Vector2(90, 89), north)
-	# Guards at the gate, where the road leaves the bridge: they look into the island.
-	for s in [-1.0, 1.0]:
-		_add(out, Cat.TANK_T55, Vector2(24, 96.0 + s * 2.6), east)
-		_add(out, Cat.APC_BRDM, Vector2(27, 96.0 + s * 2.6), east)
+	# --- Checkpoint at the end of the bridge, the vehicles that guard it inside ---
+	out.append({"cat": Cat.CHECKPOINT, "at": CHECKPOINT_AT, "dir": south, "scale": 1.0, "origin": true})
+	for v in CHECKPOINT_PARK:
+		_add(out, v[0], CHECKPOINT_AT + (v[1] as Vector2), south)
+	_veh(out, HUMVEE, CHECKPOINT_AT + CHECKPOINT_HUMVEE, north)
 	# --- Vehicle park: one block per kind, all the noses to the road ---
 	for g in PARK:
 		for r in int(g[3]):
