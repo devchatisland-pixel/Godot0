@@ -119,8 +119,6 @@ static func classify(path: String) -> Dictionary:
 			or name.begins_with("shipping-container") or name == "water-tower" \
 			or name.begins_with("tank"):
 		res["cat"] = Cat.INDUSTRIAL_PROP
-	elif name.begins_with("tree"):
-		res["cat"] = Cat.TREE
 	elif name == "bridge-pillar-wide":
 		res["cat"] = Cat.BRIDGE_PILLAR
 	elif name == "light-square-double" or name == "light-curved-double":

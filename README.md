@@ -60,6 +60,12 @@ islands have twice the area, with the same number of buildings of every kind and
 trees, the same zones touching each other, and roads that form one clean network. The city sits in the
 west part of the main island; the districts around it are round blobs, not squares. On screen north-west is up. Special buildings are kept far from each other on purpose.
 
+**Drastic changes (`map_overhaul.gd`, and the removal of the code that drew them):** there are **no trees, palms or
+fences** any more (cacti stay), the **urban island has no building** (its streets and ground stay), the **fog
+island has no building**, and the map holds **12 more hot air balloons** floating at random places over land and
+sea and **12 more submarines** at random places of the open sea. The text below still describes the districts as
+they were planned: read the urban island, the fog island, the trees and the fences in it with these changes.
+
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |

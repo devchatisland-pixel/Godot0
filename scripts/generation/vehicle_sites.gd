@@ -177,8 +177,7 @@ func _free(x: int, y: int) -> bool:
 	if not _d.is_land(x, y):
 		return false
 	var i := _d.idx(x, y)
-	var deco := _d.deco[i]
-	return _d.road[i] == 0 and _taken[i] == 0 			and deco != AmenitiesPlanner.FENCE_X and deco != AmenitiesPlanner.FENCE_Z
+	return _d.road[i] == 0 and _taken[i] == 0
 
 
 ## True when a vehicle of `length` cells centred on `at`, nose along `heading`, lies only

@@ -1,19 +1,12 @@
 class_name GroundPlacer
 extends RefCounted
 ## Everything placed per cell in a chunk: road tiles (oriented from their
-## neighbours), street lights along avenues, trees in parks and forests,
-## palms on beaches and islets, cacti in the desert.
+## neighbours), street lights along avenues, park details and cacti in the desert.
+## There are no trees, palms or fences on the map.
 ## Pure functions, safe to run on worker threads.
 
 const Cat := ModelCatalog.Cat
 const Zone := CityTypes.Zone
-## Height (cells) of the wooden garden fences and of the chain-link fence of the base, and
-## the thickness the models are flattened to at most.
-const WOOD_FENCE_HEIGHT := 0.2
-const CHAIN_FENCE_HEIGHT := 0.42
-const FENCE_THICKNESS := 0.05
-## Share of the trees kept in the central park (36 % fewer).
-const CENTRAL_PARK_TREES := 0.64
 ## Where the bulb hangs under the arm of the Kenney street light (model space).
 const BULB_OFFSET := Vector3(0.0, 0.64, -0.17)
 
@@ -33,21 +26,14 @@ static func road_cat(mask: int) -> int:
 
 static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: InstanceBatch) -> void:
 	var road_rot := _road_rotations(lib)
-	var trees := lib.ids(Cat.TREE)
-	if trees.is_empty():
-		trees = PackedInt32Array([lib.named_id("tree")])
 	var lights := lib.ids(Cat.STREET_LIGHT)
-	var palm := lib.named_id("palm")
 	var cactus := lib.named_id("cactus")
 	var bridge := _bridge_clearing(data)
 	var checkpoint := Roadblocks.clearing(data)
 	var ts := data.tree_share
-	var wood := lib.named_id("wood_fence")
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var i := y * data.size + x
-			if data.fence_edge[i] != 0 and wood >= 0:
-				_place_garden_fence(lib, wood, x, y, data.fence_edge[i], batch)
 			var road: int = data.road[i]
 			if road != 0:
 				_place_road(data, lib, x, y, road, road_rot, lights, batch)
@@ -58,27 +44,13 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 				_place_deco(data, lib, x, y, data.deco[i], batch)
 				continue
 			var z: int = data.zone[i]
-			var beach: bool = data.terrain[i] == CityTypes.Terrain.BEACH and data.rocky[i] == 0
-			match z:
-				Zone.NATURE:
-					if beach:
-						_scatter(x, y, 0.06 * ts, 0.15, palm, batch)
-					else:
-						_place_forest(data, x, y, trees, batch)
-				Zone.ISLET:
-					_scatter(x, y, (0.12 if beach else 0.45) * ts, 0.2, palm, batch)
-				Zone.PARK:
-					_place_park_tree(data, x, y, trees, batch)
-				Zone.DESERT:
-					_scatter(x, y, 0.035 * ts, 0.1, cactus, batch)
-				Zone.PRISON:
-					if data.terrain[i] == CityTypes.Terrain.LAND:
-						_scatter(x, y, 0.12 * ts, 0.2, trees[(x + y) % trees.size()], batch)
+			if z == Zone.DESERT:
+				_scatter(x, y, 0.035 * ts, 0.1, cactus, batch)
 			if data.edge[i] != 0:
 				_place_edge(lib, x, y, data.edge[i], batch)
 
 
-## Where no tree or palm grows: round both ends of the metal bridge to the urban island.
+## Where no cactus or tuft grows: round both ends of the metal bridge to the urban island.
 const BRIDGE_CLEAR_X := Vector2i(5, 9)
 const BRIDGE_CLEAR_Y := 7
 
@@ -105,47 +77,9 @@ static func _place_deco(data: CityData, lib: ModelLibrary, x: int, y: int, deco:
 			batch.add(lib.named_id("playground"), Transform3D(Basis(), at))
 		AmenitiesPlanner.BOARD:
 			batch.add(lib.named_id("plank"), Transform3D(Basis(), at))
-		AmenitiesPlanner.FENCE_X, AmenitiesPlanner.FENCE_Z:
-			var along := Vector3(0.5, 0, 0) if deco == AmenitiesPlanner.FENCE_X else Vector3(0, 0, 0.5)
-			var chain := lib.named_id("chain_fence")
-			if chain >= 0:
-				batch.add(chain, fence_xform(lib, chain, at - along, at + along, CHAIN_FENCE_HEIGHT))
-			else:
-				var yaw := 0.0 if deco == AmenitiesPlanner.FENCE_X else PI * 0.5
-				batch.add(lib.named_id("fence"), Transform3D(Basis(Vector3.UP, yaw), at))
 		AmenitiesPlanner.BOARD_LAMP:
 			batch.add(lib.named_id("plank"), Transform3D(Basis(), at))
 			batch.add(lib.named_id("boardwalk_lamp"), Transform3D(Basis(), at))
-
-
-## The wooden fences on the north and west sides of a cell (GardenFences).
-static func _place_garden_fence(lib: ModelLibrary, id: int, x: int, y: int, sides: int, batch: InstanceBatch) -> void:
-	var corner := Vector3(x, 0, y)
-	if sides & GardenFences.NORTH:
-		batch.add(id, fence_xform(lib, id, corner, corner + Vector3(1, 0, 0), WOOD_FENCE_HEIGHT))
-	if sides & GardenFences.WEST:
-		batch.add(id, fence_xform(lib, id, corner, corner + Vector3(0, 0, 1), WOOD_FENCE_HEIGHT))
-
-
-## Stretches fence model `id` from `a` to `b` (on the ground, along X or Z): its longest
-## horizontal side runs along the segment, it stands `height` cells high and is at most
-## FENCE_THICKNESS thick.
-static func fence_xform(lib: ModelLibrary, id: int, a: Vector3, b: Vector3, height: float) -> Transform3D:
-	var box: AABB = lib.bounds[id]
-	var long_x := box.size.x >= box.size.z
-	var length := maxf(box.size.x if long_x else box.size.z, 0.001)
-	var depth := maxf(box.size.z if long_x else box.size.x, 0.001)
-	var up := height / maxf(box.size.y, 0.001)
-	# Model space: scale its own long side and depth, then turn it onto the segment.
-	var scale := Vector3(a.distance_to(b) / length, up, minf(up, FENCE_THICKNESS / depth))
-	if not long_x:
-		scale = Vector3(scale.z, scale.y, scale.x)
-	var turn := 0.0 if long_x else -PI * 0.5
-	if absf(b.z - a.z) > absf(b.x - a.x):
-		turn += PI * 0.5
-	var basis := Basis(Vector3.UP, turn) * Basis.from_scale(scale)
-	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
-	return Transform3D(basis, (a + b) * 0.5 - basis * center)
 
 
 ## Dry tufts and a few rocks where the desert meets the meadow (`edge`: closeness 1..4 in the
@@ -202,22 +136,7 @@ static func _place_road(data: CityData, lib: ModelLibrary, x: int, y: int, road:
 				batch.add(lib.named_id("lamp_bulb"), lamp * Transform3D(Basis(), BULB_OFFSET))
 
 
-# --- Trees -------------------------------------------------------------------------------------
-static func _place_forest(data: CityData, x: int, y: int, trees: PackedInt32Array, batch: InstanceBatch) -> void:
-	var f := float(data.forest[y * data.size + x]) / 255.0
-	if f <= 0.0:
-		return
-	var h := CityTypes.hash2(x, y, 911)
-	var count := 0
-	if float(h & 1023) / 1024.0 < f * 0.9 * data.tree_share:
-		count = 1 + int(f > 0.6 and (h >> 10) & 1 == 1)
-	for t in count:
-		var hh := CityTypes.hash2(x, y, 31 + t)
-		var p := Vector3(x + 0.15 + float(hh & 255) / 255.0 * 0.7, 0,
-				y + 0.15 + float((hh >> 8) & 255) / 255.0 * 0.7)
-		batch.add(trees[hh % trees.size()], BuildingExtras.tree_xform(p, hh))
-
-
+# --- Scatter -------------------------------------------------------------------------------------
 ## One mesh on the cell with probability `chance`, jittered, random size and turn.
 static func _scatter(x: int, y: int, chance: float, jitter_scale: float, mesh: int, batch: InstanceBatch) -> void:
 	var h := CityTypes.hash2(x, y, 4242)
@@ -227,18 +146,3 @@ static func _scatter(x: int, y: int, chance: float, jitter_scale: float, mesh: i
 			y + 0.2 + float((h >> 18) & 255) / 255.0 * 0.6)
 	var s := 1.0 + (float((h >> 4) & 63) / 63.0 - 0.5) * jitter_scale * 2.0
 	batch.add(mesh, Transform3D(Basis(Vector3.UP, float(h & 63) * 0.1).scaled(Vector3(s, s, s)), p))
-
-
-static func _place_park_tree(data: CityData, x: int, y: int, trees: PackedInt32Array, batch: InstanceBatch) -> void:
-	# The central park is a wood: up to two big trees per cell, CENTRAL_PARK_TREES of the
-	# usual number there (fewer polygons); other parks keep them all.
-	var share := 55.0 * data.tree_share
-	if data.central_park.has_point(Vector2i(x, y)):
-		share *= CENTRAL_PARK_TREES
-	for t in 2:
-		var h := CityTypes.hash2(x, y, 517 + t)
-		if h % 100 >= int(share):
-			continue
-		var p := Vector3(x + 0.15 + float(h & 255) / 255.0 * 0.7, 0, y + 0.15 + float((h >> 8) & 255) / 255.0 * 0.7)
-		var xf := BuildingExtras.tree_xform(p, h)
-		batch.add(trees[(h >> 4) % trees.size()], Transform3D(xf.basis.scaled(Vector3(1.3, 1.3, 1.3)), p))

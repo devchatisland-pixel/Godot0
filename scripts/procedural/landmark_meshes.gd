@@ -23,7 +23,6 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("pond", pond())
 	lib.add_named("box", unit_box())
 	lib.add_named("lamp_bulb", lamp_bulb())
-	lib.add_named("tree", fallback_tree())
 	lib.add_named("stadium_lights", stadium_lights())
 	lib.add_named("helipad_h", helipad_h())
 	lib.add_named("bt_tower", bt_tower())
@@ -162,11 +161,4 @@ static func bt_tower() -> ArrayMesh:
 	k.neon(true)
 	k.block(Vector3(0, 12.25, 0), Vector3(0.1, 0.1, 0.1), Color("ff2a3a"))
 	k.neon(false)
-	return k.commit()
-
-
-static func fallback_tree() -> ArrayMesh:
-	var k := MeshKit.new()
-	k.cylinder(Vector3.ZERO, 0.04, 0.04, 0.2, 6, Color("8a5a3c"))
-	k.cylinder(Vector3(0, 0.15, 0), 0.2, 0.0, 0.5, 8, Color("4f9a45"))
 	return k.commit()

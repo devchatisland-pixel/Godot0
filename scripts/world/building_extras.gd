@@ -1,8 +1,7 @@
 class_name BuildingExtras
 extends RefCounted
 ## Small things added next to a building model: the golden arches, the U.N.
-## emblem, the stadium floodlights, trees of houses, and the fillers of empty
-## lots (gardens, plazas, industrial yards). Pure functions, thread safe.
+## emblem, the stadium floodlights, and the fillers of empty lots (industrial yards). Pure functions, thread safe.
 
 const Kind := CityTypes.Kind
 const Cat := ModelCatalog.Cat
@@ -18,16 +17,6 @@ const HOSPITAL_ROOF := 0.8688
 const JET_SCALE := 0.85
 ## The emblem of the U.N. tower is a bit smaller than the tower is wide.
 const UN_EMBLEM := 0.38
-## Zones of houses, where the gardens are fenced lawns: one house in TREE_EVERY_HOUSE keeps
-## its tree, one garden in TREE_EVERY_GARDEN gets a single tree.
-const SPARSE_TREE_ZONES: Array[int] = [CityTypes.Zone.SUBURBAN, CityTypes.Zone.APARTMENT]
-const TREE_EVERY_HOUSE := 6
-const TREE_EVERY_GARDEN := 4
-
-
-static func _sparse_trees(data: CityData, r: Rect2i) -> bool:
-	var c := r.get_center()
-	return SPARSE_TREE_ZONES.has(data.zone_at(c.x, c.y))
 
 static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 		pick: Dictionary, batch: InstanceBatch) -> void:
@@ -76,11 +65,6 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 						box.get_center().z + box.size.z * HOSPITAL_PAD.y)
 				var w := box.size.x * HOSPITAL_PAD.z
 				batch.add(lib.named_id("helipad_h"), xform * Transform3D(Basis.from_scale(Vector3(w, 1, w)), pad))
-		Kind.HOUSE:
-			if lib.has_cat(Cat.TREE) and (not _sparse_trees(data, r) or absi(seed >> 4) % TREE_EVERY_HOUSE == 0):
-				var trees := lib.ids(Cat.TREE)
-				var p := lot_center + to_back * 0.75 + side * float(mini(r.size.x, r.size.y)) * 0.6
-				batch.add(trees[seed % trees.size()], tree_xform(p, seed))
 		Kind.INDUSTRIAL:
 			if lib.has_cat(Cat.INDUSTRIAL_PROP) and seed % 3 == 0:
 				var props := lib.ids(Cat.INDUSTRIAL_PROP)
@@ -90,24 +74,10 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 					batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 3) * PI * 0.5), p))
 
 
-## Trees on gardens, a tree on plazas and props on industrial yards.
+## Props on industrial yards (gardens and plazas stay bare: there are no trees).
 static func place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, batch: InstanceBatch) -> void:
-	var r := data.building_rect(i)
-	var seed: int = data.b_seed[i]
 	if kind == Kind.INDUSTRIAL_YARD:
-		_place_yard(lib, r, seed, batch)
-		return
-	var trees := lib.ids(Cat.TREE)
-	if trees.is_empty():
-		trees = PackedInt32Array([lib.named_id("tree")])
-	var count := 1 if kind == Kind.PLAZA else mini(4, r.get_area())
-	if kind == Kind.GARDEN and _sparse_trees(data, r):
-		count = 1 if absi(seed >> 4) % TREE_EVERY_GARDEN == 0 else 0
-	for t in count:
-		var h := CityTypes.hash2(i, t, seed)
-		var p := Vector3(r.position.x + 0.3 + float(h & 255) / 255.0 * (r.size.x - 0.6), 0,
-				r.position.y + 0.3 + float((h >> 8) & 255) / 255.0 * (r.size.y - 0.6))
-		batch.add(trees[h % trees.size()], tree_xform(p, h))
+		_place_yard(lib, data.building_rect(i), data.b_seed[i], batch)
 
 
 ## Scale of the shipping containers of the yards (cells per metre): 6.1 m long = 1.2 cells.
@@ -168,11 +138,6 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 			batch.add(boxes[seed % boxes.size()], Transform3D(turn * Basis.from_scale(Vector3.ONE * YARD_BOX_SCALE), c))
 			return
 		batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c))
-
-
-static func tree_xform(p: Vector3, seed: int) -> Transform3D:
-	var s := 1.1 + float((seed >> 5) & 15) / 15.0 * 0.6
-	return Transform3D(Basis(Vector3.UP, float(seed & 63) * 0.1).scaled(Vector3(s, s, s)), p)
 
 
 ## Neon signs by model category: "roof" stands on the roof of the building at its south
@@ -270,9 +235,6 @@ static func _roof(lib: ModelLibrary, id: int, xform: Transform3D) -> Dictionary:
 # --- Concert camp (ConcertSite) ---------------------------------------------------------------
 ## The stage stands at the back of the camp (its back to the sea), the crowd in front of it.
 ## Distances are in cells, along the camp: u across it, v from its back edge to its gate.
-## Inset of the crowd barriers from the edge of the camp, and the width of the gate.
-const CONCERT_FENCE_INSET := 0.3
-const CONCERT_GATE := 2.0
 ## Gap between the stage and the front-of-stage barrier.
 const CONCERT_PIT := 0.6
 ## The barrier model is as tall as a man on the stage: drawn at half its size.
@@ -342,18 +304,11 @@ static func place_concert(data: CityData, lib: ModelLibrary, i: int, batch: Inst
 	var sd := lib.bounds[sid].size.z
 	var stage_mid := _camp_at(ax, 0.0, sd * 0.5 + 0.4)
 
-	# Crowd barriers: round the whole camp (a gate in the middle of the front side) and a
-	# line in front of the stage.
+	# Crowd barrier: one line in front of the stage (no fence round the camp).
 	var barriers := lib.ids(Cat.CROWD_BARRIER)
 	if not barriers.is_empty():
-		var s := CONCERT_FENCE_INSET
-		var l := -w * 0.5 + s
-		var rr := w * 0.5 - s
-		var g := CONCERT_GATE * 0.5
-		for seg in [[l, s, rr, s], [l, s, l, d - s], [rr, s, rr, d - s],
-				[l, d - s, -g, d - s], [g, d - s, rr, d - s],
-				[-sw * 0.5, sd + 0.4 + CONCERT_PIT, sw * 0.5, sd + 0.4 + CONCERT_PIT]]:
-			_barrier_line(lib, barriers[0], _camp_at(ax, seg[0], seg[1]), _camp_at(ax, seg[2], seg[3]), batch)
+		_barrier_line(lib, barriers[0], _camp_at(ax, -sw * 0.5, sd + 0.4 + CONCERT_PIT),
+				_camp_at(ax, sw * 0.5, sd + 0.4 + CONCERT_PIT), batch)
 
 	# Floodlights: two beside the stage, two at the back corners of the crowd, all aimed at it.
 	var lights := lib.ids(Cat.FLOODLIGHT)

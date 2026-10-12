@@ -2,7 +2,6 @@ class_name FogIsland
 extends Node3D
 ## Draws the island hidden in the fog east of Chat City and the metal
 ## bridge that leads to it:
-##   - its buildings and palms (a few MultiMeshes, always loaded, small),
 ##   - a fog bank made of painted cloud textures: drifting sheets plus big
 ##     billows and smoke plumes on camera-facing quads (no 3D volumes),
 ##   - the "ZONE UNLOCKED ON SEASON 2, COMING SOON" title above it.
@@ -38,7 +37,6 @@ func build(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
 	var fog := data.fog
 	if fog == null:
 		return
-	_build_buildings(fog, lib)
 	_build_bridge(data, lib)
 	_build_layers(fog)
 	_build_puffs(fog, 60 if cfg.is_mobile else 120)
@@ -48,36 +46,6 @@ func build(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
 func set_night(amount: float) -> void:
 	for m in _materials:
 		m.set_shader_parameter("night", amount)
-
-
-# --- Buildings and trees -------------------------------------------------------------------
-func _build_buildings(fog: FogIslandShaper, lib: ModelLibrary) -> void:
-	var pools := [_union(lib, [Cat.TOWER_PHOTO, Cat.SKYSCRAPER]),
-			_union(lib, [Cat.COMMERCIAL, Cat.NY_MIDRISE]), lib.ids(Cat.HOUSE)]
-	var groups := {}
-	for b in fog.buildings:
-		var p: Vector2 = b[0]
-		var kind: int = b[1]
-		var h: int = b[2]
-		var pool: PackedInt32Array = pools[kind]
-		if pool.is_empty():
-			continue
-		var id := pool[h % pool.size()]
-		var s := 1.2 if kind == 0 else 1.0
-		var t := Transform3D(Basis(Vector3.UP, float(h & 3) * PI * 0.5).scaled(Vector3(s, s, s)),
-				Vector3(p.x, 0, p.y))
-		_add(groups, id, t)
-	var palm := lib.named_id("palm")
-	var trees := lib.ids(Cat.TREE)
-	for tr in fog.trees:
-		var p: Vector2 = tr[0]
-		var h: int = tr[2]
-		var id := palm if tr[1] or trees.is_empty() else trees[h % trees.size()]
-		var s := 1.0 + float(h & 7) * 0.08
-		_add(groups, id, Transform3D(Basis(Vector3.UP, float(h & 63) * 0.1).scaled(Vector3(s, s, s)),
-				Vector3(p.x, 0, p.y)))
-	for id in groups:
-		_multimesh(lib.meshes[id], groups[id])
 
 
 # --- Bridge to the fog island ------------------------------------------------------------------
@@ -216,32 +184,3 @@ func _build_title(fog: FogIslandShaper) -> void:
 	title.render_priority = 10
 	title.position = Vector3(c.x, TITLE_HEIGHT, c.y)
 	add_child(title)
-
-
-# --- Helpers ---------------------------------------------------------------------------------------
-func _add(groups: Dictionary, id: int, t: Transform3D) -> void:
-	if id < 0:
-		return
-	if not groups.has(id):
-		groups[id] = []
-	groups[id].append(t)
-
-
-func _multimesh(mesh: Mesh, xforms: Array) -> void:
-	var mm := MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = mesh
-	mm.instance_count = xforms.size()
-	for i in xforms.size():
-		mm.set_instance_transform(i, xforms[i])
-	var mmi := MultiMeshInstance3D.new()
-	mmi.multimesh = mm
-	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(mmi)
-
-
-func _union(lib: ModelLibrary, cats: Array) -> PackedInt32Array:
-	var out := PackedInt32Array()
-	for c in cats:
-		out.append_array(lib.ids(c))
-	return out

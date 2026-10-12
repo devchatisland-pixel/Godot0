@@ -25,9 +25,6 @@ var deco := PackedByteArray()
 ## Closeness to the other biome across the desert border (AmenitiesPlanner): low nibble
 ## 1..4 (4 = at the border), bit 0x80 = the cell is desert.
 var edge := PackedByteArray()
-## Garden fences (GardenFences): bit 1 = a fence on the north side of the cell, bit 2 = on
-## its west side (the south and east sides are the north and west sides of the next cells).
-var fence_edge := PackedByteArray()
 
 # Buildings / lots (index = building id)
 var b_rect := PackedInt32Array()     # x, y, w, h (4 ints per building)
@@ -75,7 +72,6 @@ func _init(p_size: int, p_chunk: int) -> void:
 	occupied.resize(n)
 	deco.resize(n)
 	edge.resize(n)
-	fence_edge.resize(n)
 
 
 # --- Cell access -----------------------------------------------------------------
