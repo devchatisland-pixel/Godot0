@@ -81,6 +81,8 @@ func _build_props(data: CityData, lib: ModelLibrary) -> void:
 		var id := lib.load_named("prop:" + String(p["file"]).get_file(), p["file"])
 		if id < 0:
 			continue
+		if p["file"] == ScenicProps.BILLBOARD and not NightWindows.light_billboard(lib.meshes[id]):
+			push_warning("[Props] the park billboard has no flat panel to light at night")
 		var box := lib.bounds[id]
 		var longest := maxf(box.size.x, box.size.z)
 		if longest <= 0.0:
