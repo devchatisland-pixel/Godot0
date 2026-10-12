@@ -50,6 +50,8 @@ const BILLBOARD_LIGHT := Color(1.0, 0.96, 0.88)
 const BILLBOARD_GLOW := 1.0
 ## Night duplicates (tools/make_night_variants.py: the pharmacy cross, the police lights) bring
 ## their own night map, which holds a third of the final light: off by day, x3 at night.
+## A higher value makes the light the lamps throw around them stronger; the lamps themselves
+## keep their colour.
 const OWN_NIGHT := 3.0
 
 
@@ -119,7 +121,12 @@ static func light_own(mesh: Mesh) -> bool:
 		if mat == null or mat.emission_texture == null or lit.has(mat):
 			continue
 		mat.emission_enabled = true
+		# The map alone is the light. The importer leaves the emission colour white (the
+		# emissiveFactor of the file): added to the map, it would turn the whole model white.
+		mat.emission = Color.BLACK
 		mat.emission_operator = BaseMaterial3D.EMISSION_OP_ADD
+		# The map has its own texture coordinates when the model brings a second set.
+		mat.emission_on_uv2 = (mesh.surface_get_format(s) & Mesh.ARRAY_FORMAT_TEX_UV2) != 0
 		SignAtlas.register_night(mat, 0.0, OWN_NIGHT)
 		lit[mat] = true
 	mesh.set_meta("own_night", not lit.is_empty())
