@@ -39,6 +39,7 @@ const TITLES := {
 	Cat.TANK_T55: ["T-55 tank", "VEHICLE"], Cat.APC_BMP1: ["BMP-1 infantry fighting vehicle", "VEHICLE"],
 	Cat.APC_BRDM: ["BRDM armoured car", "VEHICLE"], Cat.APC_EE11: ["EE-11 anti-aircraft vehicle", "VEHICLE"],
 	Cat.NUCLEAR2: ["Nuclear power plant", "MILITARY"], Cat.CARRIER: ["Aircraft carrier", "SHIP"],
+	Cat.CHECKPOINT: ["Golden Gate checkpoint", "MILITARY"],
 }
 
 ## Clickable things: {"mesh": Mesh, "xform": Transform3D, "pick": Dictionary} (see BuildingPicker).
@@ -94,8 +95,12 @@ func _base(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> int
 			continue
 		var dir: Vector2 = p["dir"]
 		var lift := MapVehicles.HELIPAD_LIFT if p.get("veh", "") == FogBaseSites.HELICOPTER else 0.0
-		_put(lib, batch, id, _standing(lib, id, Vector3(fog.origin.x + at.x, lift, fog.origin.y + at.y),
-				atan2(dir.x, dir.y) + turn, scale), label[0], label[1], "military base of the fog island")
+		var ground := Vector3(fog.origin.x + at.x, lift, fog.origin.y + at.y)
+		var yaw := atan2(dir.x, dir.y) + turn
+		# A model built round its own origin (the checkpoint: the middle of its road) stands
+		# with that origin on `at`, not the middle of its box.
+		var xform := Transform3D(Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3.ONE * scale), ground) 				if p.get("origin", false) else _standing(lib, id, ground, yaw, scale)
+		_put(lib, batch, id, xform, label[0], label[1], "military base of the fog island")
 		n += 1
 	var pad := MapVehicles.helipad_id(lib)
 	if pad >= 0:

@@ -56,6 +56,9 @@ enum Cat {
 	# Eighteenth wave (tools/build_wave16_models.py, PortRework): the industrial buildings set (halls,
 	# sheds, towers and tanks), the oil and storage tanks with the brick factory, the offshore oil rig
 	IND_HALL, IND_SHED, IND_TOWER, PORT_TANK, OIL_RIG,
+	# Nineteenth wave: the checkpoint of the Golden Gate (fog island), the "Danger" plate of the
+	# secret base, the lighthouse club of the little island and the glowing part of its sign
+	CHECKPOINT, DANGER_SIGN, LIGHTHOUSE_CLUB, NEON_LIGHTHOUSE,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
