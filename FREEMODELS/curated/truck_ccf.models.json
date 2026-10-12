@@ -1,9 +1,4 @@
 {
 	"file": "truck_ccf.glb",
-	"models": [
-		{
-			"cat": "TRUCK_CCF",
-			"node": "truck_ccf"
-		}
-	]
+	"models": []
 }

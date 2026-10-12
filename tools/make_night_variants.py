@@ -205,28 +205,58 @@ class Triangles:
     def __init__(s, g):
         s.g = g
         s.prims = []            # (primitive, first triangle, number of triangles)
-        pos, nrm, uv, local = [], [], [], []
+        pos, nrm, uv, local, lnrm, mat = [], [], [], [], [], []
         j = g.j
-        for node in j['nodes']:
-            if 'mesh' not in node:
-                continue
-            assert 'rotation' not in node and 'scale' not in node and 'matrix' not in node, 'only moved nodes are handled'
-            move = np.array(node.get('translation', [0.0, 0.0, 0.0]))
-            for p in j['meshes'][node['mesh']]['primitives']:
-                P = g.acc(p['attributes']['POSITION']).astype(np.float64)
-                N = g.acc(p['attributes']['NORMAL']).astype(np.float64)
-                U = g.acc(p['attributes']['TEXCOORD_0']).astype(np.float64)
-                I = g.acc(p['indices']).reshape(-1, 3) if 'indices' in p else np.arange(len(P)).reshape(-1, 3)
-                s.prims.append((p, sum(len(x) for x in pos), len(I)))
-                local.append(P[I])
-                pos.append(P[I] + move)
-                nrm.append(N[I])
-                uv.append(U[I])
+        count = [0]
+
+        def walk(i, parent):
+            node = j['nodes'][i]
+            world = parent @ node_matrix(node)
+            if 'mesh' in node:
+                turn = np.linalg.inv(world[:3, :3]).T
+                for p in j['meshes'][node['mesh']]['primitives']:
+                    P = g.acc(p['attributes']['POSITION']).astype(np.float64)
+                    N = g.acc(p['attributes']['NORMAL']).astype(np.float64)
+                    U = g.acc(p['attributes']['TEXCOORD_0']).astype(np.float64)
+                    I = g.acc(p['indices']).reshape(-1, 3) if 'indices' in p else np.arange(len(P)).reshape(-1, 3)
+                    s.prims.append((p, count[0], len(I)))
+                    count[0] += len(I)
+                    local.append(P[I])
+                    lnrm.append(N[I])
+                    pos.append(P[I] @ world[:3, :3].T + world[:3, 3])
+                    n = N[I] @ turn.T
+                    nrm.append(n / (np.linalg.norm(n, axis=2, keepdims=True) + 1e-12))
+                    uv.append(U[I])
+                    mat.append(np.full(len(I), p.get('material', 0)))
+            for c in node.get('children', []):
+                walk(c, world)
+        walk(g.root(), np.eye(4))
         s.local = np.concatenate(local)   # (T, 3, 3) in the space of the mesh
+        s.local_nrm = np.concatenate(lnrm)
         s.pos = np.concatenate(pos)       # (T, 3, 3) in the space of the scene
         s.nrm = np.concatenate(nrm)
         s.uv = np.concatenate(uv)
+        s.mat = np.concatenate(mat)
         s.mesh = np.concatenate([np.full(n, k) for k, (_, _, n) in enumerate(s.prims)])
+
+    def colours(s):
+        """Colour (linear) of every triangle: its material's texture at the middle of the
+        triangle (the colour of the material when it has no texture)."""
+        j = s.g.j
+        out = np.zeros((len(s.pos), 3))
+        c = s.uv.mean(1) % 1.0
+        for m in np.unique(s.mat):
+            sel = s.mat == m
+            pbr = j['materials'][m].get('pbrMetallicRoughness', {})
+            factor = np.array(pbr.get('baseColorFactor', [1, 1, 1, 1])[:3], dtype=np.float64)
+            if 'baseColorTexture' in pbr:
+                img = np.asarray(s.g.image(j['textures'][pbr['baseColorTexture']['index']]['source'])).astype(np.float64) / 255.0
+                h, w = img.shape[:2]
+                out[sel] = to_linear(img[np.minimum((c[sel, 1] * h).astype(int), h - 1),
+                                         np.minimum((c[sel, 0] * w).astype(int), w - 1)]) * factor
+            else:
+                out[sel] = factor
+        return out
 
     def islands(s):
         """Island id of every triangle (corners at the same place are welded)."""
@@ -244,11 +274,25 @@ class Triangles:
                 parent[find(v)] = a
         return np.array([find(t[0]) for t in weld])
 
-    def colours(s, albedo):
-        """Colour (linear) of every triangle: the texture at the middle of the triangle."""
-        h, w = albedo.shape[:2]
-        c = s.uv.mean(1) % 1.0
-        return to_linear(albedo[np.minimum((c[:, 1] * h).astype(int), h - 1), np.minimum((c[:, 0] * w).astype(int), w - 1)])
+
+def node_matrix(n):
+    if 'matrix' in n:
+        return np.array(n['matrix'], dtype=np.float64).reshape(4, 4).T
+    m = np.eye(4)
+    if 'scale' in n:
+        m = np.diag(list(n['scale']) + [1.0]) @ m
+    if 'rotation' in n:
+        x, y, z, w = n['rotation']
+        r = np.eye(4)
+        r[:3, :3] = [[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+                     [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+                     [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]]
+        m = r @ m
+    if 'translation' in n:
+        t = np.eye(4)
+        t[:3, 3] = n['translation']
+        m = t @ m
+    return m
 
 
 def morton(points):
@@ -262,7 +306,7 @@ def morton(points):
     return np.argsort(code, kind='stable')
 
 
-def night_map(tri, albedo, lamps, reach, strength, base=0.0, size=MAP_SIZE):
+def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE):
     """Paints the night map of the triangles `tri` and returns (TEXCOORD_1 per corner (T, 3, 2),
     the map as an image).
     `lamps`: [(triangles of the lamp (bool per triangle), colour)]; `reach`: distance at which
@@ -286,7 +330,7 @@ def night_map(tri, albedo, lamps, reach, strength, base=0.0, size=MAP_SIZE):
         bary.append((np.clip(u, -0.35, 1.35), np.clip(v, -0.35, 1.35)))
     corners = [np.array([[pad, pad], [pad + span, pad], [pad, pad + span]]),
                np.array([[cell - pad, cell - pad], [cell - pad - span, cell - pad], [cell - pad, cell - pad - span]])]
-    colour = tri.colours(albedo)
+    colour = tri.colours()
     own = np.zeros((T, 3))
     is_lamp = np.zeros(T, bool)
     sources = []
@@ -334,7 +378,7 @@ def write_night(g, tri, uv2, img, name):
     """The triangles get their new coordinates, every material the night map."""
     for p, start, count in tri.prims:
         sl = slice(start, start + count)
-        g.set_geometry(p, tri.local[sl].reshape(-1, 3), tri.nrm[sl].reshape(-1, 3), tri.uv[sl].reshape(-1, 2),
+        g.set_geometry(p, tri.local[sl].reshape(-1, 3), tri.local_nrm[sl].reshape(-1, 3), tri.uv[sl].reshape(-1, 2),
                        uv2[sl].reshape(-1, 2))
     tex = g.add_texture(img, name)
     for m in g.j['materials']:
@@ -349,20 +393,16 @@ def pharmacy():
     pharm = next(c for c in j['nodes'][g.root()]['children'] if j['nodes'][c]['name'] == 'pharmacy')
     g.keep_only([pharm])
     j['nodes'][0]['name'] = 'pharmacy_night'
-    for node in j['nodes']:   # the mesh node itself is not moved: only its parents are
-        if 'mesh' in node:
-            assert not ({'rotation', 'scale', 'translation'} & set(node))
-    albedo = np.asarray(g.image()).astype(np.float64) / 255.0
     tri = Triangles(g)
     # The cross is the island that reaches the highest (140 triangles); its green faces are
     # the cross, the pale ones its rim.
     isl = tri.islands()
     tops = {k: tri.pos[isl == k][..., 1].max() for k in np.unique(isl)}
     cross = isl == max(tops, key=tops.get)
-    col = tri.colours(albedo)
+    col = tri.colours()
     green = cross & (col[:, 1] > col[:, 0] + 0.1)
     print('  pharmacy: %d green and %d rim triangles in the cross' % (green.sum(), (cross & ~green).sum()))
-    uv2, img = night_map(tri, albedo, [(green, CROSS_GREEN), (cross & ~green, CROSS_RIM)], reach=1.1, strength=0.55,
+    uv2, img = night_map(tri, [(green, CROSS_GREEN), (cross & ~green, CROSS_RIM)], reach=0.22, strength=0.55,
                          base=FACADE / OWN_NIGHT)
     write_night(g, tri, uv2, img, 'pharmacy_night')
     g.save(os.path.join(CUR, 'pharmacy_night.glb'))
@@ -371,42 +411,99 @@ def pharmacy():
         f.write('\n')
 
 
-# --- Police cars ---------------------------------------------------------------------
-def police(name, pick):
-    """`pick(tri)` -> bool per triangle: the faces of the lamp unit (its red and blue lenses
-    are found by their colour)."""
-    g = GLB(os.path.join(VEH, name + '.glb'))
-    albedo = np.asarray(g.image()).astype(np.float64) / 255.0
-    tri = Triangles(g)
-    unit = pick(tri)
-    col = to_srgb(tri.colours(albedo))
+# --- Vehicles ------------------------------------------------------------------------
+def red_blue(tri, unit):
+    """The red and the blue lenses among the faces `unit`, by their colour."""
+    col = to_srgb(tri.colours())
     r, gr, b = col[:, 0], col[:, 1], col[:, 2]
     red = unit & (r > 0.2) & (r > gr * 2.0) & (r > b * 2.0)
     blue = unit & (b > 0.2) & (b > r * 1.6) & (b > gr * 1.2)
+    return red, blue
+
+
+def left_right(tri, unit):
+    """A light bar without separate lenses: its left half red, its right half blue."""
+    x = tri.pos.mean(1)[:, 0]
+    mid = (tri.pos[unit][..., 0].min() + tri.pos[unit][..., 0].max()) / 2.0
+    return unit & (x < mid), unit & (x >= mid)
+
+
+def vehicle(folder, name, pick, reach=0.55, strength=0.8, manifest=None):
+    """`pick(tri)` -> (red faces, blue faces) of the lamps (bool per triangle)."""
+    g = GLB(os.path.join(folder, name + '.glb'))
+    tri = Triangles(g)
+    red, blue = pick(tri)
     print('  %s: %d red and %d blue lamp triangles' % (name, red.sum(), blue.sum()))
-    assert red.any()
-    lamps = [(red, LAMP_RED)] + ([(blue, LAMP_BLUE)] if blue.any() else [])
-    uv2, img = night_map(tri, albedo, lamps, reach=0.55, strength=0.8)
+    assert red.any() or blue.any()
+    lamps = [(m, c) for m, c in ((red, LAMP_RED), (blue, LAMP_BLUE)) if m.any()]
+    uv2, img = night_map(tri, lamps, reach=reach, strength=strength)
     write_night(g, tri, uv2, img, name + '_lamps')
-    g.j['nodes'][g.root()]['name'] = name + '_night'
-    g.save(os.path.join(VEH, name + '_night.glb'))
+    if manifest is None:
+        g.j['nodes'][g.root()]['name'] = name + '_night'
+    g.save(os.path.join(folder, name + '_night.glb'))
+    if manifest is not None:
+        # A curated pack: the night model takes the place of the model in the lists the game reads.
+        node, cat = manifest
+        for file, models in ((name + '_night', [{'cat': cat, 'node': node}]), (name, [])):
+            with open(os.path.join(folder, file + '.models.json'), 'w', newline='\n') as f:
+                json.dump({'file': file + '.glb', 'models': models}, f, indent='\t')
+                f.write('\n')
 
 
-def light_bar(tri):
+def island_where(tri, test):
+    """Faces of the islands whose box (lo, hi) passes `test`."""
+    isl = tri.islands()
+    out = np.zeros(len(isl), bool)
+    for k in np.unique(isl):
+        sel = isl == k
+        V = tri.pos[sel].reshape(-1, 3)
+        if test(V.min(0), V.max(0), int(sel.sum())):
+            out |= sel
+    return out
+
+
+def cruiser_bar(tri):
     # The light bar is the island on the roof that spans the car's width.
     isl = tri.islands()
     def score(k):
         V = tri.pos[isl == k].reshape(-1, 3)
         return V[:, 1].min() if (V[:, 0].max() - V[:, 0].min()) > 1.0 else -1e9
-    return isl == max(np.unique(isl), key=score)
+    return red_blue(tri, isl == max(np.unique(isl), key=score))
 
 
-def beacon(tri):
+def jp_beacon(tri):
     # The red beacon is its own part, "Cube", on the roof (the seventh mesh).
-    return tri.mesh == 6
+    return red_blue(tri, tri.mesh == 6)
+
+
+def ambulance_bar(tri):
+    # The light bar over the cab: the wide island above 2.1 m, in front of the box.
+    return left_right(tri, island_where(tri, lambda lo, hi, n: lo[1] > 2.12 and hi[0] - lo[0] > 1.2 and n > 12))
+
+
+def fire_truck_lights(tri):
+    # The bar across the front of the cab roof (left red, right blue) and the two red
+    # beacons behind it.
+    bar = island_where(tri, lambda lo, hi, n: lo[1] > 2.7 and hi[2] < -4.0 and hi[0] - lo[0] > 1.5)
+    boxes = island_where(tri, lambda lo, hi, n: lo[1] > 2.7 and -4.0 < lo[2] and hi[2] < -3.3 and hi[0] - lo[0] < 0.5)
+    red, blue = left_right(tri, bar)
+    return red | boxes, blue
+
+
+def ccf_beacons(tri):
+    # The two blue beacons on the roof of the cab: the blue faces of the top fifth.
+    col = to_srgb(tri.colours())
+    top = tri.pos[..., 1].max()
+    high = tri.pos.mean(1)[:, 1] > top * 0.8
+    blue = high & (col[:, 2] > 0.25) & (col[:, 2] > col[:, 0] * 1.4) & (col[:, 2] > col[:, 1] * 1.2)
+    return np.zeros(len(col), bool), blue
 
 
 if __name__ == '__main__':
     pharmacy()
-    police('police_us_cruiser', light_bar)
-    police('police_jp_black', beacon)
+    vehicle(VEH, 'police_us_cruiser', cruiser_bar)
+    vehicle(VEH, 'police_jp_black', jp_beacon)
+    vehicle(VEH, 'p54_11_ambulance', ambulance_bar, reach=0.7)
+    vehicle(VEH, 'p54_33_fire_truck', fire_truck_lights, reach=0.8)
+    # The forest fire truck is a curated model, two cells long.
+    vehicle(CUR, 'truck_ccf', ccf_beacons, reach=0.16, manifest=('truck_ccf', 'TRUCK_CCF'))
