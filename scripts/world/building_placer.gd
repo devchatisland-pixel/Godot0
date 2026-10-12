@@ -158,7 +158,19 @@ static func pick_for(data: CityData, lib: ModelLibrary, i: int, facing: int = -1
 
 
 # --- Model choice ------------------------------------------------------------------------
+## The cartoon house "house1" never faces north: it is turned to face south.
+const SOUTH_ONLY_MODEL := "carto.glb: house1"
+
+
 static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
+	var pick := _pick_model_raw(data, lib, i, facing_override)
+	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
+	if facing == 0 and not pick.is_empty() and lib.model_name(pick["id"]) == SOUTH_ONLY_MODEL:
+		return _pick_model_raw(data, lib, i, 2)
+	return pick
+
+
+static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
 	var kind: int = data.b_kind[i]
 	var r := data.building_rect(i)
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override

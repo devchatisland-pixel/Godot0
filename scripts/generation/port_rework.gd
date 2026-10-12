@@ -68,9 +68,8 @@ const KEEP_YARDS := 32
 const GAP := 1
 const OIL_RIG := "oil_rig.glb: oil_rig"
 const OIL_RIG_LOT := Vector2i(5, 6)
-## Open sea all round the rig, in cells; how far out it may stand from the crane.
+## Open sea all round the rig, in cells.
 const OIL_RIG_SEA := 3
-const OIL_RIG_REACH := 45
 
 var _d: CityData
 var _grid := PackedByteArray()
@@ -234,18 +233,45 @@ func _free_lot(r: Rect2i) -> bool:
 
 
 # --- The oil rig --------------------------------------------------------------------------------
-## At sea, as near the port as it can with open sea all round it.
+## At sea, on the spot of open water farthest from any coast (island, quay or edge of the map).
 func _oil_rig() -> int:
+	var n := _d.size
+	var dist := PackedInt32Array()
+	dist.resize(n * n)
+	dist.fill(-1)
+	var queue := PackedInt32Array()
+	for y in n:
+		for x in n:
+			var i := _d.idx(x, y)
+			if _d.terrain[i] != Terrain.DEEP or _grid[i] != 0 or x == 0 or y == 0 or x == n - 1 or y == n - 1:
+				dist[i] = 0
+				queue.append(i)
+	var head := 0
+	while head < queue.size():
+		var i := queue[head]
+		head += 1
+		var x := i % n
+		var y := i / n
+		for o in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var nx: int = x + o.x
+			var ny: int = y + o.y
+			if nx < 0 or ny < 0 or nx >= n or ny >= n:
+				continue
+			var j := _d.idx(nx, ny)
+			if dist[j] < 0:
+				dist[j] = dist[i] + 1
+				queue.append(j)
 	var best := Rect2i()
-	var best_d := INF
-	var c := Vector2i(_center)
-	for y in range(c.y - OIL_RIG_REACH, c.y + OIL_RIG_REACH):
-		for x in range(c.x - OIL_RIG_REACH, c.x + OIL_RIG_REACH):
-			var r := Rect2i(Vector2i(x, y), OIL_RIG_LOT)
-			var d := Vector2(r.get_center()).distance_to(_center)
-			if d < best_d and _open_sea(r.grow(OIL_RIG_SEA)):
-				best_d = d
-				best = r
+	var best_d := 0
+	for y in range(0, n - OIL_RIG_LOT.y):
+		for x in range(0, n - OIL_RIG_LOT.x):
+			var c := Vector2i(x + OIL_RIG_LOT.x / 2, y + OIL_RIG_LOT.y / 2)
+			var d := dist[_d.idx(c.x, c.y)]
+			if d > best_d:
+				var r := Rect2i(Vector2i(x, y), OIL_RIG_LOT)
+				if _open_sea(r.grow(OIL_RIG_SEA)):
+					best_d = d
+					best = r
 	if best.size.x == 0:
 		push_warning("[Port] no open sea for the oil rig")
 		return 0
