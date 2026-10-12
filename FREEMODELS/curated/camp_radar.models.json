@@ -1,0 +1,9 @@
+{
+	"file": "camp_radar.glb",
+	"models": [
+		{
+			"cat": "RADAR",
+			"node": "camp_radar"
+		}
+	]
+}

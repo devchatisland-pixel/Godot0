@@ -1,0 +1,9 @@
+{
+	"file": "neon_woman.glb",
+	"models": [
+		{
+			"cat": "NEON_WOMAN",
+			"node": "neon_woman"
+		}
+	]
+}

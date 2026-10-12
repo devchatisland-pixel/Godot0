@@ -1,0 +1,9 @@
+{
+	"file": "sam_nasams.glb",
+	"models": [
+		{
+			"cat": "SAM_NASAMS",
+			"node": "sam_nasams"
+		}
+	]
+}

@@ -4,6 +4,8 @@ extends RefCounted
 ##   - on the beach between a lighthouse and the north watchtower: two deck chairs and a beach
 ##     ball;
 ##   - one deck chair on a beach near the north-east lighthouse (not on its own sand strip);
+##   - deck chairs and a beach ball on a few lonely beaches, far from the lighthouses and from
+##     everything else;
 ##   - a billboard on the border of the central park, by a downtown tower.
 ## Pure data in, a list of placements out: {"file", "title", "at": Vector3, "yaw", "length"}
 ## (`length`: longest side of the model, in cells; the model stands on the ground at `at`).
@@ -29,6 +31,13 @@ const BILLBOARD_WIDTH := 4.5
 const BALL_LEN := 0.16
 const CHAIR_LEN := 0.45
 
+## Lonely beaches: how many get chairs and a ball, how far they keep from each other, from
+## the lighthouses, and from any building, road or other prop (cells).
+const LONELY_SETS := 6
+const LONELY_APART := 34.0
+const LONELY_FROM_LIGHTHOUSE := 26.0
+const LONELY_CLEAR := 12
+
 
 var out: Array[Dictionary] = []
 var _d: CityData
@@ -49,6 +58,7 @@ static func plan(data: CityData) -> Array[Dictionary]:
 					s._taken[data.idx(x, y)] = 1
 	s._beach_set()
 	s._lone_chair()
+	s._lonely_beaches()
 	s._park_billboard()
 	return s.out
 
@@ -127,6 +137,61 @@ func _to_sea(c: Vector2i) -> Vector3:
 		return Vector3(0, 0, 1)
 	sum = sum.normalized()
 	return Vector3(sum.x, 0, sum.y)
+
+
+## Deck chairs facing the sea and a beach ball on LONELY_SETS beaches of the main island with
+## nothing around: no lighthouse within LONELY_FROM_LIGHTHOUSE cells, no building, road or
+## prop within LONELY_CLEAR. Two or three chairs, by the hash of the cell.
+func _lonely_beaches() -> void:
+	var lights: Array[Vector2] = []
+	for b in _d.building_count():
+		if _d.b_kind[b] == Kind.LIGHTHOUSE:
+			lights.append(Vector2(_d.building_rect(b).get_center()))
+	var cands: Array[Vector2i] = []
+	for y in range(LONELY_CLEAR, _d.size - LONELY_CLEAR):
+		for x in range(LONELY_CLEAR, _d.size - LONELY_CLEAR):
+			if _sand(x, y) and _d.zone_at(x, y) != Zone.DEV and _lonely(x, y, lights):
+				cands.append(Vector2i(x, y))
+	cands.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return CityTypes.hash2(a.x, a.y, 83) < CityTypes.hash2(b.x, b.y, 83))
+	var sets: Array[Vector2i] = []
+	for c in cands:
+		if sets.size() >= LONELY_SETS:
+			break
+		var apart := true
+		for o in sets:
+			if Vector2(o).distance_to(Vector2(c)) < LONELY_APART:
+				apart = false
+				break
+		if not apart:
+			continue
+		sets.append(c)
+		var p := Vector3(c.x + 0.5, 0, c.y + 0.5)
+		var sea := _to_sea(c)
+		var side := Vector3(-sea.z, 0, sea.x)
+		var face := atan2(sea.x, sea.z)
+		var chairs := 2 + (CityTypes.hash2(c.x, c.y, 89) & 1)
+		for k in chairs:
+			_add(CHAIR, "Deck chair", p + side * (float(k) - float(chairs - 1) * 0.5) * 0.55, face, CHAIR_LEN)
+		_add(BALL, "Beach ball", p + sea * 0.45 + side * 0.2, 0.0, BALL_LEN)
+	if sets.size() < LONELY_SETS:
+		push_warning("[Props] only %d lonely beaches" % sets.size())
+
+
+## True when sand cell (x, y) has sand or sea all round it, no lighthouse near and nothing
+## built or placed within LONELY_CLEAR cells.
+func _lonely(x: int, y: int, lights: Array[Vector2]) -> bool:
+	for l in lights:
+		if l.distance_to(Vector2(x, y)) < LONELY_FROM_LIGHTHOUSE:
+			return false
+	for dy in range(-LONELY_CLEAR, LONELY_CLEAR + 1):
+		for dx in range(-LONELY_CLEAR, LONELY_CLEAR + 1):
+			var i := _d.idx(x + dx, y + dy)
+			if _taken[i] != 0 or _d.road[i] != 0 or _d.deco[i] != 0:
+				return false
+			if maxi(absi(dx), absi(dy)) <= 1 and _d.is_land(x + dx, y + dy) and not _sand(x + dx, y + dy):
+				return false
+	return true
 
 
 # --- Park billboard -----------------------------------------------------------------------------

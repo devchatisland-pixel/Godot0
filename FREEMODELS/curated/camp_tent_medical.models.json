@@ -1,0 +1,9 @@
+{
+	"file": "camp_tent_medical.glb",
+	"models": [
+		{
+			"cat": "TENT_MEDICAL",
+			"node": "camp_tent_medical"
+		}
+	]
+}

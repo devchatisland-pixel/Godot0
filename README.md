@@ -66,6 +66,25 @@ island has no building**, and the map holds **12 more hot air balloons** floatin
 sea and **12 more submarines** at random places of the open sea. The text below still describes the districts as
 they were planned: read the urban island, the fog island, the trees and the fences in it with these changes.
 
+**Latest additions (`map_additions.gd`, `fog_base_sites.gd`, `fog_base.gd`):**
+
+* **Fog island**: the "SEASON 2" title is switched off (`FogIsland.SHOW_TITLE`) and the fog is gone (clear sky,
+  `FogIsland.SHOW_FOG`), because the island now holds a **military base**: an air base (runway and roads
+  drawn with the highway texture, a row of F-14, staff building, radar, the helipad with the helicopter that
+  stood on the prison island), a camp (rows of tents, medical tents, barracks, and a vehicle park where
+  T-55, BMP-1, BRDM and EE-11 AA stand side by side in blocks of one kind) and the **nuclear power plant** the
+  army protects, with air defence (NASAMS) and armoured cars round it. Everything is placed by hand in
+  `FogBaseSites` (local cells of the island).
+* **Main city**: three low poly churches; downtown is denser (its cleared and low lots are Kenney
+  skyscrapers); the poor district has a ghetto look (the three blackthorn towers `tower0`, `tower5`, `tower6`
+  and the ten buildings of the "Buildings" pack, each used a few times); one tall tower of Las Vegas carries
+  the neon woman sign on its roof.
+* **Vehicles** (`vehicle_sites.gd`): a harvester in a wheat field, a red pickup, a forwarder and a tractor
+  with its trailer in the farmland, a water tanker next to the construction crane, a fuel tanker next to the
+  oil barrels of the port.
+* **Sky and beaches**: three F-111 fly in a V over the sea far north of the island; deck chairs and beach
+  balls stand on six lonely beaches, away from the lighthouses and from everything else (`scenic_props.gd`).
+
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
@@ -87,7 +106,7 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 | just south of the urban island | **BT tower islet** | a tiny industrial islet with the BT tower in its middle and three satellite dishes round it |
 | the two forests | **Watchtowers** | two simplified wooden lookouts, one in the north-east forest and one in the forest of the old city |
 | far north-west, at sea | **Prison island** | a long rocky island far from the coast: a very big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses |
-| east, across the Golden Gate | **The fog island** | a second island hidden in a thick bank of fog and smoke (twice the area of before, same buildings). A three-lane highway leads to the Golden Gate (no roadblocks, the deck is level with the road; the fog stays clear only over the bridge itself and covers the island from its coast). "SEASON 2" floats over it |
+| east, across the Golden Gate | **The fog island** | a second island under a clear sky, with the military base and its nuclear plant (it was hidden in a thick bank of fog). A three-lane highway leads to the Golden Gate (no roadblocks, the deck is level with the road; the fog stays clear only over the bridge itself and covers the island from its coast). The "SEASON 2" title is switched off |
 | coast | **Beaches, rocky shores, islets** | six lighthouses, each on a real coast cell (four round the main island, two on the prison island), and palm islets; on the smallest one a pirate grave |
 
 How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same map on every device):
@@ -130,7 +149,7 @@ The fog is made of pictures, not 3D volumes:
 
 * four sheets of drifting cloud texture at different heights (`shaders/fog_layer.gdshader`), whose holes open and close over the buildings;
 * about 50 big painted billows and two smoke plumes on camera-facing quads (`shaders/fog_puff.gdshader`);
-* the "SEASON 2" title, always on top.
+* the "SEASON 2" title, always on top (switched off: `FogIsland.SHOW_TITLE`).
 
 The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
 At night the fog turns dark blue-grey.
@@ -301,11 +320,13 @@ Two packs (`free_mini`, `poor`) store one object per material for the whole town
 Not used:
 
 * **Kit parts, not whole buildings**: buildings pack, European asset pack, `building.glb`.
-* **Duplicate**: the school (the procedural school is used).
-* **Skipped on request**: the neon woman sign.
 * **Not placed**: the train station and the gym of the CartoCity pack, the police car and solid roadblocks (removed on request), the museums of the European pack (the museum was replaced by the U.N.).
 
 ### Credits of the latest models
+
+* Military base: "Low poly F14 Tomcat" by SIpriv, "Jungle Tent" by SyntheticMN, "WWII Medical Tent" by creationwasteland, "Nasams 1 Surface-to-Air Missile System" by Muhamad Mirza Arrafi, "Radar" by Calibians, "Nuclear Power Plant [Game Asset]" by Jen S Abbott and "school building" by swjeta (the barracks), CC BY 4.0
+* "Strike Fighters tanks pack" and "Strike Fighters APC/IFV pack" by 42manako (T-55, BMP-1, BRDM, EE-11 AA): **CC BY-NC 4.0, non-commercial use only**
+* "Low Poly Church" by Anthony Yanez and "Neon Sign - Woman" by Kira Khaos, CC BY 4.0
 
 * "Low-poly Container" by Muhammad Awais Gul, CC BY 4.0 (shops/, development island)
 * "building 3" by geniusrahman155, CC BY 4.0

@@ -113,6 +113,10 @@ func _start_city() -> void:
 	fog_island.name = "FogIsland"
 	add_child(fog_island)
 	fog_island.build(cfg, data, library)
+	var fog_base := FogBase.new()
+	fog_base.name = "FogBase"
+	add_child(fog_base)
+	fog_base.build(data, library)
 	var west_bridge := WestBridge.new()
 	west_bridge.name = "WestBridge"
 	add_child(west_bridge)

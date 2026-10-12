@@ -1,0 +1,80 @@
+{
+  "comment": "The military base of the fog island (air base, camp, nuclear plant), the low poly church and the neon woman sign. Sizes are in cells (longest side). The two Strike Fighters packs (42manako) are CC-BY-NC-4.0: non-commercial use only.",
+  "packs": [
+    {
+      "src": "res://FREEMODELS/_incoming/low_poly_church.glb",
+      "out": "church_low",
+      "texture_max": 256,
+      "items": [{"id": "church_low", "nodes": ["Sketchfab_model"], "cat": "CHURCH_LOW", "footprint": 2.4}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/low_poly_f14_tomcat.glb",
+      "out": "jet_f14",
+      "texture_max": 128,
+      "comment": "Rest pose of the file, no animation.",
+      "items": [{"id": "jet_f14", "nodes": ["Sketchfab_model"], "cat": "JET_F14", "footprint": 2.2}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/jungle_tent.glb",
+      "out": "camp_tent_jungle",
+      "texture_max": 256,
+      "items": [{"id": "camp_tent_jungle", "nodes": ["Sketchfab_model"], "cat": "TENT_JUNGLE", "footprint": 2.2}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/wwii_medical_tent.glb",
+      "out": "camp_tent_medical",
+      "texture_max": 256,
+      "items": [{"id": "camp_tent_medical", "nodes": ["Sketchfab_model"], "cat": "TENT_MEDICAL", "footprint": 1.5}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/nasams_1_surface-to-air_missile_system.glb",
+      "out": "sam_nasams",
+      "texture_max": 256,
+      "items": [{"id": "sam_nasams", "nodes": ["Sketchfab_model"], "cat": "SAM_NASAMS", "footprint": 1.4}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/radar.glb",
+      "out": "camp_radar",
+      "texture_max": 256,
+      "comment": "Rest pose of the file, no animation.",
+      "items": [{"id": "camp_radar", "nodes": ["Sketchfab_model"], "cat": "RADAR", "footprint": 1.6}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/strike_fighters_apcifv_pack.glb",
+      "out": "army_apc",
+      "texture_max": 256,
+      "items": [
+        {"id": "apc_ee11_aa", "nodes": ["EE-11_AA"], "cat": "APC_EE11", "footprint": 1.05},
+        {"id": "apc_bmp1", "nodes": ["BMP-1"], "cat": "APC_BMP1", "footprint": 1.15},
+        {"id": "apc_brdm", "nodes": ["BRDM"], "cat": "APC_BRDM", "footprint": 0.98}
+      ]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/strike_fighters_tanks_pack.glb",
+      "out": "army_tanks",
+      "texture_max": 256,
+      "items": [{"id": "tank_t55", "nodes": ["T-55"], "cat": "TANK_T55", "footprint": 1.5}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/nuclear_power_plant_game_asset.glb",
+      "out": "nuclear2",
+      "texture_max": 512,
+      "items": [{"id": "nuclear2", "nodes": ["Sketchfab_model"], "cat": "NUCLEAR2", "footprint": 16.0}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/school_building.glb",
+      "out": "base_hall",
+      "texture_max": 256,
+      "comment": "The hard buildings of the base (barracks, staff building).",
+      "items": [{"id": "base_hall", "nodes": ["Sketchfab_model"], "cat": "BASE_HALL", "footprint": 5.0}]
+    },
+    {
+      "src": "res://FREEMODELS/_incoming/neon_sign_-_woman.glb",
+      "out": "neon_woman",
+      "keep_emission": true,
+      "texture_max": 256,
+      "comment": "A flat neon sign standing upright. Lit strongly at night by NightWindows.",
+      "items": [{"id": "neon_woman", "nodes": ["Sketchfab_model"], "cat": "NEON_WOMAN", "height": 1.8}]
+    }
+  ]
+}

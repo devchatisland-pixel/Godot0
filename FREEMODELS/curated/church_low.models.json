@@ -1,0 +1,9 @@
+{
+	"file": "church_low.glb",
+	"models": [
+		{
+			"cat": "CHURCH_LOW",
+			"node": "church_low"
+		}
+	]
+}

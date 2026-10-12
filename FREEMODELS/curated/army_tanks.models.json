@@ -1,0 +1,9 @@
+{
+	"file": "army_tanks.glb",
+	"models": [
+		{
+			"cat": "TANK_T55",
+			"node": "tank_t55"
+		}
+	]
+}

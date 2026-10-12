@@ -47,6 +47,7 @@ func _run() -> void:
 		_street_sedans()
 		_forest_suv()
 	_farm_machines()
+	_farm_extras()
 	_industrial_zones()
 	_hospital_ambulance()
 	_city_hall_cars()
@@ -54,6 +55,8 @@ func _run() -> void:
 	_bunker_cars()
 	_fire_station_truck()
 	_container_tanker()
+	_crane_tanker()
+	_port_fuel_tanker()
 	_desert()
 	_ranch_wreck()
 	_drive_in_cars()
@@ -323,6 +326,82 @@ func _farm_machines_auto() -> void:
 		k += 1
 	if k < ids.size():
 		push_warning("[Vehicles] only %d crop fields found" % k)
+
+
+## More machines in the farmland: a harvester in the middle of a wheat field (the yellow
+## ones) that has no machine yet, and a red pickup, a forwarder and a tractor with its trailer
+## in three other fields, far from each other.
+func _farm_extras() -> void:
+	var fields: Array[int] = []
+	for b in _d.building_count():
+		if _d.b_kind[b] == Kind.FIELD and _d.zone_at(_d.building_rect(b).position.x, _d.building_rect(b).position.y) == Zone.FARM:
+			fields.append(b)
+	fields.sort_custom(func(a: int, b: int) -> bool:
+		var pa := _d.building_rect(a).position
+		var pb := _d.building_rect(b).position
+		return CityTypes.hash2(pa.x, pa.y, 53) < CityTypes.hash2(pb.x, pb.y, 53))
+	var ids := ["p54_21_harvester_olive", "p54_26_pickup_40s_red", "p54_42_forwarder_green",
+			"p54_43_tractor_vintage_trailer"]
+	var k := 0
+	for b in fields:
+		if k >= ids.size():
+			break
+		var r := _d.building_rect(b)
+		var c := Vector2(r.position) + Vector2(r.size) * 0.5
+		# The harvester works a wheat field; BuildingPlacer draws wheat on variant 0.
+		if (k == 0) != (absi(_d.b_seed[b] >> 2) % 4 == 0) or _near_placed(c, 9.0):
+			continue
+		_add(ids[k], c, Vector2(1, 0) if r.size.x >= r.size.y else Vector2(0, 1),
+				"in a wheat field" if k == 0 else "in an agricultural field")
+		k += 1
+	if k < ids.size():
+		push_warning("[Vehicles] only %d of the farm machines found a field" % k)
+
+
+## The construction crane of the red district (top-left cell of its lot).
+const QUARTER_CRANE := Vector2i(188, 236)
+
+
+## A water tanker next to the construction crane: on free ground beside it, else parked on
+## the nearest straight street cell.
+func _crane_tanker() -> void:
+	var crane := _nearest_kind(Kind.CRANE, QUARTER_CRANE)
+	if crane < 0:
+		return
+	var id := "p54_10_tanker_water"
+	var why := "next to the construction crane"
+	var r := _d.building_rect(crane)
+	var best := Vector2i(-1, -1)
+	var best_d := INF
+	for y in range(r.position.y - 3, r.end.y + 3):
+		for x in range(r.position.x - 3, r.end.x + 3):
+			if not _d.in_bounds(x, y) or _d.road[_d.idx(x, y)] == 0:
+				continue
+			var m := _d.road_mask(x, y)
+			var d := Vector2(x + 0.5, y + 0.5).distance_to(Vector2(r.get_center()) + Vector2(0.5, 0.5))
+			if (m == (CityTypes.DIR_E | CityTypes.DIR_W) or m == (CityTypes.DIR_N | CityTypes.DIR_S)) and d < best_d:
+				best_d = d
+				best = Vector2i(x, y)
+	if best.x >= 0:
+		_add_on_road(id, best, why)
+	elif not _beside(id, r, why, 59, 0.4, 7.0):
+		push_warning("[Vehicles] no room next to the construction crane")
+
+
+## A fuel tanker next to the oil barrels of the port: the barrel yard (INDUSTRIAL_YARD whose
+## seed draws barrels, see BuildingExtras) nearest to the quay of the cargo ship.
+func _port_fuel_tanker() -> void:
+	var quay := Vector2(MapLayout.point("cargo_ship"))
+	var yards: Array[Rect2i] = []
+	for b in _d.building_count():
+		if _d.b_kind[b] == Kind.INDUSTRIAL_YARD and _d.b_seed[b] % 3 == 1:
+			yards.append(_d.building_rect(b))
+	yards.sort_custom(func(a: Rect2i, b: Rect2i) -> bool:
+		return Vector2(a.get_center()).distance_to(quay) < Vector2(b.get_center()).distance_to(quay))
+	for r in yards:
+		if _beside("p54_18_tanker_fuel", r, "next to the oil barrels of the port", 67, 0.4, 2.5):
+			return
+	push_warning("[Vehicles] no room next to the oil barrels of the port")
 
 
 # --- Industrial zones, port -------------------------------------------------------------------
@@ -705,8 +784,8 @@ func _plant_road() -> void:
 
 
 ## Prison island: a military helicopter hovering over the sea between the main island and
-## the prison island, another one on the ground beside the lighthouse of the island, and an
-## armoured car (Rosomak) next to it.
+## the prison island, and an armoured car (Rosomak) beside the lighthouse of the island. The
+## helicopter that stood there is now on the helipad of the fog island (FogBaseSites).
 const HELI_LIFT := 3.0
 ## The lighthouse of the prison island (top-left cell of its lot).
 const PRISON_LIGHTHOUSE := Vector2i(29, 46)
@@ -729,12 +808,7 @@ func _prison_helicopters() -> void:
 	if light < 0:
 		push_warning("[Vehicles] no lighthouse on the prison island")
 		return
-	var n := out.size()
-	if not _beside(id, _d.building_rect(light), "next to the lighthouse of the prison island", 93, 0.6, 4.0):
-		return
-	var heli: Vector2 = out[n]["at"]
-	var spot := Rect2i(Vector2i(heli.floor()) - Vector2i(1, 1), Vector2i(3, 3))
-	_beside("rosomak_apc", spot, "next to the helicopter of the prison island", 97, 0.4, 3.0)
+	_beside("rosomak_apc", _d.building_rect(light), "next to the lighthouse of the prison island", 97, 0.6, 4.0)
 
 
 ## Middle of the water met going from `from` towards `to` (first sea after the land of

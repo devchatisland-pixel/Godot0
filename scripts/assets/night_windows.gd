@@ -31,7 +31,7 @@ const PACK_GLOW := {
 	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
 }
 ## Neon roof signs: dim by day, very bright at night (they glow in their own colours).
-const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN]
+const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NEON_WOMAN]
 const NEON_DAY := 0.35
 const NEON_NIGHT := 5.0
 ## Brightness of the halo (a bigger copy added behind the sign) at night.

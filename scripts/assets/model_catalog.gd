@@ -42,6 +42,9 @@ enum Cat {
 	UFO,
 	# Thirteenth wave: the concert camp (festival stage, floodlight, bleacher, crowd barrier)
 	CONCERT_STAGE, FLOODLIGHT, BLEACHER, CROWD_BARRIER,
+	# Fourteenth wave: the military base of the fog island, the low poly church, one more neon sign
+	CHURCH_LOW, JET_F14, TENT_JUNGLE, TENT_MEDICAL, SAM_NASAMS, RADAR,
+	APC_EE11, APC_BMP1, APC_BRDM, TANK_T55, NUCLEAR2, BASE_HALL, NEON_WOMAN,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
