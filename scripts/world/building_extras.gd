@@ -38,7 +38,14 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 		_place_sign(data, lib, i, pid, xform, batch, data.b_sign[i])
 	for more: Array in data.b_more_signs.get(i, []):
 		_place_sign(data, lib, i, pid, xform, batch, more[0], more[1])
+	if lib.cats[pid] == Cat.LIGHTHOUSE_CLUB:
+		_lighthouse_neon(lib, xform, batch)
 	match kind:
+		Kind.CHURCH:
+			if lib.model_name(pid) == CROSS_LIGHT_MODEL:
+				# A tiny red light glowing on the tip of the cross.
+				var tip := box.position + box.size * CROSS_TIP
+				batch.add(lib.named_id("cross_light"), xform * Transform3D(Basis.from_scale(Vector3.ONE * CROSS_LIGHT_SIZE), tip))
 		Kind.AIRBASE:
 			var jets := lib.ids(Cat.JET_F111)
 			if not jets.is_empty():
@@ -159,6 +166,11 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 ## height). `scale` shrinks the model; `halo` is the size of the glow copy drawn behind it.
 ## "face" hangs flat on the wall the sign was set up for (CityData.b_sign_facing: east or south,
 ## the two walls the camera sees), in the middle of it, `fill` of the wall wide, at `height`.
+## Church model whose cross carries a red light: where the tip of the cross is in the box of
+## the model (share of its size), and the size of the light.
+const CROSS_LIGHT_MODEL := "free_mini.glb: m12"
+const CROSS_TIP := Vector3(0.48, 1.0, 0.83)
+const CROSS_LIGHT_SIZE := 0.035
 ## "blade" (Taiwan signboards) sticks out of the east wall from its brackets (the -X end of the
 ## model), `out` cells long, its face to the south; "corner" (the LED band) wraps the south-east
 ## corner, along `fill` of the east wall. A roof sign with `deep` stands wholly on the roof
@@ -262,6 +274,25 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		var back := Vector3(0, 0, -0.03)
 		batch.add(halo, Transform3D(turn * Basis.from_scale(Vector3(h, h, s)),
 				at + back - turn * (local_center * Vector3(h, h, s))))
+
+
+## The glowing part of the "Light House Club" sign of the lighthouse club: built in the frame
+## of the building (tools/build_wave16_models.py), so it takes the same transform; its halo is
+## a bigger copy round the middle of the sign.
+const LIGHTHOUSE_HALO := 1.08
+
+
+static func _lighthouse_neon(lib: ModelLibrary, xform: Transform3D, batch: InstanceBatch) -> void:
+	var ids := lib.ids(Cat.NEON_LIGHTHOUSE)
+	if ids.is_empty():
+		return
+	batch.add(ids[0], xform)
+	var halo := lib.named_id("neon_halo_%d" % Cat.NEON_LIGHTHOUSE)
+	if halo >= 0:
+		var c := lib.bounds[ids[0]].get_center()
+		var grow := Transform3D(Basis.from_scale(Vector3(LIGHTHOUSE_HALO, LIGHTHOUSE_HALO, 1.0)),
+				c - c * Vector3(LIGHTHOUSE_HALO, LIGHTHOUSE_HALO, 1.0) - Vector3(0, 0, 0.03))
+		batch.add(halo, xform * grow)
 
 
 ## The flat roof of a model placed with `xform`: {"y": height, "rect": Rect2 in x, z}. The roof

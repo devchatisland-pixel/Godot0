@@ -93,6 +93,17 @@ const DELETED_AT := [
 	["NIGHTCLUB", Vector2i(121, 178)],
 	["PHARMACY", Vector2i(167, 203)],
 ]
+## Buildings turned by hand: kind, top-left cell of the lot on the final map, facing (0 N, 1 E, 2 S, 3 W).
+const TURNED_AT := [
+	["MAIN_HOSPITAL", Vector2i(243, 201), 2],
+	["MAIN_HOSPITAL", Vector2i(167, 195), 2],
+]
+## Buildings taken away by hand once the buildings are final (in `finish`, after the burger
+## joints became McDonald's): kind and top-left cell of the lot on the final map.
+const DELETED_LATE := [
+	["MCDONALDS", Vector2i(237, 202)],
+	["APARTMENT", Vector2i(175, 216)],
+]
 ## Cleared lots that get a farm building back: top-left cell, model (as the library names it).
 const FARM_BUILDINGS_AT := [
 	[Vector2i(265, 283), "outpost.glb: water_tank"],
@@ -339,10 +350,19 @@ static func finish(data: CityData) -> int:
 				data.b_kind[b] = CityTypes.Kind.OUTPOST
 				data.b_model[b] = f[1]
 				data.b_facing[b] = 2
+	for b in data.building_count():
+		for t in TURNED_AT:
+			if data.b_kind[b] == CityTypes.Kind[t[0]] and data.building_rect(b).position == t[1]:
+				data.b_facing[b] = t[2]
 	# Every burger joint becomes a McDonald's.
 	for b in data.building_count():
 		if data.b_kind[b] == CityTypes.Kind.BURGER_JOINT:
 			data.b_kind[b] = CityTypes.Kind.MCDONALDS
+	for b in data.building_count():
+		for d in DELETED_LATE:
+			if data.b_kind[b] == CityTypes.Kind[d[0]] and data.building_rect(b).position == d[1]:
+				data.b_kind[b] = CityTypes.Kind.EMPTY
+				hand_deleted[b] = true
 	_add_oil_pumps(data)
 	_cinema_shops(data)
 	# The main police station: its front yard is paved like its lot (its patrol car parks there).

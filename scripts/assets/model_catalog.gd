@@ -59,6 +59,9 @@ enum Cat {
 	# Nineteenth wave (tools/build_wave16_models.py): Taiwan style signboards of the urban island
 	# (blade signs on the east walls, boards on the roofs, an LED band round a corner)
 	TW_BANASONIC, TW_MCDONALDS, TW_COLA_JP, TW_COLA_BILLBOARD, TW_LED_BOARD, TW_LED_BAND,
+	# Nineteenth wave: the checkpoint of the Golden Gate (fog island), the "Danger" plate of the
+	# secret base, the lighthouse club of the little island and the glowing part of its sign
+	CHECKPOINT, DANGER_SIGN, LIGHTHOUSE_CLUB, NEON_LIGHTHOUSE,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

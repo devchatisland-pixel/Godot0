@@ -3,14 +3,6 @@
 	"models": [
 		{
 			"cat": "HOTEL_LOW",
-			"node": "hotel_small"
-		},
-		{
-			"cat": "HOTEL_LOW",
-			"node": "hotel_stars"
-		},
-		{
-			"cat": "HOTEL_LOW",
 			"node": "hotel_tower"
 		}
 	]

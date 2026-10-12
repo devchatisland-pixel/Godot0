@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the models of the sixteenth to eighteenth waves from their raw files (FREEMODELS/_incoming).
+"""Builds the models of the sixteenth to nineteenth waves from their raw files (FREEMODELS/_incoming).
 
 Usage:  python tools/build_wave16_models.py [--src <folder of the raw .glb>] [--info] [name ...]
 Needs:  numpy, Pillow.
@@ -184,7 +184,8 @@ def yaw(deg):
 def shape(parts, spec):
     """Turns (spec "yaw", degrees round Y; "tilt": 3x3 matrix first), scales (spec "length": the
     longest side on the ground, "width": the x side, or "height"; "scale" as it is) and puts the
-    model centred on x/z, standing on y = 0. Returns the size (x, y, z)."""
+    model centred on x/z, standing on y = 0 ("origin": the point [x, z] of the turned raw model
+    that goes to 0 instead of the middle). Returns the size (x, y, z)."""
     if "tilt" in spec:
         turn(parts, np.array(spec["tilt"], dtype=float))
     if spec.get("yaw"):
@@ -199,6 +200,8 @@ def shape(parts, spec):
     elif "height" in spec:
         s = spec["height"] / size[1]
     base = np.array([(lo[0] + hi[0]) * 0.5, lo[1], (lo[2] + hi[2]) * 0.5])
+    if "origin" in spec:
+        base = np.array([spec["origin"][0], lo[1], spec["origin"][1]])
     for p in parts:
         p["pos"] = (p["pos"] - base) * s
     return size * s
@@ -562,7 +565,35 @@ PACKS = {
         {"id": "factory_brick", "src": "industrial_building.glb", "cat": "PORT_TANK", "length": 3.5}]},
     "oil_rig": {"src": "oil_rig_-_low_poly.glb", "tex": 256, "items": [
         {"id": "oil_rig", "cat": "OIL_RIG", "length": 6.0}]},
+    # Nineteenth wave. The checkpoint at the island end of the Golden Gate: the whole military
+    # post of the pack (walls, two gates with their barriers, two guard posts, two watchtowers,
+    # the vehicle shelter, the garage, the road lights) without its ground, its tank and its
+    # transformer. The road runs along x through both gates; "origin" puts the middle of the
+    # road between the gates at 0. 0.3 cells to the metre (vehicles: 0.17), so that the
+    # gates are about as wide as the road.
+    "checkpoint": {"src": "game_ready_military_base_asset_pack.glb", "tex": 512, "items": [
+        {"id": "checkpoint_post", "cat": "CHECKPOINT", "skip": ["Ground", "Tank", "Transformer", "Parking"],
+         "origin": [-5.05, 0.0], "scale": 0.3, "weld": 0.012}]},
+    # The "Danger" plate of the fence pack (the other signs and the fences are not used), stood
+    # with its face to +Z. FogBase hangs it on the fence of the secret base.
+    "danger_sign": {"src": "simple_chainlink_fence.glb", "tex": 512, "items": [
+        {"id": "danger", "cat": "DANGER_SIGN", "nodes": ["Danger"], "yaw": -90, "width": 1.0}]},
 }
+
+## The lighthouse of the little island, a night club: the "Light House Club" sign of the club
+## sign pack hangs on the east wall of the house (the model faces +Z: south on the map), like a
+## blade sign: its poles against the wall, its face to the south. Two models in the same frame:
+## the building with the metal of the sign, and the parts that glow (NightWindows lights them
+## as a neon sign); BuildingExtras draws the second with the transform of the first.
+LIGHTHOUSE = {"src": "light_house.glb", "sign": "night_club_sign.glb", "tex": 256,
+              "length": 4.5,
+              # Height of the sign and of its bottom above the ground, in cells (the walls of
+              # the house are 0.6 cells high, the ridge 0.9, the tower 3).
+              "sign_height": 1.3, "sign_lift": 0.15,
+              # Where along the east wall (0 back, 1 front of the house at that end).
+              "sign_along": 0.62,
+              "glow": ["sign-legs", "words-glass", "words-L", "words-I", "words-G", "words-H-01",
+                       "words-T", "words-H-02", "words-O", "words-U", "words-S", "words-E", "words-club"]}
 
 HUMVEE = {"yaw": 90, "length": 4.9, "tex": 256, "skip_materials": ["Muzzleflash"],
           "file": "vehicles/models/military/%s.glb"}
@@ -648,8 +679,43 @@ def main():
         with open(out + ".models.json", "w", newline="\n") as f:
             json.dump({"file": pack + ".glb", "models": manifest}, f, indent="\t")
             f.write("\n")
+    _lighthouse(only, source)
     _catalog(only, source, VEHICLES, "vehicles", "vehicles")
     _catalog(only, source, SHOPS, "shops", "shops")
+
+
+def _lighthouse(only, source):
+    """FREEMODELS/curated/lighthouse_club.glb: the lighthouse with its club sign (LIGHTHOUSE)."""
+    if only and "lighthouse_club" not in only:
+        return
+    spec = LIGHTHOUSE
+    house = pick(source(spec["src"], spec["tex"]), {})
+    size = shape(house, {"length": spec["length"]})
+    pos = np.concatenate([p["pos"] for p in house])
+    # The east wall: the farthest point east of the low part of the house (below its eaves),
+    # and how far the house runs from back to front at that end.
+    low = pos[pos[:, 1] < 0.3]
+    east = low[:, 0].max()
+    end = low[low[:, 0] > east - 0.15]
+    back, front = end[:, 2].min(), end[:, 2].max()
+    sign = pick(source(spec["sign"], spec["tex"]), {})
+    lo, hi = box(sign)
+    s = spec["sign_height"] / (hi[1] - lo[1])
+    at = np.array([east + 0.01, spec["sign_lift"], back + (front - back) * spec["sign_along"]])
+    for p in sign:
+        # Its poles (the west end, -x) against the wall, its face to +Z.
+        p["pos"] = (p["pos"] - np.array([lo[0], lo[1], (lo[2] + hi[2]) * 0.5])) * s + at
+    glow = pick(sign, {"nodes": spec["glow"], "neon": True})
+    metal = pick(sign, {"skip": spec["glow"]})
+    items = [("lighthouse_club", merged(house + metal)), ("lighthouse_club_neon", merged(glow))]
+    out = os.path.join(ROOT, "FREEMODELS", "curated", "lighthouse_club")
+    write_glb(out + ".glb", "lighthouse_club", items)
+    with open(out + ".models.json", "w", newline="\n") as f:
+        json.dump({"file": "lighthouse_club.glb", "models": [{"cat": "LIGHTHOUSE_CLUB", "node": "lighthouse_club"},
+                   {"cat": "NEON_LIGHTHOUSE", "node": "lighthouse_club_neon"}]}, f, indent="\t")
+        f.write("\n")
+    print("%-18s %-16s %.2f x %.2f x %.2f cells, %d + %d triangles, east wall x %.2f, z %.2f..%.2f" % (
+          "lighthouse_club", "lighthouse_club", *size, triangles(items[0][1]), triangles(items[1][1]), east, back, front))
 
 
 def _catalog(only, source, table, folder, key):

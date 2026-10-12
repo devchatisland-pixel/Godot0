@@ -28,7 +28,6 @@ docker compose up --build web
 
 Then open **http://localhost:8080**. If that port is already used (an older build still running), pick another one: `WEB_PORT=8081 docker compose up --build web` (PowerShell: `$env:WEB_PORT=8081; docker compose up --build web`). This is the fast multi-threaded build, rendered by your GPU through WebGL 2.
 
-* **From a phone or another PC on your network:** open `http://<your-pc-ip>:8080/lite/`. Browsers only allow the multi-threaded build on `localhost` or HTTPS, so `/lite/` is a single-threaded build. It is slower, but works everywhere.
 * **First build:** it downloads Godot (~60 MB) and its export templates (~1.25 GB). Docker caches both, so later builds only re-export the project (about 1 minute).
 * **After you change the code:** run the same command again.
 * **Stop:** `Ctrl+C`, or `docker compose down`.
@@ -49,7 +48,7 @@ docker-compose.yml     services "web" (port 8080) and "tests"
 docker/Dockerfile      stages: godot -> project (import) -> tests | templates -> export -> web (nginx)
 docker/nginx.conf      adds the COOP/COEP headers needed by the threaded web build
 docker/run-tests.sh    what the tests container runs
-export_presets.cfg     "Web" (threads) and "Web Lite" (no threads) presets
+export_presets.cfg     "Web" (threads) preset
 ```
 
 ## The island
@@ -208,6 +207,21 @@ The fog is made of pictures, not 3D volumes:
 The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
 At night the fog turns dark blue-grey.
 
+**Nineteenth wave (`lighthouse_island.gd`, the last step of the generation; `FogBaseSites`, `MapFences`; models from
+`tools/build_wave16_models.py`):**
+
+* **Golden Gate checkpoint (fog island)**: where the road leaves the bridge it runs through a military post
+  (`checkpoint.glb`, the "military base asset pack" without its ground, tank, transformer and vehicle shelter): walls,
+  a gate with barriers at each end, two guard posts, two watchtowers, the garage and road lights, on a concrete pad.
+  The road narrows to 1.5 cells between its gates. The five vehicles that guarded the end of the bridge are parked
+  inside (`FogBaseSites.CHECKPOINT_PARK`): the two T-55 and the two BRDM side by side in the north yard, their noses
+  to the road, and the grey Humvee in the south yard beside the garage.
+* **Secret base**: the "Danger" plate of the chainlink fence pack hangs on its fence beside the gate, facing out.
+* **Lighthouse island**: a little island alone in the sea south-east of the main island, sandy beaches all round it
+  and no tree; its coast is an ellipse cut by noise, so it is not round. The lighthouse stands in the middle, facing
+  south, with the "Light House Club" sign of the night club sign pack jutting out of the east wall of its house
+  (`lighthouse_club.glb`: the building, and the glowing part of the sign drawn with it, lit like a neon at night).
+
 ## Beaches, park and borders
 
 * **Piers** (`beach_sites.gd`): wooden piers running into the sea from sandy beaches of the main island
@@ -343,8 +357,12 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
 | `police` | low-poly police station | POLICE | (kept; the same model as the main police station) |
 | `stadium` | low-poly stadium (+ its pitch) | STADIUM | the stadium |
-| `public_main` | low-poly public buildings pack | POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, GAS_STATION | the main public buildings, one of each, drawn big |
+| `public_main` | low-poly public buildings pack | CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, GAS_STATION | the main public buildings, one of each, drawn big |
 | `pharmacy_night` | the pharmacy of `public_main`, with a night map (`tools/make_night_variants.py`) | PHARMACY | the pharmacy; its green cross glows at night |
+| `police_hq_night` | the police station of `public_main`, with a night map (`tools/make_night_variants.py`) | POLICE_MAIN | the main police station; the word POLICE glows blue at night |
+| `cinema_night` | the cinema of `cinema2` (kept as it was, unused), with a night map | CINEMA2 | the main cinema; the word CINEMA glows red at night |
+| `hotel_small_night` | `hotel_small` of `hotels`, with a night map | HOTEL_LOW | the small purple hotel; the word HOTEL glows green at night |
+| `hotel_stars_night` | `hotel_stars` of `hotels`, with a night map | HOTEL_LOW | the five-star hotel; its five stars glow yellow at night |
 | `un_tower` | building 3 | UN_TOWER | the United Nations tower |
 | `crane` | building crane | CRANE | one crane in the colourful quarter |
 | `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the skyline blocks of the urban island |
@@ -387,6 +405,9 @@ Not used:
 * Sixteenth wave: "Windows Logo (2001-2012) in 3D" by ZoeError Remakes, "Neon joysticks" by local.yany, "BAR sign board" by alina_dreiman, "SCHOOL BUS - low poly model" by Jasmin Daniel, "Jeep" by rajibkc and "Low Poly Building" by Ahmed Galeb, CC BY 4.0
 * "Armored Vehicle-Test" and "Armored Vehicle+Animation" by Kapi777 (the two Humvees): **CC BY-NC 4.0, non-commercial use only**
 * "Woman in Martini Neon Sign" by trashbinkr and "Low poly Hotel 1" by assetfactory: Sketchfab Standard licence (raw files kept out of git)
+* Nineteenth wave: "GAME READY MILITARY BASE ASSET PACK" by Oxygen3D (the checkpoint), "Light House" by Oksana3D and
+  "Night club sign" by Mantas Stankaitis, CC BY 4.0; "Simple Chainlink Fence" by trashbinkr (the "Danger" plate),
+  Sketchfab Standard licence (raw files kept out of git)
 
 * "Low-poly Container" by Muhammad Awais Gul, CC BY 4.0 (shops/, development island)
 * "building 3" by geniusrahman155, CC BY 4.0

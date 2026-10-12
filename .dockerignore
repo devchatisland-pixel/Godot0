@@ -5,3 +5,4 @@ docker-out
 docs
 **/*.tmp
 FREEMODELS/_incoming
+.claude
