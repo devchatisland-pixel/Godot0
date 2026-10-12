@@ -1,0 +1,45 @@
+{
+	"file": "port_towers.glb",
+	"models": [
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_crane"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_radio"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_water"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_tank_1"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_tank_2"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_tank_4"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_tank_5"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_silo"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_tank_3"
+		},
+		{
+			"cat": "IND_TOWER",
+			"node": "tower_hut"
+		}
+	]
+}

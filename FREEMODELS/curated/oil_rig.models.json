@@ -1,0 +1,9 @@
+{
+	"file": "oil_rig.glb",
+	"models": [
+		{
+			"cat": "OIL_RIG",
+			"node": "oil_rig"
+		}
+	]
+}

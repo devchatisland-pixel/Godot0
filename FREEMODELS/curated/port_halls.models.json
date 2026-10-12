@@ -1,0 +1,45 @@
+{
+	"file": "port_halls.glb",
+	"models": [
+		{
+			"cat": "IND_HALL",
+			"node": "hall_building_1"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_building_10"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_factory_1"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_factory_2"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_hangar"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_warehouse_5"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_powerplant"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_terminal"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_warehouse_4"
+		},
+		{
+			"cat": "IND_HALL",
+			"node": "hall_warehouse_1"
+		}
+	]
+}

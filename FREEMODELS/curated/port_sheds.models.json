@@ -1,0 +1,45 @@
+{
+	"file": "port_sheds.glb",
+	"models": [
+		{
+			"cat": "IND_SHED",
+			"node": "shed_warehouse_3"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_generic_4"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_works_1"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_works_2"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_loadbay"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_duplex"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_small_4"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_generic_3"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_trailer"
+		},
+		{
+			"cat": "IND_SHED",
+			"node": "shed_station"
+		}
+	]
+}
