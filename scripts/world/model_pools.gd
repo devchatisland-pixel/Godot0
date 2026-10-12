@@ -117,8 +117,10 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.BURGER_KING:
 			return lib.ids(Cat.BURGER_KING)
 		Kind.HOTEL:
-			# A single hotel model is kept (the lightest one), every hotel lot draws it.
-			return lib.ids(Cat.HOTEL_SMALL)
+			# Every hotel lot draws the one low poly hotel (the mini hotel when it is missing).
+			return lib.ids(Cat.HOTEL_LOW) if lib.has_cat(Cat.HOTEL_LOW) else lib.ids(Cat.HOTEL_SMALL)
+		Kind.BASKET_COURT:
+			return lib.ids(Cat.COURT)
 		Kind.FACTORY_BLDG:
 			return _variant_of(_eight_factories(lib), seed)
 		Kind.PRISON_WING:

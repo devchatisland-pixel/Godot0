@@ -59,12 +59,15 @@ func _run() -> void:
 	_crane_tanker()
 	_port_fuel_tanker()
 	_desert()
-	_ranch_wreck()
 	_drive_in_cars()
 	_prison_helicopters()
 	_plant_road()
 	if REGULAR_CARS:
 		_cinema_parking()
+	# Last, so that nothing placed before moves: the newer vehicles and the hand changes.
+	_school_bus()
+	_bridge_humvee()
+	_hand_changes()
 
 
 ## Marks the lots of all buildings but `skip` as taken.
@@ -601,7 +604,7 @@ func _bunker_cars() -> void:
 
 
 ## Size of the helipad of the secret base (cells across).
-const BUNKER_PAD := 3.4
+const BUNKER_PAD := 4.2
 
 
 ## A helicopter parked on a helipad near the bunker of the secret base ("pad": MapVehicles
@@ -638,14 +641,85 @@ func _in_front(id: String, b: int, why: String, gap: float = FRONT_GAP) -> void:
 
 # --- Desert, buses -----------------------------------------------------------------------------
 
-## A rusted chassis wreck beside the farm building at RANCH_WRECK.
-const RANCH_WRECK := Vector2i(298, 238)
+## Helicopters are drawn a third bigger than the other vehicles (MapVehicles, FogBase).
+const HELICOPTER_SCALE := 4.0 / 3.0
 
 
-func _ranch_wreck() -> void:
-	var b := _nearest_kind(Kind.OUTPOST, RANCH_WRECK)
+## Size factor of catalog vehicle `id` on top of CELLS_PER_METRE.
+static func size_factor(id: String) -> float:
+	return HELICOPTER_SCALE if id.contains("helicopter") else 1.0
+
+
+## The school bus, parked in front of the main school.
+func _school_bus() -> void:
+	var b := _biggest(Kind.MAIN_SCHOOL)
 	if b >= 0:
-		_beside("p54_12_wreck_chassis", _d.building_rect(b), "beside the farm building", 131, 0.4, 3.0)
+		_in_front("school_bus", b, "in front of the main school")
+	else:
+		push_warning("[Vehicles] no main school")
+
+
+## How far west of the Golden Gate the sand Humvee stands, and how far it may be from there.
+const BRIDGE_HUMVEE_BACK := 5
+const BRIDGE_HUMVEE_REACH := 6
+
+
+## The sand Humvee at the west end of the Golden Gate: on the free ground nearest to the
+## highway, its nose to the bridge. (The grey ones are on the fog island: FogBaseSites.)
+func _bridge_humvee() -> void:
+	if _d.bridge.x < 0:
+		return
+	var id := "humvee_sand"
+	var want := Vector2(_d.bridge.x - BRIDGE_HUMVEE_BACK, _d.bridge.y) + Vector2(0.5, 0.5)
+	var best := Vector2(-1, -1)
+	var best_d := INF
+	for y in range(_d.bridge.y - BRIDGE_HUMVEE_REACH, _d.bridge.y + BRIDGE_HUMVEE_REACH + 1):
+		for x in range(_d.bridge.x - BRIDGE_HUMVEE_BACK - BRIDGE_HUMVEE_REACH, _d.bridge.x - 1):
+			var p := Vector2(x, y) + Vector2(0.5, 0.5)
+			var d := p.distance_to(want)
+			if d < best_d and _d.in_bounds(x, y) and _d.terrain[_d.idx(x, y)] == CityTypes.Terrain.LAND 					and _fits(p, Vector2(1, 0), _length(id) + 0.6):
+				best_d = d
+				best = p
+	if best.x < 0:
+		push_warning("[Vehicles] no room for the Humvee at the Golden Gate")
+		return
+	_add(id, best, Vector2(1, 0), "at the west end of the Golden Gate")
+
+
+## Vehicles changed by hand once everything is placed: `id` and `near` (where the planner
+## puts it) name the vehicle; "field" moves it to the middle of the crop field whose lot
+## starts at that cell, "heading" turns its nose that way.
+const HAND_CHANGES := [
+	{"id": "p54_21_harvester_olive", "near": Vector2(280.9, 249.0), "field": Vector2i(267, 266)},
+	{"id": "p54_42_forwarder_green", "near": Vector2(263.5, 241.0), "heading": Vector2(1, 0)},
+	{"id": "p54_43_tractor_vintage_trailer", "near": Vector2(277.0, 234.5), "heading": Vector2(0, 1)},
+]
+const HAND_REACH := 4.0
+
+
+func _hand_changes() -> void:
+	for c in HAND_CHANGES:
+		var v := -1
+		var best := HAND_REACH
+		for k in out.size():
+			var d := (out[k]["at"] as Vector2).distance_to(c["near"])
+			if out[k]["id"] == c["id"] and d < best:
+				best = d
+				v = k
+		if v < 0:
+			push_warning("[Vehicles] no %s near %s to change" % [c["id"], c["near"]])
+			continue
+		if c.has("field"):
+			var f := _nearest_kind(Kind.FIELD, c["field"])
+			if f < 0 or _d.building_rect(f).position != c["field"]:
+				push_warning("[Vehicles] no crop field at %s" % c["field"])
+				continue
+			var r := _d.building_rect(f)
+			out[v]["at"] = Vector2(r.position) + Vector2(r.size) * 0.5
+			out[v]["why"] = "in a wheat field"
+		if c.has("heading"):
+			var h: Vector2 = c["heading"]
+			out[v]["yaw"] = atan2(-h.x, -h.y)
 
 
 ## The drive-in cinema: real cars (the lightest of the catalog) in two rows on its lot, their

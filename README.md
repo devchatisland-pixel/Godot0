@@ -97,6 +97,24 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 * **Sky and beaches**: three F-111 fly in a V over the sea far north of the island; deck chairs and beach
   balls stand on six lonely beaches, away from the lighthouses and from everything else (`scenic_props.gd`).
 
+**Sixteenth wave (`map_retouch.gd`, `map_fences.gd`, `tools/build_wave16_models.py`):**
+
+* **Urban island**: four towers carry a sign on their east wall, a little narrower than the wall: the Windows
+  logo, the white neon joystick, the woman in a martini glass and the "BAR" board (`MapRetouch.TOWER_SIGNS`,
+  mount "face" of `BuildingExtras.SIGNS`). They glow at night like the other neon signs.
+* **City**: ten more billboards and two basketball courts on bare ground beside a street; every hotel is the
+  orange low poly hotel; the school bus is parked in front of the main school; a Burger King and two Las Vegas
+  clubs are gone; the neon tower of Las Vegas faces east.
+* **Prison**: a wire fence all round it, on dry ground only, with floodlights and bleachers in its yard.
+* **Secret base**: 1.5 times bigger (its jets too), inside a wire fence. Ground helipads are the helipad model
+  (the roof of the hospital keeps its painted H) and helicopters are a third bigger.
+* **Fog island**: the jets and four of the carriers are turned about, the army and medical tents are mixed, half
+  of the army vehicles are gone, the plant has no air defence any more and its barracks has the size of the
+  others; jeeps stand by the tents, grey Humvees drive on the roads, a fire truck and a tow truck wait on the
+  apron. A sand Humvee stands at the west end of the Golden Gate.
+* **Farmland**: one harvester moved to another wheat field, the forwarder and a tractor turned.
+* **Development island**: one more shop, the blue townhouse.
+
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
@@ -340,6 +358,10 @@ Not used:
 * Military base: "Low poly F14 Tomcat" by SIpriv, "Jungle Tent" by SyntheticMN, "WWII Medical Tent" by creationwasteland, "Nasams 1 Surface-to-Air Missile System" by Muhamad Mirza Arrafi, "Radar" by Calibians, "Nuclear Power Plant [Game Asset]" by Jen S Abbott and "school building" by swjeta (the barracks), CC BY 4.0
 * "Strike Fighters tanks pack" and "Strike Fighters APC/IFV pack" by 42manako (T-55, BMP-1, BRDM, EE-11 AA): **CC BY-NC 4.0, non-commercial use only**
 * "Low Poly Church" by Anthony Yanez and "Neon Sign - Woman" by Kira Khaos, CC BY 4.0
+
+* Sixteenth wave: "Windows Logo (2001-2012) in 3D" by ZoeError Remakes, "Neon joysticks" by local.yany, "BAR sign board" by alina_dreiman, "Helicopter Land / Helipad / Heliport" by muhammad.rihca, "SCHOOL BUS - low poly model" by Jasmin Daniel, "Jeep" by rajibkc and "Low Poly Building" by Ahmed Galeb, CC BY 4.0
+* "Armored Vehicle-Test" and "Armored Vehicle+Animation" by Kapi777 (the two Humvees): **CC BY-NC 4.0, non-commercial use only**
+* "Woman in Martini Neon Sign" by trashbinkr and "Low poly Hotel 1" by assetfactory: Sketchfab Standard licence (raw files kept out of git)
 
 * "Low-poly Container" by Muhammad Awais Gul, CC BY 4.0 (shops/, development island)
 * "building 3" by geniusrahman155, CC BY 4.0

@@ -1,0 +1,9 @@
+{
+	"file": "neon_joystick.glb",
+	"models": [
+		{
+			"cat": "NEON_JOYSTICK",
+			"node": "joystick_white"
+		}
+	]
+}

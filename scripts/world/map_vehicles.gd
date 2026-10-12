@@ -48,6 +48,29 @@ static func lengths_m() -> Dictionary:
 	return out
 
 
+## The helipad on the ground: the helipad model, else the painted H of the hospital roof; -1
+## when there is neither.
+static func helipad_id(lib: ModelLibrary) -> int:
+	var ids := lib.ids(ModelCatalog.Cat.HELIPAD)
+	return ids[0] if not ids.is_empty() else lib.named_id("helipad_h")
+
+
+## The helipad `id`, `width` cells across, lying on the ground with its middle at `at`.
+static func helipad_xform(lib: ModelLibrary, id: int, at: Vector3, width: float) -> Transform3D:
+	if lib.cats[id] < 0:
+		return Transform3D(Basis.from_scale(Vector3(width, 1, width)), at + Vector3(0, 0.03, 0))
+	var box := lib.bounds[id]
+	var basis := Basis.from_scale(Vector3.ONE * width / maxf(box.size.x, 0.01))
+	return Transform3D(basis, at - basis * Vector3(box.get_center().x, box.position.y, box.get_center().z))
+
+
+## Height of the top of helipad `id` drawn `width` cells across.
+static func helipad_top(lib: ModelLibrary, id: int, width: float) -> float:
+	if lib.cats[id] < 0:
+		return 0.03
+	return lib.bounds[id].size.y * width / maxf(lib.bounds[id].size.x, 0.01)
+
+
 func build(data: CityData, lib: ModelLibrary) -> void:
 	var placed := 0
 	for p in VehicleSites.plan(data, lengths_m()):
@@ -55,24 +78,27 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		if mid < 0:
 			continue
 		var at: Vector2 = p["at"]
-		var s: float = VehicleSites.CELLS_PER_METRE * POLICE_SCALE.get(String(p["id"]), 1.0)
+		var s: float = VehicleSites.CELLS_PER_METRE * POLICE_SCALE.get(String(p["id"]), 1.0) 				* VehicleSites.size_factor(String(p["id"]))
+		var pad_id := helipad_id(lib) if p.has("pad") else -1
+		var lift := float(p.get("lift", 0.0))
+		if pad_id >= 0:
+			lift += helipad_top(lib, pad_id, float(p["pad"]))
 		var mi := MeshInstance3D.new()
 		mi.mesh = lib.meshes[mid]
 		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * s),
-				Vector3(at.x, float(p.get("lift", 0.0)), at.y))
+				Vector3(at.x, lift, at.y))
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
 		add_child(mi)
-		if p.has("pad") and lib.named_id("helipad_h") >= 0:
+		if pad_id >= 0:
 			# The helipad the vehicle stands on.
 			var pad := MeshInstance3D.new()
-			pad.mesh = lib.meshes[lib.named_id("helipad_h")]
-			var w := float(p["pad"])
-			pad.transform = Transform3D(Basis.from_scale(Vector3(w, 1, w)), Vector3(at.x, 0.03, at.y))
+			pad.mesh = lib.meshes[pad_id]
+			pad.transform = helipad_xform(lib, pad_id, Vector3(at.x, 0, at.y), float(p["pad"]))
 			pad.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			pad.set_meta("pick", {
 				"uid": "V-%03d-pad" % placed, "number": placed, "title": "Helipad", "kind": "PROP",
-				"model": "helipad_h", "category": "Prop", "note": String(p.get("why", "")),
+				"model": lib.model_name(pad_id), "category": "Prop", "note": String(p.get("why", "")),
 			})
 			add_child(pad)
 		var e := entry(p["id"])

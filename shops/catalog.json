@@ -565,6 +565,25 @@
    },
    "triangles": 12,
    "notes": "20 ft shipping container, 12 triangles, one 512 px texture."
+  },
+  {
+   "id": "shop-townhouse-blue",
+   "category": "Townhouse",
+   "name": "Low Poly Building (blue townhouse)",
+   "credit": {
+    "title": "Low Poly Building",
+    "author": "Ahmed Galeb",
+    "url": "https://sketchfab.com/AhmedGaleb",
+    "license": "CC-BY-4.0"
+   },
+   "notes": "Blue 3-storey townhouse with pink awnings and window boxes.",
+   "file": "res://shops/models/shop-townhouse-blue.glb",
+   "triangles": 4664,
+   "size_m": {
+    "width": 9.84,
+    "depth": 7.71,
+    "height": 9.0
+   }
   }
  ]
 }

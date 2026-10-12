@@ -1,0 +1,9 @@
+{
+	"file": "court.glb",
+	"models": [
+		{
+			"cat": "COURT",
+			"node": "basketball_court"
+		}
+	]
+}

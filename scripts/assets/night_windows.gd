@@ -23,7 +23,7 @@ const PACK_GLOW := {
 	ModelCat.SCHOOL_MAIN: 0.45, ModelCat.PHARMACY: 0.55, ModelCat.GAS_STATION: 0.7,
 	ModelCat.UN_TOWER: 0.55, ModelCat.CRANE: 0.35, ModelCat.BRIDGE: 0.6,
 	ModelCat.BANK_PACK: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
-	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.MUSEUM_PACK: 0.6,
+	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6,
 	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
 	ModelCat.METAL_BRIDGE: 0.4, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
@@ -31,7 +31,12 @@ const PACK_GLOW := {
 	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
 }
 ## Neon roof signs: dim by day, very bright at night (they glow in their own colours).
-const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NEON_WOMAN]
+const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NEON_WOMAN,
+		ModelCat.NEON_JOYSTICK, ModelCat.NEON_MARTINI, ModelCat.NEON_BAR]
+## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
+const LOGO_PACKS := [ModelCat.SIGN_WINDOWS]
+const LOGO_DAY := 0.15
+const LOGO_NIGHT := 0.9
 const NEON_DAY := 0.35
 const NEON_NIGHT := 5.0
 ## Brightness of the halo (a bigger copy added behind the sign) at night.
@@ -56,6 +61,9 @@ static func apply(lib: ModelLibrary) -> void:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
 			lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
+	for cat in LOGO_PACKS:
+		for id in lib.ids(cat):
+			_light_facade(lib.meshes[id], LOGO_NIGHT, done, LOGO_DAY)
 	for cat in NIGHT_PACKS:
 		for id in lib.ids(cat):
 			var mesh := lib.meshes[id]

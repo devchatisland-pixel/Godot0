@@ -77,3 +77,19 @@ FREEMODELS/_incoming/golden_gate_bridge.glb
 FREEMODELS/_incoming/low-poly_radar_dish.glb
 FREEMODELS/_incoming/carrier.glb
 FREEMODELS/_incoming/low_poly_silo.glb
+
+# Wave 16 raw files (wall signs, helipad, hotel, school bus, jeep, Humvees, townhouse, street pack):
+# only the copies built by tools/build_wave16_models.py are committed. The two Humvee files are
+# CC-BY-NC-4.0; the hotel and the martini sign have the Sketchfab Standard licence.
+FREEMODELS/_incoming/windows_logo_2001-2012_in_3d.glb
+FREEMODELS/_incoming/neon_joysticks.glb
+FREEMODELS/_incoming/woman_in_martini_neon_sign.glb
+FREEMODELS/_incoming/bar_sign_board.glb
+FREEMODELS/_incoming/helicopter_land__helipad__heliport.glb
+FREEMODELS/_incoming/low_poly_hotel_1.glb
+FREEMODELS/_incoming/lowpoly_city_street_pack_buildings_stylized.glb
+FREEMODELS/_incoming/school__bus_-_low_poly_model.glb
+FREEMODELS/_incoming/jeep.glb
+FREEMODELS/_incoming/armored_vehicle-test.glb
+FREEMODELS/_incoming/armored_vehicleanimation.glb
+FREEMODELS/_incoming/low_poly_building.glb

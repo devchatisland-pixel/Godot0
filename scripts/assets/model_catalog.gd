@@ -48,6 +48,9 @@ enum Cat {
 	# Fifteenth wave: the night skyline towers of the urban island, the Golden Gate bridge, the
 	# radar dish (satellite dishes), the aircraft carrier, the oil silo
 	NIGHT_SKYLINE, GOLDEN_GATE, SAT_DISH, CARRIER, SILO,
+	# Sixteenth wave (tools/build_wave16_models.py): signs for the walls of the urban island, the
+	# ground helipad, the hotel, the basketball court
+	SIGN_WINDOWS, NEON_JOYSTICK, NEON_MARTINI, NEON_BAR, HELIPAD, HOTEL_LOW, COURT,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

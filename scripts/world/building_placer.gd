@@ -38,6 +38,7 @@ const FAR_COLORS := {
 	Kind.WATCHTOWER: Color("8a6a45"), Kind.BEACH_HUT: Color("c9954a"), Kind.PIER: Color("8a6a45"), Kind.BOAT: Color("7a6a5a"),
 	Kind.FIRE_TRUCK: Color("c0392b"), Kind.BALLOON: Color("e2573b"), Kind.BILLBOARD: Color("d8d3c4"), Kind.UFO: Color("b9bcc6"), Kind.TANK: Color("5f6a4a"),
 	Kind.BUS_STOP: Color("3f8f5a"), Kind.SKYLINE_BLDG: Color("4a5068"),
+	Kind.BASKET_COURT: Color("7d7078"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -58,7 +59,7 @@ const NAMED := {
 	Kind.NUCLEAR_PLANT: ["box"], Kind.CINEMA_MAIN: ["box"], Kind.AIRPORT: ["box"], Kind.BURGER_JOINT: ["box"],
 	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"], Kind.BEACH_HUT: ["box"], Kind.PIER: ["box"], Kind.BOAT: ["box"],
 	Kind.FIRE_TRUCK: ["box"], Kind.BALLOON: ["box"], Kind.BILLBOARD: ["box"],
-	Kind.UFO: ["box"], Kind.TANK: ["box"], Kind.BUS_STOP: ["box"], Kind.SKYLINE_BLDG: ["box"],
+	Kind.UFO: ["box"], Kind.TANK: ["box"], Kind.BUS_STOP: ["box"], Kind.SKYLINE_BLDG: ["box"], Kind.BASKET_COURT: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],

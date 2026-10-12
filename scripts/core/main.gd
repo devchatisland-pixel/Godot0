@@ -142,13 +142,18 @@ func _start_city() -> void:
 	add_child(shops)
 	shops.build(data, library)
 
+	var fences := MapFences.new()
+	fences.name = "Fences"
+	add_child(fences)
+	fences.build(data, library)
+
 	# Every building can be clicked: glow and information bubble.
 	picker = BuildingPicker.new()
 	picker.name = "BuildingPicker"
 	add_child(picker)
 	picker.setup(camera, data, library)
 	# Vehicles, shops and roadblock pieces are not numbered buildings: clickable all the same.
-	var props := picker.add_props(vehicles) + picker.add_props(shops) + picker.add_props(roadblocks)
+	var props := picker.add_props(vehicles) + picker.add_props(shops) + picker.add_props(roadblocks) + picker.add_props(fences)
 	# The military base, the carriers, the F-111 and the Golden Gate as well.
 	props += picker.add_props(fog_island) + fog_base.picks.size()
 	for e in fog_base.picks:
