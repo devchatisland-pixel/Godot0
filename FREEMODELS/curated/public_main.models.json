@@ -2,10 +2,6 @@
 	"file": "public_main.glb",
 	"models": [
 		{
-			"cat": "POLICE_MAIN",
-			"node": "police_hq"
-		},
-		{
 			"cat": "CITY_HALL_MAIN",
 			"node": "city_hall"
 		},

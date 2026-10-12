@@ -333,8 +333,12 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
 | `police` | low-poly police station | POLICE | (kept; the same model as the main police station) |
 | `stadium` | low-poly stadium (+ its pitch) | STADIUM | the stadium |
-| `public_main` | low-poly public buildings pack | POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, GAS_STATION | the main public buildings, one of each, drawn big |
+| `public_main` | low-poly public buildings pack | CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, GAS_STATION | the main public buildings, one of each, drawn big |
 | `pharmacy_night` | the pharmacy of `public_main`, with a night map (`tools/make_night_variants.py`) | PHARMACY | the pharmacy; its green cross glows at night |
+| `police_hq_night` | the police station of `public_main`, with a night map (`tools/make_night_variants.py`) | POLICE_MAIN | the main police station; the word POLICE glows blue at night |
+| `cinema_night` | the cinema of `cinema2` (kept as it was, unused), with a night map | CINEMA2 | the main cinema; the word CINEMA glows red at night |
+| `hotel_small_night` | `hotel_small` of `hotels`, with a night map | HOTEL_LOW | the small purple hotel; the word HOTEL glows green at night |
+| `hotel_stars_night` | `hotel_stars` of `hotels`, with a night map | HOTEL_LOW | the five-star hotel; its five stars glow yellow at night |
 | `un_tower` | building 3 | UN_TOWER | the United Nations tower |
 | `crane` | building crane | CRANE | one crane in the colourful quarter |
 | `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the skyline blocks of the urban island |

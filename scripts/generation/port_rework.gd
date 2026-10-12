@@ -13,8 +13,8 @@ const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 const Terrain := CityTypes.Terrain
 
-const HOTEL_MODELS := ["hotel_low.glb: hotel_orange", "hotels.glb: hotel_small", "hotels.glb: hotel_stars",
-		"hotels.glb: hotel_tower"]
+const HOTEL_MODELS := ["hotel_low.glb: hotel_orange", "hotel_small_night.glb: hotel_small",
+		"hotel_stars_night.glb: hotel_stars", "hotels.glb: hotel_tower"]
 const HOTEL_SIZE := Vector2i(3, 3)
 const HOTEL_ZONES: Array[int] = [Zone.COMMERCIAL, Zone.DOWNTOWN, Zone.APARTMENT, Zone.ENTERTAINMENT]
 const HOTEL_APART := 30.0
