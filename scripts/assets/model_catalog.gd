@@ -56,7 +56,13 @@ enum Cat {
 	# Eighteenth wave (tools/build_wave16_models.py, PortRework): the industrial buildings set (halls,
 	# sheds, towers and tanks), the oil and storage tanks with the brick factory, the offshore oil rig
 	IND_HALL, IND_SHED, IND_TOWER, PORT_TANK, OIL_RIG,
-	# Nineteenth wave: the low poly business buildings (central city shops and eateries)
+	# Nineteenth wave (tools/build_wave16_models.py): Taiwan style signboards of the urban island
+	# (blade signs on the east walls, boards on the roofs, an LED band round a corner)
+	TW_BANASONIC, TW_MCDONALDS, TW_COLA_JP, TW_COLA_BILLBOARD, TW_LED_BOARD, TW_LED_BAND,
+	# Nineteenth wave: the checkpoint of the Golden Gate (fog island), the "Danger" plate of the
+	# secret base, the lighthouse club of the little island and the glowing part of its sign
+	CHECKPOINT, DANGER_SIGN, LIGHTHOUSE_CLUB, NEON_LIGHTHOUSE,
+	# Twentieth wave: the low poly business buildings (central city shops and eateries)
 	BIZ_RESTAURANT, BIZ_SHOP, BIZ_PIZZA, BIZ_BURGER, BIZ_CAFE,
 }
 

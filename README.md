@@ -128,6 +128,16 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 * **Sea**: the offshore oil rig stands off the port, with open sea all round it.
 * `tests/dump_sites.gd` prints the hotels and the buildings of the industrial zone with their cells and models.
 
+**Nineteenth wave (`map_retouch.gd`, models from `tools/build_wave16_models.py`):**
+
+* **Urban island**: Taiwan style signboards on the row of towers, on the same east side as the neon signs. A
+  tower whose east wall is free carries its sign on that wall: the "Banasonic", McDonald's and Japanese
+  Coca-Cola boards stick out of the wall from their brackets (mount "blade"), and an LED ticker band wraps the
+  free south-east corner of a tower (mount "corner"). A tower with a lower one in front of it carries its board
+  on the roof instead, seen over the other one: the Coca-Cola billboard and the LED safety board (mount "roof",
+  `deep`). The neon bull moved from its wall to the roof of its tower. At night only the boards light up, in
+  their own colours; the steel frames stay dark (`NightWindows.LOGO_PACKS`, `LOGO_DARK`).
+
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
@@ -196,6 +206,21 @@ The fog is made of pictures, not 3D volumes:
 
 The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
 At night the fog turns dark blue-grey.
+
+**Nineteenth wave (`lighthouse_island.gd`, the last step of the generation; `FogBaseSites`, `MapFences`; models from
+`tools/build_wave16_models.py`):**
+
+* **Golden Gate checkpoint (fog island)**: where the road leaves the bridge it runs through a military post
+  (`checkpoint.glb`, the "military base asset pack" without its ground, tank, transformer and vehicle shelter): walls,
+  a gate with barriers at each end, two guard posts, two watchtowers, the garage and road lights, on a concrete pad.
+  The road narrows to 1.5 cells between its gates. The five vehicles that guarded the end of the bridge are parked
+  inside (`FogBaseSites.CHECKPOINT_PARK`): the two T-55 and the two BRDM side by side in the north yard, their noses
+  to the road, and the grey Humvee in the south yard beside the garage.
+* **Secret base**: the "Danger" plate of the chainlink fence pack hangs on its fence beside the gate, facing out.
+* **Lighthouse island**: a little island alone in the sea south-east of the main island, sandy beaches all round it
+  and no tree; its coast is an ellipse cut by noise, so it is not round. The lighthouse stands in the middle, facing
+  south, with the "Light House Club" sign of the night club sign pack jutting out of the east wall of its house
+  (`lighthouse_club.glb`: the building, and the glowing part of the sign drawn with it, lit like a neon at night).
 
 ## Beaches, park and borders
 
@@ -380,6 +405,9 @@ Not used:
 * Sixteenth wave: "Windows Logo (2001-2012) in 3D" by ZoeError Remakes, "Neon joysticks" by local.yany, "BAR sign board" by alina_dreiman, "SCHOOL BUS - low poly model" by Jasmin Daniel, "Jeep" by rajibkc and "Low Poly Building" by Ahmed Galeb, CC BY 4.0
 * "Armored Vehicle-Test" and "Armored Vehicle+Animation" by Kapi777 (the two Humvees): **CC BY-NC 4.0, non-commercial use only**
 * "Woman in Martini Neon Sign" by trashbinkr and "Low poly Hotel 1" by assetfactory: Sketchfab Standard licence (raw files kept out of git)
+* Nineteenth wave: "GAME READY MILITARY BASE ASSET PACK" by Oxygen3D (the checkpoint), "Light House" by Oksana3D and
+  "Night club sign" by Mantas Stankaitis, CC BY 4.0; "Simple Chainlink Fence" by trashbinkr (the "Danger" plate),
+  Sketchfab Standard licence (raw files kept out of git)
 
 * "Low-poly Container" by Muhammad Awais Gul, CC BY 4.0 (shops/, development island)
 * "building 3" by geniusrahman155, CC BY 4.0
@@ -393,6 +421,7 @@ Not used:
 * "Low Poly UFO Scene" by EdwinRC (CC BY 4.0), "Highway" by Genkidonky (CC BY 4.0)
 * "Pier (Game ready model)" by BlackBox613 and "Old pier" by smitecraft.swe, CC BY 4.0
 * "neon game controller" by alina_dreiman and "Neon Pac-Man" by patrakeevasveta, CC BY 4.0
+* "Taiwan style Signboard (lowpoly)" by Solarliu, CC BY 4.0 (six of its boards, in `FREEMODELS/curated/taiwan_signs.glb`; raw file kept out of git)
 * "LOWPOLY CITY STREET PACK BUILDINGS STYLIZED" by haykel-shaba, CC BY 4.0 (the stage, floodlights, bleachers and crowd barriers of the concert camp; raw file kept out of git)
 * "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)
 * "XXX Neon Sign" by Jimmy Johansson, CC BY 4.0 (only a front render of it is used, as the XXX texture of the sign atlas)

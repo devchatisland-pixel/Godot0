@@ -1,0 +1,29 @@
+{
+	"file": "taiwan_signs.glb",
+	"models": [
+		{
+			"cat": "TW_BANASONIC",
+			"node": "tw_banasonic"
+		},
+		{
+			"cat": "TW_MCDONALDS",
+			"node": "tw_mcdonalds"
+		},
+		{
+			"cat": "TW_COLA_JP",
+			"node": "tw_cola_jp"
+		},
+		{
+			"cat": "TW_COLA_BILLBOARD",
+			"node": "tw_cola_billboard"
+		},
+		{
+			"cat": "TW_LED_BOARD",
+			"node": "tw_led_board"
+		},
+		{
+			"cat": "TW_LED_BAND",
+			"node": "tw_led_band"
+		}
+	]
+}

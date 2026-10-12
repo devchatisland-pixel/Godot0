@@ -101,3 +101,10 @@ FREEMODELS/_incoming/neon_pack3.glb
 FREEMODELS/_incoming/neon_fun.glb
 FREEMODELS/_incoming/neon_palm_tree_sign.glb
 FREEMODELS/_incoming/bank_minimalist_model.glb
+
+# Wave 19 raw files (checkpoint, Danger plate, lighthouse club): only the built copies are committed.
+# The chainlink fence pack has the Sketchfab Standard licence.
+FREEMODELS/_incoming/game_ready_military_base_asset_pack.glb
+FREEMODELS/_incoming/simple_chainlink_fence.glb
+FREEMODELS/_incoming/light_house.glb
+FREEMODELS/_incoming/night_club_sign.glb
