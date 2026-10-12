@@ -34,12 +34,13 @@ VEH = os.path.join(ROOT, 'vehicles', 'models', 'municipal_emergency')
 CUR = os.path.join(ROOT, 'FREEMODELS', 'curated')
 OWN_NIGHT = 3.0
 ## Night colours of the lamps, as they look at night (linear).
-CROSS_GREEN = (0.0, 1.0, 0.3)
-CROSS_RIM = (0.55, 1.0, 0.7)
+CROSS_GREEN = (0.0, 1.0, 0.25)
+CROSS_RIM = (0.45, 1.0, 0.5)
 LAMP_RED = (1.0, 0.08, 0.05)
 LAMP_BLUE = (0.06, 0.3, 1.0)
-## Pharmacy facade at night, like the other public buildings (NightWindows.PACK_GLOW).
-FACADE = 0.55
+## Pharmacy facade at night: the share of its own colour it glows with (a little brighter
+## than the public buildings around it, far from white).
+FACADE = 0.25
 ## Size of the night maps (pixels).
 MAP_SIZE = 512
 
@@ -306,12 +307,16 @@ def morton(points):
     return np.argsort(code, kind='stable')
 
 
-def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE):
+def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False):
     """Paints the night map of the triangles `tri` and returns (TEXCOORD_1 per corner (T, 3, 2),
     the map as an image).
     `lamps`: [(triangles of the lamp (bool per triangle), colour)]; `reach`: distance at which
     the light a lamp throws has fallen to a fifth; `strength`: that light right beside the lamp
-    (1 = as bright as the lamp); `base`: share of its own colour every face glows with."""
+    (1 = as bright as the lamp); `base`: share of its own colour every face glows with.
+    `plain`: the numbers are stored as they are, not through the sRGB curve. Measured on
+    screen, the game shows a stored value times OWN_NIGHT as it is: a plain map comes out
+    in the colours asked for, a curved one brighter and paler (blue creeps into a green).
+    The vehicles keep the curved map (the wide glow round their lamps), the pharmacy is plain."""
     T = len(tri.pos)
     order = morton(tri.pos.mean(1))
     grid = int(np.ceil(np.sqrt(np.ceil(T / 2.0))))
@@ -351,7 +356,7 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE):
         if is_lamp[k]:
             value = np.broadcast_to(own[k], (int(sel.sum()), 3))
         else:
-            value = np.zeros((int(sel.sum()), 3)) + base * colour[k]
+            value = np.zeros((int(sel.sum()), 3)) + base * (to_srgb(colour[k]) if plain else colour[k])
             u, v = bary[half]
             w = np.stack([1.0 - u - v, u, v], 1)
             pos = w @ tri.pos[k]
@@ -371,7 +376,8 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE):
                 value = value + (fall * facing)[:, None] * rgb * (0.4 + 0.6 * colour[k]) / OWN_NIGHT
         block = img[cy:cy + cell, cx:cx + cell]
         block[sel] = value
-    return uv2, Image.fromarray((to_srgb(img) * 255).round().astype(np.uint8))
+    stored = np.clip(img, 0.0, 1.0) if plain else to_srgb(img)
+    return uv2, Image.fromarray((stored * 255).round().astype(np.uint8))
 
 
 def write_night(g, tri, uv2, img, name):
@@ -403,7 +409,7 @@ def pharmacy():
     green = cross & (col[:, 1] > col[:, 0] + 0.1)
     print('  pharmacy: %d green and %d rim triangles in the cross' % (green.sum(), (cross & ~green).sum()))
     uv2, img = night_map(tri, [(green, CROSS_GREEN), (cross & ~green, CROSS_RIM)], reach=0.22, strength=0.55,
-                         base=FACADE / OWN_NIGHT)
+                         base=FACADE / OWN_NIGHT, plain=True)
     write_night(g, tri, uv2, img, 'pharmacy_night')
     g.save(os.path.join(CUR, 'pharmacy_night.glb'))
     with open(os.path.join(CUR, 'pharmacy_night.models.json'), 'w', newline='\n') as f:
@@ -481,15 +487,6 @@ def ambulance_bar(tri):
     return left_right(tri, island_where(tri, lambda lo, hi, n: lo[1] > 2.12 and hi[0] - lo[0] > 1.2 and n > 12))
 
 
-def fire_truck_lights(tri):
-    # The bar across the front of the cab roof (left red, right blue) and the two red
-    # beacons behind it.
-    bar = island_where(tri, lambda lo, hi, n: lo[1] > 2.7 and hi[2] < -4.0 and hi[0] - lo[0] > 1.5)
-    boxes = island_where(tri, lambda lo, hi, n: lo[1] > 2.7 and -4.0 < lo[2] and hi[2] < -3.3 and hi[0] - lo[0] < 0.5)
-    red, blue = left_right(tri, bar)
-    return red | boxes, blue
-
-
 def ccf_beacons(tri):
     # The two blue beacons on the roof of the cab: the blue faces of the top fifth.
     col = to_srgb(tri.colours())
@@ -504,6 +501,5 @@ if __name__ == '__main__':
     vehicle(VEH, 'police_us_cruiser', cruiser_bar)
     vehicle(VEH, 'police_jp_black', jp_beacon)
     vehicle(VEH, 'p54_11_ambulance', ambulance_bar, reach=0.7)
-    vehicle(VEH, 'p54_33_fire_truck', fire_truck_lights, reach=0.8)
     # The forest fire truck is a curated model, two cells long.
     vehicle(CUR, 'truck_ccf', ccf_beacons, reach=0.16, manifest=('truck_ccf', 'TRUCK_CCF'))

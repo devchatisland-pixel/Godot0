@@ -93,16 +93,14 @@ func _base(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> int
 		if id < 0:
 			continue
 		var dir: Vector2 = p["dir"]
-		var lift := 0.0
-		if p.get("veh", "") == FogBaseSites.HELICOPTER and MapVehicles.helipad_id(lib) >= 0:
-			lift = MapVehicles.helipad_top(lib, MapVehicles.helipad_id(lib), FogBaseSites.HELIPAD_SIZE)
+		var lift := MapVehicles.HELIPAD_LIFT if p.get("veh", "") == FogBaseSites.HELICOPTER else 0.0
 		_put(lib, batch, id, _standing(lib, id, Vector3(fog.origin.x + at.x, lift, fog.origin.y + at.y),
 				atan2(dir.x, dir.y) + turn, scale), label[0], label[1], "military base of the fog island")
 		n += 1
 	var pad := MapVehicles.helipad_id(lib)
 	if pad >= 0:
 		var c := fog.origin + FogBaseSites.HELIPAD
-		_put(lib, batch, pad, MapVehicles.helipad_xform(lib, pad, Vector3(c.x, 0, c.y), FogBaseSites.HELIPAD_SIZE),
+		_put(lib, batch, pad, MapVehicles.helipad_xform(Vector3(c.x, 0, c.y), FogBaseSites.HELIPAD_SIZE),
 				"Helipad", "MILITARY", "military base of the fog island")
 	return n
 
