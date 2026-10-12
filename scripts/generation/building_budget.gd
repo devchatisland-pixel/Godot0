@@ -66,12 +66,18 @@ static func apply(data: CityData) -> Dictionary:
 
 
 ## Clears `count` buildings of `ids`: first the ones that stand on no street, then spread
-## over the map (in the order of a hash of their place); the ones changed by hand last.
+## over the map (in the order of a hash of their place); the ones changed by hand last, and
+## before them the ones of the urban island (UrbanIslandRebuild takes them away afterwards: a
+## change of that island must not change which buildings the rest of the map keeps).
 static func _clear(data: CityData, ids: Array, count: int, kept: Dictionary, roadless: Dictionary) -> int:
 	var order := ids.duplicate()
 	order.sort_custom(func(a: int, b: int) -> bool:
 		if kept.has(a) != kept.has(b):
 			return kept.has(b)
+		var ua := MapLayout.on_urban_island(data.building_rect(a).get_center())
+		var ub := MapLayout.on_urban_island(data.building_rect(b).get_center())
+		if ua != ub:
+			return ub
 		if roadless.has(a) != roadless.has(b):
 			return roadless.has(a)
 		var ra := data.building_rect(a).position

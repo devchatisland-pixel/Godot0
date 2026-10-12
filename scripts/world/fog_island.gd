@@ -1,10 +1,11 @@
 class_name FogIsland
 extends Node3D
-## Draws the island hidden in the fog east of Chat City and the metal
-## bridge that leads to it:
+## Draws the island east of Chat City and the Golden Gate bridge that leads to it:
 ##   - its buildings and palms (a few MultiMeshes, always loaded, small),
+##   - the aircraft carriers at sea round it,
 ##   - a fog bank made of painted cloud textures: drifting sheets plus big
-##     billows and smoke plumes on camera-facing quads (no 3D volumes),
+##     billows and smoke plumes on camera-facing quads (no 3D volumes); it is
+##     only drawn when `CityConfig.fog_enabled` is true (off for now),
 ##   - the "ZONE UNLOCKED ON SEASON 2, COMING SOON" title above it.
 ## DayNight darkens the fog through `set_night`.
 
@@ -21,6 +22,12 @@ const LAYERS := [
 ]
 ## Smoke plumes rising from the hidden city (local cells of the fog island).
 const PLUMES := [Vector2(70, 40) + FogIslandShaper.SHIFT, Vector2(78, 88) + FogIslandShaper.SHIFT]
+## The Golden Gate: highest its towers may stand (the model is squashed to keep them slim),
+## where its deck is (share of its height) and the height the deck must have (just above the
+## road tiles), so the highway runs onto the bridge without a step.
+const BRIDGE_HEIGHT := 3.6
+const DECK_FRACTION := 0.3083
+const DECK_LEVEL := 0.06
 ## Width of the title in world units and its height above the island.
 const TITLE_WIDTH := 84.0
 const TITLE_HEIGHT := 3.0
@@ -40,8 +47,11 @@ func build(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
 		return
 	_build_buildings(fog, lib)
 	_build_bridge(data, lib)
-	_build_layers(fog)
-	_build_puffs(fog, 60 if cfg.is_mobile else 120)
+	_build_ships(fog, lib)
+	# The fog is switched off in CityConfig: nothing of it is drawn, the code stays.
+	if cfg.fog_enabled:
+		_build_layers(fog)
+		_build_puffs(fog, 60 if cfg.is_mobile else 120)
 	_build_title(fog)
 
 
@@ -80,8 +90,22 @@ func _build_buildings(fog: FogIslandShaper, lib: ModelLibrary) -> void:
 		_multimesh(lib.meshes[id], groups[id])
 
 
+# --- Aircraft carriers ----------------------------------------------------------------------------
+## The carriers of FogIslandShaper.ships (the model is long along Z, its waterline at y = 0).
+func _build_ships(fog: FogIslandShaper, lib: ModelLibrary) -> void:
+	var ids := lib.ids(Cat.CARRIER)
+	if ids.is_empty() or fog.ships.is_empty():
+		return
+	var xforms := []
+	for s in fog.ships:
+		var p: Vector2 = s[0]
+		xforms.append(Transform3D(Basis(Vector3.UP, s[1]), Vector3(p.x, 0, p.y)))
+	_multimesh(lib.meshes[ids[0]], xforms).name = "Carriers"
+
+
 # --- Bridge to the fog island ------------------------------------------------------------------
-## The same metal truss as the west bridge (WestBridge), several spans end to end.
+## The Golden Gate, one model stretched from the end of the highway to the shore of the
+## island; the metal truss of the west bridge (several spans) when its pack is missing.
 func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	var fog := data.fog
 	if data.bridge.x < 0 or fog.bridge_land_x < 0.0:
@@ -90,6 +114,34 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	var x0 := float(data.bridge.x) - 1.0
 	var x1 := fog.bridge_land_x + 1.0
 	var z := float(data.bridge.y) + 0.5
+	# Only the span over the water stays clear: the fog covers the island itself from its coast.
+	_clear = Vector3(x0 - 4.0, x1 - 10.0, z)
+	var ids := lib.ids(Cat.BRIDGE)
+	if ids.is_empty():
+		_build_metal_bridge(lib, x0, x1, z)
+		return
+	var box := lib.bounds[ids[0]]
+	# The model runs along its longest side; turn it to run along X.
+	var along_x := box.size.x >= box.size.z
+	var length := box.size.x if along_x else box.size.z
+	var s := (x1 - x0) / length
+	var sy := minf(s, BRIDGE_HEIGHT / box.size.y)
+	# The deck is as wide as the three-lane highway that leads to it.
+	var width := 3.0 / (box.size.z if along_x else box.size.x)
+	var basis := (Basis() if along_x else Basis(Vector3.UP, PI * 0.5)) * Basis.from_scale(Vector3(s, sy, width))
+	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
+	var mi := MeshInstance3D.new()
+	mi.name = "GoldenGate"
+	mi.mesh = lib.meshes[ids[0]]
+	# Lower the model so that its deck (measured: 31 % of its height) is level with the highway.
+	var deck := (box.position.y + DECK_FRACTION * box.size.y) * sy
+	mi.transform = Transform3D(basis, Vector3((x0 + x1) * 0.5, DECK_LEVEL - deck, z) - basis * center)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+
+
+## The same metal truss as the west bridge (WestBridge), several spans end to end.
+func _build_metal_bridge(lib: ModelLibrary, x0: float, x1: float, z: float) -> void:
 	var ids := lib.ids(Cat.METAL_BRIDGE)
 	if ids.is_empty():
 		return
@@ -117,8 +169,6 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	mmi.multimesh = mm
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mmi)
-	# Only the span over the water stays clear: the fog covers the island itself from its coast.
-	_clear = Vector3(x0 - 4.0, x1 - 10.0, z)
 
 
 # --- Fog ------------------------------------------------------------------------------------------
@@ -227,7 +277,7 @@ func _add(groups: Dictionary, id: int, t: Transform3D) -> void:
 	groups[id].append(t)
 
 
-func _multimesh(mesh: Mesh, xforms: Array) -> void:
+func _multimesh(mesh: Mesh, xforms: Array) -> MultiMeshInstance3D:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.mesh = mesh
@@ -238,6 +288,7 @@ func _multimesh(mesh: Mesh, xforms: Array) -> void:
 	mmi.multimesh = mm
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mmi)
+	return mmi
 
 
 func _union(lib: ModelLibrary, cats: Array) -> PackedInt32Array:

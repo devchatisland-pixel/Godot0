@@ -117,6 +117,9 @@ enum Kind {
 	TANK,             # tank at the gates of the secret base
 	BUS_STOP,         # no longer placed (the bus shelter pack is gone)
 	CONCERT,          # the concert camp near the north-east beach (ConcertSite): stage, lights, stands
+	SKYLINE_TOWER,    # skyscraper of the urban island (night city skyline pack), in rows along its roads
+	SILO,             # oil silo beside the containers of the port (MapAdditions)
+	HELIPAD,          # landing pad of the helicopter beside the bunker (MapAdditions)
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -133,6 +136,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.PIRATE_SHIP, Kind.GRAVE,
 	Kind.NUCLEAR_PLANT, Kind.CINEMA_MAIN, Kind.AIRPORT, Kind.BURGER_JOINT,
 	Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER, Kind.WATCHTOWER, Kind.BEACH_HUT, Kind.PIER, Kind.BOAT, Kind.FIRE_TRUCK, Kind.BALLOON, Kind.BILLBOARD, Kind.UFO, Kind.TANK, Kind.BUS_STOP, Kind.CONCERT,
+	Kind.SILO, Kind.HELIPAD,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

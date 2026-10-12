@@ -18,11 +18,12 @@ static var scale := 1.0
 const BLOBS := {
 	# Islands.
 	"main": {"at": Vector2(141, 133), "r": Vector2(80, 94)},
-	# The urban island (third island) west of the main one, joined by the metal bridge. Small
-	# (30 % of the area it had) and packed with towers (UrbanIslandRebuild).
-	"urban": {"at": Vector2(37, 138), "r": Vector2(12, 26)},
-	# A lobe of land at its north end, wide enough for the nuclear plant and its cooling towers.
-	"urban_north": {"at": Vector2(39, 105), "r": Vector2(15, 9)},
+	# The urban island (third island) west of the main one, joined by the metal bridge: rows of
+	# skyscrapers along three roads (UrbanIslandRebuild). 30 % more area than it had (radii
+	# 12 x 26 and 15 x 9, times 1.14).
+	"urban": {"at": Vector2(37, 138), "r": Vector2(13.7, 29.6)},
+	# A lobe of land at its north end, wide enough for the nuclear plants.
+	"urban_north": {"at": Vector2(39, 105), "r": Vector2(17.1, 10.3)},
 	# The tiny islet of the BT tower, in the sea north of the urban island.
 	"tower_islet": {"at": Vector2(24, 64), "r": Vector2(10, 6.5)},
 	# The development island, alone in the empty south-west corner of the sea, far from the

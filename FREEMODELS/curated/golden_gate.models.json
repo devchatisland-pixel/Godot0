@@ -1,0 +1,9 @@
+{
+	"file": "golden_gate.glb",
+	"models": [
+		{
+			"cat": "BRIDGE",
+			"node": "golden_gate"
+		}
+	]
+}

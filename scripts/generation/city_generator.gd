@@ -59,6 +59,8 @@ func generate() -> CityData:
 	print("[City] urban island: ", UrbanIslandRebuild.apply(data))
 	print("[City] buildings deleted or resized by hand (expect 22 + 1 = 23): ", ManualEdits.delete_by_hand(data))
 	print("[City] houses turned from west to east: ", ManualEdits.finish(data))
+	# Boats, silos and the helipad: added last, so no building number moves.
+	print("[City] additions: ", MapAdditions.apply(data))
 	# The concert camp clears what stands on its square, after the budget has counted it.
 	ConcertSite.apply(data)
 	AmenitiesPlanner.apply(data)

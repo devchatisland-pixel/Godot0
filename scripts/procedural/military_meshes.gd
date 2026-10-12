@@ -19,6 +19,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("bunker", bunker())
 	lib.add_named("airbase", airbase())
 	lib.add_named("runway_ext", runway_extension())
+	lib.add_named("helipad", helipad())
 
 
 # --- Bunker (3x3): sand berm, concrete front with a steel door, sandbags ------------------
@@ -121,4 +122,22 @@ static func runway_extension() -> ArrayMesh:
 	while z < 18.0:
 		k.box(Vector3(x0 + w * 0.5 - 0.1, 0.061, z), Vector3(0.2, 0.004, 0.9), LINE)
 		z += 1.8
+	return k.commit()
+
+
+# --- Helipad (3x3): round concrete pad, painted circle and H, edge lights ------------------------
+static func helipad() -> ArrayMesh:
+	var k := MeshKit.new()
+	k.cylinder(Vector3.ZERO, 1.38, 1.34, 0.05, 28, CONCRETE.darkened(0.25), ASPHALT)
+	var paint := Color("e8c832")
+	var ring: Array[Color] = [paint]
+	k.elliptic_ring(Vector3(0, 0.052, 0), Vector2(1.0, 1.0), Vector2(1.1, 1.1), 0.0, 0.0, 28, ring, paint)
+	k.box(Vector3(-0.42, 0.052, -0.5), Vector3(0.16, 0.004, 1.0), LINE)
+	k.box(Vector3(0.26, 0.052, -0.5), Vector3(0.16, 0.004, 1.0), LINE)
+	k.box(Vector3(-0.26, 0.052, -0.08), Vector3(0.52, 0.004, 0.16), LINE)
+	k.glow(true)
+	for i in 8:
+		var a := TAU * (float(i) + 0.5) / 8.0
+		k.block(Vector3(cos(a) * 1.27, 0.05, sin(a) * 1.27), Vector3(0.07, 0.04, 0.07), Color("7dff9a"))
+	k.glow(false)
 	return k.commit()

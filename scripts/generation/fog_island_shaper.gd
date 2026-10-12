@@ -18,6 +18,12 @@ const CLUSTERS := [
 	{"at": Vector2(40, 70), "radius": 12.0, "towers": false},
 ]
 const HILLS := Vector2(36, 34)
+## The aircraft carriers: directions from the middle of the island (degrees, 0 = east, 90 =
+## south; none to the west, where the bridge and the strait to Chat City are), the open sea
+## kept between a carrier and the coast, and between it and the edge of the square (cells).
+const SHIP_BEARINGS: Array[float] = [-112.0, -62.0, -18.0, 22.0, 66.0, 114.0]
+const SHIP_OFFSHORE := 11.0
+const SHIP_EDGE := 9.0
 
 const GRASS := Color("7fae5c")
 const FOREST := Color("4f8a45")
@@ -36,6 +42,8 @@ var buildings: Array = []
 var trees: Array = []
 ## World x where the bridge reaches the fog island (west shore of its row).
 var bridge_land_x := -1.0
+## Aircraft carriers at sea round the island: [Vector2 world position, yaw in radians].
+var ships: Array = []
 
 var _cfg: CityConfig
 var _height := PackedFloat32Array()
@@ -64,6 +72,7 @@ func shape(bridge_row: int) -> void:
 			if _height[bridge_row * SIZE + x] > 0.0:
 				bridge_land_x = origin.x + x
 				break
+	_place_ships()
 	_height = PackedFloat32Array()
 
 
@@ -140,6 +149,30 @@ func _place_trees() -> void:
 				continue
 			var near_coast := _height[int(p.y) * SIZE + int(p.x)] < 0.18
 			trees.append([origin + p, near_coast or (h >> 10) & 1 == 0, h])
+
+
+## One carrier on each bearing: SHIP_OFFSHORE cells beyond the last land met on the way out
+## (or as far as the square goes), its side turned to the island.
+func _place_ships() -> void:
+	var from := Vector2(SIZE * 0.44, SIZE * 0.5)
+	for k in SHIP_BEARINGS.size():
+		var dir := Vector2.from_angle(deg_to_rad(SHIP_BEARINGS[k]))
+		var coast := 0.0
+		var reach := 0.0
+		var d := 1.0
+		while true:
+			var p := from + dir * d
+			if p.x < SHIP_EDGE or p.y < SHIP_EDGE or p.x > SIZE - SHIP_EDGE or p.y > SIZE - SHIP_EDGE:
+				break
+			if _height[int(p.y) * SIZE + int(p.x)] > 0.0:
+				coast = d
+			reach = d
+			d += 1.0
+		var at := from + dir * minf(coast + SHIP_OFFSHORE, reach)
+		# Broadside to the island, a little off, bow one way or the other.
+		var h := CityTypes.hash2(k, 17, 606)
+		var yaw := atan2(dir.x, dir.y) + PI * 0.5 + (float(h & 15) / 15.0 - 0.5) * 0.5 + (PI if (h >> 4) & 1 == 1 else 0.0)
+		ships.append([origin + at, yaw])
 
 
 func _is_land(p: Vector2) -> bool:

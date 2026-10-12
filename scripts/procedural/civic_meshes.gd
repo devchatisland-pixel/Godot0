@@ -18,6 +18,8 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("bank", bank())
 	lib.add_named("un_hq", un_headquarters())
 	lib.add_named("prison", prison())
+	lib.add_named("prison_wall", prison_wall())
+	lib.add_named("prison_tower", prison_tower())
 	lib.add_named("un_signs", un_signs())
 
 
@@ -116,4 +118,29 @@ static func prison() -> ArrayMesh:
 		k.glow(true)
 		k.block(p + Vector3(0, 0.8, 0.17), Vector3(0.08, 0.06, 0.03), Color.WHITE)
 		k.glow(false)
+	return k.commit()
+
+
+# --- Walls of the jail: one piece 1 cell long along X (stretched to the side it closes) ---------
+const WALL_HEIGHT := 0.5
+
+
+static func prison_wall() -> ArrayMesh:
+	var k := MeshKit.new()
+	k.box(Vector3(-0.5, 0, -0.05), Vector3(1.0, WALL_HEIGHT, 0.1), CONCRETE, Color("8f8b80"))
+	# Coils of barbed wire on top.
+	k.box(Vector3(-0.5, WALL_HEIGHT, -0.03), Vector3(1.0, 0.07, 0.06), DARK)
+	return k.commit()
+
+
+## Guard tower of a corner of the wall: concrete shaft, dark cabin with windows, search lights.
+static func prison_tower() -> ArrayMesh:
+	var k := MeshKit.new()
+	k.block(Vector3.ZERO, Vector3(0.3, 0.95, 0.3), CONCRETE)
+	k.block(Vector3(0, 0.95, 0), Vector3(0.46, 0.24, 0.46), DARK)
+	k.block(Vector3(0, 1.19, 0), Vector3(0.56, 0.05, 0.56), Color("5a5d6e"))
+	k.glow(true)
+	for o in [Vector3(0.25, 1.02, 0), Vector3(-0.25, 1.02, 0), Vector3(0, 1.02, 0.25), Vector3(0, 1.02, -0.25)]:
+		k.block(o, Vector3(0.07, 0.07, 0.07), Color.WHITE)
+	k.glow(false)
 	return k.commit()

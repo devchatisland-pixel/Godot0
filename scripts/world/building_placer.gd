@@ -38,6 +38,7 @@ const FAR_COLORS := {
 	Kind.WATCHTOWER: Color("8a6a45"), Kind.BEACH_HUT: Color("c9954a"), Kind.PIER: Color("8a6a45"), Kind.BOAT: Color("7a6a5a"),
 	Kind.FIRE_TRUCK: Color("c0392b"), Kind.BALLOON: Color("e2573b"), Kind.BILLBOARD: Color("d8d3c4"), Kind.UFO: Color("b9bcc6"), Kind.TANK: Color("5f6a4a"),
 	Kind.BUS_STOP: Color("3f8f5a"),
+	Kind.SKYLINE_TOWER: Color("3d4358"), Kind.SILO: Color("d9d6cc"), Kind.HELIPAD: Color("5a5d66"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -59,6 +60,7 @@ const NAMED := {
 	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"], Kind.BEACH_HUT: ["box"], Kind.PIER: ["box"], Kind.BOAT: ["box"],
 	Kind.FIRE_TRUCK: ["box"], Kind.BALLOON: ["box"], Kind.BILLBOARD: ["box"],
 	Kind.UFO: ["box"], Kind.TANK: ["box"], Kind.BUS_STOP: ["box"],
+	Kind.SKYLINE_TOWER: ["box"], Kind.SILO: ["box"], Kind.HELIPAD: ["helipad"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -72,6 +74,7 @@ const SEED_VARIANTS: Array[int] = [Kind.MUSEUM]
 const FIXED_SIZE: Array[int] = [
 	Kind.LIGHTHOUSE, Kind.TELECOM_TOWER, Kind.SAT_DISH, Kind.MESA, Kind.POND,
 	Kind.FOUNTAIN, Kind.CRANE, Kind.MOUNTAIN, Kind.OIL_PUMP, Kind.STALL, Kind.GRAVE, Kind.BT_TOWER,
+	Kind.HELIPAD,
 ]
 ## Extra size of some fixed props (the radio tower is twice as big, mountains tower over the forest).
 const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.6, Kind.LIGHTHOUSE: 1.65,
@@ -99,6 +102,14 @@ const FUTURE_STRETCH := 1.5
 ## Futuristic towers that look bad: drawn as this model of the night city instead (stretched like it).
 const BAD_FUTURE_TOWERS := ["tower_g", "tower_k"]
 const FUTURE_REPLACEMENT := "city_night.glb: city_night_03_b"
+## Skyline towers of the urban island fill their lot (the rows have no gap between two towers):
+## share of the lot they cover, and how much taller than wide they are drawn.
+const SKYLINE_FILL := 0.985
+const SKYLINE_STRETCH := 1.1
+## The jail is drawn this much taller than modelled; a radar dish keeps its own size.
+const PRISON_STRETCH := 1.25
+## Share of its lot the jail takes: the rest is the yard between it and the walls.
+const PRISON_YARD := 0.86
 ## Las Vegas buildings by the short side of their lot: small bars and chapels,
 ## clubs, then neon towers and resorts that fill bigger lots.
 const VEGAS_BY_SIZE := {
@@ -191,6 +202,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 	if kind == Kind.FIELD:
 		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r, _laid_across(data, i, facing))}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
+	if kind == Kind.SKYLINE_TOWER:
+		return {"id": id, "xform": _fit_fill(lib, id, r, facing)}
 	var swapped := false
 	if kind == Kind.FUTURE_BLDG:
 		var model := lib.model_name(id)
@@ -244,6 +257,11 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 		Kind.URBAN_CLUSTER:
 			scale = minf(room, 1.0)
 			stretch = 1.6
+		Kind.SAT_DISH:
+			scale = minf(room, 1.0)
+		Kind.PRISON:
+			scale = minf(room, MAX_FILL) * PRISON_YARD
+			stretch = PRISON_STRETCH
 		_:
 			scale = minf(room, MAX_FILL if CityTypes.is_service(kind) else 1.0)
 	if ModelPools.is_new_york(lib, id):
@@ -320,6 +338,23 @@ static func _fit_field(lib: ModelLibrary, id: int, r: Rect2i, across: bool = fal
 	var center := Vector3(b.get_center().x, 0, b.get_center().z)
 	var lot := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
 	return Transform3D(basis, lot - basis * center)
+
+
+## A tower that covers its whole lot: turned to `facing`, its long side along the long side of
+## the lot, then scaled on each side of the lot apart so that it touches its neighbours.
+static func _fit_fill(lib: ModelLibrary, id: int, r: Rect2i, facing: int) -> Transform3D:
+	var yaw := CityTypes.facing_yaw(facing)
+	var fp := _footprint(lib, id, facing)
+	if r.size.x != r.size.y and (fp.x > fp.y) != (r.size.x > r.size.y):
+		yaw += PI * 0.5
+		fp = Vector2(fp.y, fp.x)
+	var sx := float(r.size.x) * SKYLINE_FILL / maxf(fp.x, 0.01)
+	var sz := float(r.size.y) * SKYLINE_FILL / maxf(fp.y, 0.01)
+	var basis := Basis.from_scale(Vector3(sx, sqrt(sx * sz) * SKYLINE_STRETCH, sz)) * Basis(Vector3.UP, yaw)
+	var aabb := lib.bounds[id]
+	var center_local := Vector3(aabb.get_center().x, 0, aabb.get_center().z)
+	var lot_center := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
+	return Transform3D(basis, lot_center - basis * center_local)
 
 
 ## Room of a procedural mesh, turned the way `_fit` turns it (square_fit).

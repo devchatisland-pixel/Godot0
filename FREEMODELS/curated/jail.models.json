@@ -1,0 +1,9 @@
+{
+	"file": "jail.glb",
+	"models": [
+		{
+			"cat": "PRISON_MAIN",
+			"node": "jail"
+		}
+	]
+}

@@ -29,6 +29,7 @@ const PACK_GLOW := {
 	ModelCat.METAL_BRIDGE: 0.4, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
 	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
+	ModelCat.PRISON_MAIN: 0.45, ModelCat.CARRIER: 0.3, ModelCat.SILO: 0.25, ModelCat.RADAR_DISH: 0.3,
 }
 ## Neon roof signs: dim by day, very bright at night (they glow in their own colours).
 const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN]
@@ -46,7 +47,7 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in PACK_GLOW:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
-	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE]:
+	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE, ModelCat.NIGHT_SKYLINE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
 	for cat in NEON_PACKS:

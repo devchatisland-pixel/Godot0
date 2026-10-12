@@ -68,6 +68,9 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 				var front := Vector3(box.get_center().x, box.size.y * 0.66, box.end.z + 0.01)
 				var w := box.size.x * UN_EMBLEM
 				batch.add(lib.named_id("un_signs"), xform * Transform3D(Basis.from_scale(Vector3(w, w, w)), front))
+		Kind.PRISON:
+			if ModelPools.is_pack_model(lib, pid, Cat.PRISON_MAIN):
+				_place_prison_walls(lib, r, int(data.b_facing[i]), batch)
 		Kind.MAIN_HOSPITAL:
 			if ModelPools.is_pack_model(lib, pid, Cat.HOSPITAL_MAIN):
 				# Lit red H over the helipad of the roof.
@@ -88,6 +91,46 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 				var prop := props[(seed >> 3) % props.size()]
 				if lib.bounds[prop].size.x < 1.0 and lib.bounds[prop].size.z < 1.0:
 					batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 3) * PI * 0.5), p))
+
+
+## The jail: a concrete wall topped with barbed wire along the edge of the lot, a guard tower
+## at each corner and a gate in the middle of the front side (two lower posts).
+const PRISON_WALL_INSET := 0.22
+const PRISON_GATE := 1.4
+
+
+static func _place_prison_walls(lib: ModelLibrary, r: Rect2i, facing: int, batch: InstanceBatch) -> void:
+	var wall := lib.named_id("prison_wall")
+	var tower := lib.named_id("prison_tower")
+	if wall < 0 or tower < 0:
+		return
+	var x0 := float(r.position.x) + PRISON_WALL_INSET
+	var x1 := float(r.end.x) - PRISON_WALL_INSET
+	var z0 := float(r.position.y) + PRISON_WALL_INSET
+	var z1 := float(r.end.y) - PRISON_WALL_INSET
+	var corners := [Vector3(x0, 0, z0), Vector3(x1, 0, z0), Vector3(x1, 0, z1), Vector3(x0, 0, z1)]
+	for k in 4:
+		batch.add(tower, Transform3D(Basis(), corners[k]))
+		var a: Vector3 = corners[k]
+		var b: Vector3 = corners[(k + 1) % 4]
+		# Sides in the order north, east, south, west: the same numbers as the facings.
+		if k != facing:
+			_wall_piece(wall, a, b, batch)
+			continue
+		var mid := (a + b) * 0.5
+		var along := (b - a).normalized()
+		_wall_piece(wall, a, mid - along * PRISON_GATE * 0.5, batch)
+		_wall_piece(wall, mid + along * PRISON_GATE * 0.5, b, batch)
+		for s: float in [-1.0, 1.0]:
+			var post: Vector3 = mid + along * PRISON_GATE * 0.5 * s
+			batch.add(tower, Transform3D(Basis.from_scale(Vector3(0.6, 0.75, 0.6)), post))
+
+
+## One wall from `a` to `b`: the piece is 1 long along its local X.
+static func _wall_piece(wall: int, a: Vector3, b: Vector3, batch: InstanceBatch) -> void:
+	var d := b - a
+	var basis := Basis(Vector3.UP, atan2(-d.z, d.x)) * Basis.from_scale(Vector3(d.length(), 1.0, 1.0))
+	batch.add(wall, Transform3D(basis, (a + b) * 0.5))
 
 
 ## Trees on gardens, a tree on plazas and props on industrial yards.

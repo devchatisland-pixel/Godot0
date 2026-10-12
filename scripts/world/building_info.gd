@@ -21,6 +21,7 @@ const NAMES := {
 	"POLICE": "Police station", "MAIN_HOSPITAL": "Main hospital", "HOSPITAL": "Clinic",
 	"MAIN_SCHOOL": "Main school", "MCDONALDS": "McDonald's", "BURGER_KING": "Burger King",
 	"BURGER_JOINT": "Burger restaurant", "CINEMA_MAIN": "Cinema", "FUTURE_BLDG": "Futuristic tower",
+	"SKYLINE_TOWER": "Skyscraper", "SILO": "Oil silo", "HELIPAD": "Helipad",
 	"URBAN_BLDG": "Tower", "QUARTER_BLDG": "Red district building", "NUCLEAR_PLANT": "Nuclear plant",
 	"POOR_BLDG": "Poor district block", "RUSSIAN": "Urban ghetto block", "FACTORY_BLDG": "Factory",
 	"PRISON": "Penitentiary", "PRISON_WING": "Prison block", "SHOPPING_CENTER": "Shopping center",

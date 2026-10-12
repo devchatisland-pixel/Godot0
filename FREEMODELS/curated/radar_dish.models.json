@@ -1,0 +1,9 @@
+{
+	"file": "radar_dish.glb",
+	"models": [
+		{
+			"cat": "RADAR_DISH",
+			"node": "radar_dish"
+		}
+	]
+}

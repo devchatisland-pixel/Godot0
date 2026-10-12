@@ -52,6 +52,7 @@ func _run() -> void:
 	_city_hall_cars()
 	_police_hq_car()
 	_bunker_cars()
+	_base_helicopter()
 	_fire_station_truck()
 	_container_tanker()
 	_desert()
@@ -512,6 +513,21 @@ func _bunker_cars() -> void:
 	for k in 2:
 		# Noses towards the bunker.
 		_add("police_jp_black", front + side * (float(k) - 0.5) * 0.7, -Vector2(o), "in front of the bunker")
+
+
+## The military helicopter of the secret base, parked on its helipad beside the bunker
+## (MapAdditions lays the pad), its nose turned like the front of the bunker.
+func _base_helicopter() -> void:
+	var pad := _biggest(Kind.HELIPAD)
+	if pad < 0:
+		push_warning("[Vehicles] no helipad at the secret base")
+		return
+	var r := _d.building_rect(pad)
+	var head := Vector2(0, 1)
+	var bunker := _biggest(Kind.BUNKER)
+	if bunker >= 0:
+		head = Vector2(CityTypes.FACING_OFFSETS[_d.b_facing[bunker]])
+	_add("p54_46_helicopter_military", Vector2(r.position) + Vector2(r.size) * 0.5, head, "on the helipad of the secret base")
 
 
 ## Distance (cells) from the front of a lot to the middle of a car parked in front of it.

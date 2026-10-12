@@ -1,19 +1,21 @@
 class_name UrbanIslandRebuild
 extends RefCounted
-## The urban island as it is finally built: the two nuclear plants, a few streets and
-## TOWER_COUNT futuristic towers along them. It runs once the whole map is generated and the
-## budget of the buildings is applied (CityGenerator), so no other district moves by a single cell:
+## The urban island as it is finally built: the two nuclear plants on its north lobe and, all
+## over the rest, rows of skyscrapers (the 13 towers of the night city skyline pack) along
+## three parallel roads. It runs once the whole map is generated and the budget of the
+## buildings is applied (CityGenerator), so no other district moves by a single cell:
 ##   - everything the planners put on the island is taken away (towers, yards and containers,
 ##     industry, the cooling hall, the fire truck, the billboard, the bus stops), and so are its
 ##     streets;
 ##   - the two plants keep their lots (PLANT_LOTS, else where as few cells as possible lie on
 ##     their line of sight to the camera), both facing south; AmenitiesPlanner fences them;
-##   - streets: one from the landing of the metal bridge across the island, cross streets
-##     every STREET_STEP columns, a street along the front of each plant joined to the others,
-##     and a small yard of containers and barrels beside the plant road;
-##   - the towers (FUTURE_BLDG) stand along the streets. On the line of sight of a plant the
-##     towers rise like the seats of a stadium: no tower is taller than what the camera (30
-##     degrees down) still sees the plant over, so the plants stay in view.
+##   - streets: ROAD_COUNT roads down the length of the island, a cross street from the landing
+##     of the metal bridge over all of them, a street joining their ends at the north and at
+##     the south, a street along the front of each plant joined to the others, and a small
+##     yard of containers and barrels beside the plant road;
+##   - the towers (SKYLINE_TOWER) stand in rows on both sides of every road, with no gap
+##     between two towers of a row: only the roads part them. On the line of sight of a plant
+##     no tower is taller than what the camera (30 degrees down) still sees the plant over.
 ## The bridge itself stays (it is a model drawn from `CityData.west_bridge`).
 ## Only the cells of the island and the buildings standing on them are touched; `CityData`
 ## outside it is exactly what the other planners made.
@@ -31,25 +33,28 @@ const SIGHT_MARGIN := 1
 const PLANT_TOP := 4.9
 const VIEW_SLOPE := 0.5774
 const HIDDEN_ALLOWED := 0.5
-## The towers that may stand on a line of sight, by their height at the biggest scale a lot gives
-## (model height x 1.15 x the stretch of the placer). Tower c of the pack is a flat sheet: never
-## used. Tower g is drawn as the night city tower that replaces it (BuildingPlacer), a lower
-## one. The names are the ones of the model library.
-const RAMP := [
-	["future.glb: tower_g", 7.5], ["future.glb: tower_l", 10.2], ["future.glb: tower_b", 14.3],
-	["future.glb: tower_a", 17.9],
+## The towers of the pack (night_skyline.glb): node, length of the lot along the road in cells
+## (the models are 2.4 to 5.4 cells long) and height once the tower fills its lot, in cells.
+const MODEL_PREFIX := "night_skyline.glb: "
+const TOWERS := [
+	["sky_01", 4, 16.5], ["sky_02", 4, 13.5], ["sky_03", 3, 9.5], ["sky_04", 5, 11.5],
+	["sky_05", 4, 21.5], ["sky_06", 5, 12.5], ["sky_07", 3, 11.5], ["sky_08", 4, 5.7],
+	["sky_09", 4, 17.9], ["sky_10", 3, 11.0], ["sky_11", 4, 6.3], ["sky_12", 5, 11.5],
+	["sky_13", 3, 9.2],
 ]
+## The parallel roads: how many, and the columns from one to the next (a road, then two rows
+## of towers back to back).
+const ROAD_COUNT := 3
+const ROW_DEPTH := 4
+const ROAD_STEP := 2 * ROW_DEPTH + 1
+## Shortest lot of TOWERS along the road.
+const MIN_LENGTH := 3
+## Rows of towers behind each of the two outer roads, out to the coast.
+const OUTER_ROWS := 3
 ## Cost of a cell of one plant that hides the other, in land cells of sight.
 const HIDE_WEIGHT := 3.0
 ## No tower closer than this to a plant (cells).
 const PLANT_AIR := 1
-## Towers tried in this order of shapes, biggest first; the first of the list that a cell
-## picks by its hash comes first, the others follow by area. No lot is smaller than 3x3:
-## the narrow towers of the pack look wrong on a smaller lot.
-const SHAPES: Array[Vector2i] = [
-	Vector2i(3, 3), Vector2i(3, 3), Vector2i(3, 3), Vector2i(3, 3), Vector2i(4, 3), Vector2i(3, 4),
-	Vector2i(4, 3), Vector2i(3, 4), Vector2i(4, 4), Vector2i(4, 4),
-]
 ## Bare ground at the end of the metal bridge: columns before its head, rows either side.
 const LANDING_COLUMNS := 5
 const LANDING_ROWS := 2
@@ -58,13 +63,6 @@ const SALT := 5101
 ## Where the two plants stand (cells of the final map): they keep their place when the land is
 ## there (ExtensionIsland keeps it).
 const PLANT_LOTS: Array[Rect2i] = [Rect2i(53, 149, 18, 7), Rect2i(51, 139, 18, 7)]
-## How many towers stand on the island (the ones left once many were taken away by hand).
-const TOWER_COUNT := 87
-## Columns between two cross streets, and the first one west of the bridge landing.
-const STREET_STEP := 9
-const FIRST_CROSS := 6
-## Passes of the towers: on a street, then up to this many cells back from one.
-const STREET_REACH: Array[int] = [1, 3]
 ## The yard by the plant road: lots (2x2) and their seeds (containers, then barrels: see
 ## BuildingExtras._place_yard).
 const PLANT_YARD_SEEDS := [3 * 101, 3 * 211 + 1]
@@ -125,8 +123,9 @@ static func _is_island_land(data: CityData, x: int, y: int) -> bool:
 
 
 # --- Taking away ---------------------------------------------------------------------------------
-## Clears every building that stands on the island land (the lot stays in the list, empty: the
-## numbers do not move). Returns the ids of the nuclear plants.
+## Clears every building that stands on the island, its beaches and its loose bits of land
+## included (the lot stays in the list, empty: the numbers do not move). Returns the ids of the
+## nuclear plants.
 static func _take_away(data: CityData, land: PackedByteArray, out: Dictionary) -> Array[int]:
 	var plants: Array[int] = []
 	for b in data.building_count():
@@ -134,7 +133,7 @@ static func _take_away(data: CityData, land: PackedByteArray, out: Dictionary) -
 		if kind == Kind.EMPTY:
 			continue
 		var c := data.building_rect(b).get_center()
-		if not data.in_bounds(c.x, c.y) or land[data.idx(c.x, c.y)] == 0:
+		if not data.in_bounds(c.x, c.y) or not MapLayout.on_urban_island(c) 				or data.terrain[data.idx(c.x, c.y)] < Terrain.BEACH:
 			continue
 		if kind == Kind.NUCLEAR_PLANT:
 			plants.append(b)
@@ -272,30 +271,71 @@ static func _best_spot(data: CityData, land: PackedByteArray, cells: Array[Vecto
 
 
 # --- The streets ---------------------------------------------------------------------------------
-## Lays the streets on the island land (CityData.road, ROAD_STREET). Returns their cells.
+## Lays the streets on the island land (CityData.road, ROAD_STREET): a street along the front
+## of each plant, ROAD_COUNT parallel roads down the length of the island, a cross street from
+## the landing of the metal bridge over all of them, and a street joining their ends at the
+## north and at the south. Returns their cells.
 static func _build_streets(data: CityData, land: PackedByteArray, plants: Array[Rect2i]) -> int:
 	var wb := data.west_bridge
 	if wb.x < 0:
 		return 0
 	var row := wb.z
-	# From the landing of the bridge westwards, across the island.
-	var west := wb.y
-	while not _blocked(data, land, plants, west - 1, row):
-		west -= 1
-	for x in range(west, wb.y + 1):
-		_road(data, x, row)
-	# Cross streets, north and south as far as the land goes.
-	for x in range(wb.y - FIRST_CROSS, west, -STREET_STEP):
-		for dir in [-1, 1]:
-			var y: int = row + dir
-			while not _blocked(data, land, plants, x, y):
-				_road(data, x, y)
-				y += dir
-	# A street along the front (south side) of each plant, joined to the others.
+	# A street along the front (south side) of each plant.
 	for p in plants:
 		for x in range(p.position.x - 1, p.end.x + 1):
 			if data.in_bounds(x, p.end.y) and land[data.idx(x, p.end.y)] == 1 and not _in_other(plants, p, x, p.end.y):
 				_road(data, x, p.end.y)
+	# The parallel roads, from the row of the bridge to the north and to the south as far as
+	# the land goes (or to a street that is already there).
+	var columns := road_columns()
+	var north := -1
+	var south := data.size
+	# No road runs further north than the street of the northern plant.
+	var limit := 0
+	for p in plants:
+		limit = p.end.y if limit == 0 else mini(limit, p.end.y)
+	for x in columns:
+		if _blocked(data, land, plants, x, row):
+			continue
+		_road(data, x, row)
+		var ends := [row, row]
+		for k in 2:
+			var dir: int = -1 if k == 0 else 1
+			var y := row + dir
+			while y >= limit and (data.is_road(x, y) or not _blocked(data, land, plants, x, y)):
+				var joined := data.is_road(x, y)
+				_road(data, x, y)
+				ends[k] = y
+				if joined:
+					break
+				y += dir
+		north = maxi(north, ends[0])
+		south = mini(south, ends[1])
+	# The cross street of the bridge, from its landing to the westernmost road.
+	for x in range(columns[0], wb.y + 1):
+		if not _blocked(data, land, plants, x, row):
+			_road(data, x, row)
+	# The streets that join the ends of the roads; the side roads stop there, the middle one
+	# runs on to the tips of the island.
+	for y: int in [north, south]:
+		if y < 0 or y >= data.size or absi(y - row) < 3:
+			continue
+		var whole := true
+		for x in range(columns[0], columns[columns.size() - 1] + 1):
+			if not data.is_road(x, y) and _blocked(data, land, plants, x, y):
+				whole = false
+		if not whole:
+			continue
+		for x in range(columns[0], columns[columns.size() - 1] + 1):
+			_road(data, x, y)
+		var out: int = -1 if y == north else 1
+		for x: int in [columns[0], columns[columns.size() - 1]]:
+			var yy := y + out
+			while data.in_bounds(x, yy) and land[data.idx(x, yy)] == 1 and data.is_road(x, yy) \
+					and not _plant_street(plants, x, yy):
+				data.road[data.idx(x, yy)] = 0
+				yy += out
+	for p in plants:
 		_join(data, land, plants, p)
 	_prune_stubs(data, land)
 	var n := 0
@@ -303,6 +343,24 @@ static func _build_streets(data: CityData, land: PackedByteArray, plants: Array[
 		if land[i] == 1 and data.road[i] != 0:
 			n += 1
 	return n
+
+
+## Columns of the parallel roads: ROAD_COUNT of them, ROAD_STEP apart, the middle one on the
+## spine of the island.
+static func road_columns() -> Array[int]:
+	var mid := int(Vector2(MapLayout.blob("urban")["at"]).x)
+	var out: Array[int] = []
+	for k in ROAD_COUNT:
+		out.append(mid + (k - ROAD_COUNT / 2) * ROAD_STEP)
+	return out
+
+
+## True on the street that runs along the front of a plant.
+static func _plant_street(plants: Array[Rect2i], x: int, y: int) -> bool:
+	for p in plants:
+		if y == p.end.y and x >= p.position.x - 1 and x <= p.end.x:
+			return true
+	return false
 
 
 static func _blocked(data: CityData, land: PackedByteArray, plants: Array[Rect2i], x: int, y: int) -> bool:
@@ -463,9 +521,10 @@ static func _yard_free(data: CityData, land: PackedByteArray, r: Rect2i) -> bool
 
 
 # --- The towers -------------------------------------------------------------------------------------
-## Puts up to TOWER_COUNT towers on free land along the streets (each lot touches a street),
-## the lots tried in the order of a hash so they spread over the whole island. Returns how
-## many were built.
+## Rows of skyscrapers down the island, on both sides of every road and behind them as far as
+## the land goes: each row is ROW_DEPTH cells deep and its towers touch each other (a lot is
+## as long as its tower, see TOWERS). The streets, the landing of the bridge and the ground
+## round the plants stay free. Returns how many were built.
 static func _build_towers(data: CityData, land: PackedByteArray, cells: Array[Vector2i],
 		plants: Array[Rect2i]) -> int:
 	var free := land.duplicate()
@@ -475,10 +534,17 @@ static func _build_towers(data: CityData, land: PackedByteArray, cells: Array[Ve
 				if data.in_bounds(x, y):
 					free[data.idx(x, y)] = 0
 	_keep_landing_free(data, free)
+	var top := data.size
+	var bottom := 0
 	for c in cells:
 		var i := data.idx(c.x, c.y)
 		if data.road[i] != 0:
 			free[i] = 0
+		top = mini(top, c.y)
+		bottom = maxi(bottom, c.y)
+	# The north lobe is left to the plants: the rows start south of their street.
+	for p in plants:
+		top = maxi(top, p.end.y + 1)
 	for b in data.building_count():
 		if data.b_kind[b] == Kind.EMPTY:
 			continue
@@ -487,64 +553,75 @@ static func _build_towers(data: CityData, land: PackedByteArray, cells: Array[Ve
 			for x in range(r.position.x - 1, r.end.x + 1):
 				if data.in_bounds(x, y):
 					free[data.idx(x, y)] = 0
-	var order := cells.duplicate()
-	order.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
-		return CityTypes.hash2(a.x, a.y, SALT + 2) < CityTypes.hash2(b.x, b.y, SALT + 2))
 	var built := 0
-	# First the lots right on a street, then (when the count is not reached) the ones a little
-	# back from it.
-	for reach in STREET_REACH:
-		built += _towers_pass(data, free, order, plants, reach, TOWER_COUNT - built)
+	var band := 0
+	for row: Array in _rows():
+		built += _tower_row(data, free, plants, row[0], row[1], top, bottom, band)
+		band += 1
 	return built
 
 
-## One pass of _build_towers: up to `count` lots within `reach` cells of a street.
-static func _towers_pass(data: CityData, free: PackedByteArray, order: Array[Vector2i],
-		plants: Array[Rect2i], reach: int, count: int) -> int:
+## The rows of towers: [column of the side nearest to its road, facing]. Two rows between two
+## roads (back to back), and rows behind the outer roads out to the coast.
+static func _rows() -> Array:
+	var columns := road_columns()
+	var out := []
+	for x in columns:
+		out.append([x - 1, 1])
+		out.append([x + 1, 3])
+	var west: int = columns[0] - 1 - ROW_DEPTH
+	var east: int = columns[columns.size() - 1] + 1 + ROW_DEPTH
+	for k in OUTER_ROWS:
+		out.append([west - k * ROW_DEPTH, 1])
+		out.append([east + k * ROW_DEPTH, 3])
+	return out
+
+
+## One row of towers from the north of the island to the south. `near` is the column of the row
+## nearest to its road; the row lies west of it when the towers face east (1), east of it when
+## they face west (3). Where the coast leaves no room for the whole depth, a shallower lot.
+static func _tower_row(data: CityData, free: PackedByteArray, plants: Array[Rect2i], near: int,
+		facing: int, top: int, bottom: int, band: int) -> int:
 	var built := 0
-	for c: Vector2i in order:
-		if built >= count:
-			break
-		if free[data.idx(c.x, c.y)] == 0:
-			continue
-		var shape := _fit_shape(data, free, c.x, c.y)
-		if shape.x == 0:
-			continue
-		var r := Rect2i(c, shape)
-		if not _on_street(data, r, reach):
-			continue
-		var seed := CityTypes.hash2(c.x, c.y, SALT) & 0x7fffffff
-		var allowed := _allowed_towers(r, plants)
-		if allowed.is_empty():
-			continue
-		var facing := 1 if (seed >> 7) & 1 == 1 else 2
-		var id := data.add_building(r, Kind.FUTURE_BLDG, facing, seed, 0.5)
-		if allowed.size() < RAMP.size():
-			data.b_model[id] = allowed[seed % allowed.size()]
-		for yy in range(r.position.y, r.end.y):
-			for xx in range(r.position.x, r.end.x):
-				free[data.idx(xx, yy)] = 0
-		built += 1
+	var last := -1
+	var y := top
+	while y <= bottom:
+		var placed := false
+		var first := CityTypes.hash2(band, built, SALT) % TOWERS.size()
+		for step in TOWERS.size():
+			var t: int = (first + step * 5) % TOWERS.size()
+			if t == last:
+				continue
+			var length: int = TOWERS[t][1]
+			for depth: int in [ROW_DEPTH, ROW_DEPTH - 1]:
+				var r := Rect2i(near - depth + 1 if facing == 1 else near, y, depth, length)
+				if not _free_rect(data, free, r) or not _tower_allowed(r, plants, float(TOWERS[t][2])):
+					continue
+				# What is left of the row up to the next street must hold a tower (or nothing).
+				var left := _run(data, free, Rect2i(r.position.x, r.end.y, depth, 1), MIN_LENGTH)
+				if left > 0 and left < MIN_LENGTH:
+					continue
+				var id := data.add_building(r, Kind.SKYLINE_TOWER, facing,
+						CityTypes.hash2(r.position.x, r.position.y, SALT) & 0x7fffffff, 0.5)
+				data.b_model[id] = MODEL_PREFIX + String(TOWERS[t][0])
+				for yy in range(r.position.y, r.end.y):
+					for xx in range(r.position.x, r.end.x):
+						free[data.idx(xx, yy)] = 0
+				built += 1
+				last = t
+				y += length
+				placed = true
+				break
+			if placed:
+				break
+		if not placed:
+			y += 1
 	return built
 
 
-## True when a street runs along a side of lot `r`, at most `reach` cells from it (not at a
-## corner).
-static func _on_street(data: CityData, r: Rect2i, reach: int) -> bool:
-	for k in range(1, reach + 1):
-		for x in range(r.position.x, r.end.x):
-			if data.is_road(x, r.position.y - k) or data.is_road(x, r.end.y - 1 + k):
-				return true
-		for y in range(r.position.y, r.end.y):
-			if data.is_road(r.position.x - k, y) or data.is_road(r.end.x - 1 + k, y):
-				return true
-	return false
-
-
-## The towers (model names) that may stand on lot `r` without hiding a plant: all of them when
-## the lot is on no line of sight, the low ones near a plant, none right in front of it.
-static func _allowed_towers(r: Rect2i, plants: Array[Rect2i]) -> Array[String]:
-	var limit := INF
+## True when a tower `height` cells high on lot `r` hides no plant: any tower off the lines of
+## sight, the low ones near a plant, none right in front of it.
+static func _tower_allowed(r: Rect2i, plants: Array[Rect2i], height: float) -> bool:
 	for p in plants:
 		var hit := false
 		for c: Vector2i in [r.position, Vector2i(r.end.x - 1, r.position.y),
@@ -555,28 +632,17 @@ static func _allowed_towers(r: Rect2i, plants: Array[Rect2i]) -> Array[String]:
 			continue
 		# Ground distance along the camera ray, from the nearest cell of the lot to the plant.
 		var k := maxi(maxi(r.position.x - (p.end.x - 1), r.position.y - (p.end.y - 1)), 0)
-		limit = minf(limit, PLANT_TOP + HIDDEN_ALLOWED + VIEW_SLOPE * float(k) * 1.4142)
-	var out: Array[String] = []
-	for t in RAMP:
-		if float(t[1]) <= limit:
-			out.append(t[0])
-	return out
+		if height > PLANT_TOP + HIDDEN_ALLOWED + VIEW_SLOPE * float(k) * 1.4142:
+			return false
+	return true
 
 
-## The shape (w, h) of the lot that fits at (x, y), the one its hash picks first.
-static func _fit_shape(data: CityData, free: PackedByteArray, x: int, y: int) -> Vector2i:
-	var pick: Vector2i = SHAPES[CityTypes.hash2(x, y, SALT + 1) % SHAPES.size()]
-	var order: Array[Vector2i] = [pick]
-	var rest: Array[Vector2i] = []
-	for s in SHAPES:
-		if s != pick and not rest.has(s):
-			rest.append(s)
-	rest.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.x * a.y > b.x * b.y)
-	order.append_array(rest)
-	for s in order:
-		if _free_rect(data, free, Rect2i(x, y, s.x, s.y)):
-			return s
-	return Vector2i.ZERO
+## How many rows in a row, from `r` southwards, are free over its whole width (at most `most`).
+static func _run(data: CityData, free: PackedByteArray, r: Rect2i, most: int) -> int:
+	var n := 0
+	while n < most and _free_rect(data, free, Rect2i(r.position.x, r.position.y + n, r.size.x, 1)):
+		n += 1
+	return n
 
 
 static func _free_rect(data: CityData, free: PackedByteArray, r: Rect2i) -> bool:

@@ -1,0 +1,57 @@
+{
+	"file": "night_skyline.glb",
+	"models": [
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_01"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_02"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_03"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_04"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_05"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_06"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_07"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_08"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_09"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_10"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_11"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_12"
+		},
+		{
+			"cat": "NIGHT_SKYLINE",
+			"node": "sky_13"
+		}
+	]
+}

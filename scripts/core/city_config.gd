@@ -56,6 +56,9 @@ var shadows := false
 ## Length of a full day and night cycle, in seconds.
 var day_cycle_seconds := 240.0
 var is_mobile := false
+## The fog bank over the east island (sheets, billows and smoke plumes). False = the fog is not
+## drawn: the island and its "season 2" title stay.
+var fog_enabled := false
 ## False on single-threaded web builds: work then runs on the main thread.
 var use_threads := true
 

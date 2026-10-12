@@ -57,3 +57,10 @@ FREEMODELS/_incoming/highway.glb
 FREEMODELS/_incoming/street_stylized.glb
 poly_heatmap.png
 grid_map.png
+
+# Map update raw packs (heavy): only the curated copies are committed
+FREEMODELS/_incoming/night_city_skyline.glb
+FREEMODELS/_incoming/golden_gate_bridge.glb
+FREEMODELS/_incoming/low-poly_radar_dish.glb
+FREEMODELS/_incoming/carrier.glb
+FREEMODELS/_incoming/low_poly_silo.glb
