@@ -68,6 +68,8 @@ func generate() -> CityData:
 	ConcertSite.apply(data)
 	# Wall signs of the urban island, more billboards, basketball courts, a bigger secret base.
 	print("[City] retouch: ", MapRetouch.apply(data))
+	# One model of each for the hotels and the industrial port, the oil rig at sea.
+	print("[City] port rework: ", PortRework.apply(data))
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")

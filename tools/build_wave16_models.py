@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the models of the sixteenth wave from their raw files (FREEMODELS/_incoming).
+"""Builds the models of the sixteenth to eighteenth waves from their raw files (FREEMODELS/_incoming).
 
 Usage:  python tools/build_wave16_models.py [--src <folder of the raw .glb>] [--info] [name ...]
 Needs:  numpy, Pillow.
@@ -345,12 +345,15 @@ def triangles(parts):
 
 
 def pick(parts, spec):
-    """The parts a spec keeps: "nodes" (names found in the node path), "skip" (names left out),
-    "skip_materials" (material name prefixes left out)."""
+    """The parts a spec keeps: "nodes" (names found in the node path), "prefix" (node names that
+    start with one of these), "skip" (names left out), "skip_materials" (material name prefixes
+    left out)."""
     out = []
     for p in parts:
         names = p["path"].split("/")
         if "nodes" in spec and not any(n in names for n in spec["nodes"]):
+            continue
+        if "prefix" in spec and not any(n.startswith(f) for n in names for f in spec["prefix"]):
             continue
         if any(n in names for n in spec.get("skip", [])):
             continue
@@ -462,6 +465,8 @@ STAND_UP_Z = [[1, 0, 0], [0, 0, 1], [0, -1, 0]]
 ## The heart of the "neon" pack: its upper part, and its tip between the legs of the girl.
 HEART = [[0.85, 2.25, 9, 9], [0.9, 2.02, 1.5, 2.25]]
 STREET_PACK = "lowpoly_city_street_pack_buildings_stylized.glb"
+INDUSTRIAL_SET = "industrial_buildings_set_-_low_poly_models.glb"
+STORAGE_TANKS = "large_industrial_storage_tanks.glb"
 
 ## Curated packs: {"src", "tex", "items": [{"id", "cat", size keys of shape(), pick keys}]}.
 ## The signs are 3 cells wide; BuildingExtras sizes them on the wall they hang on.
@@ -498,6 +503,58 @@ PACKS = {
     "court": {"src": STREET_PACK, "tex": 256, "items": [
         {"id": "basketball_court", "cat": "COURT", "nodes": ["Cube.209", "Cube.223", "terrain textures 1.004"],
          "length": 5.5}]},
+    # Eighteenth wave: one model of each for the hotels and the industrial port (PortRework).
+    "hotels": {"tex": 512, "items": [
+        {"id": "hotel_small", "src": "low_poly_hotel.glb", "cat": "HOTEL_LOW", "yaw": -90, "length": 2.4},
+        {"id": "hotel_stars", "src": "low_poly_hotel_2.glb", "cat": "HOTEL_LOW", "skip": ["Collider"],
+         "yaw": -90, "length": 2.8},
+        {"id": "hotel_tower", "src": "hotel_ostriv.glb", "cat": "HOTEL_LOW", "length": 2.8}]},
+    # The industrial buildings set, about 10 m to the cell: big halls, small sheds, towers and tanks.
+    "port_halls": {"src": INDUSTRIAL_SET, "tex": 512, "items": [
+        {"id": "hall_building_1", "cat": "IND_HALL", "nodes": ["Industrial_Building_1"], "length": 4.7},
+        {"id": "hall_building_10", "cat": "IND_HALL", "nodes": ["Industrial_Building_10"], "length": 6.5},
+        {"id": "hall_factory_1", "cat": "IND_HALL", "nodes": ["Industrial_FactoryPlant_1"], "length": 7.0},
+        {"id": "hall_factory_2", "cat": "IND_HALL", "nodes": ["Industrial_FactoryPlant_2"], "length": 7.0},
+        {"id": "hall_hangar", "cat": "IND_HALL", "nodes": ["Industrial_Hangar_2"], "length": 5.0},
+        {"id": "hall_warehouse_5", "cat": "IND_HALL", "nodes": ["Industrial_Warehouse_5"], "length": 5.0},
+        {"id": "hall_powerplant", "cat": "IND_HALL", "nodes": ["Industrial_Powerplant_1"], "length": 7.0},
+        {"id": "hall_terminal", "cat": "IND_HALL", "nodes": ["Industrial_LogisticTerminal_1"], "length": 5.0},
+        {"id": "hall_warehouse_4", "cat": "IND_HALL", "nodes": ["Industrial_Warehouse_4"], "length": 4.0},
+        {"id": "hall_warehouse_1", "cat": "IND_HALL", "nodes": ["Industrial_Warehouse_1"], "length": 3.4}]},
+    "port_sheds": {"src": INDUSTRIAL_SET, "tex": 512, "items": [
+        {"id": "shed_warehouse_3", "cat": "IND_SHED", "nodes": ["Industrial_Warehouse_3"], "length": 3.0},
+        {"id": "shed_generic_4", "cat": "IND_SHED", "nodes": ["Industrial_GenericBuilding_4"], "length": 3.5},
+        {"id": "shed_works_1", "cat": "IND_SHED", "nodes": ["Industrial_Smth_1"], "length": 2.2},
+        {"id": "shed_works_2", "cat": "IND_SHED", "nodes": ["Industrial_Smth_2"], "length": 2.9},
+        {"id": "shed_loadbay", "cat": "IND_SHED", "nodes": ["Industrial_Railroad_Loadbay_Shed_1"], "length": 2.8},
+        {"id": "shed_duplex", "cat": "IND_SHED", "nodes": ["Industrial_Duplex_1"], "length": 2.1},
+        {"id": "shed_small_4", "cat": "IND_SHED", "nodes": ["Industrial_WarehouseSmall_4"], "length": 1.4},
+        {"id": "shed_generic_3", "cat": "IND_SHED", "nodes": ["Industrial_GenericBuilding_3"], "length": 1.3},
+        {"id": "shed_trailer", "cat": "IND_SHED", "nodes": ["Industrial_OfficeTrailer_1"], "length": 1.2},
+        {"id": "shed_station", "cat": "IND_SHED", "nodes": ["Industrial_TsrStation_1"], "length": 1.2}]},
+    "port_towers": {"src": INDUSTRIAL_SET, "tex": 512, "items": [
+        {"id": "tower_crane", "cat": "IND_TOWER", "nodes": ["Industrial_PortalCrane_2"], "length": 2.5},
+        {"id": "tower_radio", "cat": "IND_TOWER", "nodes": ["Industrial_Radiotower_1"], "height": 2.6},
+        {"id": "tower_water", "cat": "IND_TOWER", "nodes": ["Industrial_Watertower_1"], "height": 2.6},
+        {"id": "tower_tank_1", "cat": "IND_TOWER", "nodes": ["Industrial_Tank_1"], "length": 2.0},
+        {"id": "tower_tank_2", "cat": "IND_TOWER", "nodes": ["Industrial_Tank_2"], "length": 2.2},
+        {"id": "tower_tank_4", "cat": "IND_TOWER", "nodes": ["Industrial_Tank_4"], "height": 2.0},
+        {"id": "tower_tank_5", "cat": "IND_TOWER", "nodes": ["Industrial_Tank_5"], "height": 2.0},
+        {"id": "tower_silo", "cat": "IND_TOWER", "nodes": ["Industrial_SiloTank_1"], "height": 1.0},
+        {"id": "tower_tank_3", "cat": "IND_TOWER", "nodes": ["Industrial_Tank_3_Walls"], "length": 1.0},
+        {"id": "tower_hut", "cat": "IND_TOWER", "nodes": ["Industrial_GenericBuilding_2"], "length": 0.8}]},
+    # The other oil and storage tanks, the brick factory and the offshore rig.
+    "port_tanks": {"tex": 512, "items": [
+        {"id": "tank_big", "src": STORAGE_TANKS, "cat": "PORT_TANK", "nodes": ["pCylinder2"], "length": 2.2},
+        {"id": "tank_spheres", "src": STORAGE_TANKS, "cat": "PORT_TANK", "length": 2.6,
+         "prefix": ["Pipe", "Valve_RoundA", "Stair", "Support", "Round", "polySurface49"]},
+        {"id": "tank_long", "src": STORAGE_TANKS, "cat": "PORT_TANK", "prefix": ["Long_Tank"], "length": 1.6},
+        {"id": "tank_oil", "src": "oil_tank.glb", "cat": "PORT_TANK", "length": 1.6},
+        {"id": "tank_rusty", "src": "free_oil_tank.glb", "cat": "PORT_TANK", "length": 2.2},
+        {"id": "tank_old", "src": "old_oil_tank_.1.glb", "cat": "PORT_TANK", "length": 2.4},
+        {"id": "factory_brick", "src": "industrial_building.glb", "cat": "PORT_TANK", "length": 3.5}]},
+    "oil_rig": {"src": "oil_rig_-_low_poly.glb", "tex": 256, "items": [
+        {"id": "oil_rig", "cat": "OIL_RIG", "length": 6.0}]},
 }
 
 HUMVEE = {"yaw": 90, "length": 4.9, "tex": 256, "skip_materials": ["Muzzleflash"],

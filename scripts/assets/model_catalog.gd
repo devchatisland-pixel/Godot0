@@ -53,6 +53,9 @@ enum Cat {
 	SIGN_WINDOWS, NEON_JOYSTICK, NEON_MARTINI, NEON_BAR, HELIPAD, HOTEL_LOW, COURT,
 	# Seventeenth wave: more neon signs (walls of the urban island, roofs of Las Vegas), the bank
 	NEON_BULL, NEON_FUN, NEON_PALM, NEON_CLUB, NEON_GIRL, NEON_LOVE, BANK_MIN,
+	# Eighteenth wave (tools/build_wave16_models.py, PortRework): the industrial buildings set (halls,
+	# sheds, towers and tanks), the oil and storage tanks with the brick factory, the offshore oil rig
+	IND_HALL, IND_SHED, IND_TOWER, PORT_TANK, OIL_RIG,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

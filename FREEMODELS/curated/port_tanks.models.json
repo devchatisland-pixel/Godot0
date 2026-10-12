@@ -1,0 +1,33 @@
+{
+	"file": "port_tanks.glb",
+	"models": [
+		{
+			"cat": "PORT_TANK",
+			"node": "tank_big"
+		},
+		{
+			"cat": "PORT_TANK",
+			"node": "tank_spheres"
+		},
+		{
+			"cat": "PORT_TANK",
+			"node": "tank_long"
+		},
+		{
+			"cat": "PORT_TANK",
+			"node": "tank_oil"
+		},
+		{
+			"cat": "PORT_TANK",
+			"node": "tank_rusty"
+		},
+		{
+			"cat": "PORT_TANK",
+			"node": "tank_old"
+		},
+		{
+			"cat": "PORT_TANK",
+			"node": "factory_brick"
+		}
+	]
+}
