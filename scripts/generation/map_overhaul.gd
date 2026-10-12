@@ -5,7 +5,8 @@ extends RefCounted
 ##   - no building stands on the urban island (west of the main island) any more: its streets,
 ##     its ground and the boats at sea off its coast stay;
 ##   - BALLOONS hot air balloons float over random places of the whole map, sea included;
-##   - SUBMARINES more submarines lie at random places of the open sea.
+##   - SUBMARINES more submarines, SIMPLE_BOATS simple boats and CARGO_SHIPS cargo ships lie at
+##     random places of the open sea.
 ## Trees, fences and the buildings of the fog island are not drawn at all (GroundPlacer,
 ## FogIslandShaper), so nothing here deals with them.
 ## Everything random comes from one generator seeded by the city seed: same map on every device.
@@ -17,6 +18,11 @@ const SUBMARINES := 12
 ## Least distance (cells) between two new balloons, and between two submarines.
 const BALLOONS_APART := 22
 const SUBMARINES_APART := 18
+## More simple boats and cargo ships at random places of the sea, and how far apart.
+const SIMPLE_BOATS := 8
+const SIMPLE_BOATS_APART := 24
+const CARGO_SHIPS := 4
+const CARGO_SHIPS_APART := 45
 ## Balloons keep this far from the edge of the map (cells).
 const EDGE_MARGIN := 4
 
@@ -29,6 +35,8 @@ static func apply(data: CityData, seed: int) -> Dictionary:
 	out["urban_cleared"] = _clear_urban_island(data)
 	out["balloons"] = _add_balloons(data, rng)
 	out["submarines"] = BoatSites.scatter_submarines(data, SUBMARINES, SUBMARINES_APART, rng)
+	out["simple_boats"] = BoatSites.scatter(data, BoatSites.SIMPLE, SIMPLE_BOATS, SIMPLE_BOATS_APART, Vector2i(4, 5), rng)
+	out["cargo_ships"] = BoatSites.scatter(data, BoatSites.CARGO, CARGO_SHIPS, CARGO_SHIPS_APART, Vector2i(4, 10), rng)
 	return out
 
 

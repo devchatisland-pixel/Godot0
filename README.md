@@ -82,6 +82,18 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 * **Vehicles** (`vehicle_sites.gd`): a harvester in a wheat field, a red pickup, a forwarder and a tractor
   with its trailer in the farmland, a water tanker next to the construction crane, a fuel tanker next to the
   oil barrels of the port.
+* **Urban island** (`urban_skyline.gd`): 30 % longer and wider (`MapLayout.BLOBS`), and rebuilt with nothing
+  but the 13 towers of the night skyline pack (`skyline_towers.glb`). Three parallel roads run its whole
+  length and meet the road that comes from the metal bridge; the towers stand wall to wall in rows along
+  them (each one is stretched over its whole lot), so the only gaps are the roads.
+* **Prison**: the cellhouse is the school building model, inside a perimeter wall with razor wire, an inner
+  fence and six guard towers (`CivicMeshes.prison`, `BuildingExtras`).
+* **East bridge**: the Golden Gate model in one piece, its deck level with the highway (`FogIsland`).
+* **Satellite dishes** are the low poly radar dish model.
+* **More at sea**: 8 simple boats and 4 cargo ships at random places (`MapOverhaul`), 6 aircraft carriers
+  round the fog island (`FogBase`).
+* **Port**: three oil silos side by side next to the container yards, the fuel tanker beside them.
+* **Secret base**: a helicopter parked on a helipad near the bunker.
 * **Sky and beaches**: three F-111 fly in a V over the sea far north of the island; deck chairs and beach
   balls stand on six lonely beaches, away from the lighthouses and from everything else (`scenic_props.gd`).
 
@@ -324,6 +336,7 @@ Not used:
 
 ### Credits of the latest models
 
+* "Low Poly Night City Building Skyline" by 99.Miles (the towers of the urban island), "Golden Gate Bridge" by JuanG3D, "Low-Poly Radar Dish" by joe_carrot, "Carrier" by victorberdugo1 and "Low Poly Silo" by CevoCreative, CC BY 4.0
 * Military base: "Low poly F14 Tomcat" by SIpriv, "Jungle Tent" by SyntheticMN, "WWII Medical Tent" by creationwasteland, "Nasams 1 Surface-to-Air Missile System" by Muhamad Mirza Arrafi, "Radar" by Calibians, "Nuclear Power Plant [Game Asset]" by Jen S Abbott and "school building" by swjeta (the barracks), CC BY 4.0
 * "Strike Fighters tanks pack" and "Strike Fighters APC/IFV pack" by 42manako (T-55, BMP-1, BRDM, EE-11 AA): **CC BY-NC 4.0, non-commercial use only**
 * "Low Poly Church" by Anthony Yanez and "Neon Sign - Woman" by Kira Khaos, CC BY 4.0

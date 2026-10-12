@@ -1,0 +1,9 @@
+{
+	"file": "dish.glb",
+	"models": [
+		{
+			"cat": "SAT_DISH",
+			"node": "dish"
+		}
+	]
+}

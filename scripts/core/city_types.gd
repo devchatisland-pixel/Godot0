@@ -117,6 +117,7 @@ enum Kind {
 	TANK,             # tank at the gates of the secret base
 	BUS_STOP,         # no longer placed (the bus shelter pack is gone)
 	CONCERT,          # the concert camp near the north-east beach (ConcertSite): stage, lights, stands
+	SKYLINE_BLDG,     # tower of the night skyline pack on the urban island (UrbanSkyline); seed = model
 }
 
 const SERVICE_KINDS: Array[int] = [

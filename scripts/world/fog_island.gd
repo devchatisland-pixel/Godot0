@@ -7,6 +7,13 @@ extends Node3D
 ##   - the "ZONE UNLOCKED ON SEASON 2, COMING SOON" title above it (switched off: SHOW_TITLE).
 ## DayNight darkens the fog through `set_night`.
 
+## The Golden Gate model (golden_gate.glb, 30 x 5.83 x 2.57): its deck is 1.98 wide and its
+## top lies at 0.343 of the height. The deck is drawn as wide as the three-lane highway.
+const GATE_DECK_WIDTH := 1.98
+const GATE_DECK_FRACTION := 0.343
+const GATE_ROAD_WIDTH := 3.2
+const GATE_HEIGHT_SCALE := 1.35
+
 const LAYER_SHADER := preload("res://shaders/fog_layer.gdshader")
 const PUFF_SHADER := preload("res://shaders/fog_puff.gdshader")
 const NOISE_TEX := preload("res://textures/fog_noise.png")
@@ -65,6 +72,12 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	var x0 := float(data.bridge.x) - 1.0
 	var x1 := fog.bridge_land_x + 1.0
 	var z := float(data.bridge.y) + 0.5
+	# Only the span over the water stays clear: the fog covers the island itself from its coast.
+	_clear = Vector3(x0 - 4.0, x1 - 10.0, z)
+	var gate := lib.ids(Cat.GOLDEN_GATE)
+	if not gate.is_empty():
+		_build_golden_gate(lib, gate[0], x0, x1, z)
+		return
 	var ids := lib.ids(Cat.METAL_BRIDGE)
 	if ids.is_empty():
 		return
@@ -92,8 +105,24 @@ func _build_bridge(data: CityData, lib: ModelLibrary) -> void:
 	mmi.multimesh = mm
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mmi)
-	# Only the span over the water stays clear: the fog covers the island itself from its coast.
-	_clear = Vector3(x0 - 4.0, x1 - 10.0, z)
+
+
+## The Golden Gate in one piece from x0 to x1: its deck level with the highway, its piers in
+## the sea.
+func _build_golden_gate(lib: ModelLibrary, id: int, x0: float, x1: float, z: float) -> void:
+	var box := lib.bounds[id]
+	var along_x := box.size.x >= box.size.z
+	var model_len := box.size.x if along_x else box.size.z
+	var s := Vector3((x1 - x0) / model_len, GATE_HEIGHT_SCALE, GATE_ROAD_WIDTH / GATE_DECK_WIDTH)
+	var basis := (Basis() if along_x else Basis(Vector3.UP, PI * 0.5)) * Basis.from_scale(s)
+	var center := Vector3(box.get_center().x, box.position.y, box.get_center().z)
+	var deck := GATE_DECK_FRACTION * box.size.y * s.y - WestBridge.DECK_LEVEL
+	var mi := MeshInstance3D.new()
+	mi.name = "GoldenGate"
+	mi.mesh = lib.meshes[id]
+	mi.transform = Transform3D(basis, Vector3((x0 + x1) * 0.5, -deck, z) - basis * center)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
 
 
 # --- Fog ------------------------------------------------------------------------------------------

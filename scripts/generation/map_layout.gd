@@ -19,10 +19,11 @@ const BLOBS := {
 	# Islands.
 	"main": {"at": Vector2(141, 133), "r": Vector2(80, 94)},
 	# The urban island (third island) west of the main one, joined by the metal bridge. Small
-	# (30 % of the area it had) and packed with towers (UrbanIslandRebuild).
-	"urban": {"at": Vector2(37, 138), "r": Vector2(12, 26)},
+	# (30 % of the area it had, then 30 % longer and wider again) and packed with the towers of
+	# the night skyline pack (UrbanSkyline).
+	"urban": {"at": Vector2(37, 138), "r": Vector2(15.6, 33.8)},
 	# A lobe of land at its north end, wide enough for the nuclear plant and its cooling towers.
-	"urban_north": {"at": Vector2(39, 105), "r": Vector2(15, 9)},
+	"urban_north": {"at": Vector2(39, 105), "r": Vector2(17.5, 11.7)},
 	# The tiny islet of the BT tower, in the sea north of the urban island.
 	"tower_islet": {"at": Vector2(24, 64), "r": Vector2(10, 6.5)},
 	# The development island, alone in the empty south-west corner of the sea, far from the

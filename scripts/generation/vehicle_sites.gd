@@ -53,6 +53,7 @@ func _run() -> void:
 	_city_hall_cars()
 	_police_hq_car()
 	_bunker_cars()
+	_bunker_helicopter()
 	_fire_station_truck()
 	_container_tanker()
 	_crane_tanker()
@@ -391,6 +392,13 @@ func _crane_tanker() -> void:
 ## A fuel tanker next to the oil barrels of the port: the barrel yard (INDUSTRIAL_YARD whose
 ## seed draws barrels, see BuildingExtras) nearest to the quay of the cargo ship.
 func _port_fuel_tanker() -> void:
+	# The silos MapAdditions put beside the container yards come first.
+	var silos := Rect2i()
+	for b in _d.building_count():
+		if _d.b_model.get(b, "") == MapAdditions.SILO_MODEL:
+			silos = _d.building_rect(b) if silos.size.x == 0 else silos.merge(_d.building_rect(b))
+	if silos.size.x > 0 and _beside("p54_18_tanker_fuel", silos, "next to the oil silos of the port", 67, 0.4, 3.0):
+		return
 	var quay := Vector2(MapLayout.point("cargo_ship"))
 	var yards: Array[Rect2i] = []
 	for b in _d.building_count():
@@ -590,6 +598,23 @@ func _bunker_cars() -> void:
 	for k in 2:
 		# Noses towards the bunker.
 		_add("police_jp_black", front + side * (float(k) - 0.5) * 0.7, -Vector2(o), "in front of the bunker")
+
+
+## Size of the helipad of the secret base (cells across).
+const BUNKER_PAD := 3.4
+
+
+## A helicopter parked on a helipad near the bunker of the secret base ("pad": MapVehicles
+## draws the helipad under it).
+func _bunker_helicopter() -> void:
+	var b := _biggest(Kind.BUNKER)
+	if b < 0:
+		return
+	var n := out.size()
+	if _beside("p54_46_helicopter_military", _d.building_rect(b), "on the helipad of the secret base", 101, 2.2, 7.0):
+		out[n]["pad"] = BUNKER_PAD
+	else:
+		push_warning("[Vehicles] no room for the helipad of the bunker")
 
 
 ## Distance (cells) from the front of a lot to the middle of a car parked in front of it.

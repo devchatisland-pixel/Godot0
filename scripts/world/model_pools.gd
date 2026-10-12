@@ -96,6 +96,12 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(BOAT_CATS[absi(seed) % BOAT_CATS.size()])
 		Kind.FUTURE_BLDG:
 			return lib.ids(Cat.FUTURE)
+		Kind.SKYLINE_BLDG:
+			return _variant(lib, Cat.NIGHT_SKYLINE, seed)
+		Kind.SAT_DISH:
+			return lib.ids(Cat.SAT_DISH)
+		Kind.PRISON:
+			return PackedInt32Array()
 		Kind.NUCLEAR_PLANT:
 			return lib.ids(Cat.NUCLEAR)
 		Kind.CINEMA_MAIN:
