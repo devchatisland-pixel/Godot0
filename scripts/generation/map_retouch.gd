@@ -2,7 +2,8 @@ class_name MapRetouch
 extends RefCounted
 ## Third wave of changes to the finished map, after MapAdditions and the concert camp (and so
 ## after BuildingBudget has counted the buildings):
-##   - TOWER_SIGNS: a logo or a neon sign on the east wall of four towers of the urban island;
+##   - TOWER_SIGNS: a logo or a neon sign on the east wall of towers of the urban island (one
+##     has a second sign on its roof), CLUB_SIGNS: neon signs on the roofs of three clubs;
 ##   - TURNED: buildings turned by hand, KIND_FACING: every McDonald's faces east; the secret base is drawn BASE_SCALE times bigger (its
 ##     jets with it);
 ##   - BILLBOARDS more billboards and COURTS basketball courts in the city, each on bare ground
@@ -17,8 +18,20 @@ const Zone := CityTypes.Zone
 const TOWER_SIGNS := [
 	[Vector2i(71, 143), "SIGN_WINDOWS"],
 	[Vector2i(63, 133), "NEON_JOYSTICK"],
-	[Vector2i(67, 170), "NEON_MARTINI"],
+	[Vector2i(67, 170), "NEON_FUN"],
+	[Vector2i(67, 175), "NEON_PALM"],
 	[Vector2i(67, 195), "NEON_BAR"],
+	[Vector2i(71, 204), "NEON_BULL"],
+]
+## A second sign on the roof of a tower, above the one on its wall: top-left cell, sign.
+const TOWER_ROOF_SIGNS := [
+	[Vector2i(67, 170), "NEON_MARTINI"],
+]
+## Roof signs of three Las Vegas clubs (top-left cell of the lot, sign), looking south.
+const CLUB_SIGNS := [
+	[Vector2i(122, 182), "NEON_CLUB"],
+	[Vector2i(134, 178), "NEON_GIRL"],
+	[Vector2i(144, 202), "NEON_LOVE"],
 ]
 ## The wall the signs hang on: east, towards the road and the camera (the towers stand wall
 ## to wall from north to south).
@@ -90,6 +103,19 @@ func _signs() -> int:
 			continue
 		_d.b_sign[b] = ModelCatalog.Cat[s[1]]
 		_d.b_sign_facing[b] = SIGN_WALL
+		n += 1
+	for s in TOWER_ROOF_SIGNS:
+		var b := _at(Kind.SKYLINE_BLDG, s[0])
+		if b >= 0:
+			_d.b_more_signs[b] = [[ModelCatalog.Cat[s[1]], "roof"]]
+			n += 1
+	for s in CLUB_SIGNS:
+		var b := _at(Kind.NIGHTCLUB, s[0])
+		if b < 0:
+			push_warning("[Retouch] no club at %s for its sign" % s[0])
+			continue
+		_d.b_sign[b] = ModelCatalog.Cat[s[1]]
+		_d.b_sign_facing[b] = 2
 		n += 1
 	return n
 

@@ -128,7 +128,7 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.STALL:
 			return _variant(lib, Cat.STALL, seed)
 		Kind.BANK:
-			return lib.ids(Cat.BANK_PACK)
+			return lib.ids(Cat.BANK_MIN) if lib.has_cat(Cat.BANK_MIN) else lib.ids(Cat.BANK_PACK)
 		Kind.CHURCH:
 			return lib.ids(Cat.CHURCH_PACK)
 		Kind.MUSEUM:

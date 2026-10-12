@@ -1,0 +1,9 @@
+{
+	"file": "neon_palm.glb",
+	"models": [
+		{
+			"cat": "NEON_PALM",
+			"node": "palm_tree"
+		}
+	]
+}

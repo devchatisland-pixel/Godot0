@@ -38,6 +38,9 @@ var b_lay := PackedByteArray()       # 1 = a flat model (crop field) is laid alo
 ## Building id -> name of the model it must use (ManualEdits "model").
 var b_model := {}
 var b_sign := PackedByteArray()      # neon sign on the building: 0 none, else a ModelCatalog.Cat (ManualEdits)
+## Building id -> more signs on the same building: [[ModelCatalog.Cat, mount ("roof", "face"...)]]
+## (MapRetouch; BuildingExtras.SIGNS says how each is drawn).
+var b_more_signs := {}
 
 # Chunk index -> building ids whose lot origin is inside the chunk
 var chunk_buildings: Array[PackedInt32Array] = []
