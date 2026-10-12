@@ -46,6 +46,9 @@ const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
 ## Billboard panels at night: soft warm white, at this brightness.
 const BILLBOARD_LIGHT := Color(1.0, 0.96, 0.88)
 const BILLBOARD_GLOW := 1.0
+## Night duplicates (tools/make_night_variants.py: the pharmacy cross, the police lights) bring
+## their own night map, which holds a third of the final light: off by day, x3 at night.
+const OWN_NIGHT := 3.0
 
 
 static func apply(lib: ModelLibrary) -> void:
@@ -53,7 +56,8 @@ static func apply(lib: ModelLibrary) -> void:
 	var done := {}
 	for cat in PACK_GLOW:
 		for id in lib.ids(cat):
-			_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
+			if not light_own(lib.meshes[id]):
+				_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
 	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE, ModelCat.NIGHT_SKYLINE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
@@ -100,6 +104,24 @@ static func light_billboard(mesh: Mesh) -> bool:
 		found = true
 	mesh.set_meta("night_lit", found)
 	return found
+
+
+## Models with their own night map (an emission texture): only the map lights up, at
+## night. Returns false when the mesh has no such map.
+static func light_own(mesh: Mesh) -> bool:
+	if mesh.has_meta("own_night"):
+		return mesh.get_meta("own_night")
+	var lit := {}
+	for s in mesh.get_surface_count():
+		var mat := mesh.surface_get_material(s) as BaseMaterial3D
+		if mat == null or mat.emission_texture == null or lit.has(mat):
+			continue
+		mat.emission_enabled = true
+		mat.emission_operator = BaseMaterial3D.EMISSION_OP_ADD
+		SignAtlas.register_night(mat, 0.0, OWN_NIGHT)
+		lit[mat] = true
+	mesh.set_meta("own_night", not lit.is_empty())
+	return not lit.is_empty()
 
 
 ## A surface whose bounding box is almost flat (thinner than 2% of its width).

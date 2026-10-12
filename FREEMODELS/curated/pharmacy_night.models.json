@@ -1,0 +1,9 @@
+{
+	"file": "pharmacy_night.glb",
+	"models": [
+		{
+			"cat": "PHARMACY",
+			"node": "pharmacy"
+		}
+	]
+}

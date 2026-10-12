@@ -32,12 +32,21 @@ static func entry(id: String) -> Dictionary:
 
 
 ## Library id of the mesh of catalog vehicle `id` (loaded on first use), or -1.
+## A "<file>_night.glb" next to the model is its night duplicate (same look by day, its
+## lights glow at night: tools/make_night_variants.py); it is drawn in place of the model.
 static func mesh_id(lib: ModelLibrary, id: String) -> int:
 	_ensure_catalog()
 	if not _entries.has(id):
 		push_warning("[Vehicles] unknown vehicle " + id)
 		return -1
-	return lib.load_named("veh:" + id, _entries[id]["file"])
+	var file: String = _entries[id]["file"]
+	var night := file.get_basename() + "_night.glb"
+	if ResourceLoader.exists(night) or FileAccess.file_exists(night):
+		var nid := lib.load_named("veh:" + id, night)
+		if nid >= 0:
+			NightWindows.light_own(lib.meshes[nid])
+			return nid
+	return lib.load_named("veh:" + id, file)
 
 
 static func lengths_m() -> Dictionary:
