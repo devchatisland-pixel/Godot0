@@ -511,8 +511,7 @@ def main():
             print("%-18s %-16s %.2f x %.2f x %.2f cells, %d triangles" % (pack, it["id"], *size, triangles(parts)))
         out = os.path.join(ROOT, "FREEMODELS", "curated", pack)
         write_glb(out + ".glb", pack, items)
-        with open(out + ".models.json", "w", newline="
-") as f:
+        with open(out + ".models.json", "w", newline="\n") as f:
             json.dump({"file": pack + ".glb", "models": manifest}, f, indent="\t")
             f.write("\n")
     _catalog(only, source, VEHICLES, "vehicles", "vehicles")
@@ -549,8 +548,7 @@ def _catalog(only, source, table, folder, key):
         if "credits" in cat:
             cat["credits"].update({k: v for k, v in CREDITS.items() if any(
                     e.get("pack") == k for e in cat[key])})
-        with open(path, "w", newline="
-") as f:
+        with open(path, "w", newline="\n") as f:
             json.dump(cat, f, indent=1)
             f.write("\n")
 
