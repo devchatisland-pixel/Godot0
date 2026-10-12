@@ -89,6 +89,18 @@ func add_props(root: Node) -> int:
 	return n
 
 
+## Registers one clickable thing that is drawn elsewhere (an instance of a MultiMesh): its
+## mesh, its transform and the same "pick" Dictionary as add_props reads.
+func add_prop(mesh: Mesh, xform: Transform3D, m: Dictionary) -> void:
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.transform = xform
+	var info := BuildingInfo.for_prop(_data, m["uid"], m["number"], m["title"], m["kind"],
+			m["model"], m["category"], mi, m["note"])
+	mi.free()
+	_props.append({"box": xform * mesh.get_aabb(), "mesh": mesh, "xform": xform, "info": info})
+
+
 ## (index, distance) of the nearest vehicle/shop/roadblock piece on the ray, or (-1, INF).
 func _pick_prop(from: Vector3, dir: Vector3) -> Vector2:
 	var best := Vector2(-1.0, INF)
