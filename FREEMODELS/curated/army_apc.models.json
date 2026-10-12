@@ -1,0 +1,17 @@
+{
+	"file": "army_apc.glb",
+	"models": [
+		{
+			"cat": "APC_EE11",
+			"node": "apc_ee11_aa"
+		},
+		{
+			"cat": "APC_BMP1",
+			"node": "apc_bmp1"
+		},
+		{
+			"cat": "APC_BRDM",
+			"node": "apc_brdm"
+		}
+	]
+}

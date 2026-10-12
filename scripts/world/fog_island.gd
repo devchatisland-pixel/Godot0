@@ -4,7 +4,7 @@ extends Node3D
 ## bridge that leads to it:
 ##   - a fog bank made of painted cloud textures: drifting sheets plus big
 ##     billows and smoke plumes on camera-facing quads (no 3D volumes),
-##   - the "ZONE UNLOCKED ON SEASON 2, COMING SOON" title above it.
+##   - the "ZONE UNLOCKED ON SEASON 2, COMING SOON" title above it (switched off: SHOW_TITLE).
 ## DayNight darkens the fog through `set_night`.
 
 const LAYER_SHADER := preload("res://shaders/fog_layer.gdshader")
@@ -18,8 +18,13 @@ const Cat := ModelCatalog.Cat
 const LAYERS := [
 	[0.5, 1.0, 0.03, 0.0], [2.2, 0.95, 0.022, 0.31], [4.5, 0.9, 0.017, 0.57], [8.0, 0.7, 0.012, 0.83],
 ]
-## Smoke plumes rising from the hidden city (local cells of the fog island).
-const PLUMES := [Vector2(70, 40) + FogIslandShaper.SHIFT, Vector2(78, 88) + FogIslandShaper.SHIFT]
+## Smoke plume rising from the nuclear plant of the base (local cells of the fog island).
+const PLUMES := [Vector2(118, 116)]
+## The "SEASON 2" title over the island: no longer shown.
+const SHOW_TITLE := false
+## The fog bank, its billows and the smoke plume: no longer drawn, the sky over the island
+## is clear so that the military base shows.
+const SHOW_FOG := false
 ## Width of the title in world units and its height above the island.
 const TITLE_WIDTH := 84.0
 const TITLE_HEIGHT := 3.0
@@ -38,9 +43,11 @@ func build(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
 	if fog == null:
 		return
 	_build_bridge(data, lib)
-	_build_layers(fog)
-	_build_puffs(fog, 60 if cfg.is_mobile else 120)
-	_build_title(fog)
+	if SHOW_FOG:
+		_build_layers(fog)
+		_build_puffs(fog, 60 if cfg.is_mobile else 120)
+	if SHOW_TITLE:
+		_build_title(fog)
 
 
 func set_night(amount: float) -> void:

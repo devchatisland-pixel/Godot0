@@ -57,3 +57,16 @@ FREEMODELS/_incoming/highway.glb
 FREEMODELS/_incoming/street_stylized.glb
 poly_heatmap.png
 grid_map.png
+
+# Wave 14 raw packs (military base, church, neon woman): only the curated copies are committed.
+# The two Strike Fighters packs are CC-BY-NC-4.0.
+FREEMODELS/_incoming/low_poly_church.glb
+FREEMODELS/_incoming/low_poly_f14_tomcat.glb
+FREEMODELS/_incoming/jungle_tent.glb
+FREEMODELS/_incoming/wwii_medical_tent.glb
+FREEMODELS/_incoming/nasams_1_surface-to-air_missile_system.glb
+FREEMODELS/_incoming/radar.glb
+FREEMODELS/_incoming/strike_fighters_apcifv_pack.glb
+FREEMODELS/_incoming/strike_fighters_tanks_pack.glb
+FREEMODELS/_incoming/nuclear_power_plant_game_asset.glb
+FREEMODELS/_incoming/neon_sign_-_woman.glb

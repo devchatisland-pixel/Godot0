@@ -1,0 +1,9 @@
+{
+	"file": "base_hall.glb",
+	"models": [
+		{
+			"cat": "BASE_HALL",
+			"node": "base_hall"
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"file": "nuclear2.glb",
+	"models": [
+		{
+			"cat": "NUCLEAR2",
+			"node": "nuclear2"
+		}
+	]
+}

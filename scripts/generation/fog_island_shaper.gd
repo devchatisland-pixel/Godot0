@@ -1,8 +1,8 @@
 class_name FogIslandShaper
 extends RefCounted
 ## The second island, east of Chat City, hidden in the fog until "season 2".
-## Only what shows through the fog is generated: the ground colours (the grey patches of the
-## two hidden downtowns stay, with no building on them, and no tree grows). It is not part of
+## Only what shows through the fog is generated: the ground colours, with the concrete and
+## tarmac of the military base (FogBaseSites.PADS; no tree grows). It is not part of
 ## the cell grid of the city (no roads or lots), so it costs almost nothing.
 ## Runs on the generation thread; the FogIsland node draws it.
 
@@ -11,19 +11,12 @@ extends RefCounted
 const SIZE := 192
 ## Moves the original 128-cell layout to the middle of the bigger square.
 const SHIFT := Vector2(28.0, 32.0)
-## Hills (top), two hidden downtowns and the palm coast, in the original 128-cell layout.
-const CLUSTERS := [
-	{"at": Vector2(72, 38), "radius": 15.0},
-	{"at": Vector2(74, 92), "radius": 17.0},
-	{"at": Vector2(40, 70), "radius": 12.0},
-]
+## Hills (top), in the original 128-cell layout.
 const HILLS := Vector2(36, 34)
 
 const GRASS := Color("7fae5c")
 const FOREST := Color("4f8a45")
 const HILL := Color("9b8a63")
-const CITY := Color("8d8a96")
-const STREET := Color("5c6070")
 
 ## World position of local cell (0, 0): right next to the city map.
 var origin := Vector2.ZERO
@@ -92,20 +85,14 @@ func _paint() -> void:
 			var hill := 1.0 - p.distance_to(HILLS + SHIFT) / 26.0
 			if hill > 0.0:
 				c = c.lerp(HILL, clampf(hill * 1.6, 0.0, 0.85))
-			for cl in CLUSTERS:
-				var d: float = p.distance_to(cluster_at(cl)) / float(cl["radius"])
-				if d < 1.0:
-					c = STREET if (x % 5 == 0 or y % 5 == 0) else CITY
+			var pad = FogBaseSites.pad_color(p)
+			if pad != null:
+				c = pad
 			colors[i * 4] = c.r8
 			colors[i * 4 + 1] = c.g8
 			colors[i * 4 + 2] = c.b8
 			var rocky := _noise.get_noise_2d(x * 2.0 + 300.0, y * 2.0) > 0.2
 			colors[i * 4 + 3] = 0 if rocky else 255
-
-
-## Centre of a hidden downtown in local cells.
-static func cluster_at(cl: Dictionary) -> Vector2:
-	return (cl["at"] as Vector2) + SHIFT
 
 
 ## Centre of the island in world coordinates (x, z).

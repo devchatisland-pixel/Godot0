@@ -1,0 +1,120 @@
+class_name FogBase
+extends Node3D
+## Draws the military base of the fog island (FogBaseSites): its models, one MultiMesh per
+## model, the runway and the roads (flat panels with the highway texture, like HighwaySurface)
+## and the helipad. Also the three F-111 flying in a V over the sea, far north of the island.
+
+const Cat := ModelCatalog.Cat
+const TEXTURE := preload("res://textures/highway.jpg")
+## Longest road panel (cells) and its height above the ground.
+const SEGMENT := 12.0
+const LIFT := 0.04
+## Extra turn of the models whose front is not +Z.
+const FRONT := {Cat.JET_F111: PI}
+
+## The F-111 formation: cell of the leader (north of the main island, over the sea), where
+## it flies to, height, distance between the jets and their size.
+const FORMATION_AT := Vector2(196, 22)
+const FORMATION_DIR := Vector2(1, 0)
+const FORMATION_LIFT := 7.0
+const FORMATION_GAP := 3.2
+const FORMATION_SCALE := 2.0
+
+
+func build(data: CityData, lib: ModelLibrary) -> void:
+	var batch := InstanceBatch.new()
+	var placed := 0
+	if data.fog != null:
+		placed = _base(data.fog, lib, batch)
+		_roads(data.fog)
+	_formation(lib, batch)
+	batch.build_nodes(self, lib, null)
+	print("[FogBase] %d models on the fog island" % placed)
+
+
+func _base(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> int:
+	var n := 0
+	for p in FogBaseSites.plan():
+		var at: Vector2 = p["at"]
+		var cell := Vector2i(at.floor())
+		if fog.elevation[cell.y * FogIslandShaper.SIZE + cell.x] <= 128:
+			push_warning("[FogBase] %s is in the sea" % at)
+			continue
+		var id := -1
+		var scale: float = p["scale"]
+		var turn := 0.0
+		if p.has("veh"):
+			id = MapVehicles.mesh_id(lib, p["veh"])
+			scale *= VehicleSites.CELLS_PER_METRE
+			turn = PI # the vehicles of the catalog face -Z
+		else:
+			var ids := lib.ids(p["cat"])
+			id = ids[0] if not ids.is_empty() else -1
+			turn = FRONT.get(p["cat"], 0.0)
+		if id < 0:
+			continue
+		var dir: Vector2 = p["dir"]
+		batch.add(id, _standing(lib, id, Vector3(fog.origin.x + at.x, 0, fog.origin.y + at.y),
+				atan2(dir.x, dir.y) + turn, scale))
+		n += 1
+	var pad := lib.named_id("helipad_h")
+	if pad >= 0:
+		var c := fog.origin + FogBaseSites.HELIPAD
+		var s := FogBaseSites.HELIPAD_SIZE
+		batch.add(pad, Transform3D(Basis.from_scale(Vector3(s, 1, s)), Vector3(c.x, LIFT, c.y)))
+	return n
+
+
+## Model `id` standing on the ground at `at`, its front (+Z) turned by `yaw`.
+static func _standing(lib: ModelLibrary, id: int, at: Vector3, yaw: float, scale: float) -> Transform3D:
+	var box := lib.bounds[id]
+	var basis := Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3.ONE * scale)
+	return Transform3D(basis, at - basis * Vector3(box.get_center().x, box.position.y, box.get_center().z))
+
+
+func _roads(fog: FogIslandShaper) -> void:
+	var panels: Array[Transform3D] = []
+	for r in FogBaseSites.ROADS:
+		var a: Vector2 = r[0]
+		var b: Vector2 = r[1]
+		var along_x := absf(b.x - a.x) >= absf(b.y - a.y)
+		var length := a.distance_to(b)
+		var count := maxi(1, ceili(length / SEGMENT))
+		var step := length / float(count)
+		var dir := (b - a).normalized()
+		for k in count:
+			var c := fog.origin + a + dir * (step * (float(k) + 0.5))
+			var basis := Basis.from_scale(Vector3(step, 1.0, float(r[2])))
+			if not along_x:
+				basis = Basis(Vector3.UP, PI * 0.5) * basis
+			panels.append(Transform3D(basis, Vector3(c.x, LIFT, c.y)))
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = TEXTURE
+	mat.roughness = 0.95
+	var quad := PlaneMesh.new()
+	quad.size = Vector2(1.0, 1.0)
+	quad.material = mat
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = quad
+	mm.instance_count = panels.size()
+	for i in panels.size():
+		mm.set_instance_transform(i, panels[i])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = "BaseRoads"
+	mmi.multimesh = mm
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mmi)
+
+
+## Three F-111 in a V: the leader in front, a wingman behind it on each side.
+func _formation(lib: ModelLibrary, batch: InstanceBatch) -> void:
+	var jets := lib.ids(Cat.JET_F111)
+	if jets.is_empty():
+		return
+	var dir := FORMATION_DIR.normalized()
+	var side := Vector2(-dir.y, dir.x)
+	var yaw := atan2(dir.x, dir.y) + float(FRONT.get(Cat.JET_F111, 0.0))
+	for o in [Vector2.ZERO, -dir + side, -dir - side]:
+		var c: Vector2 = FORMATION_AT + (o as Vector2) * FORMATION_GAP
+		batch.add(jets[0], _standing(lib, jets[0], Vector3(c.x, FORMATION_LIFT, c.y), yaw, FORMATION_SCALE))

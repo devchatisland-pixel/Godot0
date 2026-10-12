@@ -1,0 +1,9 @@
+{
+	"file": "camp_tent_jungle.glb",
+	"models": [
+		{
+			"cat": "TENT_JUNGLE",
+			"node": "camp_tent_jungle"
+		}
+	]
+}

@@ -61,6 +61,8 @@ func generate() -> CityData:
 	print("[City] houses turned from west to east: ", ManualEdits.finish(data))
 	# The last drastic changes: an empty urban island, balloons in the air, submarines at sea.
 	print("[City] overhaul: ", MapOverhaul.apply(data, _cfg.seed))
+	# Churches, the neon tower, the ghetto blocks and more skyscrapers downtown.
+	print("[City] additions: ", MapAdditions.apply(data))
 	# The concert camp clears what stands on its square, after the budget has counted it.
 	ConcertSite.apply(data)
 	AmenitiesPlanner.apply(data)
