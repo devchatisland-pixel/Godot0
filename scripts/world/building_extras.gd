@@ -35,7 +35,9 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	var pid: int = pick["id"]
 	var box: AABB = lib.bounds[pid]
 	if data.b_sign[i] != 0:
-		_place_sign(data, lib, i, pid, xform, batch)
+		_place_sign(data, lib, i, pid, xform, batch, data.b_sign[i])
+	for more: Array in data.b_more_signs.get(i, []):
+		_place_sign(data, lib, i, pid, xform, batch, more[0], more[1])
 	match kind:
 		Kind.AIRBASE:
 			var jets := lib.ids(Cat.JET_F111)
@@ -166,18 +168,30 @@ const SIGNS := {
 	ModelCatalog.Cat.NEON_JOYSTICK: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 	ModelCatalog.Cat.NEON_MARTINI: {"mount": "face", "fill": 0.9, "height": 0.58, "halo": 1.08},
 	ModelCatalog.Cat.NEON_BAR: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
+	ModelCatalog.Cat.NEON_BULL: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
+	ModelCatalog.Cat.NEON_FUN: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
+	ModelCatalog.Cat.NEON_PALM: {"mount": "face", "fill": 0.85, "height": 0.58, "halo": 1.08},
+	ModelCatalog.Cat.NEON_CLUB: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_GIRL: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_LOVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 }
 ## A wall sign is at most this share of the building's height.
 const FACE_MAX_HEIGHT := 0.5
 
 
+## Sign `cat` on building `i`. `mount` puts it somewhere else than its entry of SIGNS says (a
+## wall sign moved to the roof: it then looks the way the signs of the building look).
 static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xform: Transform3D,
-		batch: InstanceBatch) -> void:
-	var cat: int = data.b_sign[i]
+		batch: InstanceBatch, cat: int, mount: String = "") -> void:
 	var ids := lib.ids(cat)
 	if ids.is_empty() or not SIGNS.has(cat):
 		return
 	var spec: Dictionary = SIGNS[cat]
+	if mount != "" and mount != spec["mount"]:
+		spec = spec.duplicate()
+		spec["mount"] = mount
+		if mount == "roof" and int(data.b_sign_facing[i]) == 1:
+			spec["yaw"] = PI * 0.5
 	var s: float = spec.get("scale", 1.0)
 	var yaw: float = spec.get("yaw", 0.0)
 	# The sign stays where it was put when the building is turned afterwards.
@@ -211,7 +225,7 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		# when it is turned 90 degrees), centred along that edge and no longer than it.
 		var roof := _roof(lib, pid, xform)
 		var rr: Rect2 = roof["rect"]
-		var east := absf(sin(float(spec.get("yaw", 0.0)))) > 0.5
+		var east := absf(sin(yaw)) > 0.5
 		var edge_len := rr.size.y if east else rr.size.x
 		s = minf(s, edge_len * 0.92 / model.size.x)
 		if east:

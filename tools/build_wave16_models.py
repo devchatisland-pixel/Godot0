@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the models of the sixteenth and seventeenth waves from their raw files (FREEMODELS/_incoming).
+"""Builds the models of the sixteenth to eighteenth waves from their raw files (FREEMODELS/_incoming).
 
 Usage:  python tools/build_wave16_models.py [--src <folder of the raw .glb>] [--info] [name ...]
 Needs:  numpy, Pillow.
@@ -362,6 +362,56 @@ def pick(parts, spec):
         q = dict(p)
         q["pos"] = p["pos"].copy()
         q["nrm"] = None if p["nrm"] is None else p["nrm"].copy()
+        if "region" in spec:
+            # Only the triangles whose middle is inside the box (x0, y0, x1, y1) of the raw file,
+            # and outside the boxes of "but".
+            c = q["pos"][q["idx"]].mean(1)
+            # "region": one box or several.
+            boxes = spec["region"] if isinstance(spec["region"][0], list) else [spec["region"]]
+            keep = np.zeros(len(c), bool)
+            for one in boxes:
+                keep |= _inside(c, one)
+            for other in spec.get("but", []):
+                keep &= ~_inside(c, other)
+            if not keep.any():
+                continue
+            used, idx = np.unique(q["idx"][keep], return_inverse=True)
+            q["idx"] = idx.reshape(-1, 3)
+            q["pos"] = q["pos"][used]
+            q["nrm"] = None if q["nrm"] is None else q["nrm"][used]
+            q["uv"] = q["uv"][used]
+        if spec.get("neon"):
+            # A neon tube: its own colour is the colour of its light, and it is not see-through.
+            m = dict(q["mat"])
+            if m.get("emissive") and m.get("image") is None:
+                m["color"] = list(m["emissive"]) + [1.0]
+            m["color"] = list(m["color"][:3]) + [1.0]
+            m["blend"] = False
+            m["key"] = ("neon",) + tuple(m.get("key", (id(p["mat"]),)))
+            q["mat"] = m
+        out.append(q)
+    return out
+
+
+def _inside(c, box):
+    return (c[:, 0] >= box[0]) & (c[:, 1] >= box[1]) & (c[:, 0] <= box[2]) & (c[:, 1] <= box[3])
+
+
+def welded(parts, cell):
+    """Fewer triangles: the corners are snapped to a grid of `cell` and the triangles that
+    collapse are dropped (neon tubes modelled with a hundred thousand triangles)."""
+    out = []
+    for p in parts:
+        key = np.round(p["pos"] / cell).astype(np.int64)
+        _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)
+        idx = inv.reshape(-1)[p["idx"]]
+        ok = (idx[:, 0] != idx[:, 1]) & (idx[:, 1] != idx[:, 2]) & (idx[:, 0] != idx[:, 2])
+        idx = idx[ok]
+        q = dict(p)
+        q["pos"] = p["pos"][first]
+        q["nrm"] = None if p["nrm"] is None else p["nrm"][first]
+        q["uv"] = p["uv"][first]
+        q["idx"] = idx
         out.append(q)
     return out
 
@@ -410,6 +460,10 @@ def preview(parts, path, cell=360):
 # --- What is built ---------------------------------------------------------------------------------
 ## A sign lying on its back, its top towards -Z: stood up, its face towards +Z.
 STAND_UP = [[1, 0, 0], [0, 0, -1], [0, 1, 0]]
+## The same for a sign whose top is towards +Z (its face then looks back: turn it with "yaw").
+STAND_UP_Z = [[1, 0, 0], [0, 0, 1], [0, -1, 0]]
+## The heart of the "neon" pack: its upper part, and its tip between the legs of the girl.
+HEART = [[0.85, 2.25, 9, 9], [0.9, 2.02, 1.5, 2.25]]
 STREET_PACK = "lowpoly_city_street_pack_buildings_stylized.glb"
 INDUSTRIAL_SET = "industrial_buildings_set_-_low_poly_models.glb"
 STORAGE_TANKS = "large_industrial_storage_tanks.glb"
@@ -426,6 +480,20 @@ PACKS = {
         {"id": "martini_woman", "cat": "NEON_MARTINI", "tilt": STAND_UP, "width": 3.0}]},
     "neon_bar": {"src": "bar_sign_board.glb", "items": [
         {"id": "bar_board", "cat": "NEON_BAR", "yaw": 180, "width": 3.0}]},
+    # Seventeenth wave: more signs (the three of "neon" are cut out of one mesh), the bank.
+    "neon_bull": {"src": "bull_neon_sign.glb", "items": [
+        {"id": "bull", "cat": "NEON_BULL", "neon": True, "width": 3.0, "weld": 0.012}]},
+    "neon_fun": {"src": "neon_fun.glb", "items": [
+        {"id": "fun_arrow", "cat": "NEON_FUN", "neon": True, "skip_materials": ["Glass"], "width": 3.0}]},
+    "neon_palm": {"src": "neon_palm_tree_sign.glb", "tex": 256, "items": [
+        {"id": "palm_tree", "cat": "NEON_PALM", "neon": True, "skip": ["Object_2"], "tilt": STAND_UP_Z, "yaw": 180, "height": 3.0}]},
+    "neon_vegas": {"src": "neon_pack3.glb", "tex": 512, "items": [
+        {"id": "vegas_club", "cat": "NEON_CLUB", "neon": True, "region": [-9, -9, 9, 1.4], "width": 3.0, "weld": 0.012},
+        {"id": "vegas_girl", "cat": "NEON_GIRL", "neon": True, "region": [-1.04, 1.4, 9, 9],
+         "but": HEART, "width": 3.0, "weld": 0.012},
+        {"id": "vegas_love", "cat": "NEON_LOVE", "neon": True, "region": HEART, "width": 2.4, "weld": 0.012}]},
+    "bank_min": {"src": "bank_minimalist_model.glb", "items": [
+        {"id": "bank_minimalist", "cat": "BANK_MIN", "length": 2.8}]},
     # One cell across: MapVehicles and FogBase scale it to the size of the pad.
     "helipad": {"src": "helicopter_land__helipad__heliport.glb", "items": [
         {"id": "helipad_ground", "cat": "HELIPAD", "length": 1.0}]},
@@ -435,7 +503,7 @@ PACKS = {
     "court": {"src": STREET_PACK, "tex": 256, "items": [
         {"id": "basketball_court", "cat": "COURT", "nodes": ["Cube.209", "Cube.223", "terrain textures 1.004"],
          "length": 5.5}]},
-    # Seventeenth wave: one model of each for the hotels and the industrial port (PortRework).
+    # Eighteenth wave: one model of each for the hotels and the industrial port (PortRework).
     "hotels": {"tex": 512, "items": [
         {"id": "hotel_small", "src": "low_poly_hotel.glb", "cat": "HOTEL_LOW", "yaw": -90, "length": 2.4},
         {"id": "hotel_stars", "src": "low_poly_hotel_2.glb", "cat": "HOTEL_LOW", "skip": ["Collider"],
@@ -562,6 +630,8 @@ def main():
                 print("!! nothing found for", it["id"])
                 continue
             size = shape(parts, it)
+            if "weld" in it:
+                parts = welded(parts, it["weld"])
             parts = merged(parts)
             items.append((it["id"], parts))
             manifest.append({"cat": it["cat"], "node": it["id"]})

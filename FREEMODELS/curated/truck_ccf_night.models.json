@@ -1,0 +1,9 @@
+{
+	"file": "truck_ccf_night.glb",
+	"models": [
+		{
+			"cat": "TRUCK_CCF",
+			"node": "truck_ccf"
+		}
+	]
+}

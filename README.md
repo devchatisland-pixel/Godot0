@@ -115,7 +115,7 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 * **Farmland**: one harvester moved to another wheat field, the forwarder and a tractor turned.
 * **Development island**: one more shop, the blue townhouse.
 
-**Seventeenth wave (`port_rework.gd`, the last step of the generation; models from `tools/build_wave16_models.py`):**
+**Eighteenth wave (`port_rework.gd`, the last step of the generation; models from `tools/build_wave16_models.py`):**
 
 * **Hotels**: each of the four hotels has its own model (`PortRework.HOTEL_MODELS`): the orange hotel, the small
   purple hotel, the five-star hotel with awnings and the glass twin tower with a rooftop pool. When there are
@@ -135,7 +135,7 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 | just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
 | left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the shopping center; the neon signs are all on the roofs, none at street level |
 | west coast | **West desert** | reaches the sea without a beach: the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
-| south-west coast, next to the desert and Vegas | **Industrial zone and port** | 37 different industrial buildings and tanks (one of each model, seventeenth wave), container yards round the crane on the quay (no beach), the oil rig at sea |
+| south-west coast, next to the desert and Vegas | **Industrial zone and port** | 37 different industrial buildings and tanks (one of each model, eighteenth wave), container yards round the crane on the quay (no beach), the oil rig at sea |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
 | north-east | **Mountain forest** | a forest with three snow-capped mountains standing together far from the city (the one of the core is the biggest), and a wide sand beach on its coast; the forest thins to meadow at its edge |
 | below the park | **Civic center** | the main city hall and the police headquarters (each on its own plot), the bank, fire station, post office |
@@ -145,7 +145,7 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 | south | **Red district** | white and red low-rise town, bigger than before, mixed with colourful houses; the drive-in cinema, a crane, McDonald's and Burger King, the big ferris wheel at the beach, and one of each food stall (ice cream kiosks, and half-size food trucks) |
 | left | **Sports corner** | the big stadium (own plot, floodlit at night) |
 | south-east | **Farmland** | the one farming district: crop fields (wheat, corn, plowed soil, green rows) with farms and a country road |
-| everywhere | **Hotels** | four hotels, each with its own model (seventeenth wave) |
+| everywhere | **Hotels** | four hotels, each with its own model (eighteenth wave) |
 | far west, across the metal bridge | **Urban island** | the third island, long from north to south, planned end to end (`urban_island_planner.gd`): the **airport** at the south end (the left end on screen) with nothing built in front of it, the **tower city** in the middle (towers of three packs, all showing their front to the camera, a few futuristic ones in the centre), and the **nuclear plant** at the north end (the right end) with its cooling towers and hall beside it, a small yard and only low industry in front. No trees |
 | just south of the urban island | **BT tower islet** | a tiny industrial islet with the BT tower in its middle and three satellite dishes round it |
 | the two forests | **Watchtowers** | two simplified wooden lookouts, one in the north-east forest and one in the forest of the old city |

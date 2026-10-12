@@ -1,7 +1,8 @@
 class_name Roadblocks
 extends Node3D
 ## Checkpoints on the three-lane highways, on land and away from the bridges:
-##   - east (Golden Gate side): white stand barriers across the lanes, with cones,
+##   - east (Golden Gate side): white stand barriers across the lanes, with cones, two
+##     police cars on the road beyond them and one parked beside the road,
 ##   - west (main island side): a different barrier model plus a very small police
 ##     car parked beside the road (not on it).
 
@@ -23,6 +24,8 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		var x := data.bridge.x - EAST_BACK
 		_block(lib, Cat.ROADBLOCK_A, x, data.bridge.y, true, true)
 		_roadblock_cars(lib, x, data.bridge.y)
+		# One more cruiser parked beside the road, before the barriers.
+		_police_car(lib, x, data.bridge.y, 2.7)
 		_tanks_facing_bridge(lib, x, data.bridge.y)
 	if data.west_bridge.x >= 0:
 		var x := data.west_bridge.x + WEST_BACK

@@ -1,6 +1,6 @@
 class_name PortRework
 extends RefCounted
-## Seventeenth wave, the last change to the finished map (after MapRetouch):
+## Eighteenth wave, the last change to the finished map (after MapRetouch):
 ##   - every hotel gets its own model of HOTEL_MODELS (one model per building); hotels are
 ##     added in the city when there are fewer hotels than models;
 ##   - the industrial zone and port of the main island lose their old factories and Kenney

@@ -57,7 +57,7 @@ func generate() -> CityData:
 	print("[City] building budget: ", BuildingBudget.apply(data))
 	# The urban island is rebuilt last, so that nothing else of the map depends on it.
 	print("[City] urban island: ", UrbanIslandRebuild.apply(data))
-	print("[City] buildings deleted or resized by hand (expect 25 + 1 = 26): ", ManualEdits.delete_by_hand(data))
+	print("[City] buildings deleted or resized by hand (expect 26 + 1 = 27): ", ManualEdits.delete_by_hand(data))
 	print("[City] houses turned from west to east: ", ManualEdits.finish(data))
 	# The last drastic changes: an empty urban island, balloons in the air, submarines at sea.
 	print("[City] overhaul: ", MapOverhaul.apply(data, _cfg.seed))

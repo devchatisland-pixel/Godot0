@@ -22,17 +22,21 @@ const PACK_GLOW := {
 	ModelCat.POLICE_MAIN: 0.55, ModelCat.CITY_HALL_MAIN: 0.6, ModelCat.HOSPITAL_MAIN: 0.6,
 	ModelCat.SCHOOL_MAIN: 0.45, ModelCat.PHARMACY: 0.55, ModelCat.GAS_STATION: 0.7,
 	ModelCat.UN_TOWER: 0.55, ModelCat.CRANE: 0.35, ModelCat.BRIDGE: 0.6,
-	ModelCat.BANK_PACK: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
+	ModelCat.BANK_PACK: 0.6, ModelCat.BANK_MIN: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
 	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6,
 	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
 	ModelCat.METAL_BRIDGE: 0.4, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
 	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
+	# The floodlights (concert camp, prison) shine by themselves at night: no light is added.
+	ModelCat.FLOODLIGHT: 1.3,
 }
 ## Neon roof signs: dim by day, very bright at night (they glow in their own colours).
 const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NEON_WOMAN,
-		ModelCat.NEON_JOYSTICK, ModelCat.NEON_MARTINI, ModelCat.NEON_BAR]
+		ModelCat.NEON_JOYSTICK, ModelCat.NEON_MARTINI, ModelCat.NEON_BAR,
+		ModelCat.NEON_BULL, ModelCat.NEON_FUN, ModelCat.NEON_PALM,
+		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE]
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
 const LOGO_PACKS := [ModelCat.SIGN_WINDOWS]
 const LOGO_DAY := 0.15
@@ -48,6 +52,8 @@ const BILLBOARD_LIGHT := Color(1.0, 0.96, 0.88)
 const BILLBOARD_GLOW := 1.0
 ## Night duplicates (tools/make_night_variants.py: the pharmacy cross, the police lights) bring
 ## their own night map, which holds a third of the final light: off by day, x3 at night.
+## A higher value makes the light the lamps throw around them stronger; the lamps themselves
+## keep their colour.
 const OWN_NIGHT := 3.0
 
 
@@ -58,6 +64,9 @@ static func apply(lib: ModelLibrary) -> void:
 		for id in lib.ids(cat):
 			if not light_own(lib.meshes[id]):
 				_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
+	# The forest fire truck is not lit as a whole: only its night map (its blue beacons).
+	for id in lib.ids(ModelCat.TRUCK_CCF):
+		light_own(lib.meshes[id])
 	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE, ModelCat.NIGHT_SKYLINE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
@@ -117,7 +126,12 @@ static func light_own(mesh: Mesh) -> bool:
 		if mat == null or mat.emission_texture == null or lit.has(mat):
 			continue
 		mat.emission_enabled = true
+		# The map alone is the light. The importer leaves the emission colour white (the
+		# emissiveFactor of the file): added to the map, it would turn the whole model white.
+		mat.emission = Color.BLACK
 		mat.emission_operator = BaseMaterial3D.EMISSION_OP_ADD
+		# The map has its own texture coordinates when the model brings a second set.
+		mat.emission_on_uv2 = (mesh.surface_get_format(s) & Mesh.ARRAY_FORMAT_TEX_UV2) != 0
 		SignAtlas.register_night(mat, 0.0, OWN_NIGHT)
 		lit[mat] = true
 	mesh.set_meta("own_night", not lit.is_empty())
