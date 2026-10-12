@@ -42,10 +42,9 @@ RUN curl -fsSL -o /tmp/templates.tpz \
 # --- Web export -------------------------------------------------------------------------
 FROM templates AS export
 COPY --from=project /project /project
-RUN mkdir -p build/web/lite && touch build/.gdignore \
+RUN mkdir -p build/web && touch build/.gdignore \
     && godot --headless --export-release "Web" build/web/index.html \
-    && godot --headless --export-release "Web Lite" build/web/lite/index.html \
-    && test -f build/web/index.pck && test -f build/web/lite/index.pck
+    && test -f build/web/index.pck
 
 # --- Web server -----------------------------------------------------------------------------
 FROM nginx:1.27-alpine AS web
