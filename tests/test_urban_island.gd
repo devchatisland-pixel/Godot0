@@ -1,8 +1,8 @@
 extends SceneTree
-## Checks the urban island (two plants and a mass of towers), the BT tower islet, the Vegas
-## buildings and the watchtowers.
+## Checks the urban island (empty since MapOverhaul), the BT tower islet, the Vegas buildings,
+## the watchtowers, the balloons and the submarines.
 ## Run: godot --headless --script res://tests/test_urban_island.gd
-## Prints a text map of the urban island (N plant, F futuristic tower, B BT tower, # road, . land) and exits with an error when a rule is broken.
+## Prints a text map of the urban island (B BT tower, # road, . land) and exits with an error when a rule is broken.
 
 const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
@@ -25,6 +25,7 @@ func _init() -> void:
 	_check_watchtowers(data, by_kind)
 	_check_edits(data)
 	_check_boats(data, by_kind)
+	_check_overhaul(data, by_kind)
 	_check_models(cfg, data, by_kind)
 	print("[Test] %s" % ("FAILED: %d" % _fails if _fails > 0 else "all urban island checks passed"))
 	quit(1 if _fails > 0 else 0)
@@ -51,40 +52,21 @@ func _in_front(r: Rect2i, p: Vector2i) -> bool:
 
 
 func _check_places(data: CityData, by_kind: Dictionary) -> void:
-	# The island: two plants of one size showing the same face, fenced, on a street; towers
-	# along the streets, the yard by the plant road (UrbanIslandRebuild), and only the police
-	# car and the fire truck of the plant road.
+	# MapOverhaul: no building stands on the urban island any more; its streets stay, no fence
+	# is drawn, and no vehicle is parked there (the plant road is gone with the plants).
 	var plants: Array = by_kind.get(Kind.NUCLEAR_PLANT, [])
-	if plants.size() != 2:
-		_fail("expected 2 nuclear plants, found %d" % plants.size())
-	else:
-		var a := data.building_rect(plants[0])
-		var b := data.building_rect(plants[1])
-		if a.size != b.size:
-			_fail("the two plants differ in size: %s and %s" % [a.size, b.size])
-		if data.b_facing[plants[0]] != data.b_facing[plants[1]]:
-			_fail("the plants do not show the same face (facing %d and %d)" % [
-					data.b_facing[plants[0]], data.b_facing[plants[1]]])
-		if data.b_seed[plants[0]] != data.b_seed[plants[1]]:
-			_fail("the two plants do not draw the same model")
-		if a.intersects(b):
-			_fail("the plants overlap: %s %s" % [a, b])
+	if not plants.is_empty():
+		_fail("expected no nuclear plant, found %d" % plants.size())
 	var on_island := 0
 	for b in data.building_count():
 		var r := data.building_rect(b)
 		var k: int = data.b_kind[b]
-		if k == Kind.EMPTY or not MapLayout.on_urban_island(r.get_center()) 				or data.terrain[data.idx(r.get_center().x, r.get_center().y)] != CityTypes.Terrain.LAND:
+		if k == Kind.EMPTY or k == Kind.BOAT or k == Kind.BALLOON 				or not MapLayout.on_urban_island(r.get_center()):
 			continue
 		on_island += 1
-		if k != Kind.FUTURE_BLDG and k != Kind.NUCLEAR_PLANT and k != Kind.INDUSTRIAL_YARD:
-			_fail("%s B-%05d at %s on the urban island: only towers, the plants and their yard belong there" % [
-					CityTypes.Kind.keys()[k], b, r])
-		if k == Kind.FUTURE_BLDG:
-			for p in plants:
-				if data.building_rect(p).grow(1).intersects(r):
-					_fail("tower B-%05d at %s touches a plant (%s)" % [b, r, data.building_rect(p)])
+		_fail("%s B-%05d at %s on the urban island: nothing may stand there" % [
+				CityTypes.Kind.keys()[k], b, r])
 	var roads := 0
-	var fences := 0
 	for y in data.size:
 		for x in MapLayout.cells("urban_columns"):
 			if not MapLayout.on_urban_island(Vector2i(x, y)):
@@ -92,29 +74,14 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 			var i := data.idx(x, y)
 			if data.terrain[i] == CityTypes.Terrain.LAND and data.road[i] != 0:
 				roads += 1
-			if data.deco[i] == AmenitiesPlanner.FENCE_X or data.deco[i] == AmenitiesPlanner.FENCE_Z:
-				fences += 1
 	if roads < 30:
 		_fail("only %d road cells on the urban island" % roads)
-	if fences < 20:
-		_fail("only %d fence pieces on the urban island (the plants are fenced)" % fences)
-	# Only the vehicles of the plant road stand on the island.
 	var cars := 0
 	for v in VehicleSites.plan(data):
 		if MapLayout.on_urban_island(Vector2i(v["at"] as Vector2)):
 			cars += 1
-			if not ["police_us_cruiser", "p54_33_fire_truck"].has(v["id"]):
-				_fail("vehicle %s (%s) stands on the urban island" % [v["id"], v["why"]])
-	if cars != 2:
-		_fail("expected the police car and the fire truck on the plant road, found %d vehicles" % cars)
-	# The south end: the lots are filled, not left empty (the airport is gone).
-	var urban_tip := int(Vector2(MapLayout.blob("urban")["at"]).y)
+			_fail("vehicle %s (%s) stands on the urban island" % [v["id"], v["why"]])
 	var south := 0
-	for b in by_kind.get(Kind.FUTURE_BLDG, []):
-		if data.building_rect(b).position.y > urban_tip + 15:
-			south += 1
-	if south < 5:
-		_fail("only %d towers on the south end of the island" % south)
 	var bt := _rect(data, Kind.BT_TOWER, by_kind)
 	var islet := MapLayout.blob("tower_islet")["at"] as Vector2
 	var dishes := 0
@@ -129,24 +96,20 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 		_fail("expected 3 satellite dishes round the BT tower, found %d" % dishes)
 	if bt.size.x > 0 and data.zone_at(bt.position.x, bt.position.y) != Zone.INDUSTRIAL:
 		_fail("the BT islet is not an industrial zone")
-	print("[Test] urban island: %d buildings, %d towers in the south end, plants %s, %d vehicles; BT %s dishes %d" % [
-			on_island, south, plants.map(func(p): return data.building_rect(p)), cars, bt, dishes])
+	print("[Test] urban island: %d buildings, %d road cells, %d vehicles; BT %s dishes %d" % [
+			on_island, roads, cars, bt, dishes])
 
 
 func _check_towers(data: CityData, by_kind: Dictionary) -> void:
+	# The towers of the urban island are gone (MapOverhaul); none stands anywhere else either.
 	var towers := 0
-	var variants := {}
 	for k in [Kind.URBAN_BLDG, Kind.FUTURE_BLDG]:
 		for b in by_kind.get(k, []):
-			towers += 1
-			var f: int = data.b_facing[b]
-			if f != 1 and f != 2:
-				_fail("urban tower B-%05d faces %d (must be east or south)" % [b, f])
-			variants[data.b_seed[b] % 97] = true
-	print("[Test] urban towers: %d, seed variety %d" % [towers, variants.size()])
-	# UrbanIslandRebuild.TOWER_COUNT towers stand along the streets of the island.
-	if towers < 50:
-		_fail("too few towers on the urban island: %d" % towers)
+			if data.b_kind[b] == k:
+				towers += 1
+	print("[Test] urban towers: %d" % towers)
+	if towers > 0:
+		_fail("%d towers left on the map, the urban island must be empty" % towers)
 
 
 func _check_watchtowers(data: CityData, by_kind: Dictionary) -> void:
@@ -185,6 +148,25 @@ func _check_boats(data: CityData, by_kind: Dictionary) -> void:
 	print("[Test] the nearest submarine is %.0f cells from the end of the highway" % d)
 	if d < 12.0 or d > 40.0:
 		_fail("the nearest submarine is %.0f cells from the bridge to the fog island" % d)
+
+
+## MapOverhaul: 12 balloons and 12 submarines were added at random places.
+func _check_overhaul(data: CityData, by_kind: Dictionary) -> void:
+	var balloons: int = by_kind.get(Kind.BALLOON, []).size()
+	var subs := 0
+	for b in by_kind.get(Kind.BOAT, []):
+		if data.b_seed[b] == BoatSites.SUB:
+			subs += 1
+			var r := data.building_rect(b)
+			for y in range(r.position.y, r.end.y):
+				for x in range(r.position.x, r.end.x):
+					if data.terrain[data.idx(x, y)] >= CityTypes.Terrain.BEACH:
+						_fail("submarine B-%05d at %s lies on land" % [b, r])
+	print("[Test] %d balloons, %d submarines" % [balloons, subs])
+	if balloons < MapOverhaul.BALLOONS:
+		_fail("only %d balloons, MapOverhaul adds %d" % [balloons, MapOverhaul.BALLOONS])
+	if subs < MapOverhaul.SUBMARINES:
+		_fail("only %d submarines, MapOverhaul adds %d" % [subs, MapOverhaul.SUBMARINES])
 
 
 ## Every hand edit (ManualEdits) was applied: the kind, facing and scale are the wanted ones.

@@ -59,10 +59,11 @@ func generate() -> CityData:
 	print("[City] urban island: ", UrbanIslandRebuild.apply(data))
 	print("[City] buildings deleted or resized by hand (expect 22 + 1 = 23): ", ManualEdits.delete_by_hand(data))
 	print("[City] houses turned from west to east: ", ManualEdits.finish(data))
+	# The last drastic changes: an empty urban island, balloons in the air, submarines at sea.
+	print("[City] overhaul: ", MapOverhaul.apply(data, _cfg.seed))
 	# The concert camp clears what stands on its square, after the budget has counted it.
 	ConcertSite.apply(data)
 	AmenitiesPlanner.apply(data)
-	print("[City] garden fences: ", GardenFences.apply(data))
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	var services: Dictionary = core["services"].duplicate()

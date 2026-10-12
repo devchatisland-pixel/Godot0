@@ -27,12 +27,6 @@ const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "conta
 
 var _pending: Array[Dictionary] = []
 var _yard_loaded := false
-## Fence models, loaded as named meshes once the packs are done (see GroundPlacer.FENCE_*):
-## wooden garden fences of the suburbs and the chain-link fence of the base.
-const FENCES := {
-	"wood_fence": "res://props/fences/fence_wood.glb",
-	"chain_fence": "res://props/fences/chain_fence.glb",
-}
 var _total := 0
 # Curated pack currently open (packs hold many buildings, opened once each).
 var _pack_path := ""
@@ -71,8 +65,6 @@ func load_next(count: int) -> float:
 			_yard_loaded = true
 			for c: String in YARD_CONTAINERS:
 				load_named("yardbox:" + c.trim_prefix("container-"), "res://shops/models/%s.glb" % c)
-			for f in FENCES:
-				load_named(f, FENCES[f])
 	return 1.0 - float(_pending.size()) / float(_total)
 
 

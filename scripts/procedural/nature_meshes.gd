@@ -1,7 +1,7 @@
 class_name NatureMeshes
 extends RefCounted
 ## Desert and coast pieces: telecom tower, satellite dish, mesa, cactus,
-## lighthouse and palm tree. Centred on their lot, base at y = 0.
+## and lighthouse. Centred on their lot, base at y = 0.
 
 const RED := Color("d23b2f")
 const WHITE := Color("f4f2f8")
@@ -12,7 +12,6 @@ const ROCK_B := Color("b5703a")
 const ROCK_TOP := Color("dfae6a")
 const CACTUS := Color("4f9a45")
 const TRUNK := Color("9a6b3f")
-const PALM := Color("3f9c3a")
 
 
 static func build_all(lib: ModelLibrary) -> void:
@@ -21,7 +20,6 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("mesa", mesa())
 	lib.add_named("cactus", cactus())
 	lib.add_named("lighthouse", lighthouse())
-	lib.add_named("palm", palm())
 	lib.add_named("mountain_a", mountain(0))
 	lib.add_named("mountain_b", mountain(1))
 	lib.add_named("mountain_c", mountain(2))
@@ -115,23 +113,6 @@ static func lighthouse() -> ArrayMesh:
 	k.cylinder(Vector3(0, top + 0.04, 0), 0.11, 0.11, 0.18, 10, Color("fff2a0"))
 	k.neon(false)
 	k.cylinder(Vector3(0, top + 0.22, 0), 0.15, 0.0, 0.16, 10, RED)
-	return k.commit()
-
-
-# --- Palm tree ---------------------------------------------------------------------------------
-static func palm() -> ArrayMesh:
-	var k := MeshKit.new()
-	var p := Vector3.ZERO
-	for i in 5:
-		var next := p + Vector3(0.025 * i, 0.16, 0.0)
-		k.cylinder(p, 0.04 - i * 0.004, 0.036 - i * 0.004, 0.17, 6, TRUNK)
-		p = next
-	for i in 7:
-		var yaw := TAU * i / 7.0
-		k.xform = Transform3D(Basis(Vector3.UP, yaw) * Basis(Vector3.BACK, -0.45), p)
-		k.box(Vector3(0, -0.01, -0.05), Vector3(0.36, 0.02, 0.1), PALM.darkened(0.15 * (i % 2)))
-	k.xform = Transform3D.IDENTITY
-	k.cylinder(p - Vector3(0, 0.03, 0), 0.05, 0.03, 0.06, 6, Color("6b4a2a"))
 	return k.commit()
 
 

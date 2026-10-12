@@ -78,7 +78,8 @@ func _init() -> void:
 	quit(1 if _fails > 0 else 0)
 
 
-## Trees, palms and cacti that GroundPlacer puts on the whole map.
+## Trees, palms and cacti that GroundPlacer puts on the whole map (no tree grows any more:
+## only cacti are counted).
 func _ground_trees(cfg: CityConfig, data: CityData) -> int:
 	var lib := ModelLibrary.new()
 	lib.begin(cfg)
