@@ -1,0 +1,50 @@
+# free_buildings_low_poly
+
+44 individual models from `FREEMODELS/_incoming/free_buildings_low_poly.glb`.
+
+| Preview | Model |
+|---|---|
+| ![](001_mergedBlocks_bricksClone_0.png) | `001_mergedBlocks_bricksClone_0` |
+| ![](002_mergedBlocks_shieldClone_0.png) | `002_mergedBlocks_shieldClone_0` |
+| ![](003_mergedBlocks_custom21Clone_0.png) | `003_mergedBlocks_custom21Clone_0` |
+| ![](004_mergedBlocks_glassClone_0.png) | `004_mergedBlocks_glassClone_0` |
+| ![](005_mergedBlocks_metalPurpleClone_0.png) | `005_mergedBlocks_metalPurpleClone_0` |
+| ![](006_mergedBlocks_custom24Clone_0.png) | `006_mergedBlocks_custom24Clone_0` |
+| ![](007_mergedBlocks_custom25Clone_0.png) | `007_mergedBlocks_custom25Clone_0` |
+| ![](008_mergedBlocks_custom17Clone_0.png) | `008_mergedBlocks_custom17Clone_0` |
+| ![](009_mergedBlocks__defaultMatClone_0.png) | `009_mergedBlocks__defaultMatClone_0` |
+| ![](010_mergedBlocks_woodClone_0.png) | `010_mergedBlocks_woodClone_0` |
+| ![](011_mergedBlocks_stoneLightClone_0.png) | `011_mergedBlocks_stoneLightClone_0` |
+| ![](012_mergedBlocks_custom27Clone_0.png) | `012_mergedBlocks_custom27Clone_0` |
+| ![](013_mergedBlocks_custom29Clone_0.png) | `013_mergedBlocks_custom29Clone_0` |
+| ![](014_mergedBlocks_custom28Clone_0.png) | `014_mergedBlocks_custom28Clone_0` |
+| ![](015_mergedBlocks_custom30Clone_0.png) | `015_mergedBlocks_custom30Clone_0` |
+| ![](016_mergedBlocks_metalDarkClone_0.png) | `016_mergedBlocks_metalDarkClone_0` |
+| ![](017_mergedBlocks_metalLightClone_0.png) | `017_mergedBlocks_metalLightClone_0` |
+| ![](018_mergedBlocks_custom44Clone_0.png) | `018_mergedBlocks_custom44Clone_0` |
+| ![](019_mergedBlocks_custom43Clone_0.png) | `019_mergedBlocks_custom43Clone_0` |
+| ![](020_mergedBlocks_darkClone_0.png) | `020_mergedBlocks_darkClone_0` |
+| ![](021_mergedBlocks_custom14Clone_0.png) | `021_mergedBlocks_custom14Clone_0` |
+| ![](022_mergedBlocks_custom13Clone_0.png) | `022_mergedBlocks_custom13Clone_0` |
+| ![](023_mergedBlocks_custom15Clone_0.png) | `023_mergedBlocks_custom15Clone_0` |
+| ![](024_mergedBlocks_metalClone_0.png) | `024_mergedBlocks_metalClone_0` |
+| ![](025_mergedBlocks_stoneClone_0.png) | `025_mergedBlocks_stoneClone_0` |
+| ![](026_mergedBlocks_stoneDarkClone_0.png) | `026_mergedBlocks_stoneDarkClone_0` |
+| ![](027_mergedBlocks_custom18Clone_0.png) | `027_mergedBlocks_custom18Clone_0` |
+| ![](028_mergedBlocks_custom16Clone_0.png) | `028_mergedBlocks_custom16Clone_0` |
+| ![](029_mergedBlocks_custom19Clone_0.png) | `029_mergedBlocks_custom19Clone_0` |
+| ![](030_mergedBlocks_custom20Clone_0.png) | `030_mergedBlocks_custom20Clone_0` |
+| ![](031_mergedBlocks_custom32Clone_0.png) | `031_mergedBlocks_custom32Clone_0` |
+| ![](032_mergedBlocks_custom31Clone_0.png) | `032_mergedBlocks_custom31Clone_0` |
+| ![](033_mergedBlocks_bricksDarkClone_0.png) | `033_mergedBlocks_bricksDarkClone_0` |
+| ![](034_mergedBlocks_custom34Clone_0.png) | `034_mergedBlocks_custom34Clone_0` |
+| ![](035_mergedBlocks_custom38Clone_0.png) | `035_mergedBlocks_custom38Clone_0` |
+| ![](036_mergedBlocks_metalOrangeClone_0.png) | `036_mergedBlocks_metalOrangeClone_0` |
+| ![](037_mergedBlocks_custom48Clone_0.png) | `037_mergedBlocks_custom48Clone_0` |
+| ![](038_mergedBlocks_custom40Clone_0.png) | `038_mergedBlocks_custom40Clone_0` |
+| ![](039_mergedBlocks_custom45Clone_0.png) | `039_mergedBlocks_custom45Clone_0` |
+| ![](040_mergedBlocks_custom46Clone_0.png) | `040_mergedBlocks_custom46Clone_0` |
+| ![](041_mergedBlocks_custom41Clone_0.png) | `041_mergedBlocks_custom41Clone_0` |
+| ![](042_mergedBlocks_custom39Clone_0.png) | `042_mergedBlocks_custom39Clone_0` |
+| ![](043_mergedBlocks_foliageClone_0.png) | `043_mergedBlocks_foliageClone_0` |
+| ![](044_mergedBlocks_custom47Clone_0.png) | `044_mergedBlocks_custom47Clone_0` |

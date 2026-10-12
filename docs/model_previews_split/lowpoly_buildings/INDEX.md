@@ -1,0 +1,51 @@
+# lowpoly_buildings
+
+45 individual models from `FREEMODELS/_incoming/lowpoly_buildings.glb`.
+
+| Preview | Model |
+|---|---|
+| ![](001_pylon01.png) | `001_pylon01` |
+| ![](002_barn01.png) | `002_barn01` |
+| ![](003_house01.png) | `003_house01` |
+| ![](004_house01_roof.png) | `004_house01_roof` |
+| ![](005_house01_add.png) | `005_house01_add` |
+| ![](006_barn01_add.png) | `006_barn01_add` |
+| ![](007_barn03.png) | `007_barn03` |
+| ![](008_barrack01.png) | `008_barrack01` |
+| ![](009_barrack02.png) | `009_barrack02` |
+| ![](010_barrack03.png) | `010_barrack03` |
+| ![](011_container01.png) | `011_container01` |
+| ![](012_utilitybox03.png) | `012_utilitybox03` |
+| ![](013_utilitybox02.png) | `013_utilitybox02` |
+| ![](014_container02.png) | `014_container02` |
+| ![](015_container03.png) | `015_container03` |
+| ![](016_ac01.png) | `016_ac01` |
+| ![](017_ac02.png) | `017_ac02` |
+| ![](018_watertank01.png) | `018_watertank01` |
+| ![](019_trailer02.png) | `019_trailer02` |
+| ![](020_trailer01.png) | `020_trailer01` |
+| ![](021_cable_reel01.png) | `021_cable_reel01` |
+| ![](022_generator01.png) | `022_generator01` |
+| ![](023_truck01.png) | `023_truck01` |
+| ![](024_bench01.png) | `024_bench01` |
+| ![](025_utilitybox01.png) | `025_utilitybox01` |
+| ![](026_sign01.png) | `026_sign01` |
+| ![](027_sign02.png) | `027_sign02` |
+| ![](028_sign03.png) | `028_sign03` |
+| ![](029_sign04.png) | `029_sign04` |
+| ![](030_fence02.png) | `030_fence02` |
+| ![](031_fence01.png) | `031_fence01` |
+| ![](032_fence_pole01.png) | `032_fence_pole01` |
+| ![](033_fusebox01.png) | `033_fusebox01` |
+| ![](034_barrack04.png) | `034_barrack04` |
+| ![](035_house02.png) | `035_house02` |
+| ![](036_board01.png) | `036_board01` |
+| ![](037_house03.png) | `037_house03` |
+| ![](038_house03_add.png) | `038_house03_add` |
+| ![](039_house03_roof.png) | `039_house03_roof` |
+| ![](040_wooden_plate02.png) | `040_wooden_plate02` |
+| ![](041_wooden_plate01.png) | `041_wooden_plate01` |
+| ![](042_metalplate01.png) | `042_metalplate01` |
+| ![](043_metalplate03.png) | `043_metalplate03` |
+| ![](044_metalplate02.png) | `044_metalplate02` |
+| ![](045_pylon_line01.png) | `045_pylon_line01` |
