@@ -587,7 +587,11 @@ func _police_hq_car() -> void:
 		push_warning("[Vehicles] no main police station")
 
 
-## Two Japanese police cars side by side in front of the bunker of the secret base.
+## How many Japanese police cars stand in front of the bunker.
+const BUNKER_CARS := 3
+
+
+## Japanese police cars side by side in front of the bunker of the secret base.
 func _bunker_cars() -> void:
 	var b := _biggest(Kind.BUNKER)
 	if b < 0:
@@ -598,9 +602,9 @@ func _bunker_cars() -> void:
 	var half := Vector2(r.size) * 0.5
 	var front := c + Vector2(o) * (half.x * absf(o.x) + half.y * absf(o.y) + 0.6)
 	var side := Vector2(1, 0) if o.y != 0 else Vector2(0, 1)
-	for k in 2:
+	for k in BUNKER_CARS:
 		# Noses towards the bunker.
-		_add("police_jp_black", front + side * (float(k) - 0.5) * 0.7, -Vector2(o), "in front of the bunker")
+		_add("police_jp_black", front + side * (float(k) - float(BUNKER_CARS - 1) * 0.5) * 0.7, -Vector2(o), "in front of the bunker")
 
 
 ## Size of the helipad of the secret base (cells across).

@@ -3,7 +3,7 @@ extends RefCounted
 ## Third wave of changes to the finished map, after MapAdditions and the concert camp (and so
 ## after BuildingBudget has counted the buildings):
 ##   - TOWER_SIGNS: a logo or a neon sign on the east wall of four towers of the urban island;
-##   - TURNED: buildings turned by hand; the secret base is drawn BASE_SCALE times bigger (its
+##   - TURNED: buildings turned by hand, KIND_FACING: every McDonald's faces east; the secret base is drawn BASE_SCALE times bigger (its
 ##     jets with it);
 ##   - BILLBOARDS more billboards and COURTS basketball courts in the city, each on bare ground
 ##     beside a street, far from each other.
@@ -27,6 +27,8 @@ const SIGN_WALL := 1
 const TURNED := [
 	["SKYSCRAPER", Vector2i(123, 174), 1],
 ]
+## Kinds whose buildings all face the same way.
+const KIND_FACING := {"MCDONALDS": 1}
 const BASE_SCALE := 1.5
 
 const CITY_ZONES: Array[int] = [Zone.DOWNTOWN, Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN,
@@ -101,6 +103,11 @@ func _turned() -> int:
 			continue
 		_d.b_facing[b] = t[2]
 		n += 1
+	for b in _d.building_count():
+		var kind: String = Kind.keys()[_d.b_kind[b]]
+		if KIND_FACING.has(kind) and _d.b_facing[b] != KIND_FACING[kind]:
+			_d.b_facing[b] = KIND_FACING[kind]
+			n += 1
 	return n
 
 

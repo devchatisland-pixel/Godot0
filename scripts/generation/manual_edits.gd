@@ -91,6 +91,7 @@ const DELETED_AT := [
 	["BURGER_KING", Vector2i(164, 102)],
 	["NIGHTCLUB", Vector2i(128, 171)],
 	["NIGHTCLUB", Vector2i(121, 178)],
+	["PHARMACY", Vector2i(167, 203)],
 ]
 ## Cleared lots that get a farm building back: top-left cell, model (as the library names it).
 const FARM_BUILDINGS_AT := [

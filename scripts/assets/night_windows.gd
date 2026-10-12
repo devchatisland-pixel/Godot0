@@ -29,6 +29,8 @@ const PACK_GLOW := {
 	ModelCat.METAL_BRIDGE: 0.4, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
 	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
+	# The floodlights (concert camp, prison) shine by themselves at night: no light is added.
+	ModelCat.FLOODLIGHT: 1.3,
 }
 ## Neon roof signs: dim by day, very bright at night (they glow in their own colours).
 const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NEON_WOMAN,
