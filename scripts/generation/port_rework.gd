@@ -6,7 +6,9 @@ extends RefCounted
 ##   - the industrial zone and port of the main island lose their old factories and Kenney
 ##     sheds and most container yards (the KEEP_YARDS nearest the crane stay); each model of
 ##     PORT_MODELS then gets its own lot there, the big ones first, beside a street when it can;
-##   - the offshore oil rig stands at sea off the port.
+##   - hand changes to some lots of the port (PORT_DELETED, PORT_MOVED, PORT_ADDED), the city's
+##     radio tower drawn with the port's radio tower model, billboards turned round;
+##   - the offshore oil rig stands at sea off the port, sheds float on the high seas.
 ## Nothing is random: the order of the lists and the distances decide.
 
 const Kind := CityTypes.Kind
@@ -70,6 +72,57 @@ const OIL_RIG := "oil_rig.glb: oil_rig"
 const OIL_RIG_LOT := Vector2i(5, 6)
 ## Open sea all round the rig, in cells.
 const OIL_RIG_SEA := 3
+## The rig stands this many cells off the coast at least, as near the port as it can (seen
+## from the quays).
+const OIL_RIG_OFFSHORE := 8
+
+## Hand changes to the lots of the port, once every model has its lot (`_hand_edits`). A
+## model stands once in the port, so its name says which building is meant.
+const PORT_DELETED := ["port_towers.glb: tower_tank_3", "port_tanks.glb: factory_brick",
+		"port_halls.glb: hall_hangar", "port_towers.glb: tower_tank_1", "port_halls.glb: hall_warehouse_4",
+		"port_sheds.glb: shed_works_2"]
+## [model, lot, facing]: the lot a model moves to (the building on it before goes).
+const PORT_MOVED := [
+	# The power plant takes the place of warehouse 1, hall 10 the place of the power plant.
+	["port_halls.glb: hall_powerplant", Rect2i(114, 234, 4, 7), 2],
+	["port_halls.glb: hall_building_10", Rect2i(125, 257, 4, 7), 2],
+	# Three water tanks in a row beside the water tower.
+	["port_towers.glb: tower_tank_5", Rect2i(110, 239, 1, 1), 2],
+	# The big tank takes the place of shed 4; four more stand beside it (TANK_FARM).
+	["port_tanks.glb: tank_big", Rect2i(107, 244, 3, 3), 2],
+]
+## The buildings the moved ones replace.
+const PORT_REPLACED := ["port_halls.glb: hall_warehouse_1", "port_sheds.glb: shed_generic_4"]
+## [model, lot, facing]: more of a model of the port.
+const PORT_ADDED := [
+	# The old tanks (three silos each) doubled into a rectangle.
+	["port_tanks.glb: tank_old", Rect2i(115, 257, 1, 3), 2],
+	# Three long tanks side by side, three duplex sheds one behind the other.
+	["port_tanks.glb: tank_long", Rect2i(137, 264, 1, 2), 1],
+	["port_tanks.glb: tank_long", Rect2i(138, 264, 1, 2), 1],
+	["port_sheds.glb: shed_duplex", Rect2i(120, 270, 3, 1), 2],
+	["port_sheds.glb: shed_duplex", Rect2i(120, 272, 3, 1), 2],
+	["port_towers.glb: tower_tank_5", Rect2i(111, 239, 1, 1), 2],
+	["port_towers.glb: tower_tank_5", Rect2i(112, 239, 1, 1), 2],
+	# TANK_FARM: a column of three big tanks and one of two beside it.
+	["port_tanks.glb: tank_big", Rect2i(107, 241, 3, 3), 2],
+	["port_tanks.glb: tank_big", Rect2i(107, 238, 3, 3), 2],
+	["port_tanks.glb: tank_big", Rect2i(104, 241, 3, 3), 2],
+	["port_tanks.glb: tank_big", Rect2i(104, 238, 3, 3), 2],
+]
+## The radio tower of the port becomes the radio tower of the city (the TELECOM_TOWER at
+## RADIO_TOWER_AT), drawn RADIO_TOWER_SCALE times its own size.
+const RADIO_TOWER := "port_towers.glb: tower_radio"
+const RADIO_TOWER_AT := Vector2i(104, 184)
+const RADIO_TOWER_SCALE := 6.0
+## Billboards turned round: top-left cell of the lot, new facing (0 N, 1 E, 2 S, 3 W).
+const BILLBOARDS_TURNED := [[Vector2i(167, 200), 0]]
+## Sheds of the port (pontoons) out on the high seas: model, how many, lot, how far apart.
+const SEA_SHED := "port_sheds.glb: shed_generic_4"
+const SEA_SHEDS := 6
+const SEA_SHED_LOT := Vector2i(4, 2)
+const SEA_SHED_APART := 70.0
+const SEA_SHED_OFFSHORE := 16
 
 var _d: CityData
 var _grid := PackedByteArray()
@@ -78,7 +131,7 @@ var _radius := Vector2.ONE
 
 
 ## Returns {"hotels": n models given, "hotels_added": n, "removed": n, "yards_removed": n,
-## "placed": n, "missing": n, "oil_rig": 0 or 1}.
+## "placed": n, "missing": n, "hand": n changes, "oil_rig": 0 or 1, "sea_sheds": n}.
 static func apply(data: CityData) -> Dictionary:
 	var p := PortRework.new()
 	p._d = data
@@ -90,7 +143,10 @@ static func apply(data: CityData) -> Dictionary:
 	p._mark()
 	out["placed"] = p._place()
 	out["missing"] = PORT_MODELS.size() - out["placed"]
+	out["hand"] = p._hand_edits()
+	p._mark()
 	out["oil_rig"] = p._oil_rig()
+	out["sea_sheds"] = p._sea_sheds()
 	return out
 
 
@@ -232,9 +288,118 @@ func _free_lot(r: Rect2i) -> bool:
 	return true
 
 
-# --- The oil rig --------------------------------------------------------------------------------
-## At sea, on the spot of open water farthest from any coast (island, quay or edge of the map).
+# --- Hand edits ---------------------------------------------------------------------------------
+## Applies PORT_DELETED, PORT_REPLACED, PORT_MOVED and PORT_ADDED, gives the city's radio tower
+## the model of the port's one and turns BILLBOARDS_TURNED. Returns how many changes were made.
+func _hand_edits() -> int:
+	var done := 0
+	for m in PORT_DELETED + PORT_REPLACED + [RADIO_TOWER]:
+		var b := _port_building(m)
+		if b >= 0:
+			_d.b_kind[b] = Kind.EMPTY
+			_d.b_model.erase(b)
+			done += 1
+	for e in PORT_MOVED:
+		var b := _port_building(e[0])
+		if b >= 0:
+			_d.set_building_rect(b, e[1])
+			_d.b_facing[b] = e[2]
+			done += 1
+	for e in PORT_ADDED:
+		var b := _d.add_building(e[1], Kind.INDUSTRIAL, e[2], 1, 0.5)
+		_d.b_model[b] = e[0]
+		done += 1
+	for b in _d.building_count():
+		var at := _d.building_rect(b).position
+		if _d.b_kind[b] == Kind.TELECOM_TOWER and at == RADIO_TOWER_AT:
+			_d.b_model[b] = RADIO_TOWER
+			_d.b_scale[b] = RADIO_TOWER_SCALE
+			done += 1
+		elif _d.b_kind[b] == Kind.BILLBOARD:
+			for t in BILLBOARDS_TURNED:
+				if at == t[0]:
+					_d.b_facing[b] = t[1]
+					done += 1
+	return done
+
+
+## The standing building drawn with `model` (each model has one lot in the port), -1 if none.
+func _port_building(model: String) -> int:
+	for b in _d.building_count():
+		if _d.b_kind[b] != Kind.EMPTY and _d.b_model.get(b, "") == model:
+			return b
+	return -1
+
+
+# --- At sea -------------------------------------------------------------------------------------
+## SEA_SHEDS pontoon sheds on the high seas: the spots of open water farthest from any coast,
+## SEA_SHED_APART from each other and from the oil rig. Returns how many were placed.
+func _sea_sheds() -> int:
+	var dist := _sea_distance()
+	var n := _d.size
+	var taken: Array[Vector2] = []
+	for b in _d.building_count():
+		if _d.b_model.get(b, "") == OIL_RIG:
+			taken.append(Vector2(_d.building_rect(b).get_center()))
+	var cells: Array[Vector2i] = []
+	for y in range(0, n - SEA_SHED_LOT.y):
+		for x in range(0, n - SEA_SHED_LOT.x):
+			if dist[_d.idx(x, y)] >= SEA_SHED_OFFSHORE:
+				cells.append(Vector2i(x, y))
+	cells.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da := dist[_d.idx(a.x, a.y)]
+		var db := dist[_d.idx(b.x, b.y)]
+		return da > db or (da == db and CityTypes.hash2(a.x, a.y, 613) < CityTypes.hash2(b.x, b.y, 613)))
+	var placed := 0
+	for c in cells:
+		if placed >= SEA_SHEDS:
+			break
+		var r := Rect2i(c, SEA_SHED_LOT)
+		var at := Vector2(r.get_center())
+		if not taken.all(func(q: Vector2) -> bool: return q.distance_to(at) >= SEA_SHED_APART):
+			continue
+		if not _open_sea(r.grow(OIL_RIG_SEA)):
+			continue
+		var b := _d.add_building(r, Kind.BOAT, 2, 0, 0.5)
+		_d.b_model[b] = SEA_SHED
+		_stamp(r)
+		taken.append(at)
+		placed += 1
+	if placed < SEA_SHEDS:
+		push_warning("[Port] only %d of the %d sheds at sea" % [placed, SEA_SHEDS])
+	return placed
+
+
+## The oil rig: at sea, OIL_RIG_OFFSHORE cells off the coast at least, as near the port as it
+## can stand, so that it is seen from the quays.
 func _oil_rig() -> int:
+	var n := _d.size
+	var dist := _sea_distance()
+	var best := Rect2i()
+	var best_d := INF
+	for y in range(0, n - OIL_RIG_LOT.y):
+		for x in range(0, n - OIL_RIG_LOT.x):
+			var c := Vector2i(x + OIL_RIG_LOT.x / 2, y + OIL_RIG_LOT.y / 2)
+			if dist[_d.idx(c.x, c.y)] < OIL_RIG_OFFSHORE:
+				continue
+			var d := Vector2(c).distance_to(_center)
+			if d < best_d:
+				var r := Rect2i(Vector2i(x, y), OIL_RIG_LOT)
+				if _open_sea(r.grow(OIL_RIG_SEA)):
+					best_d = d
+					best = r
+	if best.size.x == 0:
+		push_warning("[Port] no open sea for the oil rig")
+		return 0
+	var b := _d.add_building(best, Kind.BOAT, 2, 0, 0.5)
+	_d.b_model[b] = OIL_RIG
+	_stamp(best)
+	return 1
+
+
+## Cells of open water to the nearest coast (island, quay, building at sea or edge of the
+## map), 0 on them.
+func _sea_distance() -> PackedInt32Array:
 	var n := _d.size
 	var dist := PackedInt32Array()
 	dist.resize(n * n)
@@ -261,23 +426,7 @@ func _oil_rig() -> int:
 			if dist[j] < 0:
 				dist[j] = dist[i] + 1
 				queue.append(j)
-	var best := Rect2i()
-	var best_d := 0
-	for y in range(0, n - OIL_RIG_LOT.y):
-		for x in range(0, n - OIL_RIG_LOT.x):
-			var c := Vector2i(x + OIL_RIG_LOT.x / 2, y + OIL_RIG_LOT.y / 2)
-			var d := dist[_d.idx(c.x, c.y)]
-			if d > best_d:
-				var r := Rect2i(Vector2i(x, y), OIL_RIG_LOT)
-				if _open_sea(r.grow(OIL_RIG_SEA)):
-					best_d = d
-					best = r
-	if best.size.x == 0:
-		push_warning("[Port] no open sea for the oil rig")
-		return 0
-	var b := _d.add_building(best, Kind.BOAT, 2, 0, 0.5)
-	_d.b_model[b] = OIL_RIG
-	return 1
+	return dist
 
 
 func _open_sea(r: Rect2i) -> bool:

@@ -450,16 +450,31 @@ func industrial_zones() -> Array[Dictionary]:
 	return comps
 
 
-## A mobile crane truck in the biggest industrial zone and a grapple loader in the second.
+## The port shed the mobile crane truck parks beside (PortRework gives it its lot).
+const CRANE_TRUCK_SHED := "port_sheds.glb: shed_generic_3"
+
+
+## A mobile crane truck in the biggest industrial zone (parked beside CRANE_TRUCK_SHED when
+## it stands) and a grapple loader in the second.
 func _industrial_zones() -> void:
 	var zones := industrial_zones()
 	var ids := ["p54_35_crane_truck_mobile", "p54_38_loader_grapple_yellow"]
 	for k in mini(ids.size(), zones.size()):
 		var z: Dictionary = zones[k]
+		if k == 0 and _beside_model(ids[k], CRANE_TRUCK_SHED, "parked beside a port shed"):
+			continue
 		if not _in_zone(ids[k], z["center"], "industrial zone %d" % (k + 1)):
 			push_warning("[Vehicles] no room in industrial zone %d" % (k + 1))
 	if zones.size() < ids.size():
 		push_warning("[Vehicles] only %d industrial zone(s)" % zones.size())
+
+
+## Beside the building drawn with `model`; false when there is none or no room.
+func _beside_model(id: String, model: String, why: String) -> bool:
+	for b in _d.building_count():
+		if _d.b_kind[b] != Kind.EMPTY and _d.b_model.get(b, "") == model:
+			return _beside(id, _d.building_rect(b), why, 41, 0.4, 3.0)
+	return false
 
 
 ## Free spot closest to `center` on industrial ground.
