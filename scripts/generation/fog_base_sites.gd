@@ -83,7 +83,7 @@ const HUMVEES := [
 	[Vector2(88.0, 96.7), Vector2(1, 0)], [Vector2(95.3, 81.0), Vector2(0, 1)],
 	[Vector2(96.7, 104.0), Vector2(0, -1)], [Vector2(75.0, 61.0), Vector2(1, 0)],
 ]
-## On the apron of the air base, beside the taxiway.
+## The fire truck stands beside the staff building of the air base, the tow truck on the apron.
 const FIRE_TRUCK := "p54_33_fire_truck"
 const TOW_TRUCK := "p54_08_tow_truck_yellow"
 
@@ -106,7 +106,7 @@ static func plan() -> Array[Dictionary]:
 	_add(out, Cat.SAM_NASAMS, Vector2(38, 60), west)
 	_add(out, Cat.SAM_NASAMS, Vector2(134, 60), east)
 	_add(out, Cat.APC_EE11, Vector2(104.0, 71.5), north)
-	_veh(out, FIRE_TRUCK, Vector2(108.0, 67.5), north)
+	_veh(out, FIRE_TRUCK, Vector2(79.2, 70.5), north) # beside the staff building
 	_veh(out, TOW_TRUCK, Vector2(112.0, 67.5), north)
 	_veh(out, HELICOPTER, HELIPAD, east)
 	# --- Camp: army and medical tents mixed north of the road, barracks ---

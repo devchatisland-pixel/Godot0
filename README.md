@@ -106,8 +106,8 @@ they were planned: read the urban island, the fog island, the trees and the fenc
   orange low poly hotel; the school bus is parked in front of the main school; a Burger King and two Las Vegas
   clubs are gone; the neon tower of Las Vegas faces east.
 * **Prison**: a wire fence all round it, on dry ground only, with floodlights and bleachers in its yard.
-* **Secret base**: 1.5 times bigger (its jets too), inside a wire fence. Ground helipads are the helipad model
-  (the roof of the hospital keeps its painted H) and helicopters are a third bigger.
+* **Secret base**: 1.5 times bigger (its jets too), inside a wire fence. Ground helipads are the painted H of the
+  hospital roof, and helicopters are a third bigger.
 * **Fog island**: the jets and four of the carriers are turned about, the army and medical tents are mixed, half
   of the army vehicles are gone, the plant has no air defence any more and its barracks has the size of the
   others; jeeps stand by the tents, grey Humvees drive on the roads, a fire truck and a tow truck wait on the
@@ -360,7 +360,7 @@ Not used:
 * "Strike Fighters tanks pack" and "Strike Fighters APC/IFV pack" by 42manako (T-55, BMP-1, BRDM, EE-11 AA): **CC BY-NC 4.0, non-commercial use only**
 * "Low Poly Church" by Anthony Yanez and "Neon Sign - Woman" by Kira Khaos, CC BY 4.0
 
-* Sixteenth wave: "Windows Logo (2001-2012) in 3D" by ZoeError Remakes, "Neon joysticks" by local.yany, "BAR sign board" by alina_dreiman, "Helicopter Land / Helipad / Heliport" by muhammad.rihca, "SCHOOL BUS - low poly model" by Jasmin Daniel, "Jeep" by rajibkc and "Low Poly Building" by Ahmed Galeb, CC BY 4.0
+* Sixteenth wave: "Windows Logo (2001-2012) in 3D" by ZoeError Remakes, "Neon joysticks" by local.yany, "BAR sign board" by alina_dreiman, "SCHOOL BUS - low poly model" by Jasmin Daniel, "Jeep" by rajibkc and "Low Poly Building" by Ahmed Galeb, CC BY 4.0
 * "Armored Vehicle-Test" and "Armored Vehicle+Animation" by Kapi777 (the two Humvees): **CC BY-NC 4.0, non-commercial use only**
 * "Woman in Martini Neon Sign" by trashbinkr and "Low poly Hotel 1" by assetfactory: Sketchfab Standard licence (raw files kept out of git)
 

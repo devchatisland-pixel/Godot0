@@ -489,9 +489,6 @@ PACKS = {
         {"id": "vegas_love", "cat": "NEON_LOVE", "neon": True, "region": HEART, "width": 2.4, "weld": 0.012}]},
     "bank_min": {"src": "bank_minimalist_model.glb", "items": [
         {"id": "bank_minimalist", "cat": "BANK_MIN", "length": 2.8}]},
-    # One cell across: MapVehicles and FogBase scale it to the size of the pad.
-    "helipad": {"src": "helicopter_land__helipad__heliport.glb", "items": [
-        {"id": "helipad_ground", "cat": "HELIPAD", "length": 1.0}]},
     "hotel_low": {"src": "low_poly_hotel_1.glb", "tex": 512, "items": [
         {"id": "hotel_orange", "cat": "HOTEL_LOW", "skip": ["Collider"], "yaw": -90, "length": 2.8}]},
     # The court with its two hoops, as they stand in the pack (5.5 cells long).
