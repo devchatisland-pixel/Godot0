@@ -1,0 +1,9 @@
+{
+	"file": "helipad.glb",
+	"models": [
+		{
+			"cat": "HELIPAD",
+			"node": "helipad_ground"
+		}
+	]
+}

@@ -57,7 +57,7 @@ func generate() -> CityData:
 	print("[City] building budget: ", BuildingBudget.apply(data))
 	# The urban island is rebuilt last, so that nothing else of the map depends on it.
 	print("[City] urban island: ", UrbanIslandRebuild.apply(data))
-	print("[City] buildings deleted or resized by hand (expect 22 + 1 = 23): ", ManualEdits.delete_by_hand(data))
+	print("[City] buildings deleted or resized by hand (expect 25 + 1 = 26): ", ManualEdits.delete_by_hand(data))
 	print("[City] houses turned from west to east: ", ManualEdits.finish(data))
 	# The last drastic changes: an empty urban island, balloons in the air, submarines at sea.
 	print("[City] overhaul: ", MapOverhaul.apply(data, _cfg.seed))
@@ -66,6 +66,8 @@ func generate() -> CityData:
 	print("[City] additions: ", MapAdditions.apply(data))
 	# The concert camp clears what stands on its square, after the budget has counted it.
 	ConcertSite.apply(data)
+	# Wall signs of the urban island, more billboards, basketball courts, a bigger secret base.
+	print("[City] retouch: ", MapRetouch.apply(data))
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")

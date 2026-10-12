@@ -155,12 +155,20 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 ## Neon signs by model category: "roof" stands on the roof of the building at its south
 ## edge (on the highest point under the sign), "wall" hangs on its south wall at `height` (share of the building
 ## height). `scale` shrinks the model; `halo` is the size of the glow copy drawn behind it.
+## "face" hangs flat on the wall the sign was set up for (CityData.b_sign_facing: east or south,
+## the two walls the camera sees), in the middle of it, `fill` of the wall wide, at `height`.
 const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
 	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.58, "halo": 1.15, "yaw": PI * 0.5},
 	ModelCatalog.Cat.NEON_WOMAN: {"mount": "roof", "scale": 1.0, "halo": 1.12},
+	ModelCatalog.Cat.SIGN_WINDOWS: {"mount": "face", "fill": 0.86, "height": 0.6, "halo": 1.0},
+	ModelCatalog.Cat.NEON_JOYSTICK: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
+	ModelCatalog.Cat.NEON_MARTINI: {"mount": "face", "fill": 0.9, "height": 0.58, "halo": 1.08},
+	ModelCatalog.Cat.NEON_BAR: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 }
+## A wall sign is at most this share of the building's height.
+const FACE_MAX_HEIGHT := 0.5
 
 
 static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xform: Transform3D,
@@ -170,7 +178,8 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 	if ids.is_empty() or not SIGNS.has(cat):
 		return
 	var spec: Dictionary = SIGNS[cat]
-	var s: float = spec["scale"]
+	var s: float = spec.get("scale", 1.0)
+	var yaw: float = spec.get("yaw", 0.0)
 	# The sign stays where it was put when the building is turned afterwards.
 	var anchor := BuildingPlacer.pick_for(data, lib, i, data.b_sign_facing[i])
 	if not anchor.is_empty():
@@ -184,6 +193,18 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		local_center = model.get_center()
 		at.y = body.position.y + body.size.y * float(spec["height"])
 		at.z = body.end.z + 0.02
+	elif spec["mount"] == "face":
+		var east := int(data.b_sign_facing[i]) == 1
+		var wall := body.size.z if east else body.size.x
+		s = minf(wall * float(spec["fill"]) / model.size.x, body.size.y * FACE_MAX_HEIGHT / model.size.y)
+		# Its back against the wall, its face (+Z of the model) outwards.
+		local_center = Vector3(model.get_center().x, model.get_center().y, model.position.z)
+		at.y = body.position.y + body.size.y * float(spec["height"])
+		if east:
+			yaw = PI * 0.5
+			at.x = body.end.x + 0.02
+		else:
+			at.z = body.end.z + 0.02
 	else:
 		# A parapet sign: on the flat roof of the model (not on the box of the whole model, which
 		# also holds annexes and masts), flush with the roof edge the sign faces (south, or east
@@ -200,7 +221,7 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 			at.x = rr.get_center().x
 			at.z = rr.end.y - ROOF_EDGE_INSET
 		at.y = roof["y"]
-	var turn := Basis(Vector3.UP, float(spec.get("yaw", 0.0)))
+	var turn := Basis(Vector3.UP, yaw)
 	batch.add(ids[0], Transform3D(turn * Basis.from_scale(Vector3(s, s, s)), at - turn * (local_center * s)))
 	var halo := lib.named_id("neon_halo_%d" % cat)
 	if halo >= 0:

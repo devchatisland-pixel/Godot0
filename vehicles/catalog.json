@@ -31,6 +31,30 @@
    "author": "Vladek",
    "url": "https://sketchfab.com/3d-models/low-poly-vehicle-mini-pack-8-52ee24ff6eb2479891fe68e6ce46af28",
    "license": "CC-BY-4.0"
+  },
+  "schoolbus": {
+   "title": "SCHOOL BUS - low poly model",
+   "author": "Jasmin Daniel",
+   "url": "https://sketchfab.com/jasmin.daniel",
+   "license": "CC-BY-4.0"
+  },
+  "jeep": {
+   "title": "Jeep",
+   "author": "rajibkc",
+   "url": "https://sketchfab.com/rajibkc",
+   "license": "CC-BY-4.0"
+  },
+  "humvee_test": {
+   "title": "Armored Vehicle-Test",
+   "author": "Kapi777",
+   "url": "https://sketchfab.com/Kapi777",
+   "license": "CC-BY-NC-4.0"
+  },
+  "humvee_anim": {
+   "title": "Armored Vehicle+Animation",
+   "author": "Kapi777",
+   "url": "https://sketchfab.com/Kapi777",
+   "license": "CC-BY-NC-4.0"
   }
  },
  "vehicles": [
@@ -1637,6 +1661,86 @@
     "width": 2.02,
     "height": 1.27,
     "length": 4.24
+   }
+  },
+  {
+   "id": "school_bus",
+   "name": "School bus (Yellow)",
+   "category": "Buses & Coaches",
+   "model": "School bus",
+   "sub_model": "Yellow",
+   "pack": "schoolbus",
+   "source": "single mesh",
+   "file": "res://vehicles/models/buses_coaches/school_bus.glb",
+   "triangles": 4988,
+   "thumbnail": "res://vehicles/thumbs/school_bus.png",
+   "parts": [
+    "Body"
+   ],
+   "size_m": {
+    "width": 3.92,
+    "height": 3.64,
+    "length": 11.0
+   }
+  },
+  {
+   "id": "jeep_willys",
+   "name": "Jeep (Willys, olive)",
+   "category": "Military",
+   "model": "Jeep",
+   "sub_model": "Willys, olive",
+   "pack": "jeep",
+   "source": "single mesh",
+   "file": "res://vehicles/models/military/jeep_willys.glb",
+   "triangles": 11981,
+   "thumbnail": "res://vehicles/thumbs/jeep_willys.png",
+   "parts": [
+    "Body"
+   ],
+   "size_m": {
+    "width": 1.52,
+    "height": 1.92,
+    "length": 3.4
+   }
+  },
+  {
+   "id": "humvee_grey",
+   "name": "Armoured vehicle (Humvee, grey)",
+   "category": "Military",
+   "model": "Humvee",
+   "sub_model": "Grey",
+   "pack": "humvee_test",
+   "source": "repaired rig",
+   "file": "res://vehicles/models/military/humvee_grey.glb",
+   "triangles": 24352,
+   "thumbnail": "res://vehicles/thumbs/humvee_grey.png",
+   "parts": [
+    "Body"
+   ],
+   "size_m": {
+    "width": 2.73,
+    "height": 2.51,
+    "length": 4.9
+   }
+  },
+  {
+   "id": "humvee_sand",
+   "name": "Armoured vehicle (Humvee, sand)",
+   "category": "Military",
+   "model": "Humvee",
+   "sub_model": "Sand",
+   "pack": "humvee_anim",
+   "source": "repaired rig",
+   "file": "res://vehicles/models/military/humvee_sand.glb",
+   "triangles": 24352,
+   "thumbnail": "res://vehicles/thumbs/humvee_sand.png",
+   "parts": [
+    "Body"
+   ],
+   "size_m": {
+    "width": 2.73,
+    "height": 2.51,
+    "length": 4.9
    }
   }
  ]

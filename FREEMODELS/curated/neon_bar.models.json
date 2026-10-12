@@ -1,0 +1,9 @@
+{
+	"file": "neon_bar.glb",
+	"models": [
+		{
+			"cat": "NEON_BAR",
+			"node": "bar_board"
+		}
+	]
+}

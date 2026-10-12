@@ -1,0 +1,9 @@
+{
+	"file": "sign_windows.glb",
+	"models": [
+		{
+			"cat": "SIGN_WINDOWS",
+			"node": "logo_windows"
+		}
+	]
+}

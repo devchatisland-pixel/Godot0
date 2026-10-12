@@ -1,6 +1,6 @@
 # Vehicle catalog
 
-73 vehicles. Each is a standalone GLB in `models/<category>/<id>.glb` (front = -Z, Y up, origin on the ground at the centre, approx. metres).
+77 vehicles. Each is a standalone GLB in `models/<category>/<id>.glb` (front = -Z, Y up, origin on the ground at the centre, approx. metres).
 Machine-readable list: [`catalog.json`](catalog.json). Overview image: [`catalog_sheet.png`](catalog_sheet.png).
 
 `id` is the stable key. Names were identified visually, so correct them in `tools/build_vehicle_catalog.py` and re-run.
@@ -66,11 +66,15 @@ Machine-readable list: [`catalog.json`](catalog.json). Overview image: [`catalog
 | ![](thumbs/p54_21_harvester_olive.png) | `p54_21_harvester_olive` | Harvester | Olive green | 10.0 x 6.2 x 3.8 | Body, Glass | 2361 |
 | ![](thumbs/p54_43_tractor_vintage_trailer.png) | `p54_43_tractor_vintage_trailer` | Tractor | Vintage with trailer | 9.3 x 3.6 x 2.6 | Body_1, Body_2 | 1761 |
 
-## Military (1)
+## Military (4) and the school bus
 
 | Preview | id | Model | Sub-model | L x W x H (m) | Parts | Tris |
 |---|---|---|---|---|---|---|
 | ![](thumbs/rosomak_apc.png) | `rosomak_apc` | Rosomak APC | Old version, camo green | 7.8 x 3.2 x 3.3 | Wheel_R_5, Wheel_R_3, Wheel_R_2, Wheel_R_1, Object_44, Object_46, Wheel_L_5, Wheel_L_3, Wheel_L_2, Wheel_L_1, Object_56, Object_57 | 14194 |
+| ![](thumbs/jeep_willys.png) | `jeep_willys` | Jeep | Willys, olive | 3.4 x 1.5 x 1.9 | Body | 11981 |
+| ![](thumbs/humvee_grey.png) | `humvee_grey` | Humvee | Grey | 4.9 x 2.7 x 2.5 | Body | 24352 |
+| ![](thumbs/humvee_sand.png) | `humvee_sand` | Humvee | Sand | 4.9 x 2.7 x 2.5 | Body | 24352 |
+| ![](thumbs/school_bus.png) | `school_bus` | School bus (listed here; category Buses & Coaches) | Yellow | 11.0 x 3.9 x 3.6 | Body | 4988 |
 
 ## Motorcycles (2)
 
@@ -155,6 +159,7 @@ Both packs are licensed **CC BY 4.0**; attribution is required when shipping.
 - "Japanese Police Car low poly" by SPixy01 - https://sketchfab.com/3d-models/japanese-police-car-low-poly-07bc7b73bf4541d1bb4683af771bf2f2
 - "POLICE CAR - LOW POLY" by Jasmin Daniel - https://sketchfab.com/3d-models/police-car-low-poly-0f5b12ea1f474887b9664fd7a171c17a
 - "KTO Rosomak (old version)" by Stachwel - https://sketchfab.com/3d-models/kto-rosomak-old-version-779d15dada5e4b0eb174a98b2ca03fd4
+- "SCHOOL BUS - low poly model" by Jasmin Daniel, "Jeep" by rajibkc (CC-BY-4.0); "Armored Vehicle-Test" and "Armored Vehicle+Animation" by Kapi777 (**CC-BY-NC-4.0, non-commercial use only**). These four are built by `tools/build_wave16_models.py`, which also repairs the broken rig of the two Humvee files.
 - "54 Vehicle Pack" by PorscheAaron (HotWheelsA) - https://sketchfab.com/3d-models/54-vehicle-pack-10575d5318f244e5987d45239dbc6247
 - "Low Poly Vehicle Mini Pack 8" by Vladek - https://sketchfab.com/3d-models/low-poly-vehicle-mini-pack-8-52ee24ff6eb2479891fe68e6ce46af28
 

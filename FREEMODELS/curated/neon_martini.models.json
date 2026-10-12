@@ -1,0 +1,9 @@
+{
+	"file": "neon_martini.glb",
+	"models": [
+		{
+			"cat": "NEON_MARTINI",
+			"node": "martini_woman"
+		}
+	]
+}

@@ -24,6 +24,8 @@ const FORMATION_SCALE := 2.0
 ## Aircraft carriers at sea round the fog island: where (degrees round its centre, east = 0,
 ## south = 90), how far out (1 = the coast) and how deep the hull lies in the water (cells).
 const CARRIER_ANGLES := [38.0, 92.0, 143.0, 216.0, 268.0, 322.0]
+## The carriers at these angles sail the first way round the island; the others were turned about.
+const CARRIER_KEPT := [216.0, 268.0]
 const CARRIER_RING := 1.34
 const CARRIER_DRAUGHT := 0.4
 
@@ -91,14 +93,16 @@ func _base(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> int
 		if id < 0:
 			continue
 		var dir: Vector2 = p["dir"]
-		_put(lib, batch, id, _standing(lib, id, Vector3(fog.origin.x + at.x, 0, fog.origin.y + at.y),
+		var lift := 0.0
+		if p.get("veh", "") == FogBaseSites.HELICOPTER and MapVehicles.helipad_id(lib) >= 0:
+			lift = MapVehicles.helipad_top(lib, MapVehicles.helipad_id(lib), FogBaseSites.HELIPAD_SIZE)
+		_put(lib, batch, id, _standing(lib, id, Vector3(fog.origin.x + at.x, lift, fog.origin.y + at.y),
 				atan2(dir.x, dir.y) + turn, scale), label[0], label[1], "military base of the fog island")
 		n += 1
-	var pad := lib.named_id("helipad_h")
+	var pad := MapVehicles.helipad_id(lib)
 	if pad >= 0:
 		var c := fog.origin + FogBaseSites.HELIPAD
-		var s := FogBaseSites.HELIPAD_SIZE
-		_put(lib, batch, pad, Transform3D(Basis.from_scale(Vector3(s, 1, s)), Vector3(c.x, LIFT, c.y)),
+		_put(lib, batch, pad, MapVehicles.helipad_xform(lib, pad, Vector3(c.x, 0, c.y), FogBaseSites.HELIPAD_SIZE),
 				"Helipad", "MILITARY", "military base of the fog island")
 	return n
 
@@ -113,7 +117,8 @@ func _carriers(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) ->
 	for deg: float in CARRIER_ANGLES:
 		var a := deg_to_rad(deg)
 		var p := c + Vector2(cos(a), sin(a)) * radius
-		_put(lib, batch, ids[0], _standing(lib, ids[0], Vector3(p.x, -CARRIER_DRAUGHT, p.y), atan2(-sin(a), cos(a)), 1.0),
+		var yaw := atan2(-sin(a), cos(a)) + (0.0 if CARRIER_KEPT.has(deg) else PI)
+		_put(lib, batch, ids[0], _standing(lib, ids[0], Vector3(p.x, -CARRIER_DRAUGHT, p.y), yaw, 1.0),
 				"Aircraft carrier", "SHIP", "at sea round the fog island")
 
 

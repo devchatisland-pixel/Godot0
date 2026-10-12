@@ -21,6 +21,7 @@ Rebuild with `python tools/build_shop_catalog.py <raw dir> shops`. Preview all o
 | `shop-general-brick` | General | Low Poly Shop (brick, balcony) | 3.89 x 5.23 x 2.1 | Natisis94 | CC-BY-4.0 |
 | `shop-general-mini` | General | Low-Poly Shop (mini) | 4.26 x 3.77 x 1.96 | reginald7 | CC-BY-4.0 |
 | `shop-townhouse-gabled` | Townhouse | Shop (gabled townhouse) | 2.3 x 2.74 x 2.48 | linus1178 | CC-BY-4.0 |
+| `shop-townhouse-blue` | Townhouse | Low Poly Building (blue townhouse) | 9.84 x 7.71 x 9.0 | Ahmed Galeb | CC-BY-4.0 |
 | `shop-steel-glass` | General | Shop (steel & glass) | 4.9 x 3.91 x 3.42 | bystryakov.yuriy | CC-BY-4.0 |
 | `shop-coffee-b` | Coffee | Shop - Free model (coffee shop) | 8.05 x 8.91 x 6.86 | Astro0960 | CC-BY-4.0 |
 | `shop-building-multi` | Building | Building (multi-part cubes) | 4.5 x 6.84 x 6.75 | Codracer13 | CC-BY-4.0 |
@@ -63,6 +64,7 @@ rows south of the shops. "Low-poly Container" by Muhammad Awais Gul, CC-BY-4.0,
 - **shop-general-brick** - Brick shop with balcony on a large white ground plane (remove it); contains Camera, Sun, Plane, Text nodes. Source: <https://sketchfab.com/3d-models/low-poly-shop-0c0665681ce6471c9393795e8a13fa88>
 - **shop-general-mini** - Corner shop with blue awning and glass front. Authored tiny: 0.17 units wide, needs ~6x scale-up just to be 1 tile. Source: <https://sketchfab.com/3d-models/low-poly-shop-e41e8060496a4693a9f62f5a4dd5b252>
 - **shop-townhouse-gabled** - Step-gabled house with red roof and hanging SHOP sign. 170 tris, single material - cheapest model. Source: <https://sketchfab.com/3d-models/shop-e89a9be0af324355b85278feb4f9da8f>
+- **shop-townhouse-blue** - Blue 3-storey townhouse with pink awnings and window boxes. 4.7k tris. Built by `tools/build_wave16_models.py`. Source: <https://sketchfab.com/AhmedGaleb>
 - **shop-steel-glass** - Grey flat roof, glass front, red louvres/shutters. Pivot is centred vertically (y -1.6..1.8): needs lifting to sit on ground. Source: <https://sketchfab.com/3d-models/shop-23e3cdb766bd40ac9c63fddfd2d39856>
 - **shop-coffee-b** - Coffee shop with cup + COFFEE sign on roof, lamp post, fence, on a dark base slab. 12k tris; floats at y 0.68 min. Source: <https://sketchfab.com/3d-models/shop-free-model-a10e5b0977cc41c6b115a568ee18772b>
 - **shop-building-multi** - Pink/grey multi-storey building with striped awning and green base. 36 Cube meshes, 19 materials; pivot centred (y -2.85..3.9). Source: <https://sketchfab.com/3d-models/building-6f57edbc41024402ac4035b6b89661e5>

@@ -1,0 +1,559 @@
+#!/usr/bin/env python3
+"""Builds the models of the sixteenth wave from their raw files (FREEMODELS/_incoming).
+
+Usage:  python tools/build_wave16_models.py [--src <folder of the raw .glb>] [--info] [name ...]
+Needs:  numpy, Pillow.
+
+Every model is baked to plain triangles in world space (node transforms and skins applied: the
+two Humvee files are rigged, and collapse to a few centimetres when their skin is ignored),
+turned, scaled, centred on x/z and put on y = 0, with small textures. Three kinds of output:
+
+  curated packs  FREEMODELS/curated/<pack>.glb + <pack>.models.json   (front +Z, cells)
+  vehicles       vehicles/models/<category>/<id>.glb + vehicles/catalog.json   (front -Z, metres)
+  shops          shops/models/<id>.glb + shops/catalog.json   (front -Z, metres)
+
+With names after the options only those outputs (pack name or catalog id) are rebuilt.
+"""
+import io, json, os, struct, sys
+import numpy as np
+from PIL import Image
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CT = {5120: np.int8, 5121: np.uint8, 5122: np.int16, 5123: np.uint16, 5125: np.uint32, 5126: np.float32}
+NC = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}
+
+
+# --- Reading ------------------------------------------------------------------------------------
+class Glb:
+    def __init__(self, path):
+        d = open(path, "rb").read()
+        n = struct.unpack("<I", d[12:16])[0]
+        self.j = json.loads(d[20:20 + n])
+        o = 20 + n
+        n2 = struct.unpack("<I", d[o:o + 4])[0]
+        self.bin = d[o + 8:o + 8 + n2]
+        self._images = {}
+
+    def acc(self, i):
+        a = self.j["accessors"][i]
+        bv = self.j["bufferViews"][a["bufferView"]]
+        n = NC[a["type"]]
+        dt = np.dtype(CT[a["componentType"]])
+        off = bv.get("byteOffset", 0) + a.get("byteOffset", 0)
+        stride = bv.get("byteStride") or n * dt.itemsize
+        if stride == n * dt.itemsize:
+            r = np.frombuffer(self.bin, dt, a["count"] * n, off).reshape(a["count"], n)
+        else:
+            raw = np.frombuffer(self.bin, np.uint8, (a["count"] - 1) * stride + n * dt.itemsize, off)
+            idx = (np.arange(a["count"])[:, None] * stride + np.arange(n * dt.itemsize)[None, :]).ravel()
+            r = raw[idx].view(dt).reshape(a["count"], n)
+        r = r.astype(np.float64) if dt.kind == "f" else r.copy()
+        if a.get("normalized") and dt.kind != "f":
+            r = r.astype(np.float64) / float(np.iinfo(dt).max)
+        return r
+
+    def image(self, i):
+        if i not in self._images:
+            bv = self.j["bufferViews"][self.j["images"][i]["bufferView"]]
+            o = bv.get("byteOffset", 0)
+            self._images[i] = Image.open(io.BytesIO(self.bin[o:o + bv["byteLength"]])).convert("RGBA")
+        return self._images[i]
+
+    @staticmethod
+    def local(n):
+        if "matrix" in n:
+            return np.array(n["matrix"], dtype=float).reshape(4, 4).T
+        m = np.eye(4)
+        if "scale" in n:
+            m = np.diag(list(n["scale"]) + [1.0]) @ m
+        if "rotation" in n:
+            x, y, z, w = n["rotation"]
+            r = np.eye(4)
+            r[:3, :3] = [[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+                         [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+                         [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]]
+            m = r @ m
+        if "translation" in n:
+            t = np.eye(4)
+            t[:3, 3] = n["translation"]
+            m = t @ m
+        return m
+
+    def worlds(self):
+        """World matrix and path of names ("a/b/c") of every node."""
+        out, paths = {}, {}
+
+        def rec(i, parent, path):
+            n = self.j["nodes"][i]
+            out[i] = parent @ self.local(n)
+            paths[i] = path + "/" + n.get("name", "")
+            for c in n.get("children", []):
+                rec(c, out[i], paths[i])
+        for r in self.j["scenes"][self.j.get("scene", 0)]["nodes"]:
+            rec(r, np.eye(4), "")
+        return out, paths
+
+    def material(self, mi, tex_max):
+        """Plain description of material `mi`: colour, picture, emission, blending."""
+        if mi is None:
+            return {"name": "none", "color": [0.8, 0.8, 0.8, 1.0]}
+        m = self.j["materials"][mi]
+        pbr = m.get("pbrMetallicRoughness", {})
+        sg = m.get("extensions", {}).get("KHR_materials_pbrSpecularGlossiness", {})
+        out = {"name": m.get("name", "mat%d" % mi), "key": (id(self), mi),
+               "color": list(pbr.get("baseColorFactor", sg.get("diffuseFactor", [1, 1, 1, 1]))),
+               "blend": m.get("alphaMode", "OPAQUE") == "BLEND"}
+        bt = pbr.get("baseColorTexture", sg.get("diffuseTexture"))
+        if bt is not None:
+            out["image"] = _small(self.image(self.j["textures"][bt["index"]]["source"]), tex_max)
+        if m.get("emissiveFactor") and any(m["emissiveFactor"]):
+            out["emissive"] = list(m["emissiveFactor"])
+            if "emissiveTexture" in m:
+                out["emissive_image"] = _small(
+                        self.image(self.j["textures"][m["emissiveTexture"]["index"]]["source"]), tex_max)
+        return out
+
+    def parts(self, tex_max=512):
+        """Every triangle list of the file in world space: {"path", "pos", "nrm", "uv", "idx", "mat"}."""
+        worlds, paths = self.worlds()
+        res = []
+        for i, n in enumerate(self.j["nodes"]):
+            if "mesh" not in n or i not in worlds:
+                continue
+            skin = None
+            if "skin" in n:
+                s = self.j["skins"][n["skin"]]
+                ibm = self.acc(s["inverseBindMatrices"]).reshape(-1, 4, 4).transpose(0, 2, 1)
+                skin = np.stack([worlds[j] @ ibm[k] for k, j in enumerate(s["joints"])])
+            for pr in self.j["meshes"][n["mesh"]]["primitives"]:
+                if pr.get("mode", 4) != 4:
+                    continue
+                at = pr["attributes"]
+                p = self.acc(at["POSITION"]).astype(float)
+                raw = p
+                bind_t = None
+                nr = self.acc(at["NORMAL"]).astype(float) if "NORMAL" in at else None
+                if skin is not None and "JOINTS_0" in at:
+                    jo = self.acc(at["JOINTS_0"]).astype(int)
+                    we = self.acc(at["WEIGHTS_0"]).astype(float)
+                    we /= np.maximum(we.sum(1, keepdims=True), 1e-9)
+                    mats = np.einsum("vk,vkab->vab", we, skin[jo])
+                    bind_t = ibm[jo[0, 0]][:3, 3]
+                else:
+                    mats = np.broadcast_to(worlds[i], (len(p), 4, 4))
+                p = np.einsum("vab,vb->va", mats[:, :3, :3], p) + mats[:, :3, 3]
+                if nr is not None:
+                    nr = np.einsum("vab,vb->va", np.linalg.inv(mats[:, :3, :3]).transpose(0, 2, 1), nr)
+                    nr /= np.linalg.norm(nr, axis=1, keepdims=True) + 1e-12
+                uv = self.acc(at["TEXCOORD_0"]).astype(float) if "TEXCOORD_0" in at else np.zeros((len(p), 2))
+                idx = self.acc(pr["indices"]).astype(np.int64).ravel() if "indices" in pr else np.arange(len(p))
+                idx = idx[:len(idx) // 3 * 3].reshape(-1, 3)
+                if np.linalg.det(worlds[i][:3, :3]) < 0 and skin is None:
+                    idx = idx[:, ::-1]
+                res.append({"path": paths[i], "pos": p, "nrm": nr, "uv": uv, "idx": idx, "raw": raw, "bind_t": bind_t,
+                            "mat": self.material(pr.get("material"), tex_max)})
+        return res
+
+
+def _small(img, tex_max):
+    if max(img.size) > tex_max:
+        k = tex_max / float(max(img.size))
+        img = img.resize((max(1, round(img.size[0] * k)), max(1, round(img.size[1] * k))), Image.LANCZOS)
+    return img
+
+
+# --- Shaping ------------------------------------------------------------------------------------
+def box(parts):
+    lo = np.min([p["pos"].min(0) for p in parts], 0)
+    hi = np.max([p["pos"].max(0) for p in parts], 0)
+    return lo, hi
+
+
+def turn(parts, m):
+    for p in parts:
+        p["pos"] = p["pos"] @ m.T
+        if p["nrm"] is not None:
+            p["nrm"] = p["nrm"] @ m.T
+
+
+def yaw(deg):
+    a = np.radians(deg)
+    return np.array([[np.cos(a), 0, np.sin(a)], [0, 1, 0], [-np.sin(a), 0, np.cos(a)]])
+
+
+def shape(parts, spec):
+    """Turns (spec "yaw", degrees round Y; "tilt": 3x3 matrix first), scales (spec "length": the
+    longest side on the ground, "width": the x side, or "height"; "scale" as it is) and puts the
+    model centred on x/z, standing on y = 0. Returns the size (x, y, z)."""
+    if "tilt" in spec:
+        turn(parts, np.array(spec["tilt"], dtype=float))
+    if spec.get("yaw"):
+        turn(parts, yaw(spec["yaw"]))
+    lo, hi = box(parts)
+    size = hi - lo
+    s = spec.get("scale", 1.0)
+    if "length" in spec:
+        s = spec["length"] / max(size[0], size[2])
+    elif "width" in spec:
+        s = spec["width"] / size[0]
+    elif "height" in spec:
+        s = spec["height"] / size[1]
+    base = np.array([(lo[0] + hi[0]) * 0.5, lo[1], (lo[2] + hi[2]) * 0.5])
+    for p in parts:
+        p["pos"] = (p["pos"] - base) * s
+    return size * s
+
+
+# --- Writing ------------------------------------------------------------------------------------
+def write_glb(path, root, items):
+    """`items`: [(node name, parts)]; the file holds one root node `root` with one child per item."""
+    chunks, bvs, accs = [], [], []
+    size = [0]
+
+    def add(data, target=None):
+        pad = (-size[0]) % 4
+        if pad:
+            chunks.append(b"\0" * pad)
+            size[0] += pad
+        bv = {"buffer": 0, "byteOffset": size[0], "byteLength": len(data)}
+        if target:
+            bv["target"] = target
+        chunks.append(data)
+        size[0] += len(data)
+        bvs.append(bv)
+        return len(bvs) - 1
+
+    def acc(arr, ct, typ, target, minmax=False):
+        a = {"bufferView": add(arr.tobytes(), target), "componentType": ct, "count": int(arr.shape[0]), "type": typ}
+        if minmax:
+            a["min"] = [float(x) for x in arr.min(0)]
+            a["max"] = [float(x) for x in arr.max(0)]
+        accs.append(a)
+        return len(accs) - 1
+
+    images, textures, materials, mat_ids, tex_ids = [], [], [], {}, {}
+
+    def texture(img):
+        key = id(img)
+        if key not in tex_ids:
+            buf = io.BytesIO()
+            alpha = np.asarray(img)[:, :, 3].min() < 250
+            if alpha:
+                img.save(buf, "PNG", optimize=True)
+            else:
+                img.convert("RGB").save(buf, "JPEG", quality=88)
+            images.append({"bufferView": add(buf.getvalue()), "mimeType": "image/png" if alpha else "image/jpeg"})
+            textures.append({"sampler": 0, "source": len(images) - 1})
+            tex_ids[key] = len(textures) - 1
+        return {"index": tex_ids[key]}
+
+    def material(m):
+        key = m.get("key", id(m))
+        if key not in mat_ids:
+            pbr = {"baseColorFactor": [float(c) for c in m["color"]], "metallicFactor": 0.0, "roughnessFactor": 0.9}
+            if m.get("image") is not None:
+                pbr["baseColorTexture"] = texture(m["image"])
+            out = {"name": m["name"], "doubleSided": True, "pbrMetallicRoughness": pbr}
+            if m.get("blend"):
+                out["alphaMode"] = "BLEND"
+            if m.get("emissive"):
+                out["emissiveFactor"] = [float(c) for c in m["emissive"]]
+                if m.get("emissive_image") is not None:
+                    out["emissiveTexture"] = texture(m["emissive_image"])
+            materials.append(out)
+            mat_ids[key] = len(materials) - 1
+        return mat_ids[key]
+
+    nodes = [{"name": root, "children": []}]
+    meshes = []
+    for name, parts in items:
+        prims = []
+        for p in parts:
+            at = {"POSITION": acc(p["pos"].astype("<f4"), 5126, "VEC3", 34962, True),
+                  "TEXCOORD_0": acc(p["uv"].astype("<f4"), 5126, "VEC2", 34962)}
+            if p["nrm"] is not None:
+                at["NORMAL"] = acc(p["nrm"].astype("<f4"), 5126, "VEC3", 34962)
+            prims.append({"attributes": at, "indices": acc(p["idx"].astype("<u4").ravel(), 5125, "SCALAR", 34963),
+                          "material": material(p["mat"])})
+        meshes.append({"name": name, "primitives": prims})
+        nodes.append({"name": name, "mesh": len(meshes) - 1})
+        nodes[0]["children"].append(len(nodes) - 1)
+    doc = {"asset": {"version": "2.0", "generator": "tools/build_wave16_models.py"},
+           "extensionsUsed": ["GODOT_single_root"], "scene": 0, "scenes": [{"nodes": [0]}],
+           "nodes": nodes, "meshes": meshes, "materials": materials, "accessors": accs, "bufferViews": bvs,
+           "buffers": [{"byteLength": 0}]}
+    if textures:
+        doc["textures"] = textures
+        doc["images"] = images
+        doc["samplers"] = [{"magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497}]
+    blob = b"".join(chunks)
+    blob += b"\0" * ((-len(blob)) % 4)
+    doc["buffers"][0]["byteLength"] = len(blob)
+    js = json.dumps(doc, separators=(",", ":")).encode()
+    js += b" " * ((-len(js)) % 4)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "wb") as f:
+        f.write(struct.pack("<4sII", b"glTF", 2, 12 + 8 + len(js) + 8 + len(blob)))
+        f.write(struct.pack("<I4s", len(js), b"JSON") + js)
+        f.write(struct.pack("<I4s", len(blob), b"BIN\0") + blob)
+
+
+## The two Humvee files are broken: the wheels, seats and glass are stored in centimetres in the
+## space of the scene, but the hull, the doors, the turret and the interior are stored in metres
+## in another space (turned a quarter round Z), so they collapse to a few centimetres beside the
+## rest. Found by fitting the doors on their glass and the hull on the wheels: these parts go
+## back in place with one turn and one offset (the bind offset of a door, in metres); the hull
+## alone uses its own bind offset.
+HUMVEE_TURN = np.array([[0.0, 1.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, 1.0]])
+
+
+def repair_humvee(parts):
+    door = [p for p in parts if p["mat"]["name"].startswith("Door_Rear_Right") and np.abs(p["raw"]).max() < 30]
+    if not door:
+        return
+    offset = door[0]["bind_t"] / 100.0
+    for p in parts:
+        if p["bind_t"] is None or np.abs(p["raw"]).max() >= 30:
+            continue
+        o = p["bind_t"] / 100.0 if p["mat"]["name"] == "Chassis" else offset
+        p["pos"] = p["raw"] @ HUMVEE_TURN.T + o
+        if p["nrm"] is not None:
+            n = p["nrm"]
+            p["nrm"] = n / (np.linalg.norm(n, axis=1, keepdims=True) + 1e-12)
+
+
+def merged(parts):
+    """One part per material (Godot draws at most 256 surfaces per mesh; the townhouse has 297)."""
+    groups = {}
+    for p in parts:
+        groups.setdefault(p["mat"].get("key", id(p["mat"])), []).append(p)
+    out = []
+    for group in groups.values():
+        offset, idx = 0, []
+        for p in group:
+            idx.append(p["idx"] + offset)
+            offset += len(p["pos"])
+        flat = [p["nrm"] if p["nrm"] is not None else np.tile([0.0, 1.0, 0.0], (len(p["pos"]), 1)) for p in group]
+        out.append({"path": group[0]["path"], "pos": np.concatenate([p["pos"] for p in group]),
+                    "nrm": np.concatenate(flat), "uv": np.concatenate([p["uv"] for p in group]),
+                    "idx": np.concatenate(idx), "mat": group[0]["mat"]})
+    return out
+
+
+def triangles(parts):
+    return int(sum(len(p["idx"]) for p in parts))
+
+
+def pick(parts, spec):
+    """The parts a spec keeps: "nodes" (names found in the node path), "skip" (names left out),
+    "skip_materials" (material name prefixes left out)."""
+    out = []
+    for p in parts:
+        names = p["path"].split("/")
+        if "nodes" in spec and not any(n in names for n in spec["nodes"]):
+            continue
+        if any(n in names for n in spec.get("skip", [])):
+            continue
+        if any(p["mat"]["name"].startswith(m) for m in spec.get("skip_materials", [])):
+            continue
+        q = dict(p)
+        q["pos"] = p["pos"].copy()
+        q["nrm"] = None if p["nrm"] is None else p["nrm"].copy()
+        out.append(q)
+    return out
+
+
+def preview(parts, path, cell=360):
+    """Three flat views of a built model, to check which way it stands: seen from its front
+    (+Z, x to the right), from its right side (+X) and from above (front at the bottom)."""
+    from PIL import ImageDraw
+    lo, hi = box(parts)
+    span = float(max(hi - lo)) or 1.0
+    mid = (lo + hi) * 0.5
+    views = [(np.array([1.0, 0, 0]), np.array([0, 1.0, 0]), np.array([0, 0, 1.0])),
+             (np.array([0, 0, -1.0]), np.array([0, 1.0, 0]), np.array([1.0, 0, 0])),
+             (np.array([1.0, 0, 0]), np.array([0, 0, -1.0]), np.array([0, 1.0, 0]))]
+    img = Image.new("RGB", (cell * 3, cell), (58, 64, 74))
+    draw = ImageDraw.Draw(img)
+    for v, (right, up, toward) in enumerate(views):
+        tris = []
+        for p in parts:
+            m = p["mat"]
+            col = np.array(m["color"][:3], dtype=float)
+            pic = m.get("emissive_image") or m.get("image")
+            tex = np.asarray(pic.convert("RGB"), dtype=float) / 255.0 if pic is not None else None
+            if m.get("emissive") and tex is None:
+                col = np.array(m["emissive"], dtype=float)
+            t = p["pos"][p["idx"]]
+            n = np.cross(t[:, 1] - t[:, 0], t[:, 2] - t[:, 0])
+            n /= np.linalg.norm(n, axis=1, keepdims=True) + 1e-12
+            shade = 0.55 + 0.45 * np.abs(n @ toward)
+            c = t.mean(1)
+            uv = p["uv"][p["idx"]].mean(1)
+            for k in range(len(t)):
+                rgb = col
+                if tex is not None:
+                    rgb = col * tex[int(uv[k, 1] % 1.0 * (tex.shape[0] - 1)), int(uv[k, 0] % 1.0 * (tex.shape[1] - 1))]
+                tris.append((c[k] @ toward, t[k], rgb * shade[k]))
+        tris.sort(key=lambda e: e[0])
+        for _, t, rgb in tris:
+            pts = [(v * cell + cell * 0.5 + float((q - mid) @ right) / span * cell * 0.9,
+                    cell * 0.5 - float((q - mid) @ up) / span * cell * 0.9) for q in t]
+            draw.polygon(pts, fill=tuple(int(min(1.0, max(0.0, x)) * 255) for x in rgb))
+        draw.text((v * cell + 6, 4), ["front (+Z)", "right side (+X)", "top (front down)"][v], fill=(255, 255, 255))
+    img.save(path)
+
+
+# --- What is built ---------------------------------------------------------------------------------
+## A sign lying on its back, its top towards -Z: stood up, its face towards +Z.
+STAND_UP = [[1, 0, 0], [0, 0, -1], [0, 1, 0]]
+STREET_PACK = "lowpoly_city_street_pack_buildings_stylized.glb"
+
+## Curated packs: {"src", "tex", "items": [{"id", "cat", size keys of shape(), pick keys}]}.
+## The signs are 3 cells wide; BuildingExtras sizes them on the wall they hang on.
+PACKS = {
+    "sign_windows": {"src": "windows_logo_2001-2012_in_3d.glb", "items": [
+        {"id": "logo_windows", "cat": "SIGN_WINDOWS", "width": 3.0}]},
+    "neon_joystick": {"src": "neon_joysticks.glb", "tex": 512, "items": [
+        {"id": "joystick_white", "cat": "NEON_JOYSTICK", "nodes": ["FG Console Led"],
+         "skip_materials": ["ConsoleLedGlass"], "width": 3.0}]},
+    "neon_martini": {"src": "woman_in_martini_neon_sign.glb", "items": [
+        {"id": "martini_woman", "cat": "NEON_MARTINI", "tilt": STAND_UP, "width": 3.0}]},
+    "neon_bar": {"src": "bar_sign_board.glb", "items": [
+        {"id": "bar_board", "cat": "NEON_BAR", "yaw": 180, "width": 3.0}]},
+    # One cell across: MapVehicles and FogBase scale it to the size of the pad.
+    "helipad": {"src": "helicopter_land__helipad__heliport.glb", "items": [
+        {"id": "helipad_ground", "cat": "HELIPAD", "length": 1.0}]},
+    "hotel_low": {"src": "low_poly_hotel_1.glb", "tex": 512, "items": [
+        {"id": "hotel_orange", "cat": "HOTEL_LOW", "skip": ["Collider"], "yaw": -90, "length": 2.8}]},
+    # The court with its two hoops, as they stand in the pack (5.5 cells long).
+    "court": {"src": STREET_PACK, "tex": 256, "items": [
+        {"id": "basketball_court", "cat": "COURT", "nodes": ["Cube.209", "Cube.223", "terrain textures 1.004"],
+         "length": 5.5}]},
+}
+
+HUMVEE = {"yaw": 90, "length": 4.9, "tex": 256, "skip_materials": ["Muzzleflash"],
+          "file": "vehicles/models/military/%s.glb"}
+## Vehicles (vehicles/catalog.json): front -Z, metres.
+VEHICLES = {
+    "school_bus": {"src": "school__bus_-_low_poly_model.glb", "length": 11.0, "tex": 512,
+                   "file": "vehicles/models/buses_coaches/%s.glb",
+                   "entry": {"name": "School bus (Yellow)", "category": "Buses & Coaches", "model": "School bus",
+                             "sub_model": "Yellow", "pack": "schoolbus", "source": "single mesh"}},
+    "jeep_willys": {"src": "jeep.glb", "yaw": 90, "length": 3.4, "tex": 512,
+                    "file": "vehicles/models/military/%s.glb",
+                    "entry": {"name": "Jeep (Willys, olive)", "category": "Military", "model": "Jeep",
+                              "sub_model": "Willys, olive", "pack": "jeep", "source": "single mesh"}},
+    "humvee_grey": dict(HUMVEE, src="armored_vehicle-test.glb",
+                        entry={"name": "Armoured vehicle (Humvee, grey)", "category": "Military", "model": "Humvee",
+                               "sub_model": "Grey", "pack": "humvee_test", "source": "repaired rig"}),
+    "humvee_sand": dict(HUMVEE, src="armored_vehicleanimation.glb",
+                        entry={"name": "Armoured vehicle (Humvee, sand)", "category": "Military", "model": "Humvee",
+                               "sub_model": "Sand", "pack": "humvee_anim", "source": "repaired rig"}),
+}
+## Shops (shops/catalog.json): front -Z, metres.
+SHOPS = {
+    "shop-townhouse-blue": {"src": "low_poly_building.glb", "yaw": 90, "height": 9.0, "tex": 256,
+                            "file": "shops/models/%s.glb",
+                            "entry": {"category": "Townhouse", "name": "Low Poly Building (blue townhouse)",
+                                      "credit": {"title": "Low Poly Building", "author": "Ahmed Galeb",
+                                                 "url": "https://sketchfab.com/AhmedGaleb", "license": "CC-BY-4.0"},
+                                      "notes": "Blue 3-storey townhouse with pink awnings and window boxes."}},
+}
+CREDITS = {
+    "schoolbus": {"title": "SCHOOL BUS - low poly model", "author": "Jasmin Daniel",
+                  "url": "https://sketchfab.com/jasmin.daniel", "license": "CC-BY-4.0"},
+    "jeep": {"title": "Jeep", "author": "rajibkc", "url": "https://sketchfab.com/rajibkc", "license": "CC-BY-4.0"},
+    "humvee_test": {"title": "Armored Vehicle-Test", "author": "Kapi777", "url": "https://sketchfab.com/Kapi777",
+                    "license": "CC-BY-NC-4.0"},
+    "humvee_anim": {"title": "Armored Vehicle+Animation", "author": "Kapi777", "url": "https://sketchfab.com/Kapi777",
+                    "license": "CC-BY-NC-4.0"},
+}
+
+
+def main():
+    args = sys.argv[1:]
+    src = os.path.join(ROOT, "FREEMODELS", "_incoming")
+    if "--src" in args:
+        src = args[args.index("--src") + 1]
+        del args[args.index("--src"):args.index("--src") + 2]
+    info = "--info" in args
+    only = [a for a in args if not a.startswith("--")]
+    if info:
+        for name in only:
+            g = Glb(os.path.join(src, name))
+            for p in g.parts(64):
+                lo, hi = p["pos"].min(0), p["pos"].max(0)
+                print("%-70s %-22s tris %6d  lo %s hi %s" % (p["path"][-70:], p["mat"]["name"][:22], len(p["idx"]),
+                      np.round(lo, 2), np.round(hi, 2)))
+        return
+    cache = {}
+
+    def source(name, tex):
+        if (name, tex) not in cache:
+            cache[(name, tex)] = Glb(os.path.join(src, name)).parts(tex)
+            repair_humvee(cache[(name, tex)])
+        return cache[(name, tex)]
+
+    for pack, spec in PACKS.items():
+        if only and pack not in only:
+            continue
+        items, manifest = [], []
+        for it in spec["items"]:
+            parts = pick(source(it.get("src", spec.get("src")), spec.get("tex", 512)), it)
+            if not parts:
+                print("!! nothing found for", it["id"])
+                continue
+            size = shape(parts, it)
+            parts = merged(parts)
+            items.append((it["id"], parts))
+            manifest.append({"cat": it["cat"], "node": it["id"]})
+            print("%-18s %-16s %.2f x %.2f x %.2f cells, %d triangles" % (pack, it["id"], *size, triangles(parts)))
+        out = os.path.join(ROOT, "FREEMODELS", "curated", pack)
+        write_glb(out + ".glb", pack, items)
+        with open(out + ".models.json", "w", newline="
+") as f:
+            json.dump({"file": pack + ".glb", "models": manifest}, f, indent="\t")
+            f.write("\n")
+    _catalog(only, source, VEHICLES, "vehicles", "vehicles")
+    _catalog(only, source, SHOPS, "shops", "shops")
+
+
+def _catalog(only, source, table, folder, key):
+    path = os.path.join(ROOT, folder, "catalog.json")
+    cat = json.load(open(path))
+    changed = False
+    for vid, spec in table.items():
+        if only and vid not in only:
+            continue
+        parts = pick(source(spec["src"], spec.get("tex", 256)), spec)
+        size = shape(parts, spec)
+        parts = merged(parts)
+        rel = spec["file"] % vid
+        write_glb(os.path.join(ROOT, rel), vid, [(vid + "_body", parts)])
+        entry = {"id": vid}
+        entry.update(spec["entry"])
+        entry.update({"file": "res://" + rel, "triangles": triangles(parts)})
+        if folder == "vehicles":
+            thumb = "vehicles/thumbs/%s.png" % vid
+            preview(parts, os.path.join(ROOT, thumb), 240)
+            entry["thumbnail"] = "res://" + thumb
+            entry["parts"] = ["Body"]
+            entry["size_m"] = {"width": round(size[0], 2), "height": round(size[1], 2), "length": round(size[2], 2)}
+        else:
+            entry["size_m"] = {"width": round(size[0], 2), "depth": round(size[2], 2), "height": round(size[1], 2)}
+        cat[key] = [e for e in cat[key] if e["id"] != vid] + [entry]
+        changed = True
+        print("%-18s %-28s %.2f x %.2f x %.2f m, %d triangles" % (folder, vid, *size, entry["triangles"]))
+    if changed:
+        if "credits" in cat:
+            cat["credits"].update({k: v for k, v in CREDITS.items() if any(
+                    e.get("pack") == k for e in cat[key])})
+        with open(path, "w", newline="
+") as f:
+            json.dump(cat, f, indent=1)
+            f.write("\n")
+
+
+if __name__ == "__main__":
+    main()

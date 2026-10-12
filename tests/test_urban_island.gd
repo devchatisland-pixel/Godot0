@@ -296,7 +296,8 @@ func _check_signs(data: CityData, lib: ModelLibrary) -> void:
 		var cat: int = data.b_sign[b]
 		var sign_id: int = lib.ids(cat)[0]
 		var halo_id := lib.named_id("neon_halo_%d" % cat)
-		if not batch.transforms.has(sign_id) or not batch.transforms.has(halo_id):
+		# A lit logo (NightWindows.LOGO_PACKS) has no halo.
+		if not batch.transforms.has(sign_id) or (halo_id >= 0 and not batch.transforms.has(halo_id)):
 			_fail("B-%05d has no sign or halo in its batch" % b)
 			continue
 		var t: PackedFloat32Array = batch.transforms[sign_id]
