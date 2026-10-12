@@ -39,6 +39,11 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	for more: Array in data.b_more_signs.get(i, []):
 		_place_sign(data, lib, i, pid, xform, batch, more[0], more[1])
 	match kind:
+		Kind.CHURCH:
+			if lib.model_name(pid) == CROSS_LIGHT_MODEL:
+				# A tiny red light glowing on the tip of the cross.
+				var tip := box.position + box.size * CROSS_TIP
+				batch.add(lib.named_id("cross_light"), xform * Transform3D(Basis.from_scale(Vector3.ONE * CROSS_LIGHT_SIZE), tip))
 		Kind.AIRBASE:
 			var jets := lib.ids(Cat.JET_F111)
 			if not jets.is_empty():
@@ -159,6 +164,11 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 ## height). `scale` shrinks the model; `halo` is the size of the glow copy drawn behind it.
 ## "face" hangs flat on the wall the sign was set up for (CityData.b_sign_facing: east or south,
 ## the two walls the camera sees), in the middle of it, `fill` of the wall wide, at `height`.
+## Church model whose cross carries a red light: where the tip of the cross is in the box of
+## the model (share of its size), and the size of the light.
+const CROSS_LIGHT_MODEL := "free_mini.glb: m12"
+const CROSS_TIP := Vector3(0.48, 1.0, 0.83)
+const CROSS_LIGHT_SIZE := 0.035
 const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
