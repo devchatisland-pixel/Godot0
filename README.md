@@ -129,6 +129,16 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 * **Sea**: the offshore oil rig stands off the port, with open sea all round it.
 * `tests/dump_sites.gd` prints the hotels and the buildings of the industrial zone with their cells and models.
 
+**Nineteenth wave (`map_retouch.gd`, models from `tools/build_wave16_models.py`):**
+
+* **Urban island**: Taiwan style signboards on the row of towers, on the same east side as the neon signs. A
+  tower whose east wall is free carries its sign on that wall: the "Banasonic", McDonald's and Japanese
+  Coca-Cola boards stick out of the wall from their brackets (mount "blade"), and an LED ticker band wraps the
+  free south-east corner of a tower (mount "corner"). A tower with a lower one in front of it carries its board
+  on the roof instead, seen over the other one: the Coca-Cola billboard and the LED safety board (mount "roof",
+  `deep`). The neon bull moved from its wall to the roof of its tower. At night only the boards light up, in
+  their own colours; the steel frames stay dark (`NightWindows.LOGO_PACKS`, `LOGO_DARK`).
+
 | Where (on screen) | District | What you find |
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
@@ -390,6 +400,7 @@ Not used:
 * "Low Poly UFO Scene" by EdwinRC (CC BY 4.0), "Highway" by Genkidonky (CC BY 4.0)
 * "Pier (Game ready model)" by BlackBox613 and "Old pier" by smitecraft.swe, CC BY 4.0
 * "neon game controller" by alina_dreiman and "Neon Pac-Man" by patrakeevasveta, CC BY 4.0
+* "Taiwan style Signboard (lowpoly)" by Solarliu, CC BY 4.0 (six of its boards, in `FREEMODELS/curated/taiwan_signs.glb`; raw file kept out of git)
 * "LOWPOLY CITY STREET PACK BUILDINGS STYLIZED" by haykel-shaba, CC BY 4.0 (the stage, floodlights, bleachers and crowd barriers of the concert camp; raw file kept out of git)
 * "Low-poly City Night" by smooth998, "city at night low poly skyscrapers" by dasy444, "Cooling Tower (Background)" by trashbinkr, "BT TOWER" by PeeJaa and "low poly Watchtower" by Cebrail Yildiz: Sketchfab Standard licence (raw files kept out of git, only the curated copies are committed)
 * "XXX Neon Sign" by Jimmy Johansson, CC BY 4.0 (only a front render of it is used, as the XXX texture of the sign atlas)

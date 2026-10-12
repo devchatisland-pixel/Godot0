@@ -56,6 +56,9 @@ enum Cat {
 	# Eighteenth wave (tools/build_wave16_models.py, PortRework): the industrial buildings set (halls,
 	# sheds, towers and tanks), the oil and storage tanks with the brick factory, the offshore oil rig
 	IND_HALL, IND_SHED, IND_TOWER, PORT_TANK, OIL_RIG,
+	# Nineteenth wave (tools/build_wave16_models.py): Taiwan style signboards of the urban island
+	# (blade signs on the east walls, boards on the roofs, an LED band round a corner)
+	TW_BANASONIC, TW_MCDONALDS, TW_COLA_JP, TW_COLA_BILLBOARD, TW_LED_BOARD, TW_LED_BAND,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

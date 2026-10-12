@@ -14,18 +14,28 @@ extends RefCounted
 const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 
-## Top-left cell of the lot of the tower, sign (a ModelCatalog.Cat; BuildingExtras.SIGNS).
+## Top-left cell of the lot of the tower, sign (a ModelCatalog.Cat; BuildingExtras.SIGNS). Only
+## towers with no tower in front of their east wall carry a wall sign; the Taiwan signboards
+## (TW_*) hang out of the wall from their brackets, the LED band wraps a free south-east corner.
 const TOWER_SIGNS := [
 	[Vector2i(71, 143), "SIGN_WINDOWS"],
 	[Vector2i(63, 133), "NEON_JOYSTICK"],
 	[Vector2i(67, 170), "NEON_FUN"],
 	[Vector2i(67, 175), "NEON_PALM"],
 	[Vector2i(67, 195), "NEON_BAR"],
-	[Vector2i(71, 204), "NEON_BULL"],
+	[Vector2i(71, 155), "TW_COLA_JP"],
+	[Vector2i(63, 160), "TW_LED_BAND"],
+	[Vector2i(67, 179), "TW_BANASONIC"],
+	[Vector2i(67, 187), "TW_MCDONALDS"],
 ]
-## A second sign on the roof of a tower, above the one on its wall: top-left cell, sign.
+## Signs on the roof of a tower (above its wall sign, or alone on a tower that has a lower one in
+## front of its east wall, so the sign shows over it): top-left cell, sign. They look east like the
+## wall signs.
 const TOWER_ROOF_SIGNS := [
 	[Vector2i(67, 170), "NEON_MARTINI"],
+	[Vector2i(71, 204), "NEON_BULL"],
+	[Vector2i(67, 147), "TW_COLA_BILLBOARD"],
+	[Vector2i(63, 186), "TW_LED_BOARD"],
 ]
 ## Roof signs of three Las Vegas clubs (top-left cell of the lot, sign), looking south.
 const CLUB_SIGNS := [
@@ -106,9 +116,12 @@ func _signs() -> int:
 		n += 1
 	for s in TOWER_ROOF_SIGNS:
 		var b := _at(Kind.SKYLINE_BLDG, s[0])
-		if b >= 0:
-			_d.b_more_signs[b] = [[ModelCatalog.Cat[s[1]], "roof"]]
-			n += 1
+		if b < 0:
+			push_warning("[Retouch] no tower at %s for its roof sign" % s[0])
+			continue
+		_d.b_sign_facing[b] = SIGN_WALL
+		_d.b_more_signs[b] = [[ModelCatalog.Cat[s[1]], "roof"]]
+		n += 1
 	for s in CLUB_SIGNS:
 		var b := _at(Kind.NIGHTCLUB, s[0])
 		if b < 0:
