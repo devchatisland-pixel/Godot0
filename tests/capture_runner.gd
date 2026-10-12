@@ -4,7 +4,7 @@ extends Node
 
 const Kind := CityTypes.Kind
 const SHOTS := [
-	{"zoom": 62.0, "at": "start"},
+	{"zoom": 32.0, "at": "start"},
 	{"zoom": 230.0, "at": "center"},
 	{"zoom": 230.0, "at": "center", "night": true},
 	{"zoom": 40.0, "at": "bridge"},
@@ -159,6 +159,6 @@ func _spots(main: Node, list: String) -> void:
 		for k in 5:
 			await get_tree().process_frame
 		get_viewport().get_texture().get_image().save_png(_dir.path_join("spot_%d.png" % n))
-		print("[Capture] spot ", n, " at ", item)
+		print("[Capture] spot ", n, " at ", item, " ready ", Time.get_ticks_msec(), " ms after launch, chunks ", main.streamer.loaded_counts())
 		n += 1
 	get_tree().quit()

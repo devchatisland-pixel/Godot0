@@ -18,6 +18,9 @@ const CLUSTERS := [
 	{"at": Vector2(40, 70), "radius": 12.0, "towers": false},
 ]
 const HILLS := Vector2(36, 34)
+## Share of the tree spots that get a tree or a palm: the island is under the fog, half of
+## them are enough (they were a fifth of the triangles of the whole map).
+const TREE_SHARE := 0.5
 
 const GRASS := Color("7fae5c")
 const FOREST := Color("4f8a45")
@@ -136,7 +139,8 @@ func _place_trees() -> void:
 		for x in range(2, SIZE - 2, 2):
 			var h := CityTypes.hash2(x, y, 4242)
 			var p := Vector2(x, y) + Vector2(float(h & 15), float((h >> 4) & 15)) / 15.0 * 1.6
-			if not _is_land(p) or _in_cluster(p) or (h >> 8) & 3 == 0:
+			if not _is_land(p) or _in_cluster(p) or (h >> 8) & 3 == 0 \
+					or float((h >> 12) & 255) / 256.0 >= TREE_SHARE:
 				continue
 			var near_coast := _height[int(p.y) * SIZE + int(p.x)] < 0.18
 			trees.append([origin + p, near_coast or (h >> 10) & 1 == 0, h])

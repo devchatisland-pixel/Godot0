@@ -27,6 +27,7 @@ func _init() -> void:
 	PublicMeshes.build_all(lib)
 	MilitaryMeshes.build_all(lib)
 	FarmMeshes.build_all(lib)
+	ParkMeshes.build_all(lib)
 
 	var w := int(data.fog.origin.x) + FogIslandShaper.SIZE if data.fog != null else data.size
 	var h := data.size

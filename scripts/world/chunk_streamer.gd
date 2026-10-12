@@ -29,12 +29,20 @@ var _empty := {}           # Vector2i -> true for chunks of open sea
 var _visible_keys: Array[Vector2i] = []
 var _inline_jobs_left := 0 # single-threaded builds: jobs allowed this frame
 var near_mode := false
+## The baked chunk lists (ChunkBake), {} when the chunks are placed here.
+var _baked := {}
 
 
-func setup(cfg: CityConfig, data: CityData, lib: ModelLibrary) -> void:
+## `baked`: the lists of ChunkBake.read(); used when they match `lib`.
+func setup(cfg: CityConfig, data: CityData, lib: ModelLibrary, baked: Dictionary = {}) -> void:
 	_cfg = cfg
 	_data = data
 	_lib = lib
+	if ChunkBake.matches(baked, lib):
+		_baked = baked
+		print("[Chunks] baked lists used")
+	elif not baked.is_empty():
+		push_warning("[Chunks] the baked lists do not match the model library: chunks are placed")
 	_box_material = StandardMaterial3D.new()
 	_box_material.vertex_color_use_as_albedo = true
 	_box_material.roughness = 0.9
@@ -140,15 +148,19 @@ func _set_pending(st: ChunkState, far: bool) -> void:
 		st.near_pending = true
 
 
-## Worker thread: builds the instance lists of one chunk (no nodes, no RIDs).
+## Worker thread: builds the instance lists of one chunk (no nodes, no RIDs), or takes the
+## baked ones.
 func _run_job(key: Vector2i, far: bool) -> void:
-	var batch := InstanceBatch.new()
 	var side := _data.chunks_per_side()
-	var ids := _data.chunk_buildings[key.y * side + key.x]
-	for id in ids:
-		BuildingPlacer.place(_data, _lib, id, batch, far)
-	if not far:
-		GroundPlacer.place_cells(_data, _lib, _data.chunk_rect(key.x, key.y), batch)
+	var batch: InstanceBatch
+	if not _baked.is_empty():
+		batch = ChunkBake.batch(_baked, key.y * side + key.x, far)
+	else:
+		batch = InstanceBatch.new()
+		for id in _data.chunk_buildings[key.y * side + key.x]:
+			BuildingPlacer.place(_data, _lib, id, batch, far)
+		if not far:
+			GroundPlacer.place_cells(_data, _lib, _data.chunk_rect(key.x, key.y), batch)
 	_mutex.lock()
 	_results.append([key, far, batch])
 	_mutex.unlock()

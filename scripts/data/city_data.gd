@@ -60,6 +60,10 @@ var west_bridge := Vector3i(-1, -1, -1)
 var central_park := Rect2i()
 ## The island hidden in the fog, east of the map (FogIslandShaper).
 var fog: FogIslandShaper
+## Where the vehicles and the single props stand (VehicleSites.plan, ScenicProps.plan), when
+## the city was baked with them (CityBake); empty = MapVehicles plans them at start.
+var vehicle_plan: Array = []
+var prop_plan: Array = []
 
 
 func _init(p_size: int, p_chunk: int) -> void:

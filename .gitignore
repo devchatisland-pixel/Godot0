@@ -57,3 +57,6 @@ FREEMODELS/_incoming/highway.glb
 FREEMODELS/_incoming/street_stylized.glb
 poly_heatmap.png
 grid_map.png
+
+# Baked city and model library (tools/bake.gd): made by every Docker build, never committed
+/baked/

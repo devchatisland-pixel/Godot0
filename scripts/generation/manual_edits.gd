@@ -411,8 +411,10 @@ static func front_yard(data: CityData, b: int, depth: int, widen: int = 0) -> Ar
 			if r.has_point(c) or not data.in_bounds(x, y) or data.road[data.idx(x, y)] != 0:
 				continue
 			# On the front side: beyond the lot that way, level with it the other way.
-			var ahead := (o.x > 0 and x >= r.end.x) or (o.x < 0 and x < r.position.x) 					or (o.y > 0 and y >= r.end.y) or (o.y < 0 and y < r.position.y)
-			var level := (o.x != 0 and y >= r.position.y - widen and y < r.end.y + widen) 					or (o.y != 0 and x >= r.position.x - widen and x < r.end.x + widen)
+			var ahead := (o.x > 0 and x >= r.end.x) or (o.x < 0 and x < r.position.x) \
+					or (o.y > 0 and y >= r.end.y) or (o.y < 0 and y < r.position.y)
+			var level := (o.x != 0 and y >= r.position.y - widen and y < r.end.y + widen) \
+					or (o.y != 0 and x >= r.position.x - widen and x < r.end.x + widen)
 			if ahead and level:
 				out.append(c)
 	return out

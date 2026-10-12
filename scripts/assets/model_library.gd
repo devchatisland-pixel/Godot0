@@ -25,6 +25,8 @@ var cats := PackedInt32Array()
 ## loaded as named meshes "yardbox:NN" when the packs are done.
 const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "container-09", "container-10"]
 
+## True when the library was read from the bake: the procedural meshes are already in it.
+var baked := false
 var _pending: Array[Dictionary] = []
 var _yard_loaded := false
 ## Fence models, loaded as named meshes once the packs are done (see GroundPlacer.FENCE_*):
@@ -37,6 +39,58 @@ var _total := 0
 # Curated pack currently open (packs hold many buildings, opened once each).
 var _pack_path := ""
 var _pack_root: Node
+
+
+## The baked library (tools/bake.gd), read at start instead of loading every model file.
+const BAKE_PATH := "res://baked/models.res"
+## Bumped when BakedModels changes: an older file is then ignored.
+const BAKE_FORMAT := 2
+
+
+static func bake_key(cfg: CityConfig) -> String:
+	return "%d/%s" % [BAKE_FORMAT, cfg.models_root]
+
+
+## Writes the library as it is once every model file and the procedural meshes are loaded
+## (before the night lights are added: they change the materials at every start). Of the
+## first `files` meshes (the models of files), one whose id is not in `used` is saved empty:
+## the map never draws it, but its id, name and box stay, so that every model is still
+## chosen as before. Returns an Error.
+func save_bake(cfg: CityConfig, files: int, used: Dictionary, path: String = BAKE_PATH) -> Error:
+	var b := BakedModels.new()
+	b.key = bake_key(cfg)
+	var empty := ArrayMesh.new()
+	for i in meshes.size():
+		b.meshes.append(meshes[i] if i >= files or used.has(i) else empty)
+	b.bounds = bounds.duplicate()
+	b.road_masks = road_masks
+	b.names = names
+	b.cats = cats
+	b.by_cat = by_cat.duplicate()
+	b.named = named.duplicate()
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir()))
+	return ResourceSaver.save(b, path, ResourceSaver.FLAG_COMPRESS)
+
+
+## Takes everything from the baked library `b`; false (and nothing taken) when it was baked
+## for another set of models.
+func use_bake(b: BakedModels, cfg: CityConfig) -> bool:
+	if b == null or b.key != bake_key(cfg):
+		push_warning("[Models] the baked library does not match: every model file is loaded")
+		return false
+	meshes = b.meshes
+	bounds = b.bounds
+	road_masks = b.road_masks
+	names = b.names
+	cats = b.cats
+	by_cat = b.by_cat
+	named = b.named
+	_pending.clear()
+	_total = 1
+	_yard_loaded = true
+	baked = true
+	print("[Models] %d models read from %s" % [meshes.size(), BAKE_PATH])
+	return true
 
 
 func begin(cfg: CityConfig) -> void:

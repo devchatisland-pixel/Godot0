@@ -178,7 +178,8 @@ func _free(x: int, y: int) -> bool:
 		return false
 	var i := _d.idx(x, y)
 	var deco := _d.deco[i]
-	return _d.road[i] == 0 and _taken[i] == 0 			and deco != AmenitiesPlanner.FENCE_X and deco != AmenitiesPlanner.FENCE_Z
+	return _d.road[i] == 0 and _taken[i] == 0 \
+			and deco != AmenitiesPlanner.FENCE_X and deco != AmenitiesPlanner.FENCE_Z
 
 
 ## True when a vehicle of `length` cells centred on `at`, nose along `heading`, lies only
@@ -689,7 +690,8 @@ func _plant_road() -> void:
 	var plant := Rect2i()
 	for b in _d.building_count():
 		var r := _d.building_rect(b)
-		if _d.b_kind[b] == Kind.NUCLEAR_PLANT and MapLayout.on_urban_island(r.get_center()) 				and (plant.size.x == 0 or r.position.y > plant.position.y):
+		if _d.b_kind[b] == Kind.NUCLEAR_PLANT and MapLayout.on_urban_island(r.get_center()) \
+				and (plant.size.x == 0 or r.position.y > plant.position.y):
 			plant = r
 	if plant.size.x == 0:
 		return

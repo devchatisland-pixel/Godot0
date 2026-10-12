@@ -122,7 +122,8 @@ func _rough_lobe(coast: FastNoiseLite, at: Vector2, r: Vector2) -> void:
 	for y in range(maxi(int(at.y - r.y * 1.3), 0), mini(int(at.y + r.y * 1.3), size)):
 		for x in range(maxi(int(at.x - r.x * 1.4), 0), mini(int(at.x + r.x * 1.4), size)):
 			var t := _ellipse_t(Vector2(x, y), at, r, 0.0)
-			var n := minf(coast.get_noise_2d(x * ROUGH_FREQ.x, y * ROUGH_FREQ.x) * ROUGH_COAST.x 					+ coast.get_noise_2d(x * ROUGH_FREQ.y + 311.0, y * ROUGH_FREQ.y) * ROUGH_COAST.y, ROUGH_CAPE)
+			var n := minf(coast.get_noise_2d(x * ROUGH_FREQ.x, y * ROUGH_FREQ.x) * ROUGH_COAST.x \
+					+ coast.get_noise_2d(x * ROUGH_FREQ.y + 311.0, y * ROUGH_FREQ.y) * ROUGH_COAST.y, ROUGH_CAPE)
 			if t < ROUGH_CORE:
 				n = maxf(n, 0.0)
 			var p := Vector2(x, y) + Vector2(0.5, 0.5)

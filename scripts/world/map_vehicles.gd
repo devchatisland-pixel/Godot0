@@ -50,7 +50,8 @@ static func lengths_m() -> Dictionary:
 
 func build(data: CityData, lib: ModelLibrary) -> void:
 	var placed := 0
-	for p in VehicleSites.plan(data, lengths_m()):
+	var plan: Array = data.vehicle_plan if not data.vehicle_plan.is_empty() else VehicleSites.plan(data, lengths_m())
+	for p in plan:
 		var mid := mesh_id(lib, p["id"])
 		if mid < 0:
 			continue
@@ -77,7 +78,8 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 ## stands on the ground, scaled so that its longest side is the planned length.
 func _build_props(data: CityData, lib: ModelLibrary) -> void:
 	var n := 0
-	for p in ScenicProps.plan(data):
+	var plan: Array = data.prop_plan if not data.prop_plan.is_empty() else ScenicProps.plan(data)
+	for p in plan:
 		var id := lib.load_named("prop:" + String(p["file"]).get_file(), p["file"])
 		if id < 0:
 			continue
