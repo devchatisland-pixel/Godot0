@@ -17,6 +17,10 @@ const HOSPITAL_ROOF := 0.8688
 const JET_SCALE := 0.85
 ## The emblem of the U.N. tower is a bit smaller than the tower is wide.
 const UN_EMBLEM := 0.38
+## The cellhouse of the prison (the school building model): its width inside the walls of the
+## "prison" mesh (3.9 wide), and how far behind the middle it stands.
+const PRISON_HALL := 2.5
+const PRISON_HALL_BACK := 0.22
 
 static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 		pick: Dictionary, batch: InstanceBatch) -> void:
@@ -57,6 +61,14 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 				var front := Vector3(box.get_center().x, box.size.y * 0.66, box.end.z + 0.01)
 				var w := box.size.x * UN_EMBLEM
 				batch.add(lib.named_id("un_signs"), xform * Transform3D(Basis.from_scale(Vector3(w, w, w)), front))
+		Kind.PRISON:
+			var halls := lib.ids(Cat.BASE_HALL)
+			if not halls.is_empty():
+				var hb := lib.bounds[halls[0]]
+				var hs := PRISON_HALL / hb.size.x
+				var foot := Vector3(hb.get_center().x, hb.position.y, hb.get_center().z)
+				batch.add(halls[0], xform * Transform3D(Basis.from_scale(Vector3.ONE * hs),
+						Vector3(0, 0.03, -PRISON_HALL_BACK) - foot * hs))
 		Kind.MAIN_HOSPITAL:
 			if ModelPools.is_pack_model(lib, pid, Cat.HOSPITAL_MAIN):
 				# Lit red H over the helipad of the roof.

@@ -1,0 +1,217 @@
+{
+ "comment": "Second wave of the map changes: the 13 buildings of the night city skyline pack (one mesh, cut by region) for the urban island, the Golden Gate bridge, the radar dish that replaces the satellite dishes, the aircraft carrier and the oil silo.",
+ "packs": [
+  {
+   "src": "res://FREEMODELS/_incoming/night_city_skyline.glb",
+   "out": "skyline_towers",
+   "keep_emission": true,
+   "texture_max": 1024,
+   "comment": "Every building of the pack, at one scale (0.2 cell per unit) so they keep their sizes.",
+   "items": [
+    {
+     "id": "sky_01",
+     "region": [
+      -28.59,
+      -70.56,
+      -8.69,
+      -50.66
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 3.5
+    },
+    {
+     "id": "sky_02",
+     "region": [
+      -60.58,
+      -43.87,
+      -40.68,
+      -22.78
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 3.74
+    },
+    {
+     "id": "sky_03",
+     "region": [
+      50.94,
+      -35.88,
+      67.07,
+      -18.02
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 3.09
+    },
+    {
+     "id": "sky_04",
+     "region": [
+      8.31,
+      -22.12,
+      27.77,
+      -4.03
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 3.41
+    },
+    {
+     "id": "sky_05",
+     "region": [
+      -94.98,
+      -18.18,
+      -71.25,
+      11.1
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 5.38
+    },
+    {
+     "id": "sky_06",
+     "region": [
+      -28.43,
+      6.34,
+      -11.93,
+      27.33
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 3.72
+    },
+    {
+     "id": "sky_07",
+     "region": [
+      -122.45,
+      12.43,
+      -96.83,
+      38.04
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 4.64
+    },
+    {
+     "id": "sky_08",
+     "region": [
+      52.21,
+      16.11,
+      75.46,
+      39.47
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 4.19
+    },
+    {
+     "id": "sky_09",
+     "region": [
+      14.66,
+      23.87,
+      34.57,
+      43.6
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 3.5
+    },
+    {
+     "id": "sky_10",
+     "region": [
+      -33.61,
+      41.16,
+      -16.89,
+      57.93
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 2.87
+    },
+    {
+     "id": "sky_11",
+     "region": [
+      22.26,
+      61.44,
+      45.04,
+      83.54
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 4.08
+    },
+    {
+     "id": "sky_12",
+     "region": [
+      -102.02,
+      73.82,
+      -72.74,
+      97.55
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 5.38
+    },
+    {
+     "id": "sky_13",
+     "region": [
+      -21.08,
+      89.86,
+      -6.54,
+      104.39
+     ],
+     "cat": "NIGHT_SKYLINE",
+     "footprint": 2.43
+    }
+   ]
+  },
+  {
+   "src": "res://FREEMODELS/_incoming/golden_gate_bridge.glb",
+   "out": "golden_gate",
+   "texture_max": 256,
+   "items": [
+    {
+     "id": "golden_gate",
+     "nodes": [
+      "Sketchfab_model"
+     ],
+     "cat": "GOLDEN_GATE",
+     "footprint": 30.0
+    }
+   ]
+  },
+  {
+   "src": "res://FREEMODELS/_incoming/low-poly_radar_dish.glb",
+   "out": "dish",
+   "texture_max": 256,
+   "items": [
+    {
+     "id": "dish",
+     "nodes": [
+      "Sketchfab_model"
+     ],
+     "cat": "SAT_DISH",
+     "footprint": 1.3
+    }
+   ]
+  },
+  {
+   "src": "res://FREEMODELS/_incoming/carrier.glb",
+   "out": "carrier",
+   "texture_max": 256,
+   "items": [
+    {
+     "id": "carrier",
+     "nodes": [
+      "Sketchfab_model"
+     ],
+     "cat": "CARRIER",
+     "footprint": 14.0
+    }
+   ]
+  },
+  {
+   "src": "res://FREEMODELS/_incoming/low_poly_silo.glb",
+   "out": "silo",
+   "texture_max": 256,
+   "items": [
+    {
+     "id": "silo",
+     "nodes": [
+      "Sketchfab_model"
+     ],
+     "cat": "SILO",
+     "footprint": 1.7
+    }
+   ]
+  }
+ ]
+}

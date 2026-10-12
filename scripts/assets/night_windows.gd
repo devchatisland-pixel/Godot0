@@ -49,7 +49,7 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in PACK_GLOW:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
-	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE]:
+	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE, ModelCat.NIGHT_SKYLINE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
 	for cat in NEON_PACKS:

@@ -91,29 +91,40 @@ static func un_signs() -> ArrayMesh:
 # --- Prison island (4x3): cellhouse, water tower, guard towers, walls ------------------
 static func prison() -> ArrayMesh:
 	var k := MeshKit.new()
+	var wall := Color("8f8b80")
+	var wire := Color("5a5d6e")
 	k.box(Vector3(-1.95, 0, -1.45), Vector3(3.9, 0.03, 2.9), Color("a9a59b"))
-	# Cellhouse: long three-storey concrete block with rows of barred windows.
-	var cell := Vector3(-1.5, 0.03, -0.9)
-	var cell_size := Vector3(3.0, 0.75, 1.2)
-	k.box(cell, cell_size, Color("d7d2c4"), Color("8f8b80"))
-	k.windows(cell, cell_size, 3, 12, Color("3a3a40"))
-	k.box(Vector3(-1.55, 0.78, -0.95), Vector3(3.1, 0.06, 1.3), Color("c4bfb1"))
-	# Administration wing and the recreation yard walls.
-	k.box(Vector3(0.9, 0.03, 0.4), Vector3(0.8, 0.45, 0.6), Color("cfc9bb"), Color("8f8b80"))
-	k.box(Vector3(-1.9, 0.03, 0.4), Vector3(1.6, 0.25, 0.06), CONCRETE)
-	k.box(Vector3(-1.9, 0.03, 1.3), Vector3(1.6, 0.25, 0.06), CONCRETE)
-	k.box(Vector3(-1.9, 0.03, 0.4), Vector3(0.06, 0.25, 0.96), CONCRETE)
-	# Water tower on stilts.
-	for p in [Vector3(1.3, 0, -1.3), Vector3(1.7, 0, -1.3), Vector3(1.3, 0, -0.9), Vector3(1.7, 0, -0.9)]:
-		k.block(p, Vector3(0.04, 0.9, 0.04), Color("6b5a4a"))
-	k.cylinder(Vector3(1.5, 0.9, -1.1), 0.3, 0.3, 0.35, 12, Color("e6e0d0"), Color("8f8b80"))
-	k.cylinder(Vector3(1.5, 1.25, -1.1), 0.3, 0.0, 0.12, 12, Color("8f8b80"))
-	# Guard towers at two corners, with search lights.
-	for p in [Vector3(-1.75, 0, 1.2), Vector3(1.75, 0, 1.2)]:
-		k.block(p, Vector3(0.22, 0.75, 0.22), CONCRETE)
-		k.block(p + Vector3(0, 0.75, 0), Vector3(0.32, 0.16, 0.32), DARK)
-		k.block(p + Vector3(0, 0.91, 0), Vector3(0.38, 0.04, 0.38), Color("5a5d6e"))
+	# The cellhouse is the school building model (BuildingExtras puts it in the middle).
+	# Perimeter wall, with a gate in the middle of the front and razor wire on top.
+	var walls := [
+		[Vector3(-1.93, 0.03, -1.43), Vector3(3.86, 0.3, 0.07)], [Vector3(-1.93, 0.03, -1.43), Vector3(0.07, 0.3, 2.86)],
+		[Vector3(1.86, 0.03, -1.43), Vector3(0.07, 0.3, 2.86)], [Vector3(-1.93, 0.03, 1.36), Vector3(1.63, 0.3, 0.07)],
+		[Vector3(0.3, 0.03, 1.36), Vector3(1.63, 0.3, 0.07)],
+	]
+	for w in walls:
+		k.box(w[0], w[1], wall, CONCRETE)
+		var size: Vector3 = w[1]
+		k.box((w[0] as Vector3) + Vector3(0.02, 0.3, 0.02), Vector3(maxf(size.x - 0.04, 0.03), 0.05, maxf(size.z - 0.04, 0.03)), wire)
+	# Inner chain fence round the yard: posts and two rails.
+	for z in [-1.22, 1.15]:
+		for h in [0.12, 0.22]:
+			k.box(Vector3(-1.7, h, z), Vector3(3.4, 0.015, 0.015), wire)
+		for i in 18:
+			k.box(Vector3(-1.7 + i * 0.2, 0.03, z), Vector3(0.02, 0.22, 0.02), wire)
+	for x in [-1.7, 1.68]:
+		for h in [0.12, 0.22]:
+			k.box(Vector3(x, h, -1.22), Vector3(0.015, 0.015, 2.37), wire)
+		for i in 12:
+			k.box(Vector3(x, 0.03, -1.22 + i * 0.2), Vector3(0.02, 0.22, 0.02), wire)
+	# Exercise yard in front of the cellhouse.
+	k.box(Vector3(-1.5, 0.03, 0.85), Vector3(1.2, 0.006, 0.26), Color("7f8a6a"))
+	# Guard towers at the four corners and beside the gate, with search lights.
+	for p in [Vector3(-1.8, 0, -1.3), Vector3(1.8, 0, -1.3), Vector3(-1.8, 0, 1.3), Vector3(1.8, 0, 1.3),
+			Vector3(-0.42, 0, 1.38), Vector3(0.42, 0, 1.38)]:
+		k.block(p, Vector3(0.2, 0.62, 0.2), CONCRETE)
+		k.block(p + Vector3(0, 0.62, 0), Vector3(0.3, 0.15, 0.3), DARK)
+		k.block(p + Vector3(0, 0.77, 0), Vector3(0.36, 0.04, 0.36), wire)
 		k.glow(true)
-		k.block(p + Vector3(0, 0.8, 0.17), Vector3(0.08, 0.06, 0.03), Color.WHITE)
+		k.block(p + Vector3(0, 0.66, 0.16), Vector3(0.08, 0.06, 0.03), Color.WHITE)
 		k.glow(false)
 	return k.commit()

@@ -63,6 +63,14 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
 		add_child(mi)
+		if p.has("pad") and lib.named_id("helipad_h") >= 0:
+			# The helipad the vehicle stands on.
+			var pad := MeshInstance3D.new()
+			pad.mesh = lib.meshes[lib.named_id("helipad_h")]
+			var w := float(p["pad"])
+			pad.transform = Transform3D(Basis.from_scale(Vector3(w, 1, w)), Vector3(at.x, 0.03, at.y))
+			pad.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			add_child(pad)
 		var e := entry(p["id"])
 		mi.set_meta("pick", {
 			"uid": "V-%03d" % placed, "number": placed, "title": e.get("name", p["id"]), "kind": "VEHICLE",

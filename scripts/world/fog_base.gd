@@ -20,12 +20,19 @@ const FORMATION_LIFT := 7.0
 const FORMATION_GAP := 3.2
 const FORMATION_SCALE := 2.0
 
+## Aircraft carriers at sea round the fog island: where (degrees round its centre, east = 0,
+## south = 90), how far out (1 = the coast) and how deep the hull lies in the water (cells).
+const CARRIER_ANGLES := [38.0, 92.0, 143.0, 216.0, 268.0, 322.0]
+const CARRIER_RING := 1.34
+const CARRIER_DRAUGHT := 0.4
+
 
 func build(data: CityData, lib: ModelLibrary) -> void:
 	var batch := InstanceBatch.new()
 	var placed := 0
 	if data.fog != null:
 		placed = _base(data.fog, lib, batch)
+		_carriers(data.fog, lib, batch)
 		_roads(data.fog)
 	_formation(lib, batch)
 	batch.build_nodes(self, lib, null)
@@ -63,6 +70,19 @@ func _base(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> int
 		var s := FogBaseSites.HELIPAD_SIZE
 		batch.add(pad, Transform3D(Basis.from_scale(Vector3(s, 1, s)), Vector3(c.x, LIFT, c.y)))
 	return n
+
+
+## One carrier per angle of CARRIER_ANGLES, sailing round the island (its side to the coast).
+func _carriers(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> void:
+	var ids := lib.ids(Cat.CARRIER)
+	if ids.is_empty():
+		return
+	var c := fog.center()
+	var radius := Vector2(FogIslandShaper.SIZE, FogIslandShaper.SIZE) * 0.5 * Vector2(0.8, 0.7) * CARRIER_RING
+	for deg: float in CARRIER_ANGLES:
+		var a := deg_to_rad(deg)
+		var p := c + Vector2(cos(a), sin(a)) * radius
+		batch.add(ids[0], _standing(lib, ids[0], Vector3(p.x, -CARRIER_DRAUGHT, p.y), atan2(-sin(a), cos(a)), 1.0))
 
 
 ## Model `id` standing on the ground at `at`, its front (+Z) turned by `yaw`.

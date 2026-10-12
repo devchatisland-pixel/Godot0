@@ -45,6 +45,9 @@ enum Cat {
 	# Fourteenth wave: the military base of the fog island, the low poly church, one more neon sign
 	CHURCH_LOW, JET_F14, TENT_JUNGLE, TENT_MEDICAL, SAM_NASAMS, RADAR,
 	APC_EE11, APC_BMP1, APC_BRDM, TANK_T55, NUCLEAR2, BASE_HALL, NEON_WOMAN,
+	# Fifteenth wave: the night skyline towers of the urban island, the Golden Gate bridge, the
+	# radar dish (satellite dishes), the aircraft carrier, the oil silo
+	NIGHT_SKYLINE, GOLDEN_GATE, SAT_DISH, CARRIER, SILO,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

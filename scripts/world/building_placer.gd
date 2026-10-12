@@ -37,7 +37,7 @@ const FAR_COLORS := {
 	Kind.COOLING_TOWER: Color("c9c6bd"), Kind.COOLING_HALL: Color("b9b6ad"), Kind.BT_TOWER: Color("c7c3bb"),
 	Kind.WATCHTOWER: Color("8a6a45"), Kind.BEACH_HUT: Color("c9954a"), Kind.PIER: Color("8a6a45"), Kind.BOAT: Color("7a6a5a"),
 	Kind.FIRE_TRUCK: Color("c0392b"), Kind.BALLOON: Color("e2573b"), Kind.BILLBOARD: Color("d8d3c4"), Kind.UFO: Color("b9bcc6"), Kind.TANK: Color("5f6a4a"),
-	Kind.BUS_STOP: Color("3f8f5a"),
+	Kind.BUS_STOP: Color("3f8f5a"), Kind.SKYLINE_BLDG: Color("4a5068"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -58,7 +58,7 @@ const NAMED := {
 	Kind.NUCLEAR_PLANT: ["box"], Kind.CINEMA_MAIN: ["box"], Kind.AIRPORT: ["box"], Kind.BURGER_JOINT: ["box"],
 	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"], Kind.BEACH_HUT: ["box"], Kind.PIER: ["box"], Kind.BOAT: ["box"],
 	Kind.FIRE_TRUCK: ["box"], Kind.BALLOON: ["box"], Kind.BILLBOARD: ["box"],
-	Kind.UFO: ["box"], Kind.TANK: ["box"], Kind.BUS_STOP: ["box"],
+	Kind.UFO: ["box"], Kind.TANK: ["box"], Kind.BUS_STOP: ["box"], Kind.SKYLINE_BLDG: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -94,6 +94,10 @@ const STALL_VEHICLES: Array[int] = [0, 6, 7]
 const BIG_MOUNTAIN_SEED := 16
 ## The U.N. tower is half the size it was.
 const UN_SCALE := 1.5
+## Size of the radar dish that stands for a satellite dish (its own size, whatever the lot).
+const DISH_SCALE := 1.25
+## Share of its lot a tower of the urban island covers: they stand wall to wall.
+const SKYLINE_FILL := 0.985
 ## Futuristic towers of the urban island: a bit wider than their lot allows for others, much taller.
 const FUTURE_STRETCH := 1.5
 ## Futuristic towers that look bad: drawn as this model of the night city instead (stretched like it).
@@ -188,6 +192,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 		var t := Transform3D(Basis.from_scale(Vector3(r.size.x * 0.8, h, r.size.y * 0.8)),
 				Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5))
 		return {"id": bid, "xform": t}
+	if kind == Kind.SKYLINE_BLDG:
+		return {"id": candidates[0], "xform": _fill_lot(lib, candidates[0], r)}
 	if kind == Kind.FIELD:
 		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r, _laid_across(data, i, facing))}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
@@ -230,6 +236,8 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 			scale = 1.2 if STALL_VEHICLES.has(lib.ids(Cat.STALL).find(id)) else 2.4
 		Kind.UN_HQ:
 			scale = minf(room, UN_SCALE)
+		Kind.SAT_DISH:
+			scale = DISH_SCALE
 		Kind.COOLING_TOWER, Kind.COOLING_HALL:
 			scale = minf(room, COOLING_SCALE)
 		Kind.WATCHTOWER:
@@ -320,6 +328,21 @@ static func _fit_field(lib: ModelLibrary, id: int, r: Rect2i, across: bool = fal
 	var center := Vector3(b.get_center().x, 0, b.get_center().z)
 	var lot := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
 	return Transform3D(basis, lot - basis * center)
+
+
+## Model `id` stretched over the whole lot `r` (turned a quarter when that keeps its shape
+## better); its height grows with the mean of the two stretches.
+static func _fill_lot(lib: ModelLibrary, id: int, r: Rect2i) -> Transform3D:
+	var b := lib.bounds[id]
+	var straight := absf(log(float(r.size.x) * b.size.z / (float(r.size.y) * b.size.x)))
+	var turned := absf(log(float(r.size.x) * b.size.x / (float(r.size.y) * b.size.z)))
+	var turn := turned < straight
+	var sx := float(r.size.x) * SKYLINE_FILL / maxf(b.size.z if turn else b.size.x, 0.01)
+	var sz := float(r.size.y) * SKYLINE_FILL / maxf(b.size.x if turn else b.size.z, 0.01)
+	var s := Vector3(sz, sqrt(sx * sz), sx) if turn else Vector3(sx, sqrt(sx * sz), sz)
+	var basis := Basis(Vector3.UP, PI * 0.5 if turn else 0.0) * Basis.from_scale(s)
+	var lot := Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5)
+	return Transform3D(basis, lot - basis * Vector3(b.get_center().x, b.position.y, b.get_center().z))
 
 
 ## Room of a procedural mesh, turned the way `_fit` turns it (square_fit).

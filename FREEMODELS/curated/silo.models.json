@@ -1,0 +1,9 @@
+{
+	"file": "silo.glb",
+	"models": [
+		{
+			"cat": "SILO",
+			"node": "silo"
+		}
+	]
+}

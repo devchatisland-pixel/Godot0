@@ -44,6 +44,12 @@ const GHETTO := [
 const GHETTO_USES := 2
 const GHETTO_EXTRA := 1
 
+## The oil silos of the port: model, how many stand side by side, lot of each, scale.
+const SILO_MODEL := "silo.glb: silo"
+const SILOS := 3
+const SILO_LOT := 2
+const SILO_SCALE := 0.85
+
 ## Kinds of downtown that become skyscrapers (with the cleared lots).
 const LOW_DOWNTOWN: Array[int] = [Kind.OFFICE, Kind.SHOP, Kind.APARTMENT, Kind.PLAZA, Kind.GARDEN]
 ## Bits of the seed ModelPools reads as "roll": all set, the tower is a Kenney skyscraper.
@@ -64,6 +70,7 @@ static func apply(data: CityData) -> Dictionary:
 	out["neon_tower"] = a._neon_tower()
 	out["ghetto"] = a._ghetto()
 	out["skyscrapers"] = a._skyscrapers()
+	out["silos"] = a._silos()
 	return out
 
 
@@ -232,3 +239,50 @@ func _skyscrapers() -> int:
 		_stamp(b)
 		n += 1
 	return n
+
+
+# --- Oil silos ---------------------------------------------------------------------------------------------
+## SILOS oil silos in a row on the free ground nearest to the container yards of the port.
+func _silos() -> int:
+	var sum := Vector2.ZERO
+	var yards := 0
+	for b in _d.building_count():
+		var c := _d.building_rect(b).get_center()
+		if _d.b_kind[b] == Kind.INDUSTRIAL_YARD and not MapLayout.on_urban_island(c):
+			sum += Vector2(c)
+			yards += 1
+	if yards == 0:
+		return 0
+	var port := sum / float(yards)
+	var size := Vector2i(SILOS * SILO_LOT, SILO_LOT)
+	var best := Rect2i()
+	var best_d := INF
+	for y in range(int(port.y) - 40, int(port.y) + 40):
+		for x in range(int(port.x) - 40, int(port.x) + 40):
+			var r := Rect2i(x, y, size.x, size.y)
+			var d := (Vector2(r.position) + Vector2(r.size) * 0.5).distance_to(port)
+			if d < best_d and _bare(r):
+				best_d = d
+				best = r
+	if best.size.x == 0:
+		push_warning("[Additions] no room for the oil silos")
+		return 0
+	for k in SILOS:
+		var b := _d.add_building(Rect2i(best.position + Vector2i(k * SILO_LOT, 0), Vector2i(SILO_LOT, SILO_LOT)),
+				Kind.INDUSTRIAL, 2, 1, 0.5)
+		_d.b_model[b] = SILO_MODEL
+		_d.b_scale[b] = -SILO_SCALE
+		_stamp(b)
+	return SILOS
+
+
+## True when every cell of `r` is dry land with no road and no building.
+func _bare(r: Rect2i) -> bool:
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			if not _d.in_bounds(x, y):
+				return false
+			var i := _d.idx(x, y)
+			if _d.terrain[i] != CityTypes.Terrain.LAND or _d.road[i] != 0 or _grid[i] != 0:
+				return false
+	return true

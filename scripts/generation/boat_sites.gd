@@ -4,7 +4,7 @@ extends RefCounted
 ## fishing boat beside the piers, the cargo ship off the industrial port and the submarine
 ## in the sea north of the Golden Gate bridge, a good way from it. The seed of a boat is
 ## its kind (ModelPools.BOAT_CATS). Added at the end of the building list.
-## `scatter_submarines` adds more submarines at random places of the open sea (MapOverhaul).
+## `scatter` adds more boats of one kind at random places of the open sea (MapOverhaul).
 
 const Kind := CityTypes.Kind
 const Terrain := CityTypes.Terrain
@@ -105,18 +105,24 @@ static func _bridge_strips(data: CityData) -> Array[Rect2i]:
 ## cells from each other (and not on another boat, nor near a bridge). Returns how many were
 ## placed.
 static func scatter_submarines(data: CityData, count: int, apart: int, rng: RandomNumberGenerator) -> int:
+	return scatter(data, SUB, count, apart, Vector2i(4, 9), rng)
+
+
+## The same for any kind of boat: `size` is its lot when it points north-south (it is turned
+## a quarter half of the time). Never on the fog island, whose land lies over the east sea.
+static func scatter(data: CityData, kind: int, count: int, apart: int, lot: Vector2i, rng: RandomNumberGenerator) -> int:
 	var taken := _taken_cells(data)
 	var forbid := _bridge_strips(data)
 	var centres: Array[Vector2i] = []
 	for b in data.building_count():
-		if data.b_kind[b] == Kind.BOAT and data.b_seed[b] == SUB:
+		if data.b_kind[b] == Kind.BOAT and data.b_seed[b] == kind:
 			centres.append(data.building_rect(b).get_center())
 	var placed := 0
 	var tries := 0
 	while placed < count and tries < 4000:
 		tries += 1
 		var east_west := rng.randi() % 2 == 0
-		var size := Vector2i(9, 4) if east_west else Vector2i(4, 9)
+		var size := Vector2i(lot.y, lot.x) if east_west else lot
 		var at := Vector2i(rng.randi_range(2, data.size - 3), rng.randi_range(2, data.size - 3))
 		var r := Rect2i(at - size / 2, size)
 		var c := r.get_center()
@@ -125,17 +131,32 @@ static func scatter_submarines(data: CityData, count: int, apart: int, rng: Rand
 			if Vector2(o).distance_to(Vector2(c)) < float(apart):
 				crowded = true
 				break
-		if crowded or not _sea(data, taken, r, forbid):
+		if crowded or not _sea(data, taken, r, forbid) or (kind != SUB and _on_fog_island(data, r)):
 			continue
-		data.add_building(r, Kind.BOAT, 1 if east_west else 2, SUB, 0.5)
+		data.add_building(r, Kind.BOAT, 1 if east_west else 2, kind, 0.5)
 		centres.append(c)
 		for y in range(r.position.y - 1, r.end.y + 1):
 			for x in range(r.position.x - 1, r.end.x + 1):
 				taken[data.idx(x, y)] = 1
 		placed += 1
 	if placed < count:
-		push_warning("[Boats] only %d of %d submarines found open sea" % [placed, count])
+		push_warning("[Boats] only %d of %d boats of kind %d found open sea" % [placed, count, kind])
 	return placed
+
+
+## True when `r` (grown by 3 cells) touches the land of the fog island.
+static func _on_fog_island(data: CityData, r: Rect2i) -> bool:
+	var fog := data.fog
+	if fog == null:
+		return false
+	var n := FogIslandShaper.SIZE
+	for y in range(r.position.y - 3, r.end.y + 3):
+		for x in range(r.position.x - 3, r.end.x + 3):
+			var lx := x - int(fog.origin.x)
+			var ly := y - int(fog.origin.y)
+			if lx >= 0 and ly >= 0 and lx < n and ly < n and fog.elevation[ly * n + lx] > 128:
+				return true
+	return false
 
 
 ## The free rectangle of open sea closest to `target`, or an empty one.
