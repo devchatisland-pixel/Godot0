@@ -38,7 +38,8 @@ const FAR_COLORS := {
 	Kind.WATCHTOWER: Color("8a6a45"), Kind.BEACH_HUT: Color("c9954a"), Kind.PIER: Color("8a6a45"), Kind.BOAT: Color("7a6a5a"),
 	Kind.FIRE_TRUCK: Color("c0392b"), Kind.BALLOON: Color("e2573b"), Kind.BILLBOARD: Color("d8d3c4"), Kind.UFO: Color("b9bcc6"), Kind.TANK: Color("5f6a4a"),
 	Kind.BUS_STOP: Color("3f8f5a"), Kind.SKYLINE_BLDG: Color("4a5068"),
-	Kind.BASKET_COURT: Color("7d7078"),
+	Kind.BASKET_COURT: Color("7d7078"), Kind.RESTAURANT: Color("d98a5a"), Kind.PIZZA_SHOP: Color("e8cfc8"),
+	Kind.BURGER_SHOP: Color("e0553a"), Kind.CAFE: Color("e8b0a0"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -60,6 +61,7 @@ const NAMED := {
 	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"], Kind.BEACH_HUT: ["box"], Kind.PIER: ["box"], Kind.BOAT: ["box"],
 	Kind.FIRE_TRUCK: ["box"], Kind.BALLOON: ["box"], Kind.BILLBOARD: ["box"],
 	Kind.UFO: ["box"], Kind.TANK: ["box"], Kind.BUS_STOP: ["box"], Kind.SKYLINE_BLDG: ["box"], Kind.BASKET_COURT: ["box"],
+	Kind.RESTAURANT: ["box"], Kind.PIZZA_SHOP: ["box"], Kind.BURGER_SHOP: ["box"], Kind.CAFE: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -167,6 +169,9 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
 	if facing == 0 and not pick.is_empty() and lib.model_name(pick["id"]) == SOUTH_ONLY_MODEL:
 		return _pick_model_raw(data, lib, i, 2)
+	# The shop that stands for Kenney's building-n faces south or east: north turns to south, west to east.
+	if (facing == 0 or facing == 3) and not pick.is_empty() and lib.ids(Cat.BIZ_SHOP).has(pick["id"]):
+		return _pick_model_raw(data, lib, i, 2 if facing == 0 else 1)
 	return pick
 
 
@@ -210,6 +215,7 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	if kind == Kind.FIELD:
 		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r, _laid_across(data, i, facing))}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
+	id = ModelPools.shop_for_building_n(lib, id)
 	var swapped := false
 	if kind == Kind.FUTURE_BLDG:
 		var model := lib.model_name(id)

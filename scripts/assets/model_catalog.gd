@@ -62,6 +62,8 @@ enum Cat {
 	# Nineteenth wave: the checkpoint of the Golden Gate (fog island), the "Danger" plate of the
 	# secret base, the lighthouse club of the little island and the glowing part of its sign
 	CHECKPOINT, DANGER_SIGN, LIGHTHOUSE_CLUB, NEON_LIGHTHOUSE,
+	# Twentieth wave: the low poly business buildings (central city shops and eateries)
+	BIZ_RESTAURANT, BIZ_SHOP, BIZ_PIZZA, BIZ_BURGER, BIZ_CAFE,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
