@@ -38,6 +38,9 @@ const NEON_NIGHT := 5.0
 const HALO_NIGHT := 3.0
 ## Night packs keep the lights painted in their emission map (a lit facade where they have none).
 const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
+## Billboard panels at night: soft warm white, at this brightness.
+const BILLBOARD_LIGHT := Color(1.0, 0.96, 0.88)
+const BILLBOARD_GLOW := 1.0
 
 
 static func apply(lib: ModelLibrary) -> void:
@@ -64,6 +67,42 @@ static func apply(lib: ModelLibrary) -> void:
 				_light_skyline(mesh, done)
 			else:
 				_light_facade(mesh, 0.45, done)
+	for id in lib.ids(ModelCat.BILLBOARD):
+		light_billboard(lib.meshes[id])
+
+
+## Billboards: only the flat poster panel lights up at night, lit by its own picture (a blank
+## panel glows plain white); the frame stays dark. Returns false when no panel was found.
+static func light_billboard(mesh: Mesh) -> bool:
+	if mesh.has_meta("night_lit"):
+		return mesh.get_meta("night_lit")
+	var found := false
+	for s in mesh.get_surface_count():
+		var mat := mesh.surface_get_material(s) as BaseMaterial3D
+		if mat == null or not _is_panel(mesh, s):
+			continue
+		var m := mat.duplicate() as BaseMaterial3D
+		m.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED # the park panel is alpha-cut at 1.0
+		m.emission_enabled = true
+		m.emission = BILLBOARD_LIGHT
+		m.emission_texture = mat.albedo_texture
+		m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+		SignAtlas.register_night(m, 0.0, BILLBOARD_GLOW)
+		mesh.surface_set_material(s, m)
+		found = true
+	mesh.set_meta("night_lit", found)
+	return found
+
+
+## A surface whose bounding box is almost flat (thinner than 2% of its width).
+static func _is_panel(mesh: Mesh, s: int) -> bool:
+	var verts: PackedVector3Array = mesh.surface_get_arrays(s)[Mesh.ARRAY_VERTEX]
+	if verts.is_empty():
+		return false
+	var box := AABB(verts[0], Vector3.ZERO)
+	for v in verts:
+		box = box.expand(v)
+	return box.size[box.get_shortest_axis_index()] < box.get_longest_axis_size() * 0.02
 
 
 ## Copy of every material of `mesh` whose texture also lights it at night.

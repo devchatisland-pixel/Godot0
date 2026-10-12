@@ -193,6 +193,29 @@ func _check_edits(data: CityData) -> void:
 	print("[Test] %d hand edits checked" % ManualEdits.EDITS.size())
 
 
+## Both billboards (one per zone, and the park one) light their poster panel at night, and only it.
+func _check_billboards(lib: ModelLibrary) -> void:
+	var meshes := {"zone billboard": lib.meshes[lib.ids(ModelCatalog.Cat.BILLBOARD)[0]]}
+	var park := lib.load_named("prop:" + ScenicProps.BILLBOARD.get_file(), ScenicProps.BILLBOARD)
+	if park < 0:
+		_fail("the park billboard did not load")
+	else:
+		NightWindows.light_billboard(lib.meshes[park])
+		meshes["park billboard"] = lib.meshes[park]
+	var night := {}
+	for e in SignAtlas.night_materials():
+		night[e[0]] = e[2]
+	for title in meshes:
+		var mesh: Mesh = meshes[title]
+		var lit := 0
+		for s in mesh.get_surface_count():
+			if night.get(mesh.surface_get_material(s), 0.0) > 0.0:
+				lit += 1
+		print("[Test] %s: %d of %d surfaces lit at night" % [title, lit, mesh.get_surface_count()])
+		if lit != 1:
+			_fail("%s: %d surfaces lit at night, wanted only the poster panel" % [title, lit])
+
+
 ## Every new kind gets its real model (not the grey box); Vegas buildings stay low.
 func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void:
 	var lib := ModelLibrary.new()
@@ -210,6 +233,7 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 		if not lib.has_cat(cat):
 			_fail("model category %s is empty" % ModelCatalog.Cat.keys()[cat])
 	NightWindows.apply(lib)
+	_check_billboards(lib)
 	_check_signs(data, lib)
 	for cat in [ModelCatalog.Cat.NEON_CONTROLLER, ModelCatalog.Cat.NEON_PACMAN]:
 		var b := lib.bounds[lib.ids(cat)[0]]
