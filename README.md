@@ -301,7 +301,8 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
 | `police` | low-poly police station | POLICE | (kept; the same model as the main police station) |
 | `stadium` | low-poly stadium (+ its pitch) | STADIUM | the stadium |
-| `public_main` | low-poly public buildings pack | POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, PHARMACY, GAS_STATION | the main public buildings, one of each, drawn big |
+| `public_main` | low-poly public buildings pack | POLICE_MAIN, CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, GAS_STATION | the main public buildings, one of each, drawn big |
+| `pharmacy_night` | the pharmacy of `public_main`, with a night map (`tools/make_night_variants.py`) | PHARMACY | the pharmacy; its green cross glows at night |
 | `un_tower` | building 3 | UN_TOWER | the United Nations tower |
 | `crane` | building crane | CRANE | one crane in the colourful quarter |
 | `skyline2` | second low-poly night skyline (keeps its light map) | SKYLINE2 | the skyline blocks of the urban island |

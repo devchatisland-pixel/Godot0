@@ -18,10 +18,6 @@
 			"node": "school"
 		},
 		{
-			"cat": "PHARMACY",
-			"node": "pharmacy"
-		},
-		{
 			"cat": "GAS_STATION",
 			"node": "gas_station"
 		}
