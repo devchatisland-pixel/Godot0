@@ -1,6 +1,6 @@
 # Incoming models preview
 
-97 models from `FREEMODELS/_incoming`. One PNG per .glb, same name, in `model_previews/`.
+101 models from `FREEMODELS/_incoming`. One PNG per .glb, same name, in `model_previews/`.
 
 | Preview | Model |
 |---|---|
@@ -35,6 +35,7 @@
 | ![](model_previews/highway.png) | `highway.glb` |
 | ![](model_previews/highway_road.png) | `highway_road.glb` |
 | ![](model_previews/hot_air_balloon_low_poly_optimized_game_ready.png) | `hot_air_balloon_low_poly_optimized_game_ready.glb` |
+| ![](model_previews/hotel_ostriv.png) | `hotel_ostriv.glb` |
 | ![](model_previews/hungry_jacks_restaurant_low_poly.png) | `hungry_jacks_restaurant_low_poly.glb` |
 | ![](model_previews/industrial_building.png) | `industrial_building.glb` |
 | ![](model_previews/industrial_buildings_set_-_low_poly_models.png) | `industrial_buildings_set_-_low_poly_models.glb` |
@@ -60,6 +61,9 @@
 | ![](model_previews/low_poly_f-111_aardvark.png) | `low_poly_f-111_aardvark.glb` |
 | ![](model_previews/low_poly_f14_tomcat.png) | `low_poly_f14_tomcat.glb` |
 | ![](model_previews/low_poly_game_ready_mcdonalds_building.png) | `low_poly_game_ready_mcdonalds_building.glb` |
+| ![](model_previews/low_poly_hotel.png) | `low_poly_hotel.glb` |
+| ![](model_previews/low_poly_hotel_1.png) | `low_poly_hotel_1.glb` |
+| ![](model_previews/low_poly_hotel_2.png) | `low_poly_hotel_2.glb` |
 | ![](model_previews/low_poly_police_station.png) | `low_poly_police_station.glb` |
 | ![](model_previews/low_poly_public_buildings_pack.png) | `low_poly_public_buildings_pack.glb` |
 | ![](model_previews/low_poly_silo.png) | `low_poly_silo.glb` |
