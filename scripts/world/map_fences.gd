@@ -103,10 +103,10 @@ func _base(data: CityData, lib: ModelLibrary, b: int) -> void:
 	var along := Vector2(-out.y, out.x)
 	var mid := ring.get_center() + Vector2(out) * Vector2(ring.size.x, ring.size.y) * 0.5
 	var p := mid + along * DANGER_FROM_GATE + Vector2(out) * (POST * 0.5 + 0.01)
-	var box := lib.bounds[signs[0]]
-	var s := DANGER_WIDTH / box.size.x
+	var sign_box := lib.bounds[signs[0]]
+	var s := DANGER_WIDTH / sign_box.size.x
 	var basis := Basis(Vector3.UP, CityTypes.facing_yaw(side)) * Basis.from_scale(Vector3.ONE * s)
-	var xform := Transform3D(basis, Vector3(p.x, DANGER_HEIGHT, p.y) - basis * box.get_center())
+	var xform := Transform3D(basis, Vector3(p.x, DANGER_HEIGHT, p.y) - basis * sign_box.get_center())
 	_add(lib.meshes[signs[0]], xform, "Danger sign", "PROP", lib.model_name(signs[0]), "on the fence of the secret base")
 
 
