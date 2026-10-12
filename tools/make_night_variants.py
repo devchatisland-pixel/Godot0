@@ -1,8 +1,13 @@
-"""Night-lit duplicates of three models: the same model by day, plus a night map (glTF
-emissiveTexture) that holds its lights. No object is added.
+"""Night-lit duplicates of some models: the same model by day, plus a night map (glTF
+emissiveTexture) that holds its lights. No object is added. The model they come from is left
+as it is (a backup); only the lists the game reads (.models.json) point to the duplicate.
 
   FREEMODELS/curated/pharmacy_night.glb      the pharmacy of public_main.glb alone; its big
                                              green cross glows green, the facade is softly lit
+  FREEMODELS/curated/cinema_night.glb        the cinema of cinema2.glb; the word CINEMA glows red
+  FREEMODELS/curated/hotel_small_night.glb   hotel_small of hotels.glb; the word HOTEL glows green
+  FREEMODELS/curated/hotel_stars_night.glb   hotel_stars of hotels.glb; its five stars glow yellow
+  FREEMODELS/curated/police_hq_night.glb     police_hq of public_main.glb; the word POLICE glows blue
   vehicles/.../police_us_cruiser_night.glb   the red and the blue lens of the light bar glow
   vehicles/.../police_jp_black_night.glb     the red roof beacon glows
 
@@ -14,7 +19,8 @@ averaged). What is painted in it:
   - the lamps themselves, in their colour;
   - the light they throw on the faces around them (by distance in space, a little less on the
     faces that look away), tinted by the colour of the face;
-  - for the pharmacy, its whole facade softly lit like the other public buildings.
+  - for the pharmacy, the hotels and the police, the whole facade softly lit like the other
+    public buildings.
 
 The game (NightWindows.light_own) keeps the map dark by day and multiplies it by
 NightWindows.OWN_NIGHT (3.0) at night, so the map stores a third of the final light. The
@@ -22,7 +28,8 @@ lamps alone are stored brighter (their main colour channel at 1.0): seen from ne
 their pure colour (the other channels still end below 1.0), seen from far they keep showing
 when the map is averaged with the dark faces around them.
 
-Usage:  python tools/make_night_variants.py
+Usage:  python tools/make_night_variants.py          (everything)
+        python tools/make_night_variants.py signs    (the cinema, the hotels and the police only)
 Needs:  numpy, Pillow.
 """
 import io, json, os, struct
@@ -38,10 +45,15 @@ CROSS_GREEN = (0.0, 1.0, 0.25)
 CROSS_RIM = (0.45, 1.0, 0.5)
 LAMP_RED = (1.0, 0.08, 0.05)
 LAMP_BLUE = (0.06, 0.3, 1.0)
+## Night colours of the lit letters and stars of the signs (linear).
+CINEMA_RED = (1.0, 0.04, 0.03)
+HOTEL_GREEN = (0.3, 1.0, 0.3)
+STAR_YELLOW = (1.0, 0.8, 0.0)
+POLICE_BLUE = (0.08, 0.35, 1.0)
 ## Pharmacy facade at night: the share of its own colour it glows with (a little brighter
 ## than the public buildings around it, far from white).
 FACADE = 0.25
-## Size of the night maps (pixels).
+## Size of the night maps (pixels); doubled for the models with many triangles.
 MAP_SIZE = 512
 
 CT = {5120: np.int8, 5121: np.uint8, 5122: np.int16, 5123: np.uint16, 5125: np.uint32, 5126: np.float32}
@@ -104,12 +116,47 @@ class GLB:
     def add_texture(s, img, name):
         b = io.BytesIO()
         img.save(b, 'PNG', optimize=True)
-        s.j['images'].append({'bufferView': s.append(b.getvalue()), 'mimeType': 'image/png', 'name': name})
-        s.j['textures'].append({'sampler': s.j['textures'][0].get('sampler', 0), 'source': len(s.j['images']) - 1})
+        s.j.setdefault('images', []).append({'bufferView': s.append(b.getvalue()), 'mimeType': 'image/png', 'name': name})
+        tex = s.j.setdefault('textures', [])
+        if not s.j.get('samplers'):
+            s.j['samplers'] = [{}]
+        tex.append({'sampler': tex[0].get('sampler', 0) if tex else 0, 'source': len(s.j['images']) - 1})
         return len(s.j['textures']) - 1
 
     def root(s):
         return s.j['scenes'][s.j.get('scene', 0)]['nodes'][0]
+
+    def drop_unused_materials(s):
+        """Keeps only the materials the meshes use, and their textures and images (a model cut
+        out of a pack would carry the textures of the whole pack)."""
+        j = s.j
+        used = sorted({p['material'] for m in j['meshes'] for p in m['primitives'] if 'material' in p})
+        mmap = {o: n for n, o in enumerate(used)}
+        j['materials'] = [j['materials'][o] for o in used]
+        for m in j['meshes']:
+            for p in m['primitives']:
+                if 'material' in p:
+                    p['material'] = mmap[p['material']]
+        refs = []
+        def find(d):
+            for k, v in d.items():
+                if isinstance(v, dict):
+                    if k.endswith('Texture') and 'index' in v:
+                        refs.append(v)
+                    else:
+                        find(v)
+        for m in j['materials']:
+            find(m)
+        tex = sorted({r['index'] for r in refs})
+        tmap = {o: n for n, o in enumerate(tex)}
+        for r in refs:
+            r['index'] = tmap[r['index']]
+        j['textures'] = [j['textures'][o] for o in tex]
+        imgs = sorted({t['source'] for t in j['textures']})
+        imap = {o: n for n, o in enumerate(imgs)}
+        for t in j['textures']:
+            t['source'] = imap[t['source']]
+        j['images'] = [j['images'][o] for o in imgs]
 
     def keep_only(s, root_children):
         """Drops every node outside `root_children` (and the unused data), repacking the buffer."""
@@ -320,6 +367,8 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False)
     T = len(tri.pos)
     order = morton(tri.pos.mean(1))
     grid = int(np.ceil(np.sqrt(np.ceil(T / 2.0))))
+    while size // grid < 8 and size < 2048:
+        size *= 2
     cell = size // grid
     assert cell >= 8, 'too many triangles for a %d px night map' % size
     pad, far = 1.5, 3.75
@@ -417,6 +466,72 @@ def pharmacy():
         f.write('\n')
 
 
+# --- Lit signs: letters and stars ------------------------------------------------------
+def lit_sign(pack, node, cat, pick, rgb, reach, strength, base, what):
+    """`node` of the pack `pack`.glb alone, as <node>_night.glb: the faces `pick(tri)` glow
+    `rgb`, the faces around them catch a little of it, every face glows with `base` of its own
+    colour. The pack is not changed; its manifest no longer lists `node` (by hand)."""
+    g = GLB(os.path.join(CUR, pack + '.glb'))
+    j = g.j
+    keep = next(c for c in j['nodes'][g.root()]['children'] if j['nodes'][c]['name'] == node)
+    g.keep_only([keep])
+    g.drop_unused_materials()
+    j['nodes'][0]['name'] = node + '_night'
+    tri = Triangles(g)
+    lit = pick(tri)
+    print('  %s: %d triangles in %s' % (node, lit.sum(), what))
+    uv2, img = night_map(tri, [(lit, rgb)], reach=reach, strength=strength, base=base, plain=True)
+    write_night(g, tri, uv2, img, node + '_night')
+    g.save(os.path.join(CUR, node + '_night.glb'))
+    with open(os.path.join(CUR, node + '_night.models.json'), 'w', newline='\n') as f:
+        json.dump({'file': node + '_night.glb', 'models': [{'cat': cat, 'node': node}]}, f, indent='\t')
+        f.write('\n')
+
+
+def islands_in(tri, lo_min, hi_max, count):
+    """Faces of the islands that lie inside the box (lo_min, hi_max); there must be `count`."""
+    lo_min, hi_max = np.array(lo_min), np.array(hi_max)
+    found = [0]
+    def test(lo, hi, n):
+        inside = bool((lo >= lo_min).all() and (hi <= hi_max).all())
+        found[0] += inside
+        return inside
+    out = island_where(tri, test)
+    assert found[0] == count, 'found %d islands, not %d' % (found[0], count)
+    return out
+
+
+def cinema_letters(tri):
+    # The six orange letters over the entrance, in front of the facade (z 0.22 to 0.30).
+    return islands_in(tri, (-0.8, 0.79, 0.2), (0.8, 1.13, 0.31), 6)
+
+
+def hotel_small_letters(tri):
+    # The five green letters standing on the roof, along the side of the building (x -0.75).
+    return islands_in(tri, (-0.8, 3.2, -0.8), (-0.7, 3.6, 0.8), 5)
+
+
+def hotel_stars_stars(tri):
+    # The five yellow stars under the word HOTEL, at the top of the front (z 0.95 to 0.99).
+    return islands_in(tri, (-0.95, 3.5, 0.94), (0.95, 3.82, 1.0), 5)
+
+
+def police_letters(tri):
+    # The six blue letters on the board over the door (z 0.22 to 0.23).
+    return islands_in(tri, (-0.3, 0.85, 0.21), (0.3, 0.99, 0.24), 6)
+
+
+def signs():
+    # The cinema had no lit facade: only its letters (and what they light) show at night.
+    lit_sign('cinema2', 'cinema', 'CINEMA2', cinema_letters, CINEMA_RED, 0.2, 0.5, 0.0, 'the word CINEMA')
+    lit_sign('hotels', 'hotel_small', 'HOTEL_LOW', hotel_small_letters, HOTEL_GREEN, 0.25, 0.5, FACADE / OWN_NIGHT,
+             'the word HOTEL')
+    lit_sign('hotels', 'hotel_stars', 'HOTEL_LOW', hotel_stars_stars, STAR_YELLOW, 0.2, 0.5, FACADE / OWN_NIGHT,
+             'the stars')
+    lit_sign('public_main', 'police_hq', 'POLICE_MAIN', police_letters, POLICE_BLUE, 0.1, 0.5, FACADE / OWN_NIGHT,
+             'the word POLICE')
+
+
 # --- Vehicles ------------------------------------------------------------------------
 def red_blue(tri, unit):
     """The red and the blue lenses among the faces `unit`, by their colour."""
@@ -497,7 +612,12 @@ def ccf_beacons(tri):
 
 
 if __name__ == '__main__':
+    import sys
+    if sys.argv[1:] == ['signs']:
+        signs()
+        sys.exit()
     pharmacy()
+    signs()
     vehicle(VEH, 'police_us_cruiser', cruiser_bar)
     vehicle(VEH, 'police_jp_black', jp_beacon)
     vehicle(VEH, 'p54_11_ambulance', ambulance_bar, reach=0.7)

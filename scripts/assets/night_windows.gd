@@ -50,7 +50,8 @@ const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
 ## Billboard panels at night: soft warm white, at this brightness.
 const BILLBOARD_LIGHT := Color(1.0, 0.96, 0.88)
 const BILLBOARD_GLOW := 1.0
-## Night duplicates (tools/make_night_variants.py: the pharmacy cross, the police lights) bring
+## Night duplicates (tools/make_night_variants.py: the pharmacy cross, the police lights, the
+## lit words CINEMA, HOTEL and POLICE, the hotel stars) bring
 ## their own night map, which holds a third of the final light: off by day, x3 at night.
 ## A higher value makes the light the lamps throw around them stronger; the lamps themselves
 ## keep their colour.
@@ -64,9 +65,11 @@ static func apply(lib: ModelLibrary) -> void:
 		for id in lib.ids(cat):
 			if not light_own(lib.meshes[id]):
 				_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
-	# The forest fire truck is not lit as a whole: only its night map (its blue beacons).
-	for id in lib.ids(ModelCat.TRUCK_CCF):
-		light_own(lib.meshes[id])
+	# Not lit as a whole: only their night map (the blue beacons of the forest fire truck,
+	# the red word CINEMA).
+	for cat in [ModelCat.TRUCK_CCF, ModelCat.CINEMA2]:
+		for id in lib.ids(cat):
+			light_own(lib.meshes[id])
 	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE, ModelCat.NIGHT_SKYLINE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)

@@ -1,0 +1,9 @@
+{
+	"file": "hotel_small_night.glb",
+	"models": [
+		{
+			"cat": "HOTEL_LOW",
+			"node": "hotel_small"
+		}
+	]
+}

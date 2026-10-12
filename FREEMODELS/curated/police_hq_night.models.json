@@ -1,0 +1,9 @@
+{
+	"file": "police_hq_night.glb",
+	"models": [
+		{
+			"cat": "POLICE_MAIN",
+			"node": "police_hq"
+		}
+	]
+}
