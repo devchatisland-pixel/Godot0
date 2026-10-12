@@ -122,6 +122,10 @@ func _build_golden_gate(lib: ModelLibrary, id: int, x0: float, x1: float, z: flo
 	mi.mesh = lib.meshes[id]
 	mi.transform = Transform3D(basis, Vector3((x0 + x1) * 0.5, -deck, z) - basis * center)
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.set_meta("pick", {
+		"uid": "BR-001", "number": 1, "title": "Golden Gate bridge", "kind": "BRIDGE",
+		"model": lib.model_name(id), "category": "GOLDEN_GATE", "note": "to the fog island",
+	})
 	add_child(mi)
 
 

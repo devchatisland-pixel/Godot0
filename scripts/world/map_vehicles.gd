@@ -70,6 +70,10 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 			var w := float(p["pad"])
 			pad.transform = Transform3D(Basis.from_scale(Vector3(w, 1, w)), Vector3(at.x, 0.03, at.y))
 			pad.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			pad.set_meta("pick", {
+				"uid": "V-%03d-pad" % placed, "number": placed, "title": "Helipad", "kind": "PROP",
+				"model": "helipad_h", "category": "Prop", "note": String(p.get("why", "")),
+			})
 			add_child(pad)
 		var e := entry(p["id"])
 		mi.set_meta("pick", {

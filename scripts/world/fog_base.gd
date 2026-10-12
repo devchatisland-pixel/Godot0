@@ -3,6 +3,7 @@ extends Node3D
 ## Draws the military base of the fog island (FogBaseSites): its models, one MultiMesh per
 ## model, the runway and the roads (flat panels with the highway texture, like HighwaySurface)
 ## and the helipad. Also the three F-111 flying in a V over the sea, far north of the island.
+## Everything it draws can be clicked: `picks` lists them for BuildingPicker.add_prop.
 
 const Cat := ModelCatalog.Cat
 const TEXTURE := preload("res://textures/highway.jpg")
@@ -25,6 +26,32 @@ const FORMATION_SCALE := 2.0
 const CARRIER_ANGLES := [38.0, 92.0, 143.0, 216.0, 268.0, 322.0]
 const CARRIER_RING := 1.34
 const CARRIER_DRAUGHT := 0.4
+
+
+## What the picker shows for each model category: [title, kind].
+const TITLES := {
+	Cat.JET_F14: ["F-14 Tomcat", "AIRCRAFT"], Cat.JET_F111: ["F-111 Aardvark", "AIRCRAFT"],
+	Cat.BASE_HALL: ["Barracks", "MILITARY"], Cat.RADAR: ["Radar", "MILITARY"],
+	Cat.SAM_NASAMS: ["NASAMS surface-to-air missile launcher", "MILITARY"],
+	Cat.TENT_JUNGLE: ["Army tent", "MILITARY"], Cat.TENT_MEDICAL: ["Medical tent", "MILITARY"],
+	Cat.TANK_T55: ["T-55 tank", "VEHICLE"], Cat.APC_BMP1: ["BMP-1 infantry fighting vehicle", "VEHICLE"],
+	Cat.APC_BRDM: ["BRDM armoured car", "VEHICLE"], Cat.APC_EE11: ["EE-11 anti-aircraft vehicle", "VEHICLE"],
+	Cat.NUCLEAR2: ["Nuclear power plant", "MILITARY"], Cat.CARRIER: ["Aircraft carrier", "SHIP"],
+}
+
+## Clickable things: {"mesh": Mesh, "xform": Transform3D, "pick": Dictionary} (see BuildingPicker).
+var picks: Array[Dictionary] = []
+
+
+## Draws mesh `id` at `xform` and makes it clickable.
+func _put(lib: ModelLibrary, batch: InstanceBatch, id: int, xform: Transform3D, title: String,
+		kind: String, note: String) -> void:
+	batch.add(id, xform)
+	var cat: int = lib.cats[id]
+	picks.append({"mesh": lib.meshes[id], "xform": xform, "pick": {
+		"uid": "M-%03d" % picks.size(), "number": picks.size(), "title": title, "kind": kind,
+		"model": lib.model_name(id), "category": Cat.keys()[cat] if cat >= 0 else "", "note": note,
+	}})
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
@@ -50,25 +77,29 @@ func _base(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> int
 		var id := -1
 		var scale: float = p["scale"]
 		var turn := 0.0
+		var label := ["Military model", "MILITARY"]
 		if p.has("veh"):
 			id = MapVehicles.mesh_id(lib, p["veh"])
 			scale *= VehicleSites.CELLS_PER_METRE
 			turn = PI # the vehicles of the catalog face -Z
+			label = [MapVehicles.entry(p["veh"]).get("name", p["veh"]), "VEHICLE"]
 		else:
 			var ids := lib.ids(p["cat"])
 			id = ids[0] if not ids.is_empty() else -1
 			turn = FRONT.get(p["cat"], 0.0)
+			label = TITLES.get(p["cat"], label)
 		if id < 0:
 			continue
 		var dir: Vector2 = p["dir"]
-		batch.add(id, _standing(lib, id, Vector3(fog.origin.x + at.x, 0, fog.origin.y + at.y),
-				atan2(dir.x, dir.y) + turn, scale))
+		_put(lib, batch, id, _standing(lib, id, Vector3(fog.origin.x + at.x, 0, fog.origin.y + at.y),
+				atan2(dir.x, dir.y) + turn, scale), label[0], label[1], "military base of the fog island")
 		n += 1
 	var pad := lib.named_id("helipad_h")
 	if pad >= 0:
 		var c := fog.origin + FogBaseSites.HELIPAD
 		var s := FogBaseSites.HELIPAD_SIZE
-		batch.add(pad, Transform3D(Basis.from_scale(Vector3(s, 1, s)), Vector3(c.x, LIFT, c.y)))
+		_put(lib, batch, pad, Transform3D(Basis.from_scale(Vector3(s, 1, s)), Vector3(c.x, LIFT, c.y)),
+				"Helipad", "MILITARY", "military base of the fog island")
 	return n
 
 
@@ -82,7 +113,8 @@ func _carriers(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) ->
 	for deg: float in CARRIER_ANGLES:
 		var a := deg_to_rad(deg)
 		var p := c + Vector2(cos(a), sin(a)) * radius
-		batch.add(ids[0], _standing(lib, ids[0], Vector3(p.x, -CARRIER_DRAUGHT, p.y), atan2(-sin(a), cos(a)), 1.0))
+		_put(lib, batch, ids[0], _standing(lib, ids[0], Vector3(p.x, -CARRIER_DRAUGHT, p.y), atan2(-sin(a), cos(a)), 1.0),
+				"Aircraft carrier", "SHIP", "at sea round the fog island")
 
 
 ## Model `id` standing on the ground at `at`, its front (+Z) turned by `yaw`.
@@ -137,4 +169,5 @@ func _formation(lib: ModelLibrary, batch: InstanceBatch) -> void:
 	var yaw := atan2(dir.x, dir.y) + float(FRONT.get(Cat.JET_F111, 0.0))
 	for o in [Vector2.ZERO, -dir + side, -dir - side]:
 		var c: Vector2 = FORMATION_AT + (o as Vector2) * FORMATION_GAP
-		batch.add(jets[0], _standing(lib, jets[0], Vector3(c.x, FORMATION_LIFT, c.y), yaw, FORMATION_SCALE))
+		_put(lib, batch, jets[0], _standing(lib, jets[0], Vector3(c.x, FORMATION_LIFT, c.y), yaw, FORMATION_SCALE),
+				"F-111 Aardvark", "AIRCRAFT", "flying in formation over the north sea")

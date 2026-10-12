@@ -149,6 +149,10 @@ func _start_city() -> void:
 	picker.setup(camera, data, library)
 	# Vehicles, shops and roadblock pieces are not numbered buildings: clickable all the same.
 	var props := picker.add_props(vehicles) + picker.add_props(shops) + picker.add_props(roadblocks)
+	# The military base, the carriers, the F-111 and the Golden Gate as well.
+	props += picker.add_props(fog_island) + fog_base.picks.size()
+	for e in fog_base.picks:
+		picker.add_prop(e["mesh"], e["xform"], e["pick"])
 	print("[Picker] %d vehicles, shops and roadblock pieces are clickable" % props)
 
 	# Start on the centre of the city (zoom out to see the islands).
