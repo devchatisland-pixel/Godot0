@@ -1,5 +1,5 @@
 {
-	"buildings": 1538,
+	"buildings": 1539,
 	"fog_hash": "9dc6c17dc4cb16e43f0ebfec46cfbb7e0d6a084e0341dcf33a79df313d8a9f73",
 	"ground_trees": 53,
 	"kinds": {
@@ -35,7 +35,7 @@
 		"INDUSTRIAL": 24,
 		"INDUSTRIAL_YARD": 126,
 		"LANDMARK": 7,
-		"LIGHTHOUSE": 6,
+		"LIGHTHOUSE": 7,
 		"MAIN_HOSPITAL": 2,
 		"MAIN_SCHOOL": 1,
 		"MCDONALDS": 6,
