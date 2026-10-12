@@ -93,3 +93,11 @@ FREEMODELS/_incoming/jeep.glb
 FREEMODELS/_incoming/armored_vehicle-test.glb
 FREEMODELS/_incoming/armored_vehicleanimation.glb
 FREEMODELS/_incoming/low_poly_building.glb
+
+# Wave 17 raw files (more neon signs, the bank): only the built copies are committed.
+# The bank has the Sketchfab Standard licence; "Neon Fun" is CC-BY-SA-4.0.
+FREEMODELS/_incoming/bull_neon_sign.glb
+FREEMODELS/_incoming/neon_pack3.glb
+FREEMODELS/_incoming/neon_fun.glb
+FREEMODELS/_incoming/neon_palm_tree_sign.glb
+FREEMODELS/_incoming/bank_minimalist_model.glb

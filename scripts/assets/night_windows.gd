@@ -22,7 +22,7 @@ const PACK_GLOW := {
 	ModelCat.POLICE_MAIN: 0.55, ModelCat.CITY_HALL_MAIN: 0.6, ModelCat.HOSPITAL_MAIN: 0.6,
 	ModelCat.SCHOOL_MAIN: 0.45, ModelCat.PHARMACY: 0.55, ModelCat.GAS_STATION: 0.7,
 	ModelCat.UN_TOWER: 0.55, ModelCat.CRANE: 0.35, ModelCat.BRIDGE: 0.6,
-	ModelCat.BANK_PACK: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
+	ModelCat.BANK_PACK: 0.6, ModelCat.BANK_MIN: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
 	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6,
 	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
@@ -34,7 +34,9 @@ const PACK_GLOW := {
 }
 ## Neon roof signs: dim by day, very bright at night (they glow in their own colours).
 const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NEON_WOMAN,
-		ModelCat.NEON_JOYSTICK, ModelCat.NEON_MARTINI, ModelCat.NEON_BAR]
+		ModelCat.NEON_JOYSTICK, ModelCat.NEON_MARTINI, ModelCat.NEON_BAR,
+		ModelCat.NEON_BULL, ModelCat.NEON_FUN, ModelCat.NEON_PALM,
+		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE]
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
 const LOGO_PACKS := [ModelCat.SIGN_WINDOWS]
 const LOGO_DAY := 0.15

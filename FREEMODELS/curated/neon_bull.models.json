@@ -1,0 +1,9 @@
+{
+	"file": "neon_bull.glb",
+	"models": [
+		{
+			"cat": "NEON_BULL",
+			"node": "bull"
+		}
+	]
+}

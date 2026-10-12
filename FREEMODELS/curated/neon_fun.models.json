@@ -1,0 +1,9 @@
+{
+	"file": "neon_fun.glb",
+	"models": [
+		{
+			"cat": "NEON_FUN",
+			"node": "fun_arrow"
+		}
+	]
+}
