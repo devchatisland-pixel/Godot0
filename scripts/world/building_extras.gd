@@ -171,6 +171,10 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 const CROSS_LIGHT_MODEL := "free_mini.glb: m12"
 const CROSS_TIP := Vector3(0.48, 1.0, 0.83)
 const CROSS_LIGHT_SIZE := 0.035
+## "blade" (Taiwan signboards) sticks out of the east wall from its brackets (the -X end of the
+## model), `out` cells long, its face to the south; "corner" (the LED band) wraps the south-east
+## corner, along `fill` of the east wall. A roof sign with `deep` stands wholly on the roof
+## (a board on legs), its front at the edge, instead of centred on the edge.
 const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
@@ -186,6 +190,12 @@ const SIGNS := {
 	ModelCatalog.Cat.NEON_CLUB: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.NEON_GIRL: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.NEON_LOVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.TW_BANASONIC: {"mount": "blade", "out": 2.6, "height": 0.45},
+	ModelCatalog.Cat.TW_MCDONALDS: {"mount": "blade", "out": 2.0, "height": 0.45},
+	ModelCatalog.Cat.TW_COLA_JP: {"mount": "blade", "out": 1.4, "height": 0.42},
+	ModelCatalog.Cat.TW_COLA_BILLBOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
+	ModelCatalog.Cat.TW_LED_BOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
+	ModelCatalog.Cat.TW_LED_BAND: {"mount": "corner", "fill": 0.95, "height": 0.35},
 }
 ## A wall sign is at most this share of the building's height.
 const FACE_MAX_HEIGHT := 0.5
@@ -231,6 +241,14 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 			at.x = body.end.x + 0.02
 		else:
 			at.z = body.end.z + 0.02
+	elif spec["mount"] == "blade":
+		s = minf(float(spec["out"]) / model.size.x, body.size.y * FACE_MAX_HEIGHT / model.size.y)
+		local_center = Vector3(model.position.x, model.get_center().y, model.get_center().z)
+		at = Vector3(body.end.x, body.position.y + body.size.y * float(spec["height"]), body.get_center().z)
+	elif spec["mount"] == "corner":
+		s = body.size.z * float(spec["fill"]) / model.size.z
+		local_center = Vector3(model.end.x, model.get_center().y, model.end.z)
+		at = Vector3(body.end.x + 0.02, body.position.y + body.size.y * float(spec["height"]), body.end.z + 0.02)
 	else:
 		# A parapet sign: on the flat roof of the model (not on the box of the whole model, which
 		# also holds annexes and masts), flush with the roof edge the sign faces (south, or east
@@ -240,12 +258,13 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		var east := absf(sin(yaw)) > 0.5
 		var edge_len := rr.size.y if east else rr.size.x
 		s = minf(s, edge_len * 0.92 / model.size.x)
+		var inset := ROOF_EDGE_INSET + (model.size.z * s * 0.5 if spec.get("deep", false) else 0.0)
 		if east:
-			at.x = rr.end.x - ROOF_EDGE_INSET
+			at.x = rr.end.x - inset
 			at.z = rr.get_center().y
 		else:
 			at.x = rr.get_center().x
-			at.z = rr.end.y - ROOF_EDGE_INSET
+			at.z = rr.end.y - inset
 		at.y = roof["y"]
 	var turn := Basis(Vector3.UP, yaw)
 	batch.add(ids[0], Transform3D(turn * Basis.from_scale(Vector3(s, s, s)), at - turn * (local_center * s)))
@@ -299,6 +318,20 @@ static func _roof(lib: ModelLibrary, id: int, xform: Transform3D) -> Dictionary:
 		if counts[key] > counts.get(best_key, 0):
 			best_key = key
 	var level := float(best_key) / 50.0
+	var rect := _level_rect(pts, level)
+	if rect.size == Vector2.ZERO:
+		var b := xform * lib.bounds[id]
+		return {"y": b.end.y, "rect": Rect2(b.position.x, b.position.z, b.size.x, b.size.z)}
+	# A lid over the whole of that level (a tower whose top band has fewer corners than a ledge
+	# below it) is the real roof: a sign on the ledge would be buried in the top band.
+	var lid := _level_rect(pts, top)
+	if top > level + 0.05 and lid.get_area() >= rect.get_area() * 0.9:
+		return {"y": top, "rect": lid}
+	return {"y": level, "rect": rect}
+
+
+## Box (x, z) of the points at height `level`; zero size when there are none.
+static func _level_rect(pts: PackedVector3Array, level: float) -> Rect2:
 	var lo := Vector2(INF, INF)
 	var hi := Vector2(-INF, -INF)
 	for p in pts:
@@ -306,9 +339,8 @@ static func _roof(lib: ModelLibrary, id: int, xform: Transform3D) -> Dictionary:
 			lo = Vector2(minf(lo.x, p.x), minf(lo.y, p.z))
 			hi = Vector2(maxf(hi.x, p.x), maxf(hi.y, p.z))
 	if lo.x == INF:
-		var b := xform * lib.bounds[id]
-		return {"y": b.end.y, "rect": Rect2(b.position.x, b.position.z, b.size.x, b.size.z)}
-	return {"y": level, "rect": Rect2(lo, hi - lo)}
+		return Rect2()
+	return Rect2(lo, hi - lo)
 
 
 # --- Concert camp (ConcertSite) ---------------------------------------------------------------

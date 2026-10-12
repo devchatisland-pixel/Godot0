@@ -39,7 +39,11 @@ const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NE
 		ModelCat.NEON_BULL, ModelCat.NEON_FUN, ModelCat.NEON_PALM,
 		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE, ModelCat.NEON_LIGHTHOUSE]
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
-const LOGO_PACKS := [ModelCat.SIGN_WINDOWS]
+## The Taiwan signboards are light boxes: only their "board" surface lights up, not the steel.
+const LOGO_PACKS := [ModelCat.SIGN_WINDOWS, ModelCat.TW_BANASONIC, ModelCat.TW_MCDONALDS,
+		ModelCat.TW_COLA_JP, ModelCat.TW_COLA_BILLBOARD, ModelCat.TW_LED_BOARD, ModelCat.TW_LED_BAND]
+## Surfaces of a lit logo whose material starts with this stay unlit (frames, brackets).
+const LOGO_DARK := "metal"
 const LOGO_DAY := 0.15
 const LOGO_NIGHT := 0.9
 const NEON_DAY := 0.35
@@ -80,7 +84,7 @@ static func apply(lib: ModelLibrary) -> void:
 			lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
 	for cat in LOGO_PACKS:
 		for id in lib.ids(cat):
-			_light_facade(lib.meshes[id], LOGO_NIGHT, done, LOGO_DAY)
+			_light_facade(lib.meshes[id], LOGO_NIGHT, done, LOGO_DAY, false, LOGO_DARK)
 	for cat in NIGHT_PACKS:
 		for id in lib.ids(cat):
 			var mesh := lib.meshes[id]
@@ -156,10 +160,10 @@ static func _is_panel(mesh: Mesh, s: int) -> bool:
 ## Copy of every material of `mesh` whose texture also lights it at night.
 ## `keep_emission` keeps the emission colour the material already has (neon signs).
 static func _light_facade(mesh: Mesh, energy: float, done: Dictionary, day: float = 0.0,
-		keep_emission: bool = false) -> void:
+		keep_emission: bool = false, dark: String = "") -> void:
 	for s in mesh.get_surface_count():
 		var mat := mesh.surface_get_material(s) as BaseMaterial3D
-		if mat == null:
+		if mat == null or (dark != "" and mat.resource_name.begins_with(dark)):
 			continue
 		if not done.has(mat):
 			var m := mat.duplicate() as BaseMaterial3D

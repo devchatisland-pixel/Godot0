@@ -495,6 +495,16 @@ PACKS = {
         {"id": "vegas_girl", "cat": "NEON_GIRL", "neon": True, "region": [-1.04, 1.4, 9, 9],
          "but": HEART, "width": 3.0, "weld": 0.012},
         {"id": "vegas_love", "cat": "NEON_LOVE", "neon": True, "region": HEART, "width": 2.4, "weld": 0.012}]},
+    # Nineteenth wave: Taiwan style signboards for the towers of the urban island. The pack shares
+    # one texture; the blade signs hang from brackets at their -X end, the LED band (board29, with
+    # its colour stripes board28 above it) wraps the +X/+Z corner of a building.
+    "taiwan_signs": {"src": "taiwan_style_signboard_lowpoly.glb", "tex": 1024, "items": [
+        {"id": "tw_banasonic", "cat": "TW_BANASONIC", "nodes": ["board30"], "width": 3.0},
+        {"id": "tw_mcdonalds", "cat": "TW_MCDONALDS", "nodes": ["board06"], "width": 3.0},
+        {"id": "tw_cola_jp", "cat": "TW_COLA_JP", "nodes": ["board05"], "width": 3.0},
+        {"id": "tw_cola_billboard", "cat": "TW_COLA_BILLBOARD", "nodes": ["board08"], "width": 3.0},
+        {"id": "tw_led_board", "cat": "TW_LED_BOARD", "nodes": ["board07"], "width": 3.0},
+        {"id": "tw_led_band", "cat": "TW_LED_BAND", "nodes": ["board29", "board28"], "width": 3.0}]},
     "bank_min": {"src": "bank_minimalist_model.glb", "items": [
         {"id": "bank_minimalist", "cat": "BANK_MIN", "length": 2.8}]},
     "hotel_low": {"src": "low_poly_hotel_1.glb", "tex": 512, "items": [
