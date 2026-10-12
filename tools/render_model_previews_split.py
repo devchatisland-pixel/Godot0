@@ -1,9 +1,11 @@
 import re
 import sys, os, json, http.server, threading, functools
 from playwright.sync_api import sync_playwright
-T = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_preview_root")
-SRC = r"F:\Godot0-city\FREEMODELS\_incoming"
-OUT = r"F:\Godot0-city\docs\model_previews_split"
+# Env overrides let you split a GLB that lives outside _incoming, e.g.
+#   SPLIT_SRC=C:/Users/me/Downloads python tools/render_model_previews_split.py some_pack.glb
+T = os.environ.get("PREVIEW_ROOT", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_preview_root"))
+SRC = os.environ.get("SPLIT_SRC", r"F:\Godot0-city\FREEMODELS\_incoming")
+OUT = os.environ.get("SPLIT_OUT", r"F:\Godot0-city\docs\model_previews_split")
 os.makedirs(OUT, exist_ok=True)
 HTML = """<!doctype html><meta charset=utf-8><style>
 body{margin:0;background:#2b2f36;font-family:Segoe UI,Arial,sans-serif;color:#fff;width:1024px;height:800px;position:relative}
@@ -93,7 +95,7 @@ with sync_playwright() as p:
         if only and f not in only: continue
         r=pg.evaluate('n=>window.load(n)',f)
         frac=r['ov']/max(r['n'],1)
-        pack = f[:-4] in ['100_lowpoly_buildings__buildings_pack', '54_vehicle_pack', 'buildings', 'buildings_pack', 'buildings_pack (1)', 'city_buildings_-_blackthornprod_video', 'european_building_facades', 'european_buildings_asset_pack_1', 'free_buildings_low_poly', 'low-poly_city_street_buildings_asset_pack', 'low-poly_container', 'low_poly_accommodations_buildings', 'low_poly_business_buildings_pack', 'low_poly_city__cartocity_pack__cartoonsih_city', 'low_poly_public_buildings_pack', 'low_poly_vehicle_mini_pack_8', 'lowpoly_buildings', 'lowpoly_city_street_pack_buildings_stylized', 'new_york_buildings', 'somewhat_low-poly_buildings', 'strike_fighters_apcifv_pack', 'strike_fighters_radar_pack', 'strike_fighters_tanks_pack']
+        pack = f[:-4] in ['100_lowpoly_buildings__buildings_pack', '54_vehicle_pack', 'buildings', 'buildings_pack', 'buildings_pack (1)', 'city_buildings_-_blackthornprod_video', 'european_building_facades', 'european_buildings_asset_pack_1', 'free_buildings_low_poly', 'low-poly_city_street_buildings_asset_pack', 'low-poly_container', 'low_poly_accommodations_buildings', 'low_poly_business_buildings_pack', 'low_poly_city__cartocity_pack__cartoonsih_city', 'low_poly_public_buildings_pack', 'low_poly_vehicle_mini_pack_8', 'lowpoly_buildings', 'lowpoly_city_street_pack_buildings_stylized', 'new_york_buildings', 'somewhat_low-poly_buildings', 'strike_fighters_apcifv_pack', 'strike_fighters_radar_pack', 'strike_fighters_tanks_pack'] or f in only
         summary[f]=(r['n'],round(frac,2),pack); print(f[:50].ljust(51),r['n'],round(frac,2),'PACK' if pack else '-',flush=True)
         if not pack: continue
         base=os.path.splitext(f)[0]; d=os.path.join(OUT,clean(base) or 'pack'); os.makedirs(d,exist_ok=True)

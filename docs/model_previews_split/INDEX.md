@@ -28,3 +28,4 @@ Packs from `_incoming` split into one PNG per model. Single (non-pack) models ar
 | [strike_fighters_apcifv_pack](strike_fighters_apcifv_pack/INDEX.md) | 12 |
 | [strike_fighters_radar_pack](strike_fighters_radar_pack/INDEX.md) | 11 |
 | [strike_fighters_tanks_pack](strike_fighters_tanks_pack/INDEX.md) | 16 |
+| [taiwan_style_signboard_lowpoly](taiwan_style_signboard_lowpoly/INDEX.md) | 31 |
