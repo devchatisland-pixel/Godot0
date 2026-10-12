@@ -1,0 +1,17 @@
+{
+  "comment": "The low poly business buildings (restaurants, pizzeria, burger bar, cafes, the shop that replaces Kenney building-n). Run tools/curate_models.gd business.",
+  "packs": [
+    {
+      "src": "res://FREEMODELS/_incoming/low_poly_business_buildings_pack.glb",
+      "out": "business",
+      "texture_max": 512,
+      "items": [
+        {"id": "restaurant", "nodes": ["RestaurantBuilding"], "cat": "BIZ_RESTAURANT", "footprint": 1.6},
+        {"id": "shop", "nodes": ["ShopBuilding"], "cat": "BIZ_SHOP", "footprint": 1.0},
+        {"id": "pizza", "nodes": ["PizzaBuilding"], "cat": "BIZ_PIZZA", "footprint": 1.6},
+        {"id": "burger", "nodes": ["BurgerBuilding"], "cat": "BIZ_BURGER", "footprint": 1.6},
+        {"id": "cafe", "nodes": ["CafeBuilding"], "cat": "BIZ_CAFE", "footprint": 1.6}
+      ]
+    }
+  ]
+}

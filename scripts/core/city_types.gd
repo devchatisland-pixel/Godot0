@@ -119,6 +119,10 @@ enum Kind {
 	CONCERT,          # the concert camp near the north-east beach (ConcertSite): stage, lights, stands
 	SKYLINE_BLDG,     # tower of the night skyline pack on the urban island (UrbanSkyline); seed = model
 	BASKET_COURT,     # basketball court with its two hoops (MapRetouch)
+	RESTAURANT,       # business pack: placed by hand in the central city (ManualEdits)
+	PIZZA_SHOP,
+	BURGER_SHOP,
+	CAFE,
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -135,7 +139,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.PIRATE_SHIP, Kind.GRAVE,
 	Kind.NUCLEAR_PLANT, Kind.CINEMA_MAIN, Kind.AIRPORT, Kind.BURGER_JOINT,
 	Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER, Kind.WATCHTOWER, Kind.BEACH_HUT, Kind.PIER, Kind.BOAT, Kind.FIRE_TRUCK, Kind.BALLOON, Kind.BILLBOARD, Kind.UFO, Kind.TANK, Kind.BUS_STOP, Kind.CONCERT,
-	Kind.BASKET_COURT,
+	Kind.BASKET_COURT, Kind.RESTAURANT, Kind.PIZZA_SHOP, Kind.BURGER_SHOP, Kind.CAFE,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

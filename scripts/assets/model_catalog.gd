@@ -56,6 +56,8 @@ enum Cat {
 	# Eighteenth wave (tools/build_wave16_models.py, PortRework): the industrial buildings set (halls,
 	# sheds, towers and tanks), the oil and storage tanks with the brick factory, the offshore oil rig
 	IND_HALL, IND_SHED, IND_TOWER, PORT_TANK, OIL_RIG,
+	# Nineteenth wave: the low poly business buildings (central city shops and eateries)
+	BIZ_RESTAURANT, BIZ_SHOP, BIZ_PIZZA, BIZ_BURGER, BIZ_CAFE,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

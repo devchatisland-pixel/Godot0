@@ -32,7 +32,8 @@ const NAMES := {
 	"OUTPOST": "Farm or ranch building", "INDUSTRIAL_YARD": "Industrial yard", "SHOP": "Shop",
 	"AIRPORT": "Airport", "COOLING_TOWER": "Cooling tower", "COOLING_HALL": "Cooling hall",
 	"BT_TOWER": "BT tower", "WATCHTOWER": "Watchtower", "EMPTY": "Cleared lot", "BEACH_HUT": "Beach hut", "PIER": "Pier", "BOAT": "Boat", "FIRE_TRUCK": "Forest fire truck (CCF)", "BALLOON": "Hot air balloon", "BILLBOARD": "Billboard", "UFO": "Flying saucer", "TANK": "Tank", "BUS_STOP": "Bus stop", "CONCERT": "Concert camp", "SKYLINE_BLDG": "Night skyline tower",
-	"BASKET_COURT": "Basketball court",
+	"BASKET_COURT": "Basketball court", "RESTAURANT": "Restaurant", "PIZZA_SHOP": "Pizzeria",
+	"BURGER_SHOP": "Burger bar", "CAFE": "Cafe",
 }
 const FACINGS := ["N", "E", "S", "W"]
 

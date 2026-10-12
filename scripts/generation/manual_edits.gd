@@ -57,6 +57,17 @@ const EDITS := [
 	# Shopping center: a casino stands in a park where it was.
 	{"kind": "SHOPPING_CENTER", "near": Vector2i(100, 138), "replace": "CASINO", "size": [3, 3],
 		"old_ground": "PARK"},
+	# Business pack eateries in the central city: shops become 3 restaurants, 2 pizzerias, 1 burger bar, 4 cafes.
+	{"kind": "SHOP", "near": Vector2i(138, 149), "replace": "RESTAURANT"},
+	{"kind": "SHOP", "near": Vector2i(135, 146), "replace": "RESTAURANT"},
+	{"kind": "SHOP", "near": Vector2i(142, 152), "replace": "RESTAURANT"},
+	{"kind": "SHOP", "near": Vector2i(140, 150), "replace": "PIZZA_SHOP"},
+	{"kind": "SHOP", "near": Vector2i(136, 152), "replace": "PIZZA_SHOP"},
+	{"kind": "SHOP", "near": Vector2i(138, 143), "replace": "BURGER_SHOP"},
+	{"kind": "SHOP", "near": Vector2i(134, 152), "replace": "CAFE"},
+	{"kind": "SHOP", "near": Vector2i(146, 151), "replace": "CAFE"},
+	{"kind": "SHOP", "near": Vector2i(144, 142), "replace": "CAFE"},
+	{"kind": "SHOP", "near": Vector2i(147, 148), "replace": "CAFE"},
 	# The corn field of the farm next to the tractor faces west.
 	{"kind": "FIELD", "near": Vector2i(196, 174), "facing": 3, "lay": true},
 ]
