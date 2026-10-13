@@ -13,10 +13,10 @@ description: Use for ANY work on this Godot city project (editing scenes/scripts
 - Fall back to the Godot console exe / shell only when no MCP tool covers it (e.g. `tools/*.gd` batch scripts, tests in `tests/`).
 
 ## 2. Ship automatically when a change is finished and validated
-Do this without waiting for the user to ask:
-1. Commit on the current worktree branch (clear message).
-2. Push the branch.
-3. Open a PR into `main` (`gh pr create` or github MCP), then merge it once checks pass.
-4. Retrieve it locally: `git -C F:/Godot0-city pull --ff-only` (never force; if the main checkout is dirty or not fast-forwardable, stop and tell the user).
-Then tell the user it is on `main` and ready for "deploy".
+Do this without waiting for the user to ask, live in the user's Terminal panel (never via Bash or a background task, so the user sees every step):
+run `mcp__terminal__run_in_terminal` with cwd = the session's checkout, title `ship`, command
+`& .\tools\ship.ps1 -Title "<clear commit/PR title>" -Paths <file1>,<file2> -NoDeploy`
+(`-Paths` = only the change's files, never `FREEMODELS/_incoming/`). It commits, pushes, opens the PR into `main`, merges once checks pass, and pulls `F:/Godot0-city` (ff-only).
+Watch it with `mcp__terminal__read_terminal` until `SHIP OK` or `SHIP FAILED: ...`.
+Then tell the user it is on `main` and ready for "deploy" (if the user already asked to deploy, use the deploy skill instead: same script without `-NoDeploy`).
 Never push anywhere except this repo's origin; never force-push; never rewrite main.
