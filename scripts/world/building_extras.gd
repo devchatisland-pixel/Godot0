@@ -246,7 +246,7 @@ const SIGNS := {
 	ModelCatalog.Cat.TW_LED_BOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
 	ModelCatalog.Cat.TW_LED_BAND: {"mount": "corner", "fill": 0.95, "height": 0.35},
 	# The Vice City logo: a giant board on the roof of its tower (a board on legs, front at the east edge).
-	ModelCatalog.Cat.SIGN_VICE_CITY: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true, "halo": 1.08},
+	ModelCatalog.Cat.SIGN_VICE_CITY: {"mount": "roof", "scale": 1.7, "overhang": true, "yaw": PI * 0.5, "deep": true, "halo": 1.08},
 }
 ## A wall sign is at most this share of the building's height (its spec may say "max_height").
 const FACE_MAX_HEIGHT := 0.5
@@ -309,7 +309,8 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		var rr: Rect2 = roof["rect"]
 		var east := absf(sin(yaw)) > 0.5
 		var edge_len := rr.size.y if east else rr.size.x
-		s = minf(s, edge_len * 0.92 / model.size.x)
+		if not spec.get("overhang", false):
+			s = minf(s, edge_len * 0.92 / model.size.x)
 		var inset := ROOF_EDGE_INSET + (model.size.z * s * 0.5 if spec.get("deep", false) else 0.0)
 		if east:
 			at.x = rr.end.x - inset
