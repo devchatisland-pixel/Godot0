@@ -26,7 +26,7 @@ const PACK_GLOW := {
 	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6, ModelCat.MUSEUM_HALL: 0.6,
 	ModelCat.FOG_OFFICE: 0.55, ModelCat.FOG_HOUSE: 0.35, ModelCat.FOG_OFFICE_TOWER: 0.5, ModelCat.FOG_FLOOR: 0.45,
 	ModelCat.FOG_MOD_HOUSE: 0.4, ModelCat.FOG_MOD_TOWER: 0.5, ModelCat.FOG_MOD_HOME: 0.4,
-	ModelCat.SUPERMARKET: 0.3,
+	ModelCat.SUPERMARKET: 0.3, ModelCat.VEGAS_CASINO: 0.3,
 	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
 	ModelCat.BIZ_RESTAURANT: 0.6, ModelCat.BIZ_SHOP: 0.5, ModelCat.BIZ_PIZZA: 0.6, ModelCat.BIZ_BURGER: 0.6, ModelCat.BIZ_CAFE: 0.6,
@@ -42,7 +42,7 @@ const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NE
 		ModelCat.NEON_JOYSTICK, ModelCat.NEON_MARTINI, ModelCat.NEON_BAR,
 		ModelCat.NEON_BULL, ModelCat.NEON_FUN, ModelCat.NEON_PALM,
 		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE, ModelCat.NEON_LIGHTHOUSE,
-		ModelCat.NEON_XXX, ModelCat.NEON_PLAYBOY]
+		ModelCat.NEON_XXX, ModelCat.NEON_PLAYBOY, ModelCat.NEON_CASINO]
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
 ## The Taiwan signboards are light boxes: only their "board" surface lights up, not the steel.
 const LOGO_PACKS := [ModelCat.SIGN_WINDOWS, ModelCat.TW_BANASONIC, ModelCat.TW_MCDONALDS,
