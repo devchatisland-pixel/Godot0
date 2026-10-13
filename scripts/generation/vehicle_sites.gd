@@ -391,9 +391,16 @@ func _crane_tanker() -> void:
 		push_warning("[Vehicles] no room next to the construction crane")
 
 
+## The shed the fuel tanker of the port parks beside.
+const PORT_LOADBAY := "port_sheds.glb: shed_loadbay"
+
+
 ## A fuel tanker next to the oil barrels of the port: the barrel yard (INDUSTRIAL_YARD whose
 ## seed draws barrels, see BuildingExtras) nearest to the quay of the cargo ship.
 func _port_fuel_tanker() -> void:
+	# First choice, by hand: beside the loading bay shed of the port.
+	if _beside_model("p54_18_tanker_fuel", PORT_LOADBAY, "next to the loading bay of the port"):
+		return
 	# The silos MapAdditions put beside the container yards come first.
 	var silos := Rect2i()
 	for b in _d.building_count():

@@ -17,6 +17,10 @@ const CONE_LEN := 0.15
 const TANK_LEN := 1.98
 ## Height of the west barriers (R-15 to R-17) as a share of their modelled height.
 const WEST_BARRIER_HEIGHT := 0.5
+## How far before and after the west barriers the two pairs of police cars stand, in cells.
+const WEST_CARS_APART := 2.2
+## Cells west of the urban end of the west bridge where the second line of barriers stands.
+const URBAN_EXIT_BACK := 2
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
@@ -31,6 +35,8 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		var x := data.west_bridge.x + WEST_BACK
 		_block(lib, Cat.ROADBLOCK_B, x, data.west_bridge.z, false)
 		_police_car(lib, x, data.west_bridge.z, 2.7)
+		_west_cars(lib, x, data.west_bridge.z)
+		_urban_exit_block(lib, data.west_bridge.y - URBAN_EXIT_BACK, data.west_bridge.z)
 
 
 ## A line of barriers across the three lanes of the row `row` at column `x`.
@@ -74,14 +80,45 @@ func _roadblock_cars(lib: ModelLibrary, x: int, row: int) -> void:
 ## The police car of the roadblocks: the US cruiser of the vehicle catalog (its nose is -Z,
 ## the yaws below were made for the old model whose nose is +Z, hence the half turn).
 ## Falls back to the old model when the catalog vehicle cannot be loaded.
-func _cruiser(lib: ModelLibrary) -> Dictionary:
-	var id := MapVehicles.mesh_id(lib, "police_us_cruiser")
+func _cruiser(lib: ModelLibrary, vehicle: String = "police_us_cruiser") -> Dictionary:
+	var id := MapVehicles.mesh_id(lib, vehicle)
 	if id >= 0:
 		return {"id": id, "turn": PI}
 	var ids := lib.ids(Cat.POLICE_CAR)
 	if ids.is_empty():
 		return {}
 	return {"id": ids[0], "turn": 0.0}
+
+
+## Four police cars across the road at the west checkpoint, two before the barriers and two
+## after them, slightly slanted so that together they close the three lanes.
+func _west_cars(lib: ModelLibrary, x: int, row: int) -> void:
+	var car := _cruiser(lib)
+	if car.is_empty():
+		return
+	var z := float(row) + 0.5
+	for side: float in [-1.0, 1.0]:
+		for k in 2:
+			var dz := -0.95 if k == 0 else 0.95
+			var slant: float = 0.25 * side * (1.0 if k == 0 else -1.0)
+			_put(lib, car["id"], Vector3(float(x) + 0.5 + side * WEST_CARS_APART, 0.0, z + dz),
+					PI + car["turn"] + slant, CAR_LEN, "Police car (roadblock)")
+
+
+## A simple line of roadblock_a2 barriers across the three lanes where the west bridge lets
+## out on the urban island (column `x`), and a black Japanese police car beside it.
+func _urban_exit_block(lib: ModelLibrary, x: int, row: int) -> void:
+	var ids := lib.ids(Cat.ROADBLOCK_A)
+	if ids.is_empty():
+		return
+	var id: int = ids[1 if ids.size() > 1 else 0]
+	for k in 3:
+		_put(lib, id, Vector3(float(x) + 0.5, 0.0, float(row) + 0.5 + float(k - 1)), PI * 0.5, BARRIER_LEN,
+				"Roadblock barrier")
+	var car := _cruiser(lib, "police_jp_black")
+	if not car.is_empty():
+		_put(lib, car["id"], Vector3(float(x) - 1.2, 0.0, float(row) + 0.5 + 2.2), PI + car["turn"], CAR_LEN,
+				"Police car (roadblock)")
 
 
 ## Five tanks on both verges beyond the roadblock, their guns towards the bridge (east).

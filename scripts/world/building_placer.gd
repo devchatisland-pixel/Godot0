@@ -160,14 +160,14 @@ static func pick_for(data: CityData, lib: ModelLibrary, i: int, facing: int = -1
 
 
 # --- Model choice ------------------------------------------------------------------------
-## The cartoon house "house1" never faces north: it is turned to face south.
-const SOUTH_ONLY_MODEL := "carto.glb: house1"
+## The cartoon houses "house1" and "house2" never face north: they are turned to face south.
+const SOUTH_ONLY_MODELS := ["carto.glb: house1", "carto.glb: house2"]
 
 
 static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
 	var pick := _pick_model_raw(data, lib, i, facing_override)
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
-	if facing == 0 and not pick.is_empty() and lib.model_name(pick["id"]) == SOUTH_ONLY_MODEL:
+	if facing == 0 and not pick.is_empty() and SOUTH_ONLY_MODELS.has(lib.model_name(pick["id"])):
 		return _pick_model_raw(data, lib, i, 2)
 	# The shop that stands for Kenney's building-n faces south or east: north turns to south, west to east.
 	if (facing == 0 or facing == 3) and not pick.is_empty() and lib.ids(Cat.BIZ_SHOP).has(pick["id"]):

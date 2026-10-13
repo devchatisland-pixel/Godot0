@@ -114,6 +114,8 @@ const TURNED_AT := [
 const DELETED_LATE := [
 	["MCDONALDS", Vector2i(237, 202)],
 	["APARTMENT", Vector2i(175, 216)],
+	# The apartment block in front of the fire station of (155, 210): the main one moves there.
+	["APARTMENT", Vector2i(155, 213)],
 	["CAFE", Vector2i(206, 213)],
 	["RESTAURANT", Vector2i(200, 215)],
 ]
@@ -124,6 +126,14 @@ const MODEL_AT := [
 	["APARTMENT", Vector2i(148, 237), "building-k.glb"],
 	["QUARTER_BLDG", Vector2i(193, 225), "building-k.glb"],
 	["QUARTER_BLDG", Vector2i(188, 277), "building-k.glb"],
+	# The church of the civic ground is drawn like the one of the suburb.
+	["CHURCH", Vector2i(243, 214), "church_low.glb: church_low"],
+]
+## Buildings moved by hand (in `finish`, after the deletions): kind, top-left cell of the lot on
+## the final map, new lot, new facing (0 N, 1 E, 2 S, 3 W). The ground follows the lot.
+const MOVED_AT := [
+	# The fire station of the east moves in front of the small one, across the street.
+	["FIRE_STATION", Vector2i(198, 193), Rect2i(155, 213, 3, 3), 0],
 ]
 ## The main hospital whose front yard is paved like its lot (no grass), and how deep (cells).
 const PAVED_HOSPITAL := Vector2i(243, 201)
@@ -135,9 +145,10 @@ const HIGHWAY_STUB := Rect2i(252, 188, 3, 2)
 const FARM_BUILDINGS_AT := [
 	[Vector2i(265, 283), "outpost.glb: water_tank"],
 ]
-## Oil pumps added side by side with the one whose lot starts at OIL_FIELD (to its east, else
-## its west).
+## The oil pump whose lot starts at OIL_FIELD and two more stand apart in the middle of the
+## desert: top-left cells of their lots, the last one is the reference that does not move.
 const OIL_FIELD := Vector2i(99, 209)
+const OIL_PUMP_SPOTS := [Vector2i(92, 200), Vector2i(112, 217), Vector2i(103, 209)]
 const EXTRA_OIL_PUMPS := 2
 ## Small shops round the main cinema (it stood alone in its block): how many, lot size.
 const CINEMA_SHOPS := 4
@@ -394,6 +405,7 @@ static func finish(data: CityData) -> int:
 		for m in MODEL_AT:
 			if data.b_kind[b] == CityTypes.Kind[m[0]] and data.building_rect(b).position == m[1]:
 				data.b_model[b] = m[2]
+	_move_by_hand(data)
 	_pave_hospital_yard(data)
 	_clear_highway_stub(data)
 	_add_oil_pumps(data)
@@ -430,24 +442,59 @@ static func _clear_highway_stub(data: CityData) -> void:
 				data.zone[data.idx(x, y)] = CityTypes.Zone.NATURE
 
 
-## EXTRA_OIL_PUMPS oil pumps in a row with the pump at OIL_FIELD, on free desert.
+## The pump of OIL_FIELD moves to the first of OIL_PUMP_SPOTS, the EXTRA_OIL_PUMPS others stand on
+## the rest, each on free desert (a spot with no room is shifted a few cells).
 static func _add_oil_pumps(data: CityData) -> void:
 	var pump := _nearest(data, "OIL_PUMP", OIL_FIELD)
 	if pump < 0:
 		return
-	var r := data.building_rect(pump)
-	var added := 0
-	for side in [1, -1]:
-		var k := 1
-		while added < EXTRA_OIL_PUMPS and k <= EXTRA_OIL_PUMPS:
-			var lot := Rect2i(r.position + Vector2i(side * k * r.size.x, 0), r.size)
-			if not _lot_is_free(data, -1, lot):
-				break
-			data.add_building(lot, CityTypes.Kind.OIL_PUMP, 2, data.b_seed[pump] + k * side, 0.5)
-			added += 1
-			k += 1
-	if added < EXTRA_OIL_PUMPS:
-		push_warning("[Edits] only %d oil pumps added beside the one at %s" % [added, OIL_FIELD])
+	var size := data.building_rect(pump).size
+	var placed := 0
+	for k in OIL_PUMP_SPOTS.size():
+		var lot := _free_desert_lot(data, pump, OIL_PUMP_SPOTS[k], size)
+		if lot.size.x == 0:
+			push_warning("[Edits] no room for the oil pump near %s" % OIL_PUMP_SPOTS[k])
+			continue
+		if k == 0:
+			_move_ground(data, data.building_rect(pump), lot, "DESERT")
+			data.set_building_rect(pump, lot)
+		else:
+			for y in range(lot.position.y, lot.end.y):
+				for x in range(lot.position.x, lot.end.x):
+					data.zone[data.idx(x, y)] = CityTypes.Zone.DESERT
+			data.add_building(lot, CityTypes.Kind.OIL_PUMP, 2, data.b_seed[pump] + k, 0.5)
+		placed += 1
+	if placed < OIL_PUMP_SPOTS.size():
+		push_warning("[Edits] only %d of %d oil pumps placed" % [placed, OIL_PUMP_SPOTS.size()])
+
+
+## The free lot of `size` nearest to `want` (within a few cells), all desert ground; the empty
+## rectangle when there is none. `skip` is the building that is moved (it does not block).
+static func _free_desert_lot(data: CityData, skip: int, want: Vector2i, size: Vector2i) -> Rect2i:
+	for ring in 6:
+		for dy in range(-ring, ring + 1):
+			for dx in range(-ring, ring + 1):
+				if maxi(absi(dx), absi(dy)) != ring:
+					continue
+				var lot := Rect2i(want + Vector2i(dx, dy), size)
+				if _lot_is_free(data, skip, lot) and _all_desert(data, lot):
+					return lot
+	return Rect2i()
+
+
+## Moves the buildings of MOVED_AT.
+static func _move_by_hand(data: CityData) -> void:
+	for m in MOVED_AT:
+		var b := -1
+		for i in data.building_count():
+			if data.b_kind[i] == CityTypes.Kind[m[0]] and data.building_rect(i).position == m[1]:
+				b = i
+		if b < 0:
+			push_warning("[Edits] no %s at %s to move" % [m[0], m[1]])
+			continue
+		_move_ground(data, data.building_rect(b), m[2], "")
+		data.set_building_rect(b, m[2])
+		data.b_facing[b] = m[3]
 
 
 ## The main cinema stood alone in the middle of its big square lot: the lot shrinks to the

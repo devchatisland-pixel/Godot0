@@ -162,8 +162,9 @@ func _neon_tower() -> int:
 	_d.b_scale[b] = 1.0
 	_d.b_facing[b] = 2
 	_d.b_model.erase(b)
+	# The sign hangs on the east wall, a little bigger than the tower.
 	_d.b_sign[b] = ModelCatalog.Cat.NEON_WOMAN
-	_d.b_sign_facing[b] = 2
+	_d.b_sign_facing[b] = 1
 	_stamp(b)
 	return 1
 

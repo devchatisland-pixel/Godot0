@@ -179,7 +179,7 @@ const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
 	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.58, "halo": 1.15, "yaw": PI * 0.5},
-	ModelCatalog.Cat.NEON_WOMAN: {"mount": "roof", "scale": 1.0, "halo": 1.12},
+	ModelCatalog.Cat.NEON_WOMAN: {"mount": "face", "fill": 1.1, "height": 0.5, "max_height": 1.1, "halo": 1.12},
 	ModelCatalog.Cat.SIGN_WINDOWS: {"mount": "face", "fill": 0.86, "height": 0.6, "halo": 1.0},
 	ModelCatalog.Cat.NEON_JOYSTICK: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 	ModelCatalog.Cat.NEON_MARTINI: {"mount": "face", "fill": 0.9, "height": 0.58, "halo": 1.08},
@@ -188,7 +188,7 @@ const SIGNS := {
 	ModelCatalog.Cat.NEON_FUN: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 	ModelCatalog.Cat.NEON_PALM: {"mount": "face", "fill": 0.85, "height": 0.58, "halo": 1.08},
 	ModelCatalog.Cat.NEON_CLUB: {"mount": "roof", "scale": 1.0, "halo": 1.1},
-	ModelCatalog.Cat.NEON_GIRL: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_GIRL: {"mount": "roof", "scale": 1.0, "halo": 1.1, "fill": 0.9, "height": 0.55},
 	ModelCatalog.Cat.NEON_LOVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.TW_BANASONIC: {"mount": "blade", "out": 2.6, "height": 0.45},
 	ModelCatalog.Cat.TW_MCDONALDS: {"mount": "blade", "out": 2.0, "height": 0.45},
@@ -197,7 +197,7 @@ const SIGNS := {
 	ModelCatalog.Cat.TW_LED_BOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
 	ModelCatalog.Cat.TW_LED_BAND: {"mount": "corner", "fill": 0.95, "height": 0.35},
 }
-## A wall sign is at most this share of the building's height.
+## A wall sign is at most this share of the building's height (its spec may say "max_height").
 const FACE_MAX_HEIGHT := 0.5
 
 
@@ -232,7 +232,8 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 	elif spec["mount"] == "face":
 		var east := int(data.b_sign_facing[i]) == 1
 		var wall := body.size.z if east else body.size.x
-		s = minf(wall * float(spec["fill"]) / model.size.x, body.size.y * FACE_MAX_HEIGHT / model.size.y)
+		s = minf(wall * float(spec["fill"]) / model.size.x,
+					body.size.y * float(spec.get("max_height", FACE_MAX_HEIGHT)) / model.size.y)
 		# Its back against the wall, its face (+Z of the model) outwards.
 		local_center = Vector3(model.get_center().x, model.get_center().y, model.position.z)
 		at.y = body.position.y + body.size.y * float(spec["height"])
