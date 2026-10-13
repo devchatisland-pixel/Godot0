@@ -87,6 +87,13 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
 		add_child(mi)
+		# Aircraft: red light on the left wingtip, green on the right (NavLights).
+		for l in NavLights.for_vehicle(lib, String(p["id"]), mid, mi.transform):
+			var light := MeshInstance3D.new()
+			light.mesh = lib.meshes[l[0]]
+			light.transform = l[1]
+			light.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			add_child(light)
 		if pad_id >= 0:
 			# The helipad the vehicle stands on.
 			var pad := MeshInstance3D.new()

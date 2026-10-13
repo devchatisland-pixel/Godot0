@@ -50,6 +50,7 @@ var picks: Array[Dictionary] = []
 func _put(lib: ModelLibrary, batch: InstanceBatch, id: int, xform: Transform3D, title: String,
 		kind: String, note: String) -> void:
 	batch.add(id, xform)
+	NavLights.add_to(batch, lib, id, xform)
 	var cat: int = lib.cats[id]
 	picks.append({"mesh": lib.meshes[id], "xform": xform, "pick": {
 		"uid": "M-%03d" % picks.size(), "number": picks.size(), "title": title, "kind": kind,
@@ -101,6 +102,9 @@ func _base(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> int
 		# with that origin on `at`, not the middle of its box.
 		var xform := Transform3D(Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3.ONE * scale), ground) 				if p.get("origin", false) else _standing(lib, id, ground, yaw, scale)
 		_put(lib, batch, id, xform, label[0], label[1], "military base of the fog island")
+		if p.has("veh"):
+			for l in NavLights.for_vehicle(lib, p["veh"], id, xform):
+				batch.add(l[0], l[1])
 		n += 1
 	var pad := MapVehicles.helipad_id(lib)
 	if pad >= 0:

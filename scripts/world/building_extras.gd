@@ -51,7 +51,12 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 			if not jets.is_empty():
 				for spot in MilitaryMeshes.JET_SPOTS:
 					var turn := Basis(Vector3.UP, spot[1]).scaled(Vector3.ONE * JET_SCALE)
-					batch.add(jets[0], xform * Transform3D(turn, spot[0]))
+					var jet := xform * Transform3D(turn, spot[0])
+					batch.add(jets[0], jet)
+					NavLights.add_to(batch, lib, jets[0], jet)
+		Kind.BOAT:
+			# Red light on the left side, green on the right (NavLights).
+			NavLights.add_to(batch, lib, pid, xform)
 		Kind.AIRPORT:
 			batch.add(lib.named_id("runway_ext"), xform)
 		Kind.STADIUM:
