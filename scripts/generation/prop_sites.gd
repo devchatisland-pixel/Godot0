@@ -277,7 +277,7 @@ func _ufo_and_tanks() -> int:
 func _vegas_sign() -> int:
 	var d := MapLayout.blob("desert")
 	var at := Vector2i(int(d["at"].x + d["r"].x) + 1, int(d["at"].y))
-	var r := _near(at, Vector2i(2, 5), -1, 20)
+	var r := _near(at, Vector2i(1, 3), -1, 20)
 	if r.size.x <= 0:
 		return 0
 	_add(r, Kind.VEGAS_SIGN, 1, 1)

@@ -176,12 +176,12 @@ const FINAL_SHOPS := [
 	[Vector2i(198, 205), 3], [Vector2i(198, 207), 3],
 	[Vector2i(204, 205), 1], [Vector2i(204, 207), 1],
 ]
-## The casino of Las Vegas: the skyscraper at CASINO_AT and the shop behind it make room for two
-## casino buildings side by side (CASINO_LOTS, facing south), one neon word over both.
+## The casino of Las Vegas: the skyscraper at CASINO_AT and the shop behind it make room for a
+## row of four skyscrapers side by side (CASINO_LOTS, facing south), one neon word over them.
 const CASINO_AT := Vector2i(123, 174)
 const CASINO_SHOP := Vector2i(121, 175)
-const CASINO_LOTS := [Rect2i(121, 174, 3, 3), Rect2i(124, 174, 3, 3)]
-const CASINO_MODEL := "vegas_casino.glb: casino_building"
+const CASINO_LOTS := [Rect2i(121, 174, 2, 3), Rect2i(123, 174, 1, 3), Rect2i(124, 174, 2, 3), Rect2i(126, 174, 1, 3)]
+const CASINO_MODEL := "building-skyscraper-d.glb"
 
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
@@ -613,7 +613,7 @@ static func final_tweaks(data: CityData) -> void:
 	_casino(data)
 
 
-## The two casino buildings of CASINO_LOTS and their word.
+## The row of casino towers of CASINO_LOTS and their word.
 static func _casino(data: CityData) -> void:
 	var tower := -1
 	for b in data.building_count():
@@ -627,8 +627,10 @@ static func _casino(data: CityData) -> void:
 		push_warning("[Edits] no skyscraper at %s for the casino" % CASINO_AT)
 		return
 	data.set_building_rect(tower, CASINO_LOTS[0])
-	var second := data.add_building(CASINO_LOTS[1], CityTypes.Kind.CASINO, 2, data.b_seed[tower], data.b_height[tower])
-	for b: int in [tower, second]:
+	var towers: Array[int] = [tower]
+	for k in range(1, CASINO_LOTS.size()):
+		towers.append(data.add_building(CASINO_LOTS[k], CityTypes.Kind.CASINO, 2, data.b_seed[tower], data.b_height[tower]))
+	for b: int in towers:
 		data.b_kind[b] = CityTypes.Kind.CASINO
 		data.b_facing[b] = 2
 		data.b_scale[b] = 1.0
