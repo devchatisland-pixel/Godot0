@@ -24,6 +24,7 @@ const PACK_GLOW := {
 	ModelCat.UN_TOWER: 0.55, ModelCat.CRANE: 0.35, ModelCat.BRIDGE: 0.6,
 	ModelCat.BANK_PACK: 0.6, ModelCat.BANK_MIN: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
 	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6, ModelCat.MUSEUM_HALL: 0.6,
+	ModelCat.FOG_OFFICE: 0.55, ModelCat.FOG_HOUSE: 0.35, ModelCat.FOG_OFFICE_TOWER: 0.5, ModelCat.FOG_FLOOR: 0.45,
 	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
 	ModelCat.BIZ_RESTAURANT: 0.6, ModelCat.BIZ_SHOP: 0.5, ModelCat.BIZ_PIZZA: 0.6, ModelCat.BIZ_BURGER: 0.6, ModelCat.BIZ_CAFE: 0.6,
@@ -52,7 +53,7 @@ const NEON_NIGHT := 5.0
 ## Brightness of the halo (a bigger copy added behind the sign) at night.
 const HALO_NIGHT := 3.0
 ## Night packs keep the lights painted in their emission map (a lit facade where they have none).
-const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
+const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER, ModelCat.FOG_NIGHT_TOWER]
 ## Billboard panels at night: soft warm white, at this brightness.
 const BILLBOARD_LIGHT := Color(1.0, 0.96, 0.88)
 const BILLBOARD_GLOW := 1.0
