@@ -94,6 +94,7 @@ func _start_city() -> void:
 	CivicMeshes.build_all(library)
 	PublicMeshes.build_all(library)
 	MilitaryMeshes.build_all(library)
+	NavLights.build_all(library)
 	FarmMeshes.build_all(library)
 	ParkMeshes.build_all(library)
 	NightWindows.apply(library)
