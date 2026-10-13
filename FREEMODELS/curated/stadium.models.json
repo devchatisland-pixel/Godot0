@@ -1,9 +1,4 @@
 {
 	"file": "stadium.glb",
-	"models": [
-		{
-			"cat": "STADIUM",
-			"node": "stadium"
-		}
-	]
+	"models": []
 }
