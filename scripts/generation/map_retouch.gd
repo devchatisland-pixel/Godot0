@@ -63,6 +63,11 @@ const SIGN_WALL := 1
 const TURNED := [
 	["SKYSCRAPER", Vector2i(123, 174), 1],
 ]
+## Buildings copied once to their west side (top-left cell of the lot): B-00008, the skyscraper
+## building-skyscraper-b of Las Vegas.
+const TWIN_KIND := Kind.SKYSCRAPER
+const TWINS := [Vector2i(123, 174)]
+const TWIN_MODEL := "building-skyscraper-b.glb"
 ## Kinds whose buildings all face the same way.
 const KIND_FACING := {"MCDONALDS": 1}
 const BASE_SCALE := 1.5
@@ -88,7 +93,7 @@ static func apply(data: CityData) -> Dictionary:
 	var m := MapRetouch.new()
 	m._d = data
 	m._mark()
-	var out := {"signs": m._signs(), "turned": m._turned(), "base": m._base()}
+	var out := {"signs": m._signs(), "turned": m._turned(), "base": m._base(), "twins": m._twins()}
 	out["courts"] = m._courts()
 	out["billboards"] = m._billboards()
 	return out
@@ -197,6 +202,54 @@ func _turned() -> int:
 		if KIND_FACING.has(kind) and _d.b_facing[b] != KIND_FACING[kind]:
 			_d.b_facing[b] = KIND_FACING[kind]
 			n += 1
+	return n
+
+
+## An exact copy of the building at TWINS' cell (same size, facing, seed and model) is built on
+## the lot touching its west side; the road, forest and ground detail under it are cleared.
+func _twins() -> int:
+	var n := 0
+	for src_cell in TWINS:
+		var b := _at(TWIN_KIND, src_cell)
+		if b < 0:
+			push_warning("[Retouch] no building at %s to copy" % src_cell)
+			continue
+		var r := _d.building_rect(b)
+		var t := Rect2i(r.position.x - r.size.x, r.position.y, r.size.x, r.size.y)
+		var blocked := false
+		for y in range(t.position.y, t.end.y):
+			for x in range(t.position.x, t.end.x):
+				if not _d.in_bounds(x, y) or _d.terrain[_d.idx(x, y)] != CityTypes.Terrain.LAND:
+					blocked = true
+		# Lots deleted by hand are free, small shops give way; any other building is in the way.
+		var shops: Array[int] = []
+		for o in _d.building_count():
+			var k: int = _d.b_kind[o]
+			if k != Kind.EMPTY and k != Kind.BALLOON and not ManualEdits.hand_deleted.has(o) \
+					and _d.building_rect(o).intersects(t):
+				if k == Kind.SHOP:
+					shops.append(o)
+				else:
+					blocked = true
+		if blocked:
+			push_warning("[Retouch] the lot west of %s is not free" % src_cell)
+			continue
+		for o in shops:
+			_d.b_kind[o] = Kind.EMPTY
+		for y in range(t.position.y, t.end.y):
+			for x in range(t.position.x, t.end.x):
+				var i := _d.idx(x, y)
+				_d.road[i] = 0
+				_d.forest[i] = 0
+				_d.deco[i] = 0
+		var c := _d.add_building(t, _d.b_kind[b], _d.b_facing[b], _d.b_seed[b], _d.b_height[b])
+		_d.b_scale[c] = _d.b_scale[b]
+		_d.b_lay[c] = _d.b_lay[b]
+		_d.b_sign_facing[c] = _d.b_sign_facing[b]
+		# The zone under the copy is another one: force the model of the original.
+		_d.b_model[c] = _d.b_model.get(b, TWIN_MODEL)
+		_stamp(t)
+		n += 1
 	return n
 
 
