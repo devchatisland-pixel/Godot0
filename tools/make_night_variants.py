@@ -7,7 +7,15 @@ as it is (a backup); only the lists the game reads (.models.json) point to the d
   FREEMODELS/curated/cinema_night.glb        the cinema of cinema2.glb; the word CINEMA glows red
   FREEMODELS/curated/hotel_small_night.glb   hotel_small of hotels.glb; the word HOTEL glows green
   FREEMODELS/curated/hotel_stars_night.glb   hotel_stars of hotels.glb; its five stars glow yellow
-  FREEMODELS/curated/police_hq_night.glb     police_hq of public_main.glb; the word POLICE glows blue
+  FREEMODELS/curated/police_hq_night.glb     police_hq of public_main.glb; the word POLICE and the
+                                             round sign on the roof glow blue
+  FREEMODELS/curated/hospital_night.glb      hospital of public_main.glb; the blue cross of the front
+                                             glows strong blue (the lit H of the helipad is added by
+                                             the game, BuildingExtras)
+  FREEMODELS/curated/city_hall_night.glb     city_hall of public_main.glb; the words CITY HALL glow
+                                             coral red, the colour of the letters
+  FREEMODELS/curated/stadium_night.glb       the stadium; only the inside (pitch, stands) is lit, the
+                                             outer walls stay dark (its floodlights: BuildingExtras)
   vehicles/.../police_us_cruiser_night.glb   the red and the blue lens of the light bar glow
   vehicles/.../police_jp_black_night.glb     the red roof beacon glows
 
@@ -29,7 +37,9 @@ their pure colour (the other channels still end below 1.0), seen from far they k
 when the map is averaged with the dark faces around them.
 
 Usage:  python tools/make_night_variants.py          (everything)
-        python tools/make_night_variants.py signs    (the cinema, the hotels and the police only)
+        python tools/make_night_variants.py signs    (the cinema, the hotels, the police, the
+                                                      hospital and the city hall only)
+        python tools/make_night_variants.py stadium  (the stadium only)
 Needs:  numpy, Pillow.
 """
 import io, json, os, struct
@@ -50,6 +60,8 @@ CINEMA_RED = (1.0, 0.04, 0.03)
 HOTEL_GREEN = (0.3, 1.0, 0.3)
 STAR_YELLOW = (1.0, 0.8, 0.0)
 POLICE_BLUE = (0.08, 0.35, 1.0)
+HOSPITAL_BLUE = (0.04, 0.4, 1.0)
+CITY_HALL_CORAL = (1.0, 0.25, 0.15)
 ## Pharmacy facade at night: the share of its own colour it glows with (a little brighter
 ## than the public buildings around it, far from white).
 FACADE = 0.25
@@ -359,7 +371,8 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False)
     the map as an image).
     `lamps`: [(triangles of the lamp (bool per triangle), colour)]; `reach`: distance at which
     the light a lamp throws has fallen to a fifth; `strength`: that light right beside the lamp
-    (1 = as bright as the lamp); `base`: share of its own colour every face glows with.
+    (1 = as bright as the lamp); `base`: share of its own colour every face glows with (one
+    number, or one per triangle).
     `plain`: the numbers are stored as they are, not through the sRGB curve. Measured on
     screen, the game shows a stored value times OWN_NIGHT as it is: a plain map comes out
     in the colours asked for, a curved one brighter and paler (blue creeps into a green).
@@ -405,7 +418,8 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False)
         if is_lamp[k]:
             value = np.broadcast_to(own[k], (int(sel.sum()), 3))
         else:
-            value = np.zeros((int(sel.sum()), 3)) + base * (to_srgb(colour[k]) if plain else colour[k])
+            b = base[k] if np.ndim(base) else base
+            value = np.zeros((int(sel.sum()), 3)) + b * (to_srgb(colour[k]) if plain else colour[k])
             u, v = bary[half]
             w = np.stack([1.0 - u - v, u, v], 1)
             pos = w @ tri.pos[k]
@@ -470,7 +484,9 @@ def pharmacy():
 def lit_sign(pack, node, cat, pick, rgb, reach, strength, base, what):
     """`node` of the pack `pack`.glb alone, as <node>_night.glb: the faces `pick(tri)` glow
     `rgb`, the faces around them catch a little of it, every face glows with `base` of its own
-    colour. The pack is not changed; its manifest no longer lists `node` (by hand)."""
+    colour. The pack is not changed; its manifest no longer lists `node` (by hand).
+    `pick` may also return [(faces, colour)] for lamps of several colours; `base` may be a
+    function of the triangles (one value per triangle)."""
     g = GLB(os.path.join(CUR, pack + '.glb'))
     j = g.j
     keep = next(c for c in j['nodes'][g.root()]['children'] if j['nodes'][c]['name'] == node)
@@ -478,9 +494,13 @@ def lit_sign(pack, node, cat, pick, rgb, reach, strength, base, what):
     g.drop_unused_materials()
     j['nodes'][0]['name'] = node + '_night'
     tri = Triangles(g)
-    lit = pick(tri)
-    print('  %s: %d triangles in %s' % (node, lit.sum(), what))
-    uv2, img = night_map(tri, [(lit, rgb)], reach=reach, strength=strength, base=base, plain=True)
+    lamps = pick(tri)
+    if isinstance(lamps, np.ndarray):
+        lamps = [(lamps, rgb)]
+    print('  %s: %s triangles in %s' % (node, ' + '.join(str(m.sum()) for m, _ in lamps), what))
+    if callable(base):
+        base = base(tri)
+    uv2, img = night_map(tri, lamps, reach=reach, strength=strength, base=base, plain=True)
     write_night(g, tri, uv2, img, node + '_night')
     g.save(os.path.join(CUR, node + '_night.glb'))
     with open(os.path.join(CUR, node + '_night.models.json'), 'w', newline='\n') as f:
@@ -521,6 +541,34 @@ def police_letters(tri):
     return islands_in(tri, (-0.3, 0.85, 0.21), (0.3, 0.99, 0.24), 6)
 
 
+def police_badge(tri):
+    # The gold badge in front of the round sign on the roof.
+    return islands_in(tri, (-0.09, 1.23, 0.17), (0.09, 1.4, 0.19), 1)
+
+
+def police_signs(tri):
+    # The word POLICE over the door and the round sign on the roof (y 1.17 to 1.44, its
+    # gold badge left out: it shows in its own colour on the blue disc).
+    roof = islands_in(tri, (-0.14, 1.16, 0.15), (0.14, 1.45, 0.19), 2) & ~police_badge(tri)
+    return police_letters(tri) | roof
+
+
+def police_base(tri):
+    out = np.full(len(tri.pos), FACADE / OWN_NIGHT)
+    out[police_badge(tri)] = 0.6
+    return out
+
+
+def hospital_cross(tri):
+    # The blue cross on the front, over the entrance (z 1.32 to 1.36).
+    return islands_in(tri, (-0.17, 0.34, 1.31), (0.17, 0.69, 1.37), 1)
+
+
+def city_hall_letters(tri):
+    # The eight letters of CITY HALL on the front (z 0.463 to 0.472).
+    return islands_in(tri, (-0.3, 0.81, 0.46), (0.32, 0.915, 0.475), 8)
+
+
 def signs():
     # The cinema had no lit facade: only its letters (and what they light) show at night.
     lit_sign('cinema2', 'cinema', 'CINEMA2', cinema_letters, CINEMA_RED, 0.2, 0.5, 0.0, 'the word CINEMA')
@@ -528,8 +576,52 @@ def signs():
              'the word HOTEL')
     lit_sign('hotels', 'hotel_stars', 'HOTEL_LOW', hotel_stars_stars, STAR_YELLOW, 0.2, 0.5, FACADE / OWN_NIGHT,
              'the stars')
-    lit_sign('public_main', 'police_hq', 'POLICE_MAIN', police_letters, POLICE_BLUE, 0.1, 0.5, FACADE / OWN_NIGHT,
-             'the word POLICE')
+    lit_sign('public_main', 'police_hq', 'POLICE_MAIN', police_signs, POLICE_BLUE, 0.12, 0.5, police_base,
+             'the word POLICE and the roof sign')
+    lit_sign('public_main', 'hospital', 'HOSPITAL_MAIN', hospital_cross, HOSPITAL_BLUE, 0.35, 0.8,
+             FACADE / OWN_NIGHT, 'the blue cross')
+    lit_sign('public_main', 'city_hall', 'CITY_HALL_MAIN', city_hall_letters, CITY_HALL_CORAL, 0.04, 0.3,
+             FACADE / OWN_NIGHT, 'the words CITY HALL')
+
+
+# --- Stadium: the inside floodlit, the facade dark --------------------------------------
+## Share of their own colour the pitch, the stands and the outside (roof, walls) glow with.
+STADIUM_PITCH = 1.0
+STADIUM_STANDS = 0.9
+STADIUM_OUTSIDE = 0.04
+## The inner rim of the roof (share of the box from its centre): the bowl lies inside it.
+STADIUM_RIM = 0.62
+
+
+def stadium():
+    """stadium_night.glb: no lamp of its own (the floodlights stand at the corners of the
+    plot, BuildingExtras), but the bowl (the pitch and the stands) is floodlit, while the roof
+    over the stands and the outer walls stay almost dark. A face is outside when its middle
+    lies in the outer tenth of the box (a box metric: the stadium is a rounded rectangle), when
+    it looks down, when it is the entrance block at ground level before the front, or when it
+    looks up out of the inner rim of the roof (the roof itself)."""
+    g = GLB(os.path.join(CUR, 'stadium.glb'))
+    tri = Triangles(g)
+    V = tri.pos.reshape(-1, 3)
+    half = (V.max(0) - V.min(0)) / 2.0
+    mid = (V.max(0) + V.min(0)) / 2.0
+    c = tri.pos.mean(1) - mid
+    n = tri.nrm.mean(1)
+    n /= np.linalg.norm(n, axis=1, keepdims=True) + 1e-9
+    edge = np.maximum(np.abs(c[:, 0]) / half[0], np.abs(c[:, 2]) / half[2])
+    outside = ((edge >= 0.9) | (n[:, 1] < -0.5) | ((edge >= 0.75) & (tri.pos[..., 1].max(1) < 0.2))
+               | ((edge >= STADIUM_RIM) & (n[:, 1] > 0.5)))
+    bowl = ~outside
+    pitch = bowl & (edge < 0.35) & (n[:, 1] > 0.5)
+    base = np.where(pitch, STADIUM_PITCH, np.where(bowl, STADIUM_STANDS, STADIUM_OUTSIDE)) / OWN_NIGHT
+    print('  stadium: %d outside, %d pitch, %d stand triangles' % ((~bowl).sum(), pitch.sum(), (bowl & ~pitch).sum()))
+    uv2, img = night_map(tri, [], reach=1.0, strength=0.0, base=base, plain=True)
+    write_night(g, tri, uv2, img, 'stadium_night')
+    g.save(os.path.join(CUR, 'stadium_night.glb'))
+    for file, models in (('stadium_night', [{'cat': 'STADIUM', 'node': 'stadium'}]), ('stadium', [])):
+        with open(os.path.join(CUR, file + '.models.json'), 'w', newline='\n') as f:
+            json.dump({'file': file + '.glb', 'models': models}, f, indent='\t')
+            f.write('\n')
 
 
 # --- Vehicles ------------------------------------------------------------------------
@@ -616,8 +708,12 @@ if __name__ == '__main__':
     if sys.argv[1:] == ['signs']:
         signs()
         sys.exit()
+    if sys.argv[1:] == ['stadium']:
+        stadium()
+        sys.exit()
     pharmacy()
     signs()
+    stadium()
     vehicle(VEH, 'police_us_cruiser', cruiser_bar)
     vehicle(VEH, 'police_jp_black', jp_beacon)
     vehicle(VEH, 'p54_11_ambulance', ambulance_bar, reach=0.7)

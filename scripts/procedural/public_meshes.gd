@@ -26,6 +26,8 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("golden_arches", golden_arches())
 	lib.add_named("grave", grave())
 	lib.add_named("cross_light", cross_light())
+	lib.add_named("nav_light_red", nav_light(Color(1.0, 0.03, 0.0)))
+	lib.add_named("nav_light_green", nav_light(Color(0.0, 1.0, 0.12)))
 
 
 # --- Art museum (7x5): wide temple front, two wings, glass pyramid --------------------
@@ -203,6 +205,24 @@ static func cross_light() -> ArrayMesh:
 	k.box(Vector3(-0.5, -0.5, -0.5), Vector3.ONE, Color("ff2a3a"))
 	k.neon(false)
 	return k.commit()
+
+
+# --- Navigation light (unit cube): red on port, green on starboard of the boats ------------------
+## A small dark lens by day, glowing in its colour at night.
+const NAV_LIGHT_NIGHT := 2.5
+
+
+static func nav_light(color: Color) -> ArrayMesh:
+	var k := MeshKit.new()
+	k.box(Vector3(-0.5, -0.5, -0.5), Vector3.ONE, color)
+	var mesh := k.commit()
+	var m := StandardMaterial3D.new()
+	m.albedo_color = color.darkened(0.5)
+	m.emission_enabled = true
+	m.emission = color
+	SignAtlas.register_night(m, 0.0, NAV_LIGHT_NIGHT)
+	mesh.surface_set_material(0, m)
+	return mesh
 
 
 # --- Pirate grave (1x1): earth mound, wooden cross, tombstone with a skull, a shovel ----------------

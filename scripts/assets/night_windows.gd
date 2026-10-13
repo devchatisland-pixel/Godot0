@@ -57,7 +57,8 @@ const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
 const BILLBOARD_LIGHT := Color(1.0, 0.96, 0.88)
 const BILLBOARD_GLOW := 1.0
 ## Night duplicates (tools/make_night_variants.py: the pharmacy cross, the police lights, the
-## lit words CINEMA, HOTEL and POLICE, the hotel stars) bring
+## lit words CINEMA, HOTEL, POLICE and CITY HALL, the police roof sign, the hotel stars, the
+## blue cross of the hospital, the stadium lit inside only) bring
 ## their own night map, which holds a third of the final light: off by day, x3 at night.
 ## A higher value makes the light the lamps throw around them stronger; the lamps themselves
 ## keep their colour.

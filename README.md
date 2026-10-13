@@ -283,7 +283,7 @@ At night:
 * Kenney windows glow. An emission mask is built from their colour palette, so only the glass lights up.
 * The windows of the procedural buildings glow too.
 * The buildings of the curated packs (New York, photo towers, stadium, coliseum, main public buildings...) are softly lit, like floodlit facades.
-* The stadium has floodlight masts, the drive-in shows its film and lights its lot, the airbase lights its runway.
+* The stadium has four floodlights at its corners and only its pitch and stands are lit (its outer walls stay dark); boats carry a red (port) and a green (starboard) navigation light; the drive-in shows its film and lights its lot, the airbase lights its runway.
 * The new packs (bank, hotels, houses, factories, prison blocks...) are softly lit too.
 * The red H and cross of the hospitals are neon, so they stay bright red.
 * Street lamps get bulbs.
@@ -356,10 +356,13 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `quarter` | 100 low-poly buildings | QUARTER_LOW / MID / TALL | the colourful quarter (87 buildings) |
 | `outpost` | low-poly buildings | OUTPOST | the desert outpost |
 | `police` | low-poly police station | POLICE | (kept; the same model as the main police station) |
-| `stadium` | low-poly stadium (+ its pitch) | STADIUM | the stadium |
-| `public_main` | low-poly public buildings pack | CITY_HALL_MAIN, HOSPITAL_MAIN, SCHOOL_MAIN, GAS_STATION | the main public buildings, one of each, drawn big |
+| `stadium` | low-poly stadium (+ its pitch; kept as it was, unused) | - | - |
+| `stadium_night` | `stadium` with a night map (`tools/make_night_variants.py`) | STADIUM | the stadium; at night only its pitch and stands are lit |
+| `public_main` | low-poly public buildings pack | SCHOOL_MAIN, GAS_STATION | the main public buildings, one of each, drawn big |
 | `pharmacy_night` | the pharmacy of `public_main`, with a night map (`tools/make_night_variants.py`) | PHARMACY | the pharmacy; its green cross glows at night |
-| `police_hq_night` | the police station of `public_main`, with a night map (`tools/make_night_variants.py`) | POLICE_MAIN | the main police station; the word POLICE glows blue at night |
+| `police_hq_night` | the police station of `public_main`, with a night map (`tools/make_night_variants.py`) | POLICE_MAIN | the main police station; the word POLICE and the round sign on the roof glow blue at night |
+| `hospital_night` | the hospital of `public_main`, with a night map | HOSPITAL_MAIN | the main hospital; the blue cross of its front glows strong blue at night (the red H of the helipad stays) |
+| `city_hall_night` | the city hall of `public_main`, with a night map | CITY_HALL_MAIN | the city hall; the words CITY HALL glow coral red at night |
 | `cinema_night` | the cinema of `cinema2` (kept as it was, unused), with a night map | CINEMA2 | the main cinema; the word CINEMA glows red at night |
 | `hotel_small_night` | `hotel_small` of `hotels`, with a night map | HOTEL_LOW | the small purple hotel; the word HOTEL glows green at night |
 | `hotel_stars_night` | `hotel_stars` of `hotels`, with a night map | HOTEL_LOW | the five-star hotel; its five stars glow yellow at night |

@@ -55,10 +55,20 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 		Kind.AIRPORT:
 			batch.add(lib.named_id("runway_ext"), xform)
 		Kind.STADIUM:
-			# Floodlight masts at the corners of the plot (seen at night).
-			var lights := lib.named_id("stadium_lights")
-			var h := box.size.y * xform.basis.get_scale().y * 1.6
-			batch.add(lights, Transform3D(Basis.from_scale(Vector3(r.size.x, h, r.size.y)), lot_center))
+			# Floodlights of the concert camp at the corners of the plot, aimed at the pitch
+			# (the stadium itself only lights its inside at night: stadium_night.glb).
+			var h := box.size.y * xform.basis.get_scale().y * STADIUM_FLOOD_HEIGHT
+			var floods := lib.ids(Cat.FLOODLIGHT)
+			if floods.is_empty():
+				batch.add(lib.named_id("stadium_lights"), Transform3D(Basis.from_scale(Vector3(r.size.x, h, r.size.y)), lot_center))
+			else:
+				var s := h / lib.bounds[floods[0]].size.y
+				for x in [-STADIUM_FLOOD_CORNER, STADIUM_FLOOD_CORNER]:
+					for z in [-STADIUM_FLOOD_CORNER, STADIUM_FLOOD_CORNER]:
+						var p := lot_center + Vector3(x * r.size.x, 0, z * r.size.y)
+						batch.add(floods[0], _standing(lib, floods[0], p, _side_to((lot_center - p).normalized()), s))
+		Kind.BOAT:
+			_nav_lights(lib, lib.cats[pid], box, xform, batch)
 		Kind.MCDONALDS:
 			# Golden arches over the front, lit at night.
 			var w := box.size.x * 0.5
@@ -93,6 +103,39 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 				var prop := props[(seed >> 3) % props.size()]
 				if lib.bounds[prop].size.x < 1.0 and lib.bounds[prop].size.z < 1.0:
 					batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 3) * PI * 0.5), p))
+
+
+## Stadium floodlights: as tall as this many times the stadium, at this share of the plot from
+## its centre (the corners).
+const STADIUM_FLOOD_HEIGHT := 1.6
+const STADIUM_FLOOD_CORNER := 0.47
+## Navigation lights of the boats: where the red (port) light is in the box of the model (share
+## of its size); the green (starboard) one is its mirror across the middle of the boat. Port is
+## +X on the boats whose bow is +Z, -X on the fishing boat (wheelhouse forward, gantry aft) and
+## the submarine (sail forward), whose bows are -Z. Measured on the models:
+## the front corners of the cabin (simple boat), the gunwales near the bow (wooden boat), the
+## sides of the wheelhouse (fishing boat), the bridge wings (cargo ship), the sides of the sail
+## (submarine).
+const NAV_LIGHTS := {
+	Cat.BOAT_SIMPLE: Vector3(0.855, 0.436, 0.475),
+	Cat.BOAT_WOODEN: Vector3(0.834, 0.971, 0.829),
+	Cat.BOAT_FISHING: Vector3(0.281, 0.911, 0.45),
+	Cat.BOAT_CARGO: Vector3(0.825, 0.814, 0.289),
+	Cat.BOAT_SUB: Vector3(0.423, 0.862, 0.437),
+}
+## Size of a navigation light, as a share of the width of the boat.
+const NAV_LIGHT_SIZE := 0.06
+
+
+static func _nav_lights(lib: ModelLibrary, cat: int, box: AABB, xform: Transform3D, batch: InstanceBatch) -> void:
+	if not NAV_LIGHTS.has(cat):
+		return
+	var at: Vector3 = NAV_LIGHTS[cat]
+	var size := Basis.from_scale(Vector3.ONE * box.size.x * NAV_LIGHT_SIZE)
+	var port := box.position + box.size * at
+	var starboard := box.position + box.size * Vector3(1.0 - at.x, at.y, at.z)
+	batch.add(lib.named_id("nav_light_red"), xform * Transform3D(size, port))
+	batch.add(lib.named_id("nav_light_green"), xform * Transform3D(size, starboard))
 
 
 ## Props on industrial yards (gardens and plazas stay bare: there are no trees).
