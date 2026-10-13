@@ -1,0 +1,9 @@
+{
+	"file": "museum_hall.glb",
+	"models": [
+		{
+			"cat": "MUSEUM_HALL",
+			"node": "museum_hall"
+		}
+	]
+}

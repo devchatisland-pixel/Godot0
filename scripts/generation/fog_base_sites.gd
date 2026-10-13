@@ -93,7 +93,7 @@ const HUMVEES := [
 const CHECKPOINT_AT := Vector2(26, 96)
 ## The five vehicles that guarded the end of the bridge, inside the checkpoint (cells from
 ## CHECKPOINT_AT): the two T-55 and the two BRDM side by side in the north yard (where the
-## vehicle shelter of the pack stood: it is left out), their noses to the road; the grey
+## vehicle shelter of the pack stood: it is left out), their noses to the road (south); the grey
 ## Humvee in the south yard beside the garage (where the tank of the pack stood), its nose to
 ## the road, ready to drive out.
 const CHECKPOINT_PARK := [
@@ -138,8 +138,10 @@ static func plan() -> Array[Dictionary]:
 	_add(out, Cat.SAM_NASAMS, Vector2(90, 89), north)
 	# --- Checkpoint at the end of the bridge, the vehicles that guard it inside ---
 	out.append({"cat": Cat.CHECKPOINT, "at": CHECKPOINT_AT, "dir": south, "scale": 1.0, "origin": true})
+	# The T-55 and the BRDM of the pack look along -Z (the gun of the tank points that way), so they are
+	# stood with `north` to look south, at the road.
 	for v in CHECKPOINT_PARK:
-		_add(out, v[0], CHECKPOINT_AT + (v[1] as Vector2), south)
+		_add(out, v[0], CHECKPOINT_AT + (v[1] as Vector2), north)
 	_veh(out, HUMVEE, CHECKPOINT_AT + CHECKPOINT_HUMVEE, north)
 	# --- Vehicle park: one block per kind, all the noses to the road ---
 	for g in PARK:

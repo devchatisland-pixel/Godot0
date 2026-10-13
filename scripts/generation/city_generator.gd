@@ -72,6 +72,8 @@ func generate() -> CityData:
 	print("[City] port rework: ", PortRework.apply(data))
 	# The little island of the lighthouse club, painted on open sea.
 	print("[City] lighthouse island: ", LighthouseIsland.apply(data))
+	# The museum (the Utrecht city hall) on a free square of grass of the commercial district.
+	MuseumSite.apply(data)
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")

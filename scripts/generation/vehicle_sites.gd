@@ -718,6 +718,8 @@ const HAND_CHANGES := [
 	{"id": "p54_21_harvester_olive", "near": Vector2(280.9, 249.0), "field": Vector2i(267, 266)},
 	{"id": "p54_42_forwarder_green", "near": Vector2(263.5, 241.0), "heading": Vector2(1, 0)},
 	{"id": "p54_43_tractor_vintage_trailer", "near": Vector2(277.0, 234.5), "heading": Vector2(0, 1)},
+	# The red pickup of the field at (257, 282) faces south.
+	{"id": "p54_26_pickup_40s_red", "near": Vector2(257.5, 282.5), "heading": Vector2(0, 1)},
 	# One step south, away from the door of the main hospital / the main school.
 	{"id": "p54_11_ambulance", "near": Vector2(244.5, 204.35), "shift": Vector2(0, 1)},
 	{"id": "school_bus", "near": Vector2(237.5, 201.35), "shift": Vector2(0, 1)},

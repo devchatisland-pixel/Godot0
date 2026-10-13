@@ -140,6 +140,7 @@ func _build_props(data: CityData, lib: ModelLibrary) -> void:
 		mi.set_meta("pick", {
 			"uid": "P-%03d" % n, "number": n, "title": p["title"], "kind": "PROP",
 			"model": String(p["file"]).get_file(), "category": "Prop", "note": "",
+			"front": p.get("front", Vector3(0, 0, -1)),
 		})
 		n += 1
 	print("[Props] %d props placed" % n)

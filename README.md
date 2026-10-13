@@ -222,6 +222,27 @@ At night the fog turns dark blue-grey.
   south, with the "Light House Club" sign of the night club sign pack jutting out of the east wall of its house
   (`lighthouse_club.glb`: the building, and the glowing part of the sign drawn with it, lit like a neon at night).
 
+**Twenty-first wave (`museum_site.gd`, `map_retouch.gd`, `roadblocks.gd`, `scenic_props.gd`; models from
+`tools/build_wave16_models.py`):**
+
+* **Museum**: the city hall of Utrecht (`museum_hall.glb`, `Kind.MUSEUM`) stands on the biggest free square near the
+  shop at (215, 203), its front to the east (`MuseumSite`, added last so no building number moves).
+* **Vice City logo**: a giant pink neon billboard (`sign_vice_city.glb`) on the roof of the tower at (63, 174). The
+  neon woman left the tower of Las Vegas for the roof of the tower at (67, 195); the bar sign of that tower and the
+  bull sign of the tower at (71, 204) are smaller (`BuildingExtras.SIGNS`).
+* **Development island**: two more buildings in the row (`tools/build_wave16_models.py`, `SHOPS`): the shop of the
+  business pack and the wooden house with a balcony and a tent.
+* **Port**: the three tanks of the old tank row (two old tanks of three silos and the rusty one) moved into the
+  walled empty square north of it (`PortRework.PORT_MOVED`, `PORT_ADDED`): two rows lying east-west, the rusty tank
+  at their east end.
+* **Golden Gate**: a second blockade (the barriers of the west checkpoint) stands near the sand Humvee, the
+  tanks R-13 and R-14 are on the road just behind it, and a second sand Humvee is parked by the first cruiser. The black
+  Japanese police car of the urban-island blockade stands on the road in front of the bridge entrance.
+* **Props**: the deck chair of the pack looks along +X, so the popup gives its real facing (`front` of a prop). The lone
+  chair looks north, one chair of the beach at (300, 129) and the chairs of the beach at (232, 61) look at their beach
+  ball, those of the beach at (171, 62) look west. The red pickup of the field at (257, 282) faces south.
+* **Fog island**: the two T-55 and the two BRDM of the checkpoint look south, at the road.
+
 ## Beaches, park and borders
 
 * **Piers** (`beach_sites.gd`): wooden piers running into the sea from sandy beaches of the main island

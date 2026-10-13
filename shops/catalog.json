@@ -584,6 +584,44 @@
     "depth": 7.71,
     "height": 9.0
    }
+  },
+  {
+   "id": "shop-business",
+   "category": "Business",
+   "name": "Low Poly Business Buildings (shop)",
+   "credit": {
+    "title": "Low Poly Business Buildings Pack",
+    "author": "unknown",
+    "url": "",
+    "license": "see the pack"
+   },
+   "notes": "ShopBuilding of the business pack: pink shop with a striped awning.",
+   "file": "res://shops/models/shop-business.glb",
+   "triangles": 4684,
+   "size_m": {
+    "width": 6.0,
+    "depth": 4.04,
+    "height": 4.3
+   }
+  },
+  {
+   "id": "shop-house-balcony",
+   "category": "House",
+   "name": "Low Poly House (wooden balcony and tent)",
+   "credit": {
+    "title": "Low poly house with wooden balcony and tent",
+    "author": "unknown",
+    "url": "",
+    "license": "see the source"
+   },
+   "notes": "Wooden house with a balcony, plants and a striped tent on the roof.",
+   "file": "res://shops/models/shop-house-balcony.glb",
+   "triangles": 2955,
+   "size_m": {
+    "width": 8.0,
+    "depth": 12.34,
+    "height": 7.42
+   }
   }
  ]
 }
