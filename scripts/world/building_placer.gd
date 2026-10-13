@@ -83,6 +83,8 @@ const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
 const MODEL_BOOST := {}
+## The row of skyscraper towers of the Las Vegas casino (ManualEdits) is stretched this much in height.
+const CASINO_TOWER_STRETCH := 2.3
 ## Schools are drawn this much bigger (all round); tanks this much smaller.
 const SCHOOL_SCALE := 1.1
 const TANK_SHRINK := 0.9
@@ -273,6 +275,8 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 			stretch = 1.6
 		_:
 			scale = minf(room, MAX_FILL if CityTypes.is_service(kind) else 1.0)
+	if kind == Kind.CASINO and data.b_model.get(i, "") == ManualEdits.CASINO_MODEL:
+		stretch = CASINO_TOWER_STRETCH
 	if ModelPools.is_new_york(lib, id):
 		# The New York street buildings stand taller than the Kenney kit.
 		stretch = 1.5
