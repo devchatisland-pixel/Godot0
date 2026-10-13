@@ -45,6 +45,11 @@ RUN curl -fsSL -o /tmp/templates.tpz \
         templates/version.txt templates/web_release.zip templates/web_nothreads_release.zip -d "$dir" \
     && rm /tmp/templates.tpz
 
+# --- Web templates only, for the local export (tools/setup-local-godot.ps1) -------------------
+#   docker build -f docker/Dockerfile --target templates-out -o type=local,dest=<export_templates dir> .
+FROM scratch AS templates-out
+COPY --from=templates /root/.local/share/godot/export_templates/ /
+
 # --- Web export -------------------------------------------------------------------------
 FROM templates AS export
 COPY --from=project /project /project

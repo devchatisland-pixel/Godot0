@@ -2,6 +2,7 @@
 # One-time downloads from the official Godot GitHub releases:
 #   - Godot editor (console exe) into C:\Tools\Godot\<version>\
 #   - only the two web export templates into %APPDATA%\Godot\export_templates\<version>.stable\
+#     (copied from the Docker build cache when possible, the ~1 GB download is only a fallback)
 # Dot-source it: . .\tools\setup-local-godot.ps1   -> sets $GodotExe
 $GodotVersion = '4.6.3'
 $godotDir = "C:\Tools\Godot\$GodotVersion"
@@ -17,6 +18,13 @@ if (-not (Test-Path $GodotExe)) {
     New-Item -ItemType Directory -Force $godotDir | Out-Null
     Expand-Archive -Force $zip $godotDir
     Remove-Item $zip
+}
+
+if (-not (Test-Path "$templatesDir\web_nothreads_release.zip")) {
+    # Fast path: the Docker build cache usually already holds them (templates stage of docker/Dockerfile).
+    Write-Host "Copying the web export templates from the Docker build cache..."
+    $repoRoot = Split-Path $PSScriptRoot
+    docker buildx build -f "$repoRoot\docker\Dockerfile" --target templates-out --build-arg GODOT_VERSION=$GodotVersion -o "type=local,dest=$env:APPDATA\Godot\export_templates" $repoRoot
 }
 
 if (-not (Test-Path "$templatesDir\web_nothreads_release.zip")) {
