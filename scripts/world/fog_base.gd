@@ -11,7 +11,8 @@ const TEXTURE := preload("res://textures/highway.jpg")
 const SEGMENT := 12.0
 const LIFT := 0.04
 ## Extra turn of the models whose front is not +Z.
-const FRONT := {Cat.JET_F111: PI}
+## The modular houses (tools/build_modular_buildings.py) have their fronts towards -Z.
+const FRONT := {Cat.JET_F111: PI, Cat.FOG_MOD_HOUSE: PI, Cat.FOG_MOD_HOME: PI}
 
 ## The F-111 formation: cell of the leader (north of the main island, over the sea), where
 ## it flies to, height, distance between the jets and their size.
@@ -43,7 +44,7 @@ const TITLES := {
 	Cat.FOG_OFFICE: ["Office building", "OFFICE"], Cat.FOG_HOUSE: ["House", "HOUSE"],
 	Cat.FOG_NIGHT_TOWER: ["Night tower", "SKYSCRAPER"], Cat.FOG_OFFICE_TOWER: ["Office tower", "SKYSCRAPER"],
 	Cat.FOG_FLOOR: ["Block of flats", "APARTMENT"], Cat.FOG_MOD_HOUSE: ["Town house", "HOUSE"],
-	Cat.FOG_MOD_TOWER: ["Tower", "SKYSCRAPER"],
+	Cat.FOG_MOD_TOWER: ["Tower", "SKYSCRAPER"], Cat.FOG_MOD_HOME: ["Town house", "HOUSE"],
 }
 
 ## Clickable things: {"mesh": Mesh, "xform": Transform3D, "pick": Dictionary} (see BuildingPicker).

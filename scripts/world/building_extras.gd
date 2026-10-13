@@ -37,7 +37,9 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	if data.b_sign[i] != 0:
 		_place_sign(data, lib, i, pid, xform, batch, data.b_sign[i])
 	for more: Array in data.b_more_signs.get(i, []):
-		_place_sign(data, lib, i, pid, xform, batch, more[0], more[1])
+		_place_sign(data, lib, i, pid, xform, batch, more[0], more[1],
+				more[2] if more.size() > 2 else 0, more[3] if more.size() > 3 else 1,
+				more[4] if more.size() > 4 else 0.0)
 	if lib.cats[pid] == Cat.LIGHTHOUSE_CLUB:
 		_lighthouse_neon(lib, xform, batch)
 	match kind:
@@ -238,6 +240,8 @@ const SIGNS := {
 	ModelCatalog.Cat.NEON_CLUB: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.NEON_GIRL: {"mount": "roof", "scale": 1.0, "halo": 1.1, "fill": 0.9, "height": 0.55},
 	ModelCatalog.Cat.NEON_LOVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_XXX: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
+	ModelCatalog.Cat.NEON_PLAYBOY: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
 	ModelCatalog.Cat.TW_BANASONIC: {"mount": "blade", "out": 2.6, "height": 0.45},
 	ModelCatalog.Cat.TW_MCDONALDS: {"mount": "blade", "out": 2.0, "height": 0.45},
 	ModelCatalog.Cat.TW_COLA_JP: {"mount": "blade", "out": 1.4, "height": 0.42},
@@ -247,12 +251,17 @@ const SIGNS := {
 }
 ## A wall sign is at most this share of the building's height (its spec may say "max_height").
 const FACE_MAX_HEIGHT := 0.5
+const SHARED_MAX_HEIGHT := 0.8
 
 
 ## Sign `cat` on building `i`. `mount` puts it somewhere else than its entry of SIGNS says (a
-## wall sign moved to the roof: it then looks the way the signs of the building look).
+## wall sign moved to the roof: it then looks the way the signs of the building look). A "face"
+## sign that shares its wall with others takes slot `slot` of `slots` equal parts of the wall;
+## `wall_inset` (share of the building's depth) moves it back from the front of the box onto the
+## wall, when something juts out in front of it (steps).
 static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xform: Transform3D,
-		batch: InstanceBatch, cat: int, mount: String = "") -> void:
+		batch: InstanceBatch, cat: int, mount: String = "", slot: int = 0, slots: int = 1,
+		wall_inset: float = 0.0) -> void:
 	var ids := lib.ids(cat)
 	if ids.is_empty() or not SIGNS.has(cat):
 		return
@@ -279,17 +288,24 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		at.z = body.end.z + 0.02
 	elif spec["mount"] == "face":
 		var east := int(data.b_sign_facing[i]) == 1
-		var wall := body.size.z if east else body.size.x
-		s = minf(wall * float(spec["fill"]) / model.size.x,
-					body.size.y * float(spec.get("max_height", FACE_MAX_HEIGHT)) / model.size.y)
+		var wall := (body.size.z if east else body.size.x) / float(slots)
+		if slots > 1:
+			var along := wall * (float(slot) + 0.5)
+			if east:
+				at.z = body.position.z + along
+			else:
+				at.x = body.position.x + along
+		# Signs side by side on a low wall may be taller (SHARED_MAX_HEIGHT of the building).
+		var tall: float = SHARED_MAX_HEIGHT if slots > 1 else float(spec.get("max_height", FACE_MAX_HEIGHT))
+		s = minf(wall * float(spec.get("fill", 0.9)) / model.size.x, body.size.y * tall / model.size.y)
 		# Its back against the wall, its face (+Z of the model) outwards.
 		local_center = Vector3(model.get_center().x, model.get_center().y, model.position.z)
-		at.y = body.position.y + body.size.y * float(spec["height"])
+		at.y = body.position.y + body.size.y * float(spec.get("height", 0.55))
 		if east:
 			yaw = PI * 0.5
-			at.x = body.end.x + 0.02
+			at.x = body.end.x + 0.02 - body.size.x * wall_inset
 		else:
-			at.z = body.end.z + 0.02
+			at.z = body.end.z + 0.02 - body.size.z * wall_inset
 	elif spec["mount"] == "blade":
 		s = minf(float(spec["out"]) / model.size.x, body.size.y * FACE_MAX_HEIGHT / model.size.y)
 		local_center = Vector3(model.position.x, model.get_center().y, model.get_center().z)

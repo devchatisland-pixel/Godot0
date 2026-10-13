@@ -41,9 +41,17 @@ const CLUB_SIGNS := [
 	[Vector2i(122, 182), "NEON_CLUB"],
 	[Vector2i(144, 202), "NEON_LOVE"],
 ]
-## Signs flat on the east wall of a club (top-left cell of the lot, sign).
+## Signs flat on the east wall of a club (top-left cell of the lot, signs side by side from
+## north to south).
 const CLUB_WALL_SIGNS := [
-	[Vector2i(134, 178), "NEON_GIRL"],
+	[Vector2i(134, 178), ["NEON_CLUB", "NEON_XXX", "NEON_WOMAN", "NEON_PLAYBOY"]],
+]
+## The steps of the supermarket jut out this share of its depth in front of its wall.
+const CLUB_SIGN_INSET := 0.09
+## Clubs drawn with another model (top-left cell of the lot, model): B-00023 is the supermarket
+## without its texts (tools/clean_supermarket.py), its signs on the wall.
+const CLUB_MODELS := [
+	[Vector2i(134, 178), "supermarket.glb: supermarket"],
 ]
 ## The neon woman of the tower of Las Vegas (MapAdditions) moves to the east wall of this tower of the
 ## urban island (top-left cell of its lot), as wide as the wall (it took the place of the bar sign).
@@ -141,8 +149,18 @@ func _signs() -> int:
 			push_warning("[Retouch] no club at %s for its wall sign" % s[0])
 			continue
 		_d.b_sign_facing[b] = SIGN_WALL
-		_d.b_more_signs[b] = [[ModelCatalog.Cat[s[1]], "face"]]
+		var signs: Array = s[1]
+		var more := []
+		for k in signs.size():
+			more.append([ModelCatalog.Cat[signs[k]], "face", k, signs.size(), CLUB_SIGN_INSET])
+		_d.b_more_signs[b] = more
 		n += 1
+	for c in CLUB_MODELS:
+		var b := _at(Kind.NIGHTCLUB, c[0])
+		if b < 0:
+			push_warning("[Retouch] no club at %s for its model" % c[0])
+			continue
+		_d.b_model[b] = c[1]
 	return n + _move_woman()
 
 

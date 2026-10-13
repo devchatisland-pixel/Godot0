@@ -68,6 +68,9 @@ enum Cat {
 	MUSEUM_HALL,
 	# Twenty-second wave: the towns of the fog island (FogBaseSites)
 	FOG_OFFICE, FOG_HOUSE, FOG_NIGHT_TOWER, FOG_OFFICE_TOWER, FOG_FLOOR, FOG_MOD_HOUSE, FOG_MOD_TOWER,
+	# Twenty-third wave: the supermarket of Las Vegas, its XXX and Playboy neon signs, the seven
+	# modular houses of the fog island
+	SUPERMARKET, NEON_XXX, NEON_PLAYBOY, FOG_MOD_HOME,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

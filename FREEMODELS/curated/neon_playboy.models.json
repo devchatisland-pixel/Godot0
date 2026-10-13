@@ -1,0 +1,9 @@
+{
+	"file": "neon_playboy.glb",
+	"models": [
+		{
+			"cat": "NEON_PLAYBOY",
+			"node": "playboy_bunny"
+		}
+	]
+}

@@ -133,6 +133,14 @@ const EASTBAY_HOMES := [Rect2(105, 77, 8, 8), Rect2(115, 77, 8, 8), Rect2(125, 7
 const HOMES := [[Cat.FOG_HOUSE, 2.2, 0], [Cat.FOG_MOD_HOUSE, 2.3, 0], [Cat.FOG_HOUSE, 2.0, 0],
 		[Cat.FOG_MOD_HOUSE, 2.3, 1], [Cat.FOG_FLOOR, 2.3, 0], [Cat.FOG_MOD_HOUSE, 2.4, 2], [Cat.FOG_HOUSE, 2.3, 0]]
 
+## The modular town houses (FOG_MOD_HOUSE, FOG_MOD_HOME) all show their fronts to the south,
+## whatever side of the block they stand on.
+const MOD_HOUSE_CATS := [Cat.FOG_MOD_HOUSE, Cat.FOG_MOD_HOME]
+## Houses of HOMES (their number, counted over all the house blocks) that were a house of
+## another kind and are the seven modular homes of the fog_homes pack now, one of each.
+const MOD_HOMES_AT := [0, 20, 41, 63, 84, 105, 126]
+const MOD_HOME_FIT := 2.4
+
 ## Crop fields: [top-left cell, size]; their kind is taken in turn.
 const FIELDS := [
 	[Vector2(76.5, 49), Vector2(6.5, 5)], [Vector2(83.5, 49), Vector2(6.5, 5)],
@@ -242,7 +250,7 @@ static func plan() -> Array[Dictionary]:
 	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 101.5), "dir": west, "fit": 3.2})
 	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 108.5), "dir": south, "fit": 3.2, "stack": 2})
 	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(79, 121), "dir": north, "fit": 5.0, "stack": 2})
-	out.append({"cat": Cat.FOG_MOD_HOUSE, "at": Vector2(85, 121), "dir": west, "fit": 2.8, "v": 2})
+	out.append({"cat": Cat.FOG_MOD_HOUSE, "at": Vector2(85, 121), "dir": south, "fit": 2.8, "v": 2})
 	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 120.5), "dir": west, "fit": 3.0, "stack": 3})
 	# --- Farmland ---
 	for k in FIELDS.size():
@@ -262,7 +270,7 @@ static func plan() -> Array[Dictionary]:
 
 ## One building of a town: `spec` = [category, footprint, storeys].
 static func _building(out: Array[Dictionary], spec: Array, at: Vector2, face: Vector2, v: int) -> void:
-	var e := {"cat": spec[0], "at": at, "dir": face, "fit": spec[1], "v": int(spec[3]) if spec.size() > 3 else v}
+	var e := {"cat": spec[0], "at": at, "dir": Vector2(0, 1) if MOD_HOUSE_CATS.has(spec[0]) else face, "fit": spec[1], "v": int(spec[3]) if spec.size() > 3 else v}
 	if int(spec[2]) > 1:
 		e["stack"] = int(spec[2])
 	out.append(e)
@@ -277,7 +285,11 @@ static func _homes(out: Array[Dictionary], r: Rect2, first: int) -> int:
 		var face := Vector2(0, -1) if row == 0 else Vector2(0, 1)
 		for col in 3:
 			var spec: Array = HOMES[k % HOMES.size()]
-			out.append({"cat": spec[0], "at": Vector2(r.position.x + 1.4 + col * 2.6, y), "dir": face,
+			var home := MOD_HOMES_AT.find(k)
+			if home >= 0:
+				spec = [Cat.FOG_MOD_HOME, MOD_HOME_FIT, home]
+			out.append({"cat": spec[0], "at": Vector2(r.position.x + 1.4 + col * 2.6, y),
+					"dir": Vector2(0, 1) if MOD_HOUSE_CATS.has(spec[0]) else face,
 					"fit": spec[1], "v": int(spec[2])})
 			k += 1
 	return k
