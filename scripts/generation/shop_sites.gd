@@ -16,6 +16,7 @@ const SCALE := {
 	"shop-candy-b": 2.0, "shop-candy-a": 1.3, "shop-townhouse-gabled": 2.0,
 	"shop-general-generic": 2.0, "shop-coffee-a": 0.5, "shop-general-mini": 1.15,
 	"shop-general-brick": 1.15, "shop-flower-a": 1.15, "shop-general-orange-a": 1.15,
+	"shop-business": 1.3,
 }
 ## Empty cells between two neighbours in the row.
 const GAP := 1.5

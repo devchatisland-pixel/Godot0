@@ -7,8 +7,9 @@ extends RefCounted
 ##   - deck chairs and a beach ball on a few lonely beaches, far from the lighthouses and from
 ##     everything else;
 ##   - a billboard on the border of the central park, by a downtown tower.
-## Pure data in, a list of placements out: {"file", "title", "at": Vector3, "yaw", "length"}
-## (`length`: longest side of the model, in cells; the model stands on the ground at `at`).
+## Pure data in, a list of placements out: {"file", "title", "at": Vector3, "yaw", "length", "front"}
+## (`length`: longest side of the model, in cells; the model stands on the ground at `at`; `front`:
+## the side of the model that is its front, -Z unless said otherwise: the deck chair looks along +X).
 
 const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
@@ -26,6 +27,17 @@ const LONE_CHAIR_REACH := 30
 ## The downtown tower the park billboard stands next to (top-left cell of its lot).
 const BILLBOARD_NEAR := Vector2i(179, 165)
 const BILLBOARD_WIDTH := 4.5
+
+## The deck chair of the pack looks along +X (its backrest is at -X).
+const CHAIR_FRONT := Vector3(1, 0, 0)
+
+## Chairs turned by hand (they look the way their yaw says, not at the sea): the lone chair looks
+## north; on the lonely beaches nearest to these cells (sand cell of the set) the listed chairs
+## (indexes in the set, empty = all of them) look at the beach ball, or west.
+const LONE_CHAIR_LOOK := Vector3(0, 0, -1)
+const LOOK_AT_BALL := {Vector2i(300, 129): [1], Vector2i(232, 61): []}
+const LOOK_WEST := {Vector2i(171, 62): []}
+const HAND_REACH := 3.0
 
 ## Sizes in cells (a little bigger than life, so they can be seen).
 const BALL_LEN := 0.16
@@ -78,8 +90,8 @@ func _beach_set() -> void:
 	var sea := _to_sea(c)
 	var side := Vector3(-sea.z, 0, sea.x)
 	var face := atan2(sea.x, sea.z)
-	_add(CHAIR, "Deck chair", p + side * 0.28 + sea * 0.3, face, CHAIR_LEN)
-	_add(CHAIR, "Deck chair", p - side * 0.28 + sea * 0.3, face, CHAIR_LEN)
+	_add(CHAIR, "Deck chair", p + side * 0.28 + sea * 0.3, face, CHAIR_LEN, CHAIR_FRONT)
+	_add(CHAIR, "Deck chair", p - side * 0.28 + sea * 0.3, face, CHAIR_LEN, CHAIR_FRONT)
 	_add(BALL, "Beach ball", p + sea * 0.7 + side * 0.45, 0.0, BALL_LEN)
 
 
@@ -92,8 +104,7 @@ func _lone_chair() -> void:
 	if c.x < 0:
 		push_warning("[Props] no other beach near %s" % LONE_CHAIR_NEAR)
 		return
-	var sea := _to_sea(c)
-	_add(CHAIR, "Deck chair", Vector3(c.x + 0.5, 0, c.y + 0.5), atan2(sea.x, sea.z), CHAIR_LEN)
+	_add(CHAIR, "Deck chair", Vector3(c.x + 0.5, 0, c.y + 0.5), _look_yaw(LONE_CHAIR_LOOK), CHAIR_LEN, CHAIR_FRONT)
 
 
 ## Free sand cell (with free sand all round it) nearest to `at` within `reach`, whose zone is not
@@ -171,9 +182,18 @@ func _lonely_beaches() -> void:
 		var side := Vector3(-sea.z, 0, sea.x)
 		var face := atan2(sea.x, sea.z)
 		var chairs := 2 + (CityTypes.hash2(c.x, c.y, 89) & 1)
+		var ball := p + sea * 0.45 + side * 0.2
+		var at_ball: Variant = _hand_set(LOOK_AT_BALL, c)
+		var west: Variant = _hand_set(LOOK_WEST, c)
 		for k in chairs:
-			_add(CHAIR, "Deck chair", p + side * (float(k) - float(chairs - 1) * 0.5) * 0.55, face, CHAIR_LEN)
-		_add(BALL, "Beach ball", p + sea * 0.45 + side * 0.2, 0.0, BALL_LEN)
+			var at := p + side * (float(k) - float(chairs - 1) * 0.5) * 0.55
+			var yaw := face
+			if _hand_has(at_ball, k):
+				yaw = _look_yaw(ball - at)
+			elif _hand_has(west, k):
+				yaw = _look_yaw(Vector3(-1, 0, 0))
+			_add(CHAIR, "Deck chair", at, yaw, CHAIR_LEN, CHAIR_FRONT)
+		_add(BALL, "Beach ball", ball, 0.0, BALL_LEN)
 	if sets.size() < LONELY_SETS:
 		push_warning("[Props] only %d lonely beaches" % sets.size())
 
@@ -250,8 +270,26 @@ func _anchor(kind: int, cell: Vector2i) -> Vector2:
 	return best
 
 
-func _add(file: String, title: String, at: Vector3, yaw: float, length: float) -> void:
-	out.append({"file": file, "title": title, "at": at, "yaw": yaw, "length": length})
+## Yaw that turns a model whose front is +X (the deck chair) to look along `dir` (x, z).
+static func _look_yaw(dir: Vector3) -> float:
+	return atan2(-dir.z, dir.x)
+
+
+## The hand-made list of `table` for the set whose sand cell `c` is within HAND_REACH of its key:
+## the chair indexes (empty = all), or null when the set is not in the table.
+static func _hand_set(table: Dictionary, c: Vector2i) -> Variant:
+	for cell: Vector2i in table:
+		if Vector2(cell).distance_to(Vector2(c)) <= HAND_REACH:
+			return table[cell]
+	return null
+
+
+static func _hand_has(list: Variant, k: int) -> bool:
+	return list != null and ((list as Array).is_empty() or (list as Array).has(k))
+
+
+func _add(file: String, title: String, at: Vector3, yaw: float, length: float, front: Vector3 = Vector3(0, 0, -1)) -> void:
+	out.append({"file": file, "title": title, "at": at, "yaw": yaw, "length": length, "front": front})
 	var c := Vector2i(int(floor(at.x)), int(floor(at.z)))
 	if _d.in_bounds(c.x, c.y):
 		_taken[_d.idx(c.x, c.y)] = 1

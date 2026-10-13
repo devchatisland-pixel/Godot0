@@ -89,8 +89,11 @@ const PORT_MOVED := [
 	["port_halls.glb: hall_building_10", Rect2i(125, 257, 4, 7), 2],
 	# Three water tanks in a line going north, turned east, beside the water tower.
 	["port_towers.glb: tower_tank_5", Rect2i(110, 239, 1, 1), 1],
-	# The rusty tank joins the old ones as the third of their row.
-	["port_tanks.glb: tank_rusty", Rect2i(117, 257, 1, 3), 1],
+	# The rusty tank joins the old ones as the third of their row, now in the walled empty square
+	# north of the old row (x 114-117, y 254-255): two rows of old tanks lying east-west, the
+	# rusty tank at their east end.
+	["port_tanks.glb: tank_rusty", Rect2i(117, 254, 1, 2), 1],
+	["port_tanks.glb: tank_old", Rect2i(114, 255, 3, 1), 1],
 	# The tower crane takes the place of the small shed 4.
 	["port_towers.glb: tower_crane", Rect2i(116, 262, 2, 2), 1],
 	# The big tank takes the place of shed 4; four more stand beside it (TANK_FARM).
@@ -101,8 +104,8 @@ const PORT_REPLACED := ["port_halls.glb: hall_warehouse_1", "port_sheds.glb: she
 		"port_sheds.glb: shed_small_4"]
 ## [model, lot, facing]: more of a model of the port.
 const PORT_ADDED := [
-	# The old tanks (three silos each) doubled into a rectangle.
-	["port_tanks.glb: tank_old", Rect2i(115, 257, 1, 3), 2],
+	# The old tanks (three silos each) doubled into a rectangle (the walled square, see PORT_MOVED).
+	["port_tanks.glb: tank_old", Rect2i(114, 254, 3, 1), 1],
 	# Three long tanks side by side, three duplex sheds one behind the other.
 	["port_tanks.glb: tank_long", Rect2i(137, 264, 1, 2), 1],
 	["port_tanks.glb: tank_long", Rect2i(138, 264, 1, 2), 1],

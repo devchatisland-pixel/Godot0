@@ -222,12 +222,13 @@ const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
 	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.58, "halo": 1.15, "yaw": PI * 0.5},
-	ModelCatalog.Cat.NEON_WOMAN: {"mount": "face", "fill": 1.1, "height": 0.5, "max_height": 1.1, "halo": 1.12},
+	ModelCatalog.Cat.NEON_WOMAN: {"mount": "face", "fill": 1.1, "height": 0.5, "max_height": 1.1, "halo": 1.12,
+			"scale": 0.6},
 	ModelCatalog.Cat.SIGN_WINDOWS: {"mount": "face", "fill": 0.86, "height": 0.6, "halo": 1.0},
 	ModelCatalog.Cat.NEON_JOYSTICK: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 	ModelCatalog.Cat.NEON_MARTINI: {"mount": "face", "fill": 0.9, "height": 0.58, "halo": 1.08},
-	ModelCatalog.Cat.NEON_BAR: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
-	ModelCatalog.Cat.NEON_BULL: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
+	ModelCatalog.Cat.NEON_BAR: {"mount": "face", "fill": 0.55, "height": 0.6, "max_height": 0.3, "halo": 1.08},
+	ModelCatalog.Cat.NEON_BULL: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08, "scale": 0.55},
 	ModelCatalog.Cat.NEON_FUN: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 	ModelCatalog.Cat.NEON_PALM: {"mount": "face", "fill": 0.85, "height": 0.58, "halo": 1.08},
 	ModelCatalog.Cat.NEON_CLUB: {"mount": "roof", "scale": 1.0, "halo": 1.1},
@@ -239,6 +240,8 @@ const SIGNS := {
 	ModelCatalog.Cat.TW_COLA_BILLBOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
 	ModelCatalog.Cat.TW_LED_BOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
 	ModelCatalog.Cat.TW_LED_BAND: {"mount": "corner", "fill": 0.95, "height": 0.35},
+	# The Vice City logo: a giant board on the roof of its tower (a board on legs, front at the east edge).
+	ModelCatalog.Cat.SIGN_VICE_CITY: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true, "halo": 1.08},
 }
 ## A wall sign is at most this share of the building's height (its spec may say "max_height").
 const FACE_MAX_HEIGHT := 0.5

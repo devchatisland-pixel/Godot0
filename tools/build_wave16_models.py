@@ -574,6 +574,12 @@ PACKS = {
     "checkpoint": {"src": "game_ready_military_base_asset_pack.glb", "tex": 512, "items": [
         {"id": "checkpoint_post", "cat": "CHECKPOINT", "skip": ["Ground", "Tank", "Transformer", "Parking"],
          "origin": [-5.05, 0.0], "scale": 0.3, "weld": 0.012}]},
+    # Twenty-first wave. The Vice City logo (a giant roof billboard of a tower of the urban
+    # island), and the city hall of Utrecht that serves as the museum. Both face +Z.
+    "sign_vice_city": {"src": "vice_city_3d_text_logo__retro_neon_typography.glb", "items": [
+        {"id": "vice_city_logo", "cat": "SIGN_VICE_CITY", "neon": True, "height": 4.2}]},
+    "museum_hall": {"src": "utrecht_stadhuiscity_hall.glb", "tex": 512, "items": [
+        {"id": "museum_hall", "cat": "MUSEUM_HALL", "length": 4.0}]},
     # The "Danger" plate of the fence pack (the other signs and the fences are not used), stood
     # with its face to +Z. FogBase hangs it on the fence of the secret base.
     "danger_sign": {"src": "simple_chainlink_fence.glb", "tex": 512, "items": [
@@ -622,6 +628,19 @@ SHOPS = {
                                       "credit": {"title": "Low Poly Building", "author": "Ahmed Galeb",
                                                  "url": "https://sketchfab.com/AhmedGaleb", "license": "CC-BY-4.0"},
                                       "notes": "Blue 3-storey townhouse with pink awnings and window boxes."}},
+    # Twenty-first wave: two more buildings for the development island (ShopSites).
+    "shop-business": {"src": "low_poly_business_buildings_pack.glb", "nodes": ["ShopBuilding"], "yaw": 180,
+                      "width": 6.0, "tex": 512, "file": "shops/models/%s.glb",
+                      "entry": {"category": "Business", "name": "Low Poly Business Buildings (shop)",
+                                "credit": {"title": "Low Poly Business Buildings Pack", "author": "unknown",
+                                           "url": "", "license": "see the pack"},
+                                "notes": "ShopBuilding of the business pack: pink shop with a striped awning."}},
+    "shop-house-balcony": {"src": "low_poly_house_with_wooden_balcony_and_tent.glb", "skip": ["Plane.001"],
+                           "yaw": 90, "width": 8.0, "tex": 512, "file": "shops/models/%s.glb",
+                           "entry": {"category": "House", "name": "Low Poly House (wooden balcony and tent)",
+                                     "credit": {"title": "Low poly house with wooden balcony and tent",
+                                                "author": "unknown", "url": "", "license": "see the source"},
+                                     "notes": "Wooden house with a balcony, plants and a striped tent on the roof."}},
 }
 CREDITS = {
     "schoolbus": {"title": "SCHOOL BUS - low poly model", "author": "Jasmin Daniel",

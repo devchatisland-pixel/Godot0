@@ -23,7 +23,7 @@ const PACK_GLOW := {
 	ModelCat.SCHOOL_MAIN: 0.45, ModelCat.PHARMACY: 0.55, ModelCat.GAS_STATION: 0.7,
 	ModelCat.UN_TOWER: 0.55, ModelCat.CRANE: 0.35, ModelCat.BRIDGE: 0.6,
 	ModelCat.BANK_PACK: 0.6, ModelCat.BANK_MIN: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
-	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6,
+	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6, ModelCat.MUSEUM_HALL: 0.6,
 	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
 	ModelCat.BIZ_RESTAURANT: 0.6, ModelCat.BIZ_SHOP: 0.5, ModelCat.BIZ_PIZZA: 0.6, ModelCat.BIZ_BURGER: 0.6, ModelCat.BIZ_CAFE: 0.6,
@@ -41,7 +41,7 @@ const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NE
 		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE, ModelCat.NEON_LIGHTHOUSE]
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
 ## The Taiwan signboards are light boxes: only their "board" surface lights up, not the steel.
-const LOGO_PACKS := [ModelCat.SIGN_WINDOWS, ModelCat.TW_BANASONIC, ModelCat.TW_MCDONALDS,
+const LOGO_PACKS := [ModelCat.SIGN_WINDOWS, ModelCat.SIGN_VICE_CITY, ModelCat.TW_BANASONIC, ModelCat.TW_MCDONALDS,
 		ModelCat.TW_COLA_JP, ModelCat.TW_COLA_BILLBOARD, ModelCat.TW_LED_BOARD, ModelCat.TW_LED_BAND]
 ## Surfaces of a lit logo whose material starts with this stay unlit (frames, brackets).
 const LOGO_DARK := "metal"

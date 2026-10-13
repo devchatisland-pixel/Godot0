@@ -69,11 +69,13 @@ static func describe(data: CityData, lib: ModelLibrary, i: int) -> Dictionary:
 ## shop, a roadblock piece), in the same format so that the popup shows it too.
 ## `note` says why it stands there; `mi` is the MeshInstance3D that draws it.
 static func for_prop(data: CityData, uid: String, number: int, title: String, kind: String,
-		model: String, category: String, mi: MeshInstance3D, note: String) -> Dictionary:
+		model: String, category: String, mi: MeshInstance3D, note: String,
+		front_axis: Vector3 = Vector3(0, 0, -1)) -> Dictionary:
 	var box: AABB = mi.transform * mi.mesh.get_aabb()
 	var c := box.get_center()
-	# The models face -Z: the front is where -Z of the instance points (a yaw and a scale).
-	var nose := -mi.transform.basis.z
+	# The models face -Z unless `front_axis` says otherwise (the deck chair looks along +X): the front is
+	# where that side of the instance points (a yaw and a scale).
+	var nose := mi.transform.basis * front_axis
 	var front := Vector2(nose.x, nose.z).normalized()
 	var facing := 0
 	var best := -2.0

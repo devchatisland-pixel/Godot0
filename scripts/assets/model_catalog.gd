@@ -64,6 +64,8 @@ enum Cat {
 	CHECKPOINT, DANGER_SIGN, LIGHTHOUSE_CLUB, NEON_LIGHTHOUSE,
 	# Twentieth wave: the low poly business buildings (central city shops and eateries)
 	BIZ_RESTAURANT, BIZ_SHOP, BIZ_PIZZA, BIZ_BURGER, BIZ_CAFE,
+	# Twenty-first wave: the Vice City logo (roof billboard) and the Utrecht city hall (the museum)
+	SIGN_VICE_CITY, MUSEUM_HALL,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

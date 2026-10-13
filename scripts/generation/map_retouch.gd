@@ -26,6 +26,8 @@ const TOWER_SIGNS := [
 	[Vector2i(63, 160), "TW_LED_BAND"],
 	[Vector2i(67, 179), "TW_BANASONIC"],
 	[Vector2i(67, 187), "TW_MCDONALDS"],
+	# The Vice City logo, a giant billboard on the roof of the tower of B-01765.
+	[Vector2i(63, 174), "SIGN_VICE_CITY"],
 ]
 ## Signs on the roof of a tower (above its wall sign, or alone on a tower that has a lower one in
 ## front of its east wall, so the sign shows over it): top-left cell, sign. They look east like the
@@ -46,6 +48,9 @@ const CLUB_SIGNS := [
 const CLUB_WALL_SIGNS := [
 	[Vector2i(134, 178), "NEON_GIRL"],
 ]
+## The neon woman of the tower of Las Vegas (MapAdditions) moves to the roof of this tower of the
+## urban island (top-left cell of its lot); the sign shows over the bar sign of its wall.
+const WOMAN_TOWER := Vector2i(67, 195)
 ## The wall the signs hang on: east, towards the road and the camera (the towers stand wall
 ## to wall from north to south).
 const SIGN_WALL := 1
@@ -141,7 +146,28 @@ func _signs() -> int:
 		_d.b_sign_facing[b] = SIGN_WALL
 		_d.b_more_signs[b] = [[ModelCatalog.Cat[s[1]], "face"]]
 		n += 1
-	return n
+	return n + _move_woman()
+
+
+## The neon woman leaves the tower of Las Vegas for the roof of WOMAN_TOWER (a roof sign, east).
+func _move_woman() -> int:
+	var to := _at(Kind.SKYLINE_BLDG, WOMAN_TOWER)
+	if to < 0:
+		push_warning("[Retouch] no tower at %s for the neon woman" % WOMAN_TOWER)
+		return 0
+	var old := -1
+	for b in _d.building_count():
+		if _d.b_sign[b] == ModelCatalog.Cat.NEON_WOMAN:
+			old = b
+	if old < 0:
+		push_warning("[Retouch] no neon woman to move")
+		return 0
+	_d.b_sign[old] = 0
+	var more: Array = _d.b_more_signs.get(to, [])
+	more.append([ModelCatalog.Cat.NEON_WOMAN, "roof"])
+	_d.b_more_signs[to] = more
+	_d.b_sign_facing[to] = SIGN_WALL
+	return 1
 
 
 func _turned() -> int:

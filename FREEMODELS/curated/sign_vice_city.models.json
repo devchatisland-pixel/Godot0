@@ -1,0 +1,9 @@
+{
+	"file": "sign_vice_city.glb",
+	"models": [
+		{
+			"cat": "SIGN_VICE_CITY",
+			"node": "vice_city_logo"
+		}
+	]
+}
