@@ -63,4 +63,7 @@ if ($NoDeploy) {
     Write-Host "`nSHIP OK (on main, deploy skipped)" -ForegroundColor Green
     exit 0
 }
+# Pull first so the freshly merged deploy.ps1 is the one that runs.
+git -C F:\Godot0-city pull --ff-only
+if ($LASTEXITCODE -ne 0) { Fail 'merged, but pulling the main checkout failed (local changes or not on main)' }
 & F:\Godot0-city\tools\deploy.ps1

@@ -1,6 +1,6 @@
 ---
 name: deploy
-description: Use when the user says "deploy" on the Godot city project. Fully automated and fully visible - runs tools/ship.ps1 (commit/push/PR/merge) and tools/deploy.ps1 (pull, stop old container, rebuild on 8080, prune leftover images) in the user's Terminal panel so they watch every step live.
+description: Use when the user says "deploy" on the Godot city project. Fully automated and fully visible - runs tools/ship.ps1 (commit/push/PR/merge) and tools/deploy.ps1 (pull, local Godot import + web export, restart nginx on 8080, prune leftover images) in the user's Terminal panel so they watch every step live.
 ---
 
 # Deploy (local, port 8080 only, fully automated)
@@ -19,9 +19,10 @@ Never do those through Bash or background tasks; Bash is only for read-only chec
      (`-Paths` = only the files of the change, never `FREEMODELS/_incoming/`; omit `-Paths` if already committed).
      It commits, pushes, opens the PR into `main`, waits for checks if any, merges, then runs `deploy.ps1`.
    - Nothing pending: cwd `F:\Godot0-city`, command `& F:\Godot0-city\tools\deploy.ps1`.
-   `deploy.ps1` pulls `main` (ff-only), stops `godot0-city-web-1`, runs `docker compose up --build -d web` with live output, then `docker image prune -f` to remove the untagged images left by previous builds.
+   `deploy.ps1` pulls `main` (ff-only), makes sure the local Godot 4.6.3 + web templates exist (`tools/setup-local-godot.ps1`, one-time download), imports only new/changed assets (cache kept in `F:\Godot0-city\.godot`), exports to `build/web-next` and only if that succeeds swaps it into `build/web`, restarts `godot0-city-web-1` (plain nginx serving `build/web`, no image build), then `docker image prune -f`.
    Never force-push, never push to main directly.
-3. **Watch it finish** with `mcp__terminal__read_terminal` (tab_id from step 2, `wait_for_output_ms` up to ~120000, repeat). The web export takes a few minutes.
+   If `run_in_terminal` reports the line was not started (it can happen with long argument lists), check `git status` (nothing half-done), then write that exact line into a one-line `ship-now.ps1` in the session's checkout (untracked, not in `-Paths`), run `& .\ship-now.ps1`, and delete it afterwards.
+3. **Watch it finish** with `mcp__terminal__read_terminal` (tab_id from step 2, `wait_for_output_ms` up to ~120000, repeat). Usually about a minute; the first run downloads Godot and does one full import.
    Done when it prints `DEPLOY OK`, or `SHIP FAILED: ...` / `DEPLOY FAILED: ...`. On failure, read the error, fix what you can, and say what happened.
 4. Tell the user the result and to hard-refresh (Ctrl+F5) http://localhost:8080.
 
