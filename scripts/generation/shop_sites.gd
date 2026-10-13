@@ -1,7 +1,8 @@
 class_name ShopSites
 extends RefCounted
-## Where the shops of the catalog (res://shops) stand: one of each, in a row on the
-## development island (Zone.DEV), their fronts towards the south. Pure data in, a list of
+## Where the shops of the catalog (res://shops) stand: one of each on the development island
+## (Zone.DEV), in two rows along its street (DevIsland): the shops north of it, fronts south,
+## the modular buildings south of it, fronts north. Pure data in, a list of
 ## placements out, so it can be checked headless (tests/test_shops.gd).
 ## Each placement: {"id": catalog id, "at": Vector2 (cells, x/z), "yaw": radians, "height": metres,
 ## "scale": cells per metre of this shop}.
@@ -20,42 +21,67 @@ const SCALE := {
 }
 ## Empty cells between two neighbours in the row.
 const GAP := 1.5
-## Distance of the front line of the row south of the middle of the island (cells).
-const FRONT_OFFSET := 1.5
+## Empty cells between the street and the fronts of a row.
+const FRONT_GAP := 0.4
+## Rows of cells between the street and the line a row is measured on.
+const ROW_SAMPLE := 2
+## Catalog ids of the modular buildings (tools/build_modular_buildings.py): the south row.
+const MODULAR_PREFIX := "modular-"
 
 
 ## `shops`: [{"id", "width", "depth", "height"} in metres].
 static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
-	var lo := Vector2i(data.size, data.size)
-	var hi := Vector2i(-1, -1)
+	# The street of the island (DevIsland): the row of DEV land with the most road cells.
+	var street := -1
+	var best := 0
 	for y in data.size:
+		var n := 0
 		for x in data.size:
 			var i := data.idx(x, y)
-			if data.zone[i] == Zone.DEV and data.terrain[i] == CityTypes.Terrain.LAND:
-				lo = Vector2i(mini(lo.x, x), mini(lo.y, y))
-				hi = Vector2i(maxi(hi.x, x), maxi(hi.y, y))
-	if hi.x < 0:
-		push_warning("[Shops] no development island on this map")
+			if data.zone[i] == Zone.DEV and data.road[i] != 0:
+				n += 1
+		if n > best:
+			best = n
+			street = y
+	if street < 0:
+		push_warning("[Shops] no street on the development island")
 		return out
-	# The row runs along the middle line of the island, over the land cells of that line.
-	var yc := (lo.y + hi.y) / 2
-	var x0 := data.size
-	var x1 := -1
-	for x in range(lo.x, hi.x + 1):
-		var i := data.idx(x, yc)
-		if data.zone[i] == Zone.DEV and data.terrain[i] == CityTypes.Terrain.LAND:
-			x0 = mini(x0, x)
-			x1 = maxi(x1, x)
+	# The port road leaves the street southwards: the south row stops before it.
+	var port_x := data.size
+	for x in data.size:
+		var i := data.idx(x, street + DevIsland.STREET_LANES)
+		if data.zone[i] == Zone.DEV and data.road[i] != 0:
+			port_x = mini(port_x, x)
 
 	# Shipping containers (ids "container-NN") are left out: only the shops stand on the island.
-	var containers := []
-	var order := []
+	var north := []
+	var south := []
 	for s in shops:
-		if String(s["id"]).begins_with("container-"):
-			containers.append(s)
-		else:
-			order.append(s)
+		var id := String(s["id"])
+		if id.begins_with("container-"):
+			continue
+		(south if id.begins_with(MODULAR_PREFIX) else north).append(s)
+	# North of the street the shops, their fronts south; south of it the modular buildings,
+	# their fronts north. Each row is centred on the dry land of a line ROW_SAMPLE cells off
+	# the street.
+	_row(data, north, street - ROW_SAMPLE, data.size, float(street) - FRONT_GAP, PI, -1.0, out)
+	_row(data, south, street + DevIsland.STREET_LANES + ROW_SAMPLE, port_x - 1,
+			float(street + DevIsland.STREET_LANES) + FRONT_GAP, 0.0, 1.0, out)
+	return out
+
+
+## One row: `front` is the line of the fronts, `back` the side (-1 north, +1 south) the
+## buildings stand on, `limit` the first x the row may not reach.
+static func _row(data: CityData, order: Array, line: int, limit: int, front: float, yaw: float,
+		back: float, out: Array[Dictionary]) -> void:
+	var x0 := data.size
+	var x1 := -1
+	for x in mini(limit, data.size):
+		var i := data.idx(x, line)
+		if data.zone[i] == Zone.DEV and data.terrain[i] == CityTypes.Terrain.LAND and data.road[i] == 0:
+			x0 = mini(x0, x)
+			x1 = maxi(x1, x)
 	order.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		if not is_equal_approx(a["height"], b["height"]):
 			return a["height"] < b["height"]
@@ -67,16 +93,12 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 	if total > avail:
 		push_warning("[Shops] the row (%.1f cells) is wider than the island (%.1f)" % [total, avail])
 	var x := float(x0) + avail * 0.5 - total * 0.5
-	var front := float(yc) + FRONT_OFFSET
 	for s in order:
 		var k := CELLS_PER_METRE * float(SCALE.get(s["id"], 1.0))
 		var w := float(s["width"]) * k
 		var dep := float(s["depth"]) * k
 		out.append({
-			"id": s["id"], "at": Vector2(x + w * 0.5, front - dep * 0.5),
-			"yaw": PI, "height": float(s["height"]), "scale": k,
+			"id": s["id"], "at": Vector2(x + w * 0.5, front + back * dep * 0.5),
+			"yaw": yaw, "height": float(s["height"]), "scale": k,
 		})
 		x += w + GAP
-
-	# The shipping containers are not put on the island any more (taken away on request).
-	return out
