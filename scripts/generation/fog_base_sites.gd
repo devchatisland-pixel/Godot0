@@ -15,7 +15,7 @@ extends RefCounted
 ##     the secret base of the main island, drawn at the same size, with a helipad, a few tents,
 ##     a barracks and a few armoured vehicles.
 ## The five models of the fog_city pack (offices, night tower, house, block storeys) are used
-## all over the towns, mixed with the houses, shops and towers of the main island.
+## for every building of the towns, the industry and the farms, and for no other place of the map.
 ## Pure data: FogIslandShaper paints PADS on the ground, FogBase draws ROADS, FENCES and plan().
 
 const Cat := ModelCatalog.Cat
@@ -50,9 +50,11 @@ const PADS := [
 
 ## Roads drawn with the highway texture: [from, to (centre line, along x or y), width].
 const ROADS := [
-	[Vector2(15, 96), Vector2(18.8, 96), 3.0],      # from the bridge to the checkpoint,
-	[Vector2(18.8, 96), Vector2(33.2, 96), 1.5],    # between the walls of its two gates,
-	[Vector2(33.2, 96), Vector2(150, 96), 3.0],     # then the avenue across the island
+	# The avenue is centred on the deck of the bridge: row 96 of the island is the bridge row of
+	# the city, whose middle is half a cell further south.
+	[Vector2(15, 96.5), Vector2(18.8, 96.5), 3.0],  # from the bridge to the checkpoint,
+	[Vector2(18.8, 96.5), Vector2(33.2, 96.5), 1.5], # between the walls of its two gates,
+	[Vector2(33.2, 96.5), Vector2(150, 96.5), 3.0], # then the avenue across the island
 	# Capital: streets north-south (the one at x 60 goes on to the gate of the base) and east-west.
 	[Vector2(40, 76), Vector2(40, 126), 2.0], [Vector2(50, 76), Vector2(50, 126), 2.0],
 	[Vector2(60, 70), Vector2(60, 126), 2.0], [Vector2(70, 76), Vector2(70, 126), 2.0],
@@ -92,7 +94,7 @@ const JEEP := "jeep_willys"
 const HUMVEE := "humvee_grey"
 ## The checkpoint (checkpoint.glb): where the middle of the road between its two gates is.
 ## The model runs 7.2 cells either side along the road, 6.2 north and 4.7 south of it.
-const CHECKPOINT_AT := Vector2(26, 96)
+const CHECKPOINT_AT := Vector2(26, 96.5)
 ## The vehicles that guard the end of the bridge, inside the checkpoint (cells from
 ## CHECKPOINT_AT): the two T-55 and the two BRDM side by side in the north yard, their noses
 ## to the road (south); the grey Humvee in the south yard beside the garage, ready to drive out.
@@ -107,10 +109,10 @@ const CHECKPOINT_HUMVEE := Vector2(-1.3, 2.5)
 const CAPITAL_CENTRE := [Rect2(41, 87.5, 8, 6.5), Rect2(51, 87.5, 8, 6.5), Rect2(61, 87.5, 8, 6.5),
 		Rect2(41, 98, 8, 6.5), Rect2(51, 98, 8, 6.5), Rect2(61, 98, 8, 6.5)]
 const CAPITAL_TOWERS := [
-	[Cat.FOG_NIGHT_TOWER, 3.4, 1], [Cat.FOG_OFFICE_TOWER, 3.4, 1], [Cat.FOG_FLOOR, 3.2, 6],
-	[Cat.SKYSCRAPER, 3.2, 1], [Cat.FOG_OFFICE, 3.4, 1], [Cat.FOG_NIGHT_TOWER, 3.4, 1],
-	[Cat.FOG_FLOOR, 3.2, 4], [Cat.FOG_OFFICE_TOWER, 3.4, 1], [Cat.NY_MIDRISE, 3.0, 1],
-	[Cat.FOG_FLOOR, 3.2, 5], [Cat.SKYSCRAPER, 3.2, 1], [Cat.FOG_OFFICE, 3.4, 1],
+	[Cat.FOG_NIGHT_TOWER, 3.4, 1], [Cat.FOG_MOD_TOWER, 3.6, 1, 1], [Cat.FOG_OFFICE_TOWER, 3.4, 1],
+	[Cat.FOG_MOD_TOWER, 3.8, 1, 2], [Cat.FOG_FLOOR, 3.2, 6], [Cat.FOG_MOD_TOWER, 3.4, 1, 0],
+	[Cat.FOG_NIGHT_TOWER, 3.4, 1], [Cat.FOG_MOD_TOWER, 3.6, 1, 1], [Cat.FOG_OFFICE, 3.4, 1],
+	[Cat.FOG_MOD_TOWER, 3.8, 1, 2], [Cat.FOG_OFFICE_TOWER, 3.4, 1], [Cat.FOG_MOD_TOWER, 3.4, 1, 0],
 ]
 const CAPITAL_HOMES := [Rect2(41, 77, 8, 8), Rect2(51, 77, 8, 8), Rect2(61, 77, 8, 8),
 		Rect2(41, 107, 8, 8), Rect2(51, 107, 8, 8), Rect2(61, 107, 8, 8),
@@ -120,15 +122,16 @@ const CAPITAL_HOMES := [Rect2(41, 77, 8, 8), Rect2(51, 77, 8, 8), Rect2(61, 77, 
 const EASTBAY_CENTRE := [Rect2(105, 87, 8, 7.5), Rect2(115, 87, 8, 7.5), Rect2(125, 87, 8, 7.5),
 		Rect2(135, 87, 8, 7.5)]
 const EASTBAY_SHOPS := [
-	[Cat.FOG_OFFICE, 3.2, 1], [Cat.SHOP2, 2.6, 1], [Cat.FOG_FLOOR, 3.0, 3], [Cat.TOWN2, 2.6, 1],
-	[Cat.FOG_OFFICE_TOWER, 3.2, 1], [Cat.FOG_FLOOR, 3.0, 2],
+	[Cat.FOG_OFFICE, 3.2, 1], [Cat.FOG_MOD_TOWER, 3.2, 1, 0], [Cat.FOG_FLOOR, 3.0, 3], [Cat.FOG_MOD_HOUSE, 3.2, 1, 2],
+	[Cat.FOG_OFFICE_TOWER, 3.2, 1], [Cat.FOG_MOD_HOUSE, 2.8, 1, 1], [Cat.FOG_FLOOR, 3.0, 2], [Cat.FOG_MOD_TOWER, 3.4, 1, 1],
 ]
 const EASTBAY_HOMES := [Rect2(105, 77, 8, 8), Rect2(115, 77, 8, 8), Rect2(125, 77, 8, 8),
 		Rect2(105, 67, 8, 8), Rect2(115, 67, 8, 8), Rect2(125, 67, 8, 8),
 		Rect2(135, 77, 8, 8), Rect2(135, 67, 8, 8)]
-## Houses, in turn: the fog_city house most of the time, then the houses of the main island.
-const HOMES := [[Cat.FOG_HOUSE, 2.2], [Cat.HOUSE, 2.0], [Cat.FOG_HOUSE, 2.2], [Cat.HOUSE2, 2.2],
-		[Cat.FOG_HOUSE, 2.2], [Cat.VILLA, 2.3], [Cat.FOG_FLOOR, 2.4]]
+## Houses, in turn: the house of the fog_city pack and low blocks (no model of the main island:
+## the fog island has its own buildings).
+const HOMES := [[Cat.FOG_HOUSE, 2.2, 0], [Cat.FOG_MOD_HOUSE, 2.3, 0], [Cat.FOG_HOUSE, 2.0, 0],
+		[Cat.FOG_MOD_HOUSE, 2.3, 1], [Cat.FOG_FLOOR, 2.3, 0], [Cat.FOG_MOD_HOUSE, 2.4, 2], [Cat.FOG_HOUSE, 2.3, 0]]
 
 ## Crop fields: [top-left cell, size]; their kind is taken in turn.
 const FIELDS := [
@@ -233,16 +236,14 @@ static func plan() -> Array[Dictionary]:
 	for r: Rect2 in CAPITAL_HOMES + EASTBAY_HOMES:
 		h = _homes(out, r, h)
 	# --- Industrial zone ---
-	out.append({"cat": Cat.IND_HALL, "at": Vector2(79.5, 102.5), "dir": east, "fit": 6.0, "v": 0})
+	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(79.5, 102.5), "dir": east, "fit": 5.5, "stack": 2})
 	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(84.3, 109.5), "dir": east, "fit": 3.0, "stack": 2})
-	out.append({"cat": Cat.PORT_TANK, "at": Vector2(75.8, 109.5), "dir": south, "fit": 2.4, "v": 1})
-	out.append({"cat": Cat.IND_SHED, "at": Vector2(93.5, 101.5), "dir": west, "fit": 3.2, "v": 0})
-	out.append({"cat": Cat.PORT_TANK, "at": Vector2(92, 108.5), "dir": south, "fit": 2.2, "v": 0})
-	out.append({"cat": Cat.PORT_TANK, "at": Vector2(95.6, 108.5), "dir": south, "fit": 2.2, "v": 0})
-	out.append({"cat": Cat.IND_HALL, "at": Vector2(79, 121), "dir": north, "fit": 5.2, "v": 1})
-	out.append({"cat": Cat.IND_SHED, "at": Vector2(85, 121), "dir": west, "fit": 2.6, "v": 1})
+	out.append({"cat": Cat.FOG_OFFICE, "at": Vector2(76.2, 109.5), "dir": south, "fit": 2.8})
+	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 101.5), "dir": west, "fit": 3.2})
+	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 108.5), "dir": south, "fit": 3.2, "stack": 2})
+	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(79, 121), "dir": north, "fit": 5.0, "stack": 2})
+	out.append({"cat": Cat.FOG_MOD_HOUSE, "at": Vector2(85, 121), "dir": west, "fit": 2.8, "v": 2})
 	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 120.5), "dir": west, "fit": 3.0, "stack": 3})
-	out.append({"cat": Cat.SILO, "at": Vector2(96.8, 124.3), "dir": south, "fit": 1.6})
 	# --- Farmland ---
 	for k in FIELDS.size():
 		var f: Array = FIELDS[k]
@@ -250,7 +251,7 @@ static func plan() -> Array[Dictionary]:
 		out.append({"named": FIELD_MESHES[k % FIELD_MESHES.size()], "at": (f[0] as Vector2) + size * 0.5,
 				"dir": south, "size": size})
 	for k in FARMS.size():
-		out.append({"cat": Cat.OUTPOST, "at": FARMS[k][0], "dir": south, "fit": FARMS[k][1], "v": k})
+		out.append({"cat": Cat.FOG_HOUSE, "at": FARMS[k][0], "dir": south, "fit": FARMS[k][1]})
 	# --- Vehicles ---
 	for k in CAR_SPOTS.size():
 		_veh(out, CARS[k % CARS.size()], CAR_SPOTS[k][0], CAR_SPOTS[k][1])
@@ -261,7 +262,7 @@ static func plan() -> Array[Dictionary]:
 
 ## One building of a town: `spec` = [category, footprint, storeys].
 static func _building(out: Array[Dictionary], spec: Array, at: Vector2, face: Vector2, v: int) -> void:
-	var e := {"cat": spec[0], "at": at, "dir": face, "fit": spec[1], "v": v}
+	var e := {"cat": spec[0], "at": at, "dir": face, "fit": spec[1], "v": int(spec[3]) if spec.size() > 3 else v}
 	if int(spec[2]) > 1:
 		e["stack"] = int(spec[2])
 	out.append(e)
@@ -277,7 +278,7 @@ static func _homes(out: Array[Dictionary], r: Rect2, first: int) -> int:
 		for col in 3:
 			var spec: Array = HOMES[k % HOMES.size()]
 			out.append({"cat": spec[0], "at": Vector2(r.position.x + 1.4 + col * 2.6, y), "dir": face,
-					"fit": spec[1], "v": k})
+					"fit": spec[1], "v": int(spec[2])})
 			k += 1
 	return k
 

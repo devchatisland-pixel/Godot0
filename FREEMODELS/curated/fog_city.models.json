@@ -20,6 +20,30 @@
 		{
 			"cat": "FOG_FLOOR",
 			"node": "fog_floor"
+		},
+		{
+			"cat": "FOG_MOD_HOUSE",
+			"node": "mod_house_small"
+		},
+		{
+			"cat": "FOG_MOD_HOUSE",
+			"node": "mod_house_medium"
+		},
+		{
+			"cat": "FOG_MOD_HOUSE",
+			"node": "mod_house_big"
+		},
+		{
+			"cat": "FOG_MOD_TOWER",
+			"node": "mod_tower_small"
+		},
+		{
+			"cat": "FOG_MOD_TOWER",
+			"node": "mod_tower_medium"
+		},
+		{
+			"cat": "FOG_MOD_TOWER",
+			"node": "mod_tower_big"
 		}
 	]
 }

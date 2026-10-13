@@ -584,7 +584,14 @@ PACKS = {
         {"id": "fog_house", "src": "hq_residential_house_lq_lowpoly_edition.glb", "cat": "FOG_HOUSE", "length": 2.0},
         {"id": "fog_night_tower", "src": "modern_night_building_game-ready.glb", "cat": "FOG_NIGHT_TOWER", "length": 3.0},
         {"id": "fog_office_tower", "src": "modern_office_building.glb", "cat": "FOG_OFFICE_TOWER", "length": 3.5},
-        {"id": "fog_floor", "src": "modular_building_piece.glb", "cat": "FOG_FLOOR", "length": 3.0}]},
+        {"id": "fog_floor", "src": "modular_building_piece.glb", "cat": "FOG_FLOOR", "length": 3.0},
+        # The modular city of shops/models (made by hand): three houses and three towers.
+        {"id": "mod_house_small", "src": "modular-city.glb", "nodes": ["modular-house-small"], "cat": "FOG_MOD_HOUSE", "length": 2.4},
+        {"id": "mod_house_medium", "src": "modular-city.glb", "nodes": ["modular-house-medium"], "cat": "FOG_MOD_HOUSE", "length": 2.6},
+        {"id": "mod_house_big", "src": "modular-city.glb", "nodes": ["modular-house-big"], "cat": "FOG_MOD_HOUSE", "length": 3.4},
+        {"id": "mod_tower_small", "src": "modular-city.glb", "nodes": ["modular-tower-small"], "cat": "FOG_MOD_TOWER", "length": 3.4},
+        {"id": "mod_tower_medium", "src": "modular-city.glb", "nodes": ["modular-tower-medium"], "cat": "FOG_MOD_TOWER", "length": 3.6},
+        {"id": "mod_tower_big", "src": "modular-city.glb", "nodes": ["modular-tower-big"], "cat": "FOG_MOD_TOWER", "length": 4.0}]},
     # The "Danger" plate of the fence pack (the other signs and the fences are not used), stood
     # with its face to +Z. FogBase hangs it on the fence of the secret base.
     "danger_sign": {"src": "simple_chainlink_fence.glb", "tex": 512, "items": [
