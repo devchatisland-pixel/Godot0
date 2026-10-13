@@ -107,10 +107,10 @@ func named_id(name: String) -> int:
 
 ## Loads one model file (imported or raw) as a mesh named `name`; returns its id or -1.
 ## Used for the single vehicles that are not part of a category.
-func load_named(name: String, path: String) -> int:
+func load_named(name: String, path: String, node_name: String = "") -> int:
 	if named.has(name):
 		return named[name]
-	var mesh := _load_mesh(path)
+	var mesh := _load_pack_mesh(path, node_name) if node_name != "" else _load_mesh(path)
 	if mesh == null:
 		push_warning("[Models] could not load " + path)
 		return -1

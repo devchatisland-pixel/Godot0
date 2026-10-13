@@ -622,6 +622,120 @@
     "depth": 12.34,
     "height": 7.42
    }
+  },
+  {
+   "id": "modular-house-small",
+   "file": "res://shops/models/modular-city.glb",
+   "node": "modular-house-small",
+   "category": "Modular",
+   "name": "Little house",
+   "credit": {
+    "title": "City Game ready free",
+    "author": "CG Lads",
+    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.3,
+    "depth": 3.3,
+    "height": 6.56
+   },
+   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
+  },
+  {
+   "id": "modular-house-medium",
+   "file": "res://shops/models/modular-city.glb",
+   "node": "modular-house-medium",
+   "category": "Modular",
+   "name": "Middle house",
+   "credit": {
+    "title": "City Game ready free",
+    "author": "CG Lads",
+    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 6.3,
+    "depth": 3.3,
+    "height": 9.82
+   },
+   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
+  },
+  {
+   "id": "modular-house-big",
+   "file": "res://shops/models/modular-city.glb",
+   "node": "modular-house-big",
+   "category": "Modular",
+   "name": "Big house",
+   "credit": {
+    "title": "City Game ready free",
+    "author": "CG Lads",
+    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 12.6,
+    "depth": 3.3,
+    "height": 12.82
+   },
+   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
+  },
+  {
+   "id": "modular-tower-small",
+   "file": "res://shops/models/modular-city.glb",
+   "node": "modular-tower-small",
+   "category": "Modular",
+   "name": "Little skyscraper",
+   "credit": {
+    "title": "City Game ready free",
+    "author": "CG Lads",
+    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 12.6,
+    "depth": 3.3,
+    "height": 21.82
+   },
+   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
+  },
+  {
+   "id": "modular-tower-medium",
+   "file": "res://shops/models/modular-city.glb",
+   "node": "modular-tower-medium",
+   "category": "Modular",
+   "name": "Medium skyscraper",
+   "credit": {
+    "title": "City Game ready free",
+    "author": "CG Lads",
+    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 12.6,
+    "depth": 6.6,
+    "height": 36.0
+   },
+   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
+  },
+  {
+   "id": "modular-tower-big",
+   "file": "res://shops/models/modular-city.glb",
+   "node": "modular-tower-big",
+   "category": "Modular",
+   "name": "Big skyscraper",
+   "credit": {
+    "title": "City Game ready free",
+    "author": "CG Lads",
+    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 18.9,
+    "depth": 6.6,
+    "height": 51.0
+   },
+   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
   }
  ]
 }

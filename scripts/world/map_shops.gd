@@ -20,7 +20,7 @@ static func _ensure_catalog() -> void:
 	for s in data.get("shops", []):
 		var size: Dictionary = s["size_m"]
 		_entries[s["id"]] = {
-			"id": s["id"], "file": s["file"], "name": s.get("name", s["id"]), "category": s.get("category", ""),
+			"id": s["id"], "file": s["file"], "node": s.get("node", ""), "name": s.get("name", s["id"]), "category": s.get("category", ""),
 			"width": float(size["width"]), "depth": float(size["depth"]), "height": float(size["height"]),
 		}
 
@@ -31,7 +31,7 @@ static func mesh_id(lib: ModelLibrary, id: String) -> int:
 	if not _entries.has(id):
 		push_warning("[Shops] unknown shop " + id)
 		return -1
-	return lib.load_named("shop:" + id, _entries[id]["file"])
+	return lib.load_named("shop:" + id, _entries[id]["file"], _entries[id]["node"])
 
 
 ## The catalog as the list ShopSites.plan() takes.
