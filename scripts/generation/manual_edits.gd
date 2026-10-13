@@ -114,7 +114,23 @@ const TURNED_AT := [
 const DELETED_LATE := [
 	["MCDONALDS", Vector2i(237, 202)],
 	["APARTMENT", Vector2i(175, 216)],
+	["CAFE", Vector2i(206, 213)],
+	["RESTAURANT", Vector2i(200, 215)],
 ]
+## Buildings drawn with another model by hand (in `finish`): kind, top-left cell of the lot on
+## the final map, model (as the library names it).
+const MODEL_AT := [
+	["APARTMENT", Vector2i(138, 228), "building-k.glb"],
+	["APARTMENT", Vector2i(148, 237), "building-k.glb"],
+	["QUARTER_BLDG", Vector2i(193, 225), "building-k.glb"],
+	["QUARTER_BLDG", Vector2i(188, 277), "building-k.glb"],
+]
+## The main hospital whose front yard is paved like its lot (no grass), and how deep (cells).
+const PAVED_HOSPITAL := Vector2i(243, 201)
+const PAVED_DEPTH := 4
+## Road cells of the east highway's north-west end that go back to grass (the stub of avenue
+## and street north of the first lane): inclusive corners [from, to].
+const HIGHWAY_STUB := Rect2i(252, 188, 3, 2)
 ## Cleared lots that get a farm building back: top-left cell, model (as the library names it).
 const FARM_BUILDINGS_AT := [
 	[Vector2i(265, 283), "outpost.glb: water_tank"],
@@ -374,6 +390,12 @@ static func finish(data: CityData) -> int:
 			if data.b_kind[b] == CityTypes.Kind[d[0]] and data.building_rect(b).position == d[1]:
 				data.b_kind[b] = CityTypes.Kind.EMPTY
 				hand_deleted[b] = true
+	for b in data.building_count():
+		for m in MODEL_AT:
+			if data.b_kind[b] == CityTypes.Kind[m[0]] and data.building_rect(b).position == m[1]:
+				data.b_model[b] = m[2]
+	_pave_hospital_yard(data)
+	_clear_highway_stub(data)
 	_add_oil_pumps(data)
 	_cinema_shops(data)
 	# The main police station: its front yard is paved like its lot (its patrol car parks there).
@@ -388,6 +410,24 @@ static func finish(data: CityData) -> int:
 		for c in front_yard(data, fs, FIRE_YARD_DEPTH, 1):
 			data.forest[data.idx(c.x, c.y)] = 0
 	return turned
+
+
+## The ground in front of the main hospital of PAVED_HOSPITAL is civic ground, without trees.
+static func _pave_hospital_yard(data: CityData) -> void:
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.MAIN_HOSPITAL and data.building_rect(b).position == PAVED_HOSPITAL:
+			for c in front_yard(data, b, PAVED_DEPTH, 1):
+				data.zone[data.idx(c.x, c.y)] = CityTypes.Zone.CIVIC
+				data.forest[data.idx(c.x, c.y)] = 0
+
+
+## The road stub at the north-west end of the east highway becomes grass.
+static func _clear_highway_stub(data: CityData) -> void:
+	for y in range(HIGHWAY_STUB.position.y, HIGHWAY_STUB.end.y):
+		for x in range(HIGHWAY_STUB.position.x, HIGHWAY_STUB.end.x):
+			if data.in_bounds(x, y):
+				data.road[data.idx(x, y)] = 0
+				data.zone[data.idx(x, y)] = CityTypes.Zone.NATURE
 
 
 ## EXTRA_OIL_PUMPS oil pumps in a row with the pump at OIL_FIELD, on free desert.
