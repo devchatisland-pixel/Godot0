@@ -41,7 +41,7 @@ const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NE
 		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE, ModelCat.NEON_LIGHTHOUSE]
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
 ## The Taiwan signboards are light boxes: only their "board" surface lights up, not the steel.
-const LOGO_PACKS := [ModelCat.SIGN_WINDOWS, ModelCat.SIGN_VICE_CITY, ModelCat.TW_BANASONIC, ModelCat.TW_MCDONALDS,
+const LOGO_PACKS := [ModelCat.SIGN_WINDOWS, ModelCat.TW_BANASONIC, ModelCat.TW_MCDONALDS,
 		ModelCat.TW_COLA_JP, ModelCat.TW_COLA_BILLBOARD, ModelCat.TW_LED_BOARD, ModelCat.TW_LED_BAND]
 ## Surfaces of a lit logo whose material starts with this stay unlit (frames, brackets).
 const LOGO_DARK := "metal"
