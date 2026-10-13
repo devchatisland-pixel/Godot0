@@ -22,7 +22,13 @@ WORKDIR /project
 # --- Project imported (models converted once) ---------------------------------------
 FROM godot AS project
 COPY . /project
-RUN godot --headless --import
+# Godot's import cache (.godot) is kept between builds in a BuildKit cache mount,
+# so only new or changed assets are reimported instead of every model of the project.
+# (`docker builder prune` empties it: the next build then does one full import.)
+RUN --mount=type=cache,id=godot0-city-import,target=/import-cache,sharing=locked \
+    mkdir -p .godot && cp -a /import-cache/. .godot/ \
+    && godot --headless --import \
+    && find /import-cache -mindepth 1 -delete && cp -a .godot/. /import-cache/
 
 # --- Tests ---------------------------------------------------------------------------
 FROM project AS tests
