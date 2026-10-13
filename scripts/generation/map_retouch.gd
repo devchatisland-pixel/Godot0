@@ -60,9 +60,7 @@ const WOMAN_TOWER := Vector2i(67, 195)
 ## to wall from north to south).
 const SIGN_WALL := 1
 ## Kind, top-left cell of the lot, new facing.
-const TURNED := [
-	["SKYSCRAPER", Vector2i(123, 174), 1],
-]
+const TURNED := []
 ## Buildings copied once to their west side (top-left cell of the lot): B-00008, the skyscraper
 ## building-skyscraper-b of Las Vegas.
 const TWIN_KIND := Kind.SKYSCRAPER

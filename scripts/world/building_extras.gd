@@ -214,7 +214,9 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 ## edge (on the highest point under the sign), "wall" hangs on its south wall at `height` (share of the building
 ## height). `scale` shrinks the model; `halo` is the size of the glow copy drawn behind it.
 ## "face" hangs flat on the wall the sign was set up for (CityData.b_sign_facing: east or south,
-## the two walls the camera sees), in the middle of it, `fill` of the wall wide, at `height`.
+## the two walls the camera sees), in the middle of it, `fill` of the wall wide, at `height`;
+## `shift` moves it along the wall (share of the wall), `inset` back from the front of the box
+## (share of the depth of the building).
 ## Church model whose cross carries a red light: where the tip of the cross is in the box of
 ## the model (share of its size), and the size of the light.
 const CROSS_LIGHT_MODEL := "free_mini.glb: m12"
@@ -241,6 +243,10 @@ const SIGNS := {
 	ModelCatalog.Cat.NEON_LOVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.NEON_XXX: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
 	ModelCatalog.Cat.NEON_PLAYBOY: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
+	# One word over the two casino buildings standing side by side: on the west one, as wide as
+	# 1.8 walls, its middle half a wall further east, on the wall behind the steps.
+	ModelCatalog.Cat.NEON_CASINO: {"mount": "face", "fill": 1.8, "shift": 0.5, "inset": 0.066, "height": 0.58,
+		"max_height": 0.72, "halo": 1.08},
 	ModelCatalog.Cat.TW_BANASONIC: {"mount": "face", "fill": 0.9, "height": 0.45},
 	ModelCatalog.Cat.TW_MCDONALDS: {"mount": "blade", "out": 2.0, "height": 0.45},
 	ModelCatalog.Cat.TW_COLA_JP: {"mount": "blade", "out": 1.4, "height": 0.42},
@@ -294,6 +300,12 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 				at.z = body.position.z + along
 			else:
 				at.x = body.position.x + along
+		if spec.has("shift"):
+			if east:
+				at.z += wall * float(spec["shift"])
+			else:
+				at.x += wall * float(spec["shift"])
+		wall_inset += float(spec.get("inset", 0.0))
 		# Signs side by side on a low wall may be taller (SHARED_MAX_HEIGHT of the building).
 		var tall: float = SHARED_MAX_HEIGHT if slots > 1 else float(spec.get("max_height", FACE_MAX_HEIGHT))
 		s = minf(wall * float(spec.get("fill", 0.9)) / model.size.x, body.size.y * tall / model.size.y)

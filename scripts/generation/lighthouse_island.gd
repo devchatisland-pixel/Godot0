@@ -89,11 +89,13 @@ static func apply(data: CityData) -> Dictionary:
 static func _bring_shed(data: CityData, lighthouse: Rect2i) -> void:
 	var shed := -1
 	for b in data.building_count():
-		if data.b_kind[b] == Kind.BOAT and data.b_model.get(b, "") == SHED_MODEL 				and data.building_rect(b).position == SHED_FROM:
+		if data.b_kind[b] == Kind.BOAT and data.b_model.get(b, "") == PortRework.SEA_SHED 				and data.building_rect(b).position == SHED_FROM:
 			shed = b
 	if shed < 0:
 		push_warning("[Lighthouse] no shed at %s to bring to the island" % SHED_FROM)
 		return
+	# At sea it is drawn as a boat (PortRework): on the island it is the shed again.
+	data.b_model[shed] = SHED_MODEL
 	var size := data.building_rect(shed).size
 	var best := Rect2i()
 	var best_d := INF

@@ -350,7 +350,7 @@ def triangles(parts):
 def pick(parts, spec):
     """The parts a spec keeps: "nodes" (names found in the node path), "prefix" (node names that
     start with one of these), "skip" (names left out), "skip_materials" (material name prefixes
-    left out)."""
+    left out); "neon" makes every part a neon tube, "neon_materials" the parts of these materials."""
     out = []
     for p in parts:
         names = p["path"].split("/")
@@ -383,7 +383,7 @@ def pick(parts, spec):
             q["pos"] = q["pos"][used]
             q["nrm"] = None if q["nrm"] is None else q["nrm"][used]
             q["uv"] = q["uv"][used]
-        if spec.get("neon"):
+        if spec.get("neon") or any(p["mat"]["name"] == m for m in spec.get("neon_materials", [])):
             # A neon tube: its own colour is the colour of its light, and it is not see-through.
             m = dict(q["mat"])
             if m.get("emissive") and m.get("image") is None:
@@ -595,6 +595,13 @@ PACKS = {
     # Twenty-third wave. The Las Vegas club B-00023 becomes a supermarket (the "Supermarket
     # building" of Randonavt, its sign and posters taken off by tools/clean_supermarket.py: no
     # text left), its door turned from +X to +Z; the XXX and Playboy neon signs hang on its wall.
+    # Twenty-fourth wave: the Las Vegas building of sarthakv049 ("Building", CC-BY), its words
+    # OCEAN VIEW rebuilt as CA$INO by tools/make_casino_sign.py. The building without the word
+    # (its wavy neon tubes stay), and the word alone, sized on the wall by BuildingExtras.
+    "vegas_casino": {"src": "building_vegas_casino.glb", "tex": 512, "items": [
+        {"id": "casino_building", "cat": "VEGAS_CASINO", "skip": ["LOGO_0"], "neon_materials": ["Material.019"],
+         "yaw": -90, "width": 3.0, "weld": 0.004},
+        {"id": "casino_sign", "cat": "NEON_CASINO", "nodes": ["LOGO_0"], "neon": True, "yaw": -90, "width": 3.0}]},
     "supermarket": {"src": "supermarket_clean.glb", "tex": 1024, "items": [
         {"id": "supermarket", "cat": "SUPERMARKET", "yaw": -90, "length": 5.0}]},
     "neon_xxx": {"src": "xxx_neon_sign.glb", "tex": 512, "items": [

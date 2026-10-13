@@ -167,10 +167,21 @@ const RESIZED_AT := [
 const FINAL_DELETED := [["GRAVE", Vector2i(353, 130)]]
 ## Kind, top-left cell of the lot, size factor of the model.
 const FINAL_RESIZED := [["MUSEUM", Vector2i(213, 207), 0.7]]
-## A shop (model, lot, seed) in the square of the main cinema.
+## More shops like the corner ones in the square of the main cinema (model, size factor): top-left
+## cell of the 2x2 lot, facing. None in front of the cinema (its south side).
 const FINAL_SHOP_MODEL := "building-e.glb"
-const FINAL_SHOP_LOT := Rect2i(198, 209, 2, 2)
-const FINAL_SHOP_SEED := 313754359
+const FINAL_SHOP_SCALE := 0.8
+const FINAL_SHOPS := [
+	[Vector2i(200, 203), 0], [Vector2i(202, 203), 0],
+	[Vector2i(198, 205), 3], [Vector2i(198, 207), 3],
+	[Vector2i(204, 205), 1], [Vector2i(204, 207), 1],
+]
+## The casino of Las Vegas: the skyscraper at CASINO_AT and the shop behind it make room for two
+## casino buildings side by side (CASINO_LOTS, facing south), one neon word over both.
+const CASINO_AT := Vector2i(123, 174)
+const CASINO_SHOP := Vector2i(121, 175)
+const CASINO_LOTS := [Rect2i(121, 174, 3, 3), Rect2i(124, 174, 3, 3)]
+const CASINO_MODEL := "vegas_casino.glb: casino_building"
 
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
@@ -579,7 +590,7 @@ static func move_bunker(data: CityData) -> bool:
 
 
 ## Last hand changes, run at the very end of the generation: deletes FINAL_DELETED, resizes
-## FINAL_RESIZED, adds the shop of FINAL_SHOP_LOT on free ground of the cinema square.
+## FINAL_RESIZED, adds the shops of FINAL_SHOPS on free ground of the cinema square, builds the casino.
 static func final_tweaks(data: CityData) -> void:
 	for b in data.building_count():
 		var at := data.building_rect(b).position
@@ -590,13 +601,37 @@ static func final_tweaks(data: CityData) -> void:
 		for d in FINAL_RESIZED:
 			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
 				data.b_scale[b] = d[2]
-	var lot := FINAL_SHOP_LOT
-	if not _lot_is_free(data, -1, lot):
-		push_warning("[Edits] no room for the shop at %s" % lot)
+	for f in FINAL_SHOPS:
+		var lot := Rect2i(f[0], Vector2i(2, 2))
+		if not _lot_is_free(data, -1, lot):
+			push_warning("[Edits] no room for the shop at %s" % lot)
+			continue
+		var c := lot.get_center()
+		var b := data.add_building(lot, CityTypes.Kind.SHOP, f[1], CityTypes.hash2(c.x, c.y, 717), 0.3)
+		data.b_model[b] = FINAL_SHOP_MODEL
+		data.b_scale[b] = FINAL_SHOP_SCALE
+	_casino(data)
+
+
+## The two casino buildings of CASINO_LOTS and their word.
+static func _casino(data: CityData) -> void:
+	var tower := -1
+	for b in data.building_count():
+		var at := data.building_rect(b).position
+		if data.b_kind[b] == CityTypes.Kind.SKYSCRAPER and at == CASINO_AT:
+			tower = b
+		elif data.b_kind[b] == CityTypes.Kind.SHOP and at == CASINO_SHOP:
+			data.b_kind[b] = CityTypes.Kind.EMPTY
+			hand_deleted[b] = true
+	if tower < 0:
+		push_warning("[Edits] no skyscraper at %s for the casino" % CASINO_AT)
 		return
-	for y in range(lot.position.y, lot.end.y):
-		for x in range(lot.position.x, lot.end.x):
-			data.zone[data.idx(x, y)] = CityTypes.Zone.CIVIC
-			data.forest[data.idx(x, y)] = 0
-	var b := data.add_building(lot, CityTypes.Kind.SHOP, 2, FINAL_SHOP_SEED, 0.3)
-	data.b_model[b] = FINAL_SHOP_MODEL
+	data.set_building_rect(tower, CASINO_LOTS[0])
+	var second := data.add_building(CASINO_LOTS[1], CityTypes.Kind.CASINO, 2, data.b_seed[tower], data.b_height[tower])
+	for b: int in [tower, second]:
+		data.b_kind[b] = CityTypes.Kind.CASINO
+		data.b_facing[b] = 2
+		data.b_scale[b] = 1.0
+		data.b_model[b] = CASINO_MODEL
+	data.b_sign[tower] = ModelCatalog.Cat.NEON_CASINO
+	data.b_sign_facing[tower] = 2
