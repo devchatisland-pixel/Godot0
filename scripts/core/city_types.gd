@@ -123,6 +123,7 @@ enum Kind {
 	PIZZA_SHOP,
 	BURGER_SHOP,
 	CAFE,
+	VEGAS_SIGN,       # the big "Welcome to Las Vegas" sign next to the desert (PropSites)
 }
 
 const SERVICE_KINDS: Array[int] = [
@@ -140,6 +141,7 @@ const SERVICE_KINDS: Array[int] = [
 	Kind.NUCLEAR_PLANT, Kind.CINEMA_MAIN, Kind.AIRPORT, Kind.BURGER_JOINT,
 	Kind.COOLING_TOWER, Kind.COOLING_HALL, Kind.BT_TOWER, Kind.WATCHTOWER, Kind.BEACH_HUT, Kind.PIER, Kind.BOAT, Kind.FIRE_TRUCK, Kind.BALLOON, Kind.BILLBOARD, Kind.UFO, Kind.TANK, Kind.BUS_STOP, Kind.CONCERT,
 	Kind.BASKET_COURT, Kind.RESTAURANT, Kind.PIZZA_SHOP, Kind.BURGER_SHOP, Kind.CAFE,
+	Kind.VEGAS_SIGN,
 ]
 
 # --- Directions (facing / road connections) -------------------------------------

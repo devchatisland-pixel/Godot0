@@ -127,6 +127,8 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 			return lib.ids(Cat.BIZ_BURGER)
 		Kind.CAFE:
 			return lib.ids(Cat.BIZ_CAFE)
+		Kind.VEGAS_SIGN:
+			return lib.ids(Cat.VEGAS_SIGN)
 		Kind.BASKET_COURT:
 			return lib.ids(Cat.COURT)
 		Kind.FACTORY_BLDG:
