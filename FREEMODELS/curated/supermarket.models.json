@@ -1,0 +1,9 @@
+{
+	"file": "supermarket.glb",
+	"models": [
+		{
+			"cat": "SUPERMARKET",
+			"node": "supermarket"
+		}
+	]
+}

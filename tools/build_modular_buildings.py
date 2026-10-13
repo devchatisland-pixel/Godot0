@@ -2,6 +2,10 @@
 pack (CG Lads, CC-BY-4.0, https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d).
 
     python tools/build_modular_buildings.py <city_game_ready_free.glb> [shops/models/modular-city.glb] [shops/catalog.json]
+        [--homes FREEMODELS/_incoming/modular-homes.glb]
+
+--homes also writes the seven houses of the fog island (HOMES), the source of the fog_homes
+pack of tools/build_wave16_models.py.
 
 The pack is a sheet of storeys: shop ground floors, beige, pink and glass floors, flat roofs
 with props, a tiled roof. Each building stacks them: a grid of `cols` x `rows` modules per storey
@@ -57,6 +61,21 @@ BUILDINGS = {
     "modular-tower-medium": (2, 2, [["shop_clothes", "shop_sweets2"]] + ["glass_round"] * 10 + ["top_ac"]),
     "modular-tower-big": (3, 2, [["shop_sweets", "shop_clothes", "shop_sweets2"]] + ["glass_wide"] * 15
                           + [["top_ac", "roof_crates", "top_ac"]]),
+}
+
+# The houses of the fog island (FogBaseSites, pack fog_homes): seven homes, each unlike the
+# others. None leaves a column empty from that storey up (a stepped house).
+HOMES = {
+    "home-bungalow": (2, 1, [["pink", "pink_b"], "roof_tiles"]),
+    "home-villa": (2, 2, ["beige", ["beige_balcony", "beige_balcony_b"], "roof_garden"]),
+    "home-glass": (1, 2, ["glass_round", "glass_round", "roof_dish"]),
+    "home-terrace": (3, 1, [["pink_b", "beige", "pink_c"], ["pink", "beige_balcony", "pink"],
+                            ["roof_tiles", "roof_garden", "roof_tiles"]]),
+    "home-tall": (2, 1, [["beige_b", "pink_c"], ["beige_balcony", "pink"], ["beige_balcony_b", "pink_b"],
+                         ["roof_tiles", "roof_tiles"]]),
+    "home-stepped": (3, 1, [["pink", "pink_b", "beige"], ["roof_garden", "pink_c", "beige_b"],
+                            [None, "roof_dog", "beige_balcony"], [None, None, "roof_tiles"]]),
+    "home-block": (2, 2, [["glass", "beige"], ["beige_balcony_b", "glass"], ["top_ac", "roof_crates"]]),
 }
 
 
@@ -127,22 +146,23 @@ def group_parts(meshes, group):
     return parts, size[1]
 
 
-def main():
-    src = sys.argv[1]
-    dst = sys.argv[2] if len(sys.argv) > 2 else "shops/models/modular-city.glb"
-    j, binary = read_glb(src)
-    meshes = world_meshes(j)
+def write_set(j, binary, meshes, designs, dst, scene):
+    """Writes the buildings of `designs` as the top-level nodes of GLB `dst`; returns their
+    sizes (width, depth, height in metres)."""
     nodes = []
     roots = []
     sizes = {}
-    for bid, (cols, rows, storeys) in BUILDINGS.items():
+    for bid, (cols, rows, storeys) in designs.items():
         children = []
         y = 0.0
+        top = 0.0
         for st in storeys:
             per_col = st if isinstance(st, list) else [st] * cols
             h_max = 0.0
             for r in range(rows):
                 for c in range(cols):
+                    if per_col[c] is None:
+                        continue
                     parts, h = group_parts(meshes, per_col[c])
                     h_max = max(h_max, h)
                     place = np.eye(4)
@@ -155,28 +175,41 @@ def main():
                         mm = np.diag([SCALE, SCALE, SCALE, 1.0]) @ place @ m
                         nodes.append({"mesh": mesh, "matrix": [float(v) for v in mm.T.reshape(-1)]})
                         children.append(len(nodes) - 1)
-            top = y + h_max
+            top = max(top, y + h_max)
             y += STOREY
         nodes.append({"name": bid, "children": children})
         roots.append(len(nodes) - 1)
         sizes[bid] = (cols * PITCH[0] * SCALE, rows * PITCH[1] * SCALE, round(top * SCALE, 2))
     out = dict(j)
     out["nodes"] = nodes
-    out["scenes"] = [{"name": "modular-city", "nodes": roots}]
+    out["scenes"] = [{"name": scene, "nodes": roots}]
     out["scene"] = 0
     out["asset"] = {"version": "2.0", "generator": "tools/build_modular_buildings.py",
                     "copyright": "CG Lads, CC-BY-4.0 (City Game ready free, Sketchfab)"}
     js = json.dumps(out, separators=(",", ":")).encode()
     js += b" " * (-len(js) % 4)
-    binary += b"\0" * (-len(binary) % 4)
+    binary = binary + bytes(-len(binary) % 4)
     total = 12 + 8 + len(js) + 8 + len(binary)
     with open(dst, "wb") as f:
         f.write(struct.pack("<III", 0x46546C67, 2, total))
         f.write(struct.pack("<II", len(js), 0x4E4F534A) + js)
         f.write(struct.pack("<II", len(binary), 0x004E4942) + binary)
+    return sizes
+
+
+def main():
+    src = sys.argv[1]
+    dst = sys.argv[2] if len(sys.argv) > 2 else "shops/models/modular-city.glb"
+    j, binary = read_glb(src)
+    meshes = world_meshes(j)
+    sizes = write_set(j, binary, meshes, BUILDINGS, dst, "modular-city")
+    if "--homes" in sys.argv:
+        homes = sys.argv[sys.argv.index("--homes") + 1]
+        for bid, sz in write_set(j, binary, meshes, HOMES, homes, "modular-homes").items():
+            print(bid, "width %.2f depth %.2f height %.2f" % sz)
     for bid, s in sizes.items():
         print(bid, "width %.2f depth %.2f height %.2f" % s)
-    if len(sys.argv) > 3:
+    if len(sys.argv) > 3 and not sys.argv[3].startswith("--"):
         cat_path = sys.argv[3]
         cat = json.load(open(cat_path, encoding="utf-8"))
         shops = [e for e in cat["shops"] if not e["id"].startswith("modular-")]

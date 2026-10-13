@@ -592,6 +592,22 @@ PACKS = {
         {"id": "mod_tower_small", "src": "modular-city.glb", "nodes": ["modular-tower-small"], "cat": "FOG_MOD_TOWER", "length": 3.4},
         {"id": "mod_tower_medium", "src": "modular-city.glb", "nodes": ["modular-tower-medium"], "cat": "FOG_MOD_TOWER", "length": 3.6},
         {"id": "mod_tower_big", "src": "modular-city.glb", "nodes": ["modular-tower-big"], "cat": "FOG_MOD_TOWER", "length": 4.0}]},
+    # Twenty-third wave. The Las Vegas club B-00023 becomes a supermarket (the "Supermarket
+    # building" of Randonavt, its sign and posters taken off by tools/clean_supermarket.py: no
+    # text left), its door turned from +X to +Z; the XXX and Playboy neon signs hang on its wall.
+    "supermarket": {"src": "supermarket_clean.glb", "tex": 1024, "items": [
+        {"id": "supermarket", "cat": "SUPERMARKET", "yaw": -90, "length": 5.0}]},
+    "neon_xxx": {"src": "xxx_neon_sign.glb", "tex": 512, "items": [
+        {"id": "xxx_board", "cat": "NEON_XXX", "neon": True, "skip_materials": ["M_Glass_DirtyMaster"],
+         "width": 3.0, "weld": 0.012}]},
+    "neon_playboy": {"src": "neon_playboy_logo.glb", "tex": 256, "items": [
+        {"id": "playboy_bunny", "cat": "NEON_PLAYBOY", "neon": True, "height": 3.0, "weld": 0.03}]},
+    # The seven houses of the fog island (tools/build_modular_buildings.py --homes): stacked from
+    # the City Game modular pack like the town houses of fog_city, each unlike the others. Their
+    # fronts look -Z, as in fog_city (FogBase turns both categories round).
+    "fog_homes": {"src": "modular-homes.glb", "tex": 512, "items": [
+        {"id": h, "nodes": [h], "cat": "FOG_MOD_HOME", "length": 3.0} for h in
+        ["home-bungalow", "home-villa", "home-glass", "home-terrace", "home-tall", "home-stepped", "home-block"]]},
     # The "Danger" plate of the fence pack (the other signs and the fences are not used), stood
     # with its face to +Z. FogBase hangs it on the fence of the secret base.
     "danger_sign": {"src": "simple_chainlink_fence.glb", "tex": 512, "items": [
