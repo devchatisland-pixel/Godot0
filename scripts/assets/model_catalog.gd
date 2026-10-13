@@ -66,6 +66,8 @@ enum Cat {
 	BIZ_RESTAURANT, BIZ_SHOP, BIZ_PIZZA, BIZ_BURGER, BIZ_CAFE,
 	# Twenty-first wave: the Utrecht city hall (the museum)
 	MUSEUM_HALL,
+	# Twenty-second wave: the towns of the fog island (FogBaseSites)
+	FOG_OFFICE, FOG_HOUSE, FOG_NIGHT_TOWER, FOG_OFFICE_TOWER, FOG_FLOOR,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

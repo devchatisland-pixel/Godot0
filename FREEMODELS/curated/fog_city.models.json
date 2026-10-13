@@ -1,0 +1,25 @@
+{
+	"file": "fog_city.glb",
+	"models": [
+		{
+			"cat": "FOG_OFFICE",
+			"node": "fog_office"
+		},
+		{
+			"cat": "FOG_HOUSE",
+			"node": "fog_house"
+		},
+		{
+			"cat": "FOG_NIGHT_TOWER",
+			"node": "fog_night_tower"
+		},
+		{
+			"cat": "FOG_OFFICE_TOWER",
+			"node": "fog_office_tower"
+		},
+		{
+			"cat": "FOG_FLOOR",
+			"node": "fog_floor"
+		}
+	]
+}

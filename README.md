@@ -242,6 +242,18 @@ At night the fog turns dark blue-grey.
   ball, those of the beach at (171, 62) look west. The red pickup of the field at (257, 282) faces south.
 * **Fog island**: the two T-55 and the two BRDM of the checkpoint look south, at the road.
 
+**Twenty-second wave (`fog_base_sites.gd`, `fog_base.gd`; the `fog_city` pack of `tools/build_wave16_models.py`):**
+
+* **Fog island, inhabited**: the avenue from the Golden Gate crosses a capital (business centre of towers on both sides
+  of the avenue, suburbs of houses all round it), Eastbay (a small centre of offices and shops, houses behind it), an
+  industrial zone, houses south of the nuclear plant and farmland north and south (crop fields, barns, a tractor and a
+  harvester). Cars are parked along the streets; a bus, a fire truck, an ambulance and trucks stand in the towns.
+* **Army base**: very small, inside a wire fence north of the capital. Its landing zone is the model of the secret base,
+  drawn exactly as big as on the main island, with a helipad, three tents, a barracks, a radar and five armoured vehicles.
+  The nuclear plant has its own fence. The checkpoint at the end of the bridge stays.
+* **Models**: the five models of `fog_city.glb` (office, office tower, night tower, house, and one storey of a block,
+  stacked 2 to 6 high) are used all over both towns, mixed with the houses, shops and towers of the main island.
+
 ## Beaches, park and borders
 
 * **Piers** (`beach_sites.gd`): wooden piers running into the sea from sandy beaches of the main island

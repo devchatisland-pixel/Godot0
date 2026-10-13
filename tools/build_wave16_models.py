@@ -577,6 +577,14 @@ PACKS = {
     # Twenty-first wave. The city hall of Utrecht that serves as the museum. It faces +Z.
     "museum_hall": {"src": "utrecht_stadhuiscity_hall.glb", "tex": 512, "items": [
         {"id": "museum_hall", "cat": "MUSEUM_HALL", "length": 4.0}]},
+    # Twenty-second wave. The towns of the fog island (FogBaseSites): two office buildings, a
+    # night tower, a house and one storey of a block (stacked to make blocks of 2 to 6 floors).
+    "fog_city": {"tex": 512, "items": [
+        {"id": "fog_office", "src": "office.glb", "cat": "FOG_OFFICE", "length": 3.0},
+        {"id": "fog_house", "src": "hq_residential_house_lq_lowpoly_edition.glb", "cat": "FOG_HOUSE", "length": 2.0},
+        {"id": "fog_night_tower", "src": "modern_night_building_game-ready.glb", "cat": "FOG_NIGHT_TOWER", "length": 3.0},
+        {"id": "fog_office_tower", "src": "modern_office_building.glb", "cat": "FOG_OFFICE_TOWER", "length": 3.5},
+        {"id": "fog_floor", "src": "modular_building_piece.glb", "cat": "FOG_FLOOR", "length": 3.0}]},
     # The "Danger" plate of the fence pack (the other signs and the fences are not used), stood
     # with its face to +Z. FogBase hangs it on the fence of the secret base.
     "danger_sign": {"src": "simple_chainlink_fence.glb", "tex": 512, "items": [
