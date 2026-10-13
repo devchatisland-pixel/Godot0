@@ -32,6 +32,12 @@ Remove-Item -Recurse -Force "$next\*"
 & $GodotExe --headless --path $repo --export-release 'Web' $next\index.html
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$next\index.pck")) { Fail 'web export failed, the site keeps the previous build' }
 
+$changed = @(git status --short --untracked-files=no)
+if ($changed.Count -gt 0) {
+    Write-Host "WARNING: the import rewrote $($changed.Count) tracked file(s) (e.g. .import upgrades); commit them on a branch so the checkout stays clean:" -ForegroundColor Yellow
+    $changed | Select-Object -First 5 | ForEach-Object { Write-Host "  $_" }
+}
+
 Step 'Swapping in the new build and restarting 8080'
 $running = docker ps -q --filter 'name=^godot0-city-web-1$'
 if ($running) { docker stop godot0-city-web-1 }
