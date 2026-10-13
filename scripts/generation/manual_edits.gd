@@ -163,6 +163,15 @@ const RESIZED_AT := [
 	["BOAT", Vector2i(211, 40), 0.5],
 ]
 
+## Last hand changes of the finished map (`final_tweaks`), cells of the final map.
+const FINAL_DELETED := [["GRAVE", Vector2i(353, 130)]]
+## Kind, top-left cell of the lot, size factor of the model.
+const FINAL_RESIZED := [["MUSEUM", Vector2i(213, 207), 0.7]]
+## A shop (model, lot, seed) in the square of the main cinema.
+const FINAL_SHOP_MODEL := "building-e.glb"
+const FINAL_SHOP_LOT := Rect2i(198, 209, 2, 2)
+const FINAL_SHOP_SEED := 313754359
+
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
 const BALLOON_MOUNTAIN := Vector2i(177, 101)
@@ -567,3 +576,27 @@ static func move_bunker(data: CityData) -> bool:
 		return true
 	push_warning("[Edits] no room for the bunker beside the secret base")
 	return false
+
+
+## Last hand changes, run at the very end of the generation: deletes FINAL_DELETED, resizes
+## FINAL_RESIZED, adds the shop of FINAL_SHOP_LOT on free ground of the cinema square.
+static func final_tweaks(data: CityData) -> void:
+	for b in data.building_count():
+		var at := data.building_rect(b).position
+		for d in FINAL_DELETED:
+			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
+				data.b_kind[b] = CityTypes.Kind.EMPTY
+				hand_deleted[b] = true
+		for d in FINAL_RESIZED:
+			if data.b_kind[b] == CityTypes.Kind[d[0]] and at == d[1]:
+				data.b_scale[b] = d[2]
+	var lot := FINAL_SHOP_LOT
+	if not _lot_is_free(data, -1, lot):
+		push_warning("[Edits] no room for the shop at %s" % lot)
+		return
+	for y in range(lot.position.y, lot.end.y):
+		for x in range(lot.position.x, lot.end.x):
+			data.zone[data.idx(x, y)] = CityTypes.Zone.CIVIC
+			data.forest[data.idx(x, y)] = 0
+	var b := data.add_building(lot, CityTypes.Kind.SHOP, 2, FINAL_SHOP_SEED, 0.3)
+	data.b_model[b] = FINAL_SHOP_MODEL

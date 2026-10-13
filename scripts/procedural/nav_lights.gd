@@ -14,12 +14,12 @@ const RED := Color("ff2a3a")
 const GREEN := Color("2aff7a")
 ## Front of each model in its own space: +Z is Vector3.BACK, -Z is Vector3.FORWARD.
 const FRONT := {
-	Cat.BOAT_SIMPLE: Vector3.BACK, Cat.BOAT_WOODEN: Vector3.BACK, Cat.BOAT_FISHING: Vector3.FORWARD,
-	Cat.BOAT_CARGO: Vector3.BACK, Cat.CARRIER: Vector3.FORWARD,
+	Cat.BOAT_WOODEN: Vector3.BACK, Cat.BOAT_FISHING: Vector3.FORWARD,
+	Cat.BOAT_CARGO: Vector3.BACK,
 	Cat.JET_F14: Vector3.BACK, Cat.JET_F111: Vector3.FORWARD,
 }
-const SHIPS := [Cat.BOAT_SIMPLE, Cat.BOAT_WOODEN, Cat.BOAT_FISHING, Cat.BOAT_CARGO, Cat.CARRIER]
-## Submarines carry no lights (taken away on request). The lights of the cargo ship are tiny dots:
+const SHIPS := [Cat.BOAT_WOODEN, Cat.BOAT_FISHING, Cat.BOAT_CARGO]
+## Submarines, the carriers and the simple boat carry no lights (taken away on request). The lights of the cargo ship are tiny dots:
 ## only the glow shows, not a coloured box on the hull.
 const TINY := {Cat.BOAT_CARGO: 0.012}
 ## The aircraft of the vehicle catalog face -Z (vehicles/CATALOG.md).
@@ -27,9 +27,9 @@ const VEHICLE_FRONT := Vector3.FORWARD
 ## Share of a helicopter's height searched for its sides (keeps the lights off the rotor tips).
 const HELICOPTER_LOW := 0.55
 ## Size of a light: share of the model's length, and its limits (cells).
-const SIZE_SHARE := 0.025
-const SIZE_MIN := 0.05
-const SIZE_MAX := 0.2
+const SIZE_SHARE := 0.015
+const SIZE_MIN := 0.03
+const SIZE_MAX := 0.1
 
 ## Mesh -> [port, starboard] points in the mesh's own space (read once per mesh).
 static var _sides := {}

@@ -131,7 +131,8 @@ const CRANE_MOVED := [Vector2i(123, 277), Rect2i(126, 244, 2, 2)]
 ## Billboards turned round: top-left cell of the lot, new facing (0 N, 1 E, 2 S, 3 W).
 const BILLBOARDS_TURNED := [[Vector2i(167, 200), 0]]
 ## Sheds of the port (pontoons) out on the high seas: model, how many, lot, how far apart.
-const SEA_SHED := "port_sheds.glb: shed_generic_4"
+## The pontoons at sea are boats (they were drawn as sheds and looked like buildings).
+const SEA_SHED := "boat_wooden.glb: boat_wooden"
 const SEA_SHEDS := 6
 const SEA_SHED_LOT := Vector2i(4, 2)
 const SEA_SHED_APART := 70.0

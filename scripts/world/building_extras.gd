@@ -124,14 +124,13 @@ const STADIUM_FLOOD_CORNER := 0.47
 ## sides of the wheelhouse (fishing boat), the bridge wings (cargo ship), the sides of the sail
 ## (submarine).
 const NAV_LIGHTS := {
-	Cat.BOAT_SIMPLE: Vector3(0.855, 0.436, 0.475),
 	Cat.BOAT_WOODEN: Vector3(0.834, 0.971, 0.829),
 	Cat.BOAT_FISHING: Vector3(0.281, 0.911, 0.45),
 	Cat.BOAT_CARGO: Vector3(0.825, 0.814, 0.289),
 	Cat.BOAT_SUB: Vector3(0.423, 0.862, 0.437),
 }
 ## Size of a navigation light, as a share of the width of the boat.
-const NAV_LIGHT_SIZE := 0.06
+const NAV_LIGHT_SIZE := 0.035
 
 
 static func _nav_lights(lib: ModelLibrary, cat: int, box: AABB, xform: Transform3D, batch: InstanceBatch) -> void:
@@ -242,7 +241,7 @@ const SIGNS := {
 	ModelCatalog.Cat.NEON_LOVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.NEON_XXX: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
 	ModelCatalog.Cat.NEON_PLAYBOY: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
-	ModelCatalog.Cat.TW_BANASONIC: {"mount": "blade", "out": 2.6, "height": 0.45},
+	ModelCatalog.Cat.TW_BANASONIC: {"mount": "face", "fill": 0.9, "height": 0.45},
 	ModelCatalog.Cat.TW_MCDONALDS: {"mount": "blade", "out": 2.0, "height": 0.45},
 	ModelCatalog.Cat.TW_COLA_JP: {"mount": "blade", "out": 1.4, "height": 0.42},
 	ModelCatalog.Cat.TW_COLA_BILLBOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
