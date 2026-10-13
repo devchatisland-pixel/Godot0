@@ -574,10 +574,7 @@ PACKS = {
     "checkpoint": {"src": "game_ready_military_base_asset_pack.glb", "tex": 512, "items": [
         {"id": "checkpoint_post", "cat": "CHECKPOINT", "skip": ["Ground", "Tank", "Transformer", "Parking"],
          "origin": [-5.05, 0.0], "scale": 0.3, "weld": 0.012}]},
-    # Twenty-first wave. The Vice City logo (a giant roof billboard of a tower of the urban
-    # island), and the city hall of Utrecht that serves as the museum. Both face +Z.
-    "sign_vice_city": {"src": "vice_city_3d_text_logo__retro_neon_typography.glb", "items": [
-        {"id": "vice_city_logo", "cat": "SIGN_VICE_CITY", "neon": True, "height": 4.2}]},
+    # Twenty-first wave. The city hall of Utrecht that serves as the museum. It faces +Z.
     "museum_hall": {"src": "utrecht_stadhuiscity_hall.glb", "tex": 512, "items": [
         {"id": "museum_hall", "cat": "MUSEUM_HALL", "length": 4.0}]},
     # The "Danger" plate of the fence pack (the other signs and the fences are not used), stood

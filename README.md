@@ -227,9 +227,8 @@ At night the fog turns dark blue-grey.
 
 * **Museum**: the city hall of Utrecht (`museum_hall.glb`, `Kind.MUSEUM`) stands on the biggest free square near the
   shop at (215, 203), its front to the east (`MuseumSite`, added last so no building number moves).
-* **Vice City logo**: a giant pink neon billboard (`sign_vice_city.glb`) on the roof of the tower at (63, 174). The
-  neon woman left the tower of Las Vegas for the roof of the tower at (67, 195); the bar sign of that tower and the
-  bull sign of the tower at (71, 204) are smaller (`BuildingExtras.SIGNS`).
+* **Neon woman**: the neon woman left the tower of Las Vegas for the east wall of the tower at (67, 195), as wide as
+  the wall (it replaced the bar sign); the bull sign of the tower at (71, 204) is smaller (`BuildingExtras.SIGNS`).
 * **Development island**: two more buildings in the row (`tools/build_wave16_models.py`, `SHOPS`): the shop of the
   business pack and the wooden house with a balcony and a tent.
 * **Port**: the three tanks of the old tank row (two old tanks of three silos and the rusty one) moved into the
