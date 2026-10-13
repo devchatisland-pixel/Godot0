@@ -67,7 +67,7 @@ enum Cat {
 	# Twenty-first wave: the Utrecht city hall (the museum)
 	MUSEUM_HALL,
 	# Twenty-second wave: the towns of the fog island (FogBaseSites)
-	FOG_OFFICE, FOG_HOUSE, FOG_NIGHT_TOWER, FOG_OFFICE_TOWER, FOG_FLOOR,
+	FOG_OFFICE, FOG_HOUSE, FOG_NIGHT_TOWER, FOG_OFFICE_TOWER, FOG_FLOOR, FOG_MOD_HOUSE, FOG_MOD_TOWER,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
