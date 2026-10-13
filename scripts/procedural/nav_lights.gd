@@ -15,10 +15,13 @@ const GREEN := Color("2aff7a")
 ## Front of each model in its own space: +Z is Vector3.BACK, -Z is Vector3.FORWARD.
 const FRONT := {
 	Cat.BOAT_SIMPLE: Vector3.BACK, Cat.BOAT_WOODEN: Vector3.BACK, Cat.BOAT_FISHING: Vector3.FORWARD,
-	Cat.BOAT_CARGO: Vector3.BACK, Cat.BOAT_SUB: Vector3.BACK, Cat.CARRIER: Vector3.FORWARD,
+	Cat.BOAT_CARGO: Vector3.BACK, Cat.CARRIER: Vector3.FORWARD,
 	Cat.JET_F14: Vector3.BACK, Cat.JET_F111: Vector3.FORWARD,
 }
-const SHIPS := [Cat.BOAT_SIMPLE, Cat.BOAT_WOODEN, Cat.BOAT_FISHING, Cat.BOAT_CARGO, Cat.BOAT_SUB, Cat.CARRIER]
+const SHIPS := [Cat.BOAT_SIMPLE, Cat.BOAT_WOODEN, Cat.BOAT_FISHING, Cat.BOAT_CARGO, Cat.CARRIER]
+## Submarines carry no lights (taken away on request). The lights of the cargo ship are tiny dots:
+## only the glow shows, not a coloured box on the hull.
+const TINY := {Cat.BOAT_CARGO: 0.012}
 ## The aircraft of the vehicle catalog face -Z (vehicles/CATALOG.md).
 const VEHICLE_FRONT := Vector3.FORWARD
 ## Share of a helicopter's height searched for its sides (keeps the lights off the rotor tips).
@@ -51,7 +54,7 @@ static func for_model(lib: ModelLibrary, id: int, xform: Transform3D) -> Array:
 	var cat: int = lib.cats[id]
 	if not FRONT.has(cat):
 		return []
-	return _lights(lib, id, xform, FRONT[cat], SHIPS.has(cat), 1.0)
+	return _lights(lib, id, xform, FRONT[cat], SHIPS.has(cat), 1.0, float(TINY.get(cat, 0.0)))
 
 
 ## The lights of catalog vehicle `vehicle` (mesh `id` drawn at `xform`) when it is an aircraft.
@@ -69,7 +72,7 @@ static func add_to(batch: InstanceBatch, lib: ModelLibrary, id: int, xform: Tran
 
 
 static func _lights(lib: ModelLibrary, id: int, xform: Transform3D, front: Vector3, ship: bool,
-		low: float) -> Array:
+		low: float, tiny: float = 0.0) -> Array:
 	var red := lib.named_id("nav_red")
 	var green := lib.named_id("nav_green")
 	if red < 0 or green < 0:
@@ -82,6 +85,8 @@ static func _lights(lib: ModelLibrary, id: int, xform: Transform3D, front: Vecto
 		return []
 	var box := xform * lib.bounds[id]
 	var size := clampf(maxf(box.size.x, box.size.z) * SIZE_SHARE, SIZE_MIN, SIZE_MAX)
+	if tiny > 0.0:
+		size = tiny
 	var basis := Basis.from_scale(Vector3.ONE * size)
 	return [[red, Transform3D(basis, xform * (sides[0] as Vector3))],
 			[green, Transform3D(basis, xform * (sides[1] as Vector3))]]
