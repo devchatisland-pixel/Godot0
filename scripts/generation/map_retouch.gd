@@ -23,7 +23,7 @@ const TOWER_SIGNS := [
 	[Vector2i(67, 170), "NEON_FUN"],
 	[Vector2i(67, 175), "NEON_PALM"],
 	[Vector2i(63, 160), "TW_LED_BAND"],
-	[Vector2i(67, 179), "TW_BANASONIC"],
+	[Vector2i(71, 151), "TW_BANASONIC"],
 	[Vector2i(67, 187), "TW_MCDONALDS"],
 ]
 ## Signs on the roof of a tower (above its wall sign, or alone on a tower that has a lower one in

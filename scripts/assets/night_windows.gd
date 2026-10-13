@@ -88,6 +88,9 @@ static func apply(lib: ModelLibrary) -> void:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
 			lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
+	# The Banasonic sign hangs flat on a wall: only its board, no pole or brackets.
+	for id in lib.ids(ModelCat.TW_BANASONIC):
+		_strip_surfaces(lib, id, LOGO_DARK)
 	for cat in LOGO_PACKS:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], LOGO_NIGHT, done, LOGO_DAY, false, LOGO_DARK)
@@ -104,6 +107,21 @@ static func apply(lib: ModelLibrary) -> void:
 				_light_facade(mesh, 0.45, done)
 	for id in lib.ids(ModelCat.BILLBOARD):
 		light_billboard(lib.meshes[id])
+
+
+## Library model `id` without its surfaces whose material starts with `prefix` (its bounds follow).
+static func _strip_surfaces(lib: ModelLibrary, id: int, prefix: String) -> void:
+	var src := lib.meshes[id]
+	var out := ArrayMesh.new()
+	for s in src.get_surface_count():
+		var mat := src.surface_get_material(s)
+		if mat != null and mat.resource_name.begins_with(prefix):
+			continue
+		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, src.surface_get_arrays(s))
+		out.surface_set_material(out.get_surface_count() - 1, mat)
+	if out.get_surface_count() > 0:
+		lib.meshes[id] = out
+		lib.bounds[id] = out.get_aabb()
 
 
 ## Billboards: only the flat poster panel lights up at night, lit by its own picture (a blank

@@ -78,6 +78,7 @@ func generate() -> CityData:
 	# stand along the street, see ShopSites).
 	print("[City] development island: ", DevIsland.apply(data))
 	AmenitiesPlanner.apply(data)
+	ManualEdits.final_tweaks(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	var services: Dictionary = core["services"].duplicate()
