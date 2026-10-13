@@ -62,12 +62,11 @@ func _run() -> void:
 	_drive_in_cars()
 	_prison_helicopters()
 	_plant_road()
-	if REGULAR_CARS:
-		_cinema_parking()
 	# Last, so that nothing placed before moves: the newer vehicles and the hand changes.
 	_school_bus()
 	_bridge_humvee()
 	_hand_changes()
+	_clear_cinema_zone()
 
 
 ## Marks the lots of all buildings but `skip` as taken.
@@ -712,6 +711,9 @@ const HAND_CHANGES := [
 	{"id": "p54_21_harvester_olive", "near": Vector2(280.9, 249.0), "field": Vector2i(267, 266)},
 	{"id": "p54_42_forwarder_green", "near": Vector2(263.5, 241.0), "heading": Vector2(1, 0)},
 	{"id": "p54_43_tractor_vintage_trailer", "near": Vector2(277.0, 234.5), "heading": Vector2(0, 1)},
+	# One step south, away from the door of the main hospital / the main school.
+	{"id": "p54_11_ambulance", "near": Vector2(244.5, 204.35), "shift": Vector2(0, 1)},
+	{"id": "school_bus", "near": Vector2(237.5, 201.35), "shift": Vector2(0, 1)},
 ]
 const HAND_REACH := 4.0
 
@@ -736,9 +738,28 @@ func _hand_changes() -> void:
 			var r := _d.building_rect(f)
 			out[v]["at"] = Vector2(r.position) + Vector2(r.size) * 0.5
 			out[v]["why"] = "in a wheat field"
+		if c.has("shift"):
+			out[v]["at"] = (out[v]["at"] as Vector2) + (c["shift"] as Vector2)
 		if c.has("heading"):
 			var h: Vector2 = c["heading"]
 			out[v]["yaw"] = atan2(-h.x, -h.y)
+
+
+## No vehicle stands on the ground of the main cinema (its lot and CINEMA_ZONE_REACH cells round it).
+const CINEMA_ZONE_REACH := 6
+
+
+func _clear_cinema_zone() -> void:
+	var b := _biggest(Kind.CINEMA_MAIN)
+	if b < 0:
+		return
+	var zone := _d.building_rect(b).grow(CINEMA_ZONE_REACH)
+	var kept: Array[Dictionary] = []
+	for v in out:
+		var at: Vector2 = v["at"]
+		if not zone.has_point(Vector2i(int(floor(at.x)), int(floor(at.y)))):
+			kept.append(v)
+	out = kept
 
 
 ## The drive-in cinema: real cars (the lightest of the catalog) in two rows on its lot, their
