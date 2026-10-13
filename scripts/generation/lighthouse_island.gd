@@ -34,6 +34,10 @@ const NOISE_FREQ := Vector2(0.09, 0.3)
 const SAND_TOP := 139.0
 const SEA_SLOPE := 60.0
 const SEED := 9191
+## The pontoon shed of the high seas (top-left cell of its lot) that was taken to the island: it
+## stands on dry land beside the lighthouse.
+const SHED_FROM := Vector2i(130, 340)
+const SHED_MODEL := "port_sheds.glb: shed_generic_4"
 
 
 ## Returns {"island": cell of its centre or (-1, -1), "land": cells, "beach": cells}.
@@ -76,7 +80,48 @@ static func apply(data: CityData) -> Dictionary:
 	var lot := Rect2i(at - LOT / 2, LOT)
 	var b := data.add_building(lot, Kind.LIGHTHOUSE, 2, 0, 0.5)
 	data.b_model[b] = MODEL
+	_bring_shed(data, lot)
 	return {"island": at, "land": land, "beach": beach}
+
+
+## The shed of SHED_FROM moves to the dry land nearest to the lighthouse lot (long side along the
+## beach, front to the south, else to the east when it has to stand upright).
+static func _bring_shed(data: CityData, lighthouse: Rect2i) -> void:
+	var shed := -1
+	for b in data.building_count():
+		if data.b_kind[b] == Kind.BOAT and data.b_model.get(b, "") == SHED_MODEL 				and data.building_rect(b).position == SHED_FROM:
+			shed = b
+	if shed < 0:
+		push_warning("[Lighthouse] no shed at %s to bring to the island" % SHED_FROM)
+		return
+	var size := data.building_rect(shed).size
+	var best := Rect2i()
+	var best_d := INF
+	var centre := Vector2(lighthouse.get_center())
+	for turned in [false, true]:
+		var s := Vector2i(size.y, size.x) if turned else size
+		for y in range(lighthouse.position.y - 8, lighthouse.end.y + 8):
+			for x in range(lighthouse.position.x - 10, lighthouse.end.x + 10):
+				var r := Rect2i(Vector2i(x, y), s)
+				if r.intersects(lighthouse.grow(1)) or not _all_land(data, r):
+					continue
+				var d := Vector2(r.get_center()).distance_to(centre) + (3.0 if turned else 0.0)
+				if d < best_d:
+					best_d = d
+					best = r
+	if best.size.x == 0:
+		push_warning("[Lighthouse] no dry land beside the lighthouse for the shed")
+		return
+	data.set_building_rect(shed, best)
+	data.b_facing[shed] = 1 if best.size != size else 2
+
+
+static func _all_land(data: CityData, r: Rect2i) -> bool:
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			if not data.in_bounds(x, y) or data.terrain[data.idx(x, y)] != Terrain.LAND:
+				return false
+	return true
 
 
 ## 1 in the middle of the island, 0 on its waterline, below 0 at sea.

@@ -23,7 +23,6 @@ const TOWER_SIGNS := [
 	[Vector2i(67, 170), "NEON_FUN"],
 	[Vector2i(67, 175), "NEON_PALM"],
 	[Vector2i(67, 195), "NEON_BAR"],
-	[Vector2i(71, 155), "TW_COLA_JP"],
 	[Vector2i(63, 160), "TW_LED_BAND"],
 	[Vector2i(67, 179), "TW_BANASONIC"],
 	[Vector2i(67, 187), "TW_MCDONALDS"],
@@ -35,13 +34,17 @@ const TOWER_ROOF_SIGNS := [
 	[Vector2i(67, 170), "NEON_MARTINI"],
 	[Vector2i(71, 204), "NEON_BULL"],
 	[Vector2i(67, 147), "TW_COLA_BILLBOARD"],
-	[Vector2i(63, 186), "TW_LED_BOARD"],
+	# The board of the tower at (63, 186) stood unseen: it sits above the LED band of this one.
+	[Vector2i(63, 160), "TW_LED_BOARD"],
 ]
 ## Roof signs of three Las Vegas clubs (top-left cell of the lot, sign), looking south.
 const CLUB_SIGNS := [
 	[Vector2i(122, 182), "NEON_CLUB"],
-	[Vector2i(134, 178), "NEON_GIRL"],
 	[Vector2i(144, 202), "NEON_LOVE"],
+]
+## Signs flat on the east wall of a club (top-left cell of the lot, sign).
+const CLUB_WALL_SIGNS := [
+	[Vector2i(134, 178), "NEON_GIRL"],
 ]
 ## The wall the signs hang on: east, towards the road and the camera (the towers stand wall
 ## to wall from north to south).
@@ -129,6 +132,14 @@ func _signs() -> int:
 			continue
 		_d.b_sign[b] = ModelCatalog.Cat[s[1]]
 		_d.b_sign_facing[b] = 2
+		n += 1
+	for s in CLUB_WALL_SIGNS:
+		var b := _at(Kind.NIGHTCLUB, s[0])
+		if b < 0:
+			push_warning("[Retouch] no club at %s for its wall sign" % s[0])
+			continue
+		_d.b_sign_facing[b] = SIGN_WALL
+		_d.b_more_signs[b] = [[ModelCatalog.Cat[s[1]], "face"]]
 		n += 1
 	return n
 
