@@ -60,9 +60,7 @@ const WOMAN_TOWER := Vector2i(67, 195)
 ## to wall from north to south).
 const SIGN_WALL := 1
 ## Kind, top-left cell of the lot, new facing.
-const TURNED := [
-	["SKYSCRAPER", Vector2i(123, 174), 1],
-]
+const TURNED := []
 ## Kinds whose buildings all face the same way.
 const KIND_FACING := {"MCDONALDS": 1}
 const BASE_SCALE := 1.5

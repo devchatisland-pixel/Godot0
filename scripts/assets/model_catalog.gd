@@ -71,6 +71,8 @@ enum Cat {
 	# Twenty-third wave: the supermarket of Las Vegas, its XXX and Playboy neon signs, the seven
 	# modular houses of the fog island
 	SUPERMARKET, NEON_XXX, NEON_PLAYBOY, FOG_MOD_HOME,
+	# Twenty-fourth wave: the casino building of Las Vegas and its neon word CA$INO
+	VEGAS_CASINO, NEON_CASINO,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
