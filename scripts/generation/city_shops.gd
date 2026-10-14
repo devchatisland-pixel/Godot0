@@ -15,6 +15,7 @@ const SHOP_SCALE := 0.68
 ## Zone -> number of shops.
 const QUOTA := {
 	Zone.COMMERCIAL: 40, Zone.SUBURBAN: 40, Zone.APARTMENT: 40, Zone.QUARTER: 80, Zone.POOR: 5,
+	Zone.CIVIC: 20,
 }
 ## Kinds of lot that become a shop (a vacant lot costs nothing, the others lose their model).
 const REPLACED := [Kind.EMPTY, Kind.SHOP, Kind.HOUSE, Kind.QUARTER_BLDG, Kind.APARTMENT, Kind.OFFICE]
@@ -91,8 +92,113 @@ static func apply(data: CityData) -> Dictionary:
 				if score > best:
 					best = score
 					pick = i
+		# Not enough lots to convert: shops on free ground of the zone, beside a street.
+		if count < int(QUOTA[zone]):
+			count += _on_free_ground(data, zone, int(QUOTA[zone]) - count)
 		placed[Zone.keys()[zone]] = count
 	return placed
+
+
+## Up to `want` shops on free 5 x 3 ground of `zone` (no road, building or path), long side
+## along a street, spread by the hash of their corner. Returns how many were put.
+static func _on_free_ground(data: CityData, zone: int, want: int) -> int:
+	var n := data.size
+	var used := PackedByteArray()
+	used.resize(n * n)
+	for b in data.building_count():
+		if data.b_kind[b] == Kind.PLAZA or data.b_kind[b] == Kind.GARDEN:
+			continue
+		var r := data.building_rect(b)
+		for y in range(r.position.y, r.end.y):
+			for x in range(r.position.x, r.end.x):
+				used[y * n + x] = 1
+	var found: Array = []
+	for y in range(1, n - 6):
+		for x in range(1, n - 6):
+			if data.zone[y * n + x] != zone:
+				continue
+			for horizontal in [true, false]:
+				var w := 5 if horizontal else 3
+				var h := 3 if horizontal else 5
+				if not _free(data, used, x, y, w, h, zone):
+					continue
+				var face := _street_side(data, x, y, w, h, horizontal)
+				if face >= 0:
+					found.append([x, y, w, h, face])
+	found.sort_custom(func(a: Array, b: Array) -> bool:
+		return CityTypes.hash2(a[0], a[1], 5353) < CityTypes.hash2(b[0], b[1], 5353))
+	var count := 0
+	var taken: Array[Vector2i] = []
+	for c in found:
+		if count >= want:
+			break
+		var rect := Rect2i(int(c[0]), int(c[1]), int(c[2]), int(c[3]))
+		var at := rect.position + rect.size / 2
+		var far := true
+		for t in taken:
+			if absi(t.x - at.x) < 5 and absi(t.y - at.y) < 5:
+				far = false
+				break
+		var clear := true
+		for y in range(rect.position.y, rect.end.y):
+			for x in range(rect.position.x, rect.end.x):
+				if used[y * n + x] != 0:
+					clear = false
+		if not far or not clear:
+			continue
+		var face := int(c[4])
+		face = 2 if face == 0 else (1 if face == 3 else face)
+		var b := data.add_building(rect, Kind.SHOP, (face + 2) % 4,
+				CityTypes.hash2(rect.position.x, rect.position.y, 5252), 0.3)
+		data.b_model[b] = "shop:" + SHOP_ID
+		data.b_scale[b] = -SHOP_SCALE
+		for y in range(rect.position.y, rect.end.y):
+			for x in range(rect.position.x, rect.end.x):
+				used[y * n + x] = 1
+		taken.append(at)
+		count += 1
+	return count
+
+
+static func _free(data: CityData, used: PackedByteArray, x: int, y: int, w: int, h: int, zone: int) -> bool:
+	var n := data.size
+	for yy in range(y, y + h):
+		for xx in range(x, x + w):
+			var i := yy * n + xx
+			if used[i] != 0 or data.road[i] != 0 or data.zone[i] != zone or not data.is_land(xx, yy):
+				return false
+			if data.deco[i] != 0 or data.terrain[i] != CityTypes.Terrain.LAND:
+				return false
+	return true
+
+
+## Facing (0 N, 1 E, 2 S, 3 W) of the street that runs along a long side of the lot, or -1.
+static func _street_side(data: CityData, x: int, y: int, w: int, h: int, horizontal: bool) -> int:
+	if horizontal:
+		var north := 0
+		var south := 0
+		for xx in range(x, x + w):
+			if data.is_road(xx, y - 1):
+				north += 1
+			if data.is_road(xx, y + h):
+				south += 1
+		if north >= w - 1 and north >= south:
+			return 0
+		if south >= w - 1:
+			return 2
+		return -1
+	var west := 0
+	var east := 0
+	for yy in range(y, y + h):
+		if data.is_road(x - 1, yy):
+			west += 1
+		if data.is_road(x + w, yy):
+			east += 1
+	if west >= h - 1 and west >= east:
+		return 3
+	if east >= h - 1:
+		return 1
+	return -1
 
 
 ## Facing (0 N, 1 E, 2 S, 3 W) of the side of lot `r` that has the most street cells along it, or -1.

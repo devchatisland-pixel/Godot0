@@ -42,6 +42,9 @@ const SHOP_ID := "shop-candy-b"
 const SHOP_COUNT := 50
 ## More shops put in the free spaces left once every block is filled (parks, gaps).
 const EXTRA_SHOPS := 15
+## Shops that take the place of houses (one or two of them), spread over the whole city; they
+## look south and east in turn.
+const CONVERTED_SHOPS := 50
 
 ## Skyscrapers of the centre: [category, footprint, storeys, which model].
 const CORE := [
@@ -111,6 +114,7 @@ func _run() -> void:
 	_streets()
 	_blocks()
 	_extra_shops()
+	_convert_to_shops()
 	_cars()
 
 
@@ -465,6 +469,74 @@ func _extra_shops() -> void:
 					break
 				x += 0.5
 			y += 0.5
+
+
+# --- Shops in the place of houses ---------------------------------------------------------------------------
+## Takes the houses and flats (footprint up to 3.1) of the city, farthest apart first: each
+## shop replaces the house it stands on and any neighbour its footprint touches.
+func _convert_to_shops() -> void:
+	var cand: Array[int] = []
+	for i in _items.size():
+		var e := _items[i]
+		if e.has("cat") and e.has("city") and float(e.get("fit", 9.0)) <= 3.1 and _dist(e["at"]) > CORE_R:
+			cand.append(i)
+	var mind := PackedFloat32Array()
+	mind.resize(cand.size())
+	for k in cand.size():
+		mind[k] = INF
+	var gone := {}
+	var made: Array[Dictionary] = []
+	var pick := 0 if not cand.is_empty() else -1
+	var count := 0
+	while count < CONVERTED_SHOPS and pick >= 0:
+		var e := _items[cand[pick]]
+		var at: Vector2 = e["at"]
+		mind[pick] = -1.0
+		if gone.has(cand[pick]):
+			pick = _farthest(cand, mind, gone, at)
+			continue
+		var east := count % 2 == 1
+		var size := Vector2(_shop_size.y, _shop_size.x) if east else _shop_size
+		var box := Rect2(at - size * 0.5 - Vector2(0.15, 0.15), size + Vector2(0.3, 0.3))
+		var ok := _land_box(at, size * 0.5)
+		var touched: Array[int] = []
+		for k in cand.size():
+			if gone.has(cand[k]) or k == pick:
+				continue
+			var o := _items[cand[k]]
+			var f := float(o["fit"])
+			if Rect2((o["at"] as Vector2) - Vector2(f, f) * 0.5, Vector2(f, f)).intersects(box):
+				touched.append(cand[k])
+		if ok:
+			gone[cand[pick]] = true
+			for t in touched:
+				gone[t] = true
+			made.append({"shop": SHOP_ID, "at": at, "dir": Vector2(1, 0) if east else Vector2(0, 1),
+					"scale": _shop_scale(), "city": true})
+			_stats["shops"] += 1
+			count += 1
+		pick = _farthest(cand, mind, gone, at)
+	var kept: Array[Dictionary] = []
+	for i in _items.size():
+		if not gone.has(i):
+			kept.append(_items[i])
+	_items = kept
+	_items.append_array(made)
+
+
+## Index (in `cand`) of the candidate farthest from `from` and from the earlier ones, not gone.
+func _farthest(cand: Array[int], mind: PackedFloat32Array, gone: Dictionary, from: Vector2) -> int:
+	var best := -1
+	var best_d := -1.0
+	for k in cand.size():
+		if mind[k] < 0.0 or gone.has(cand[k]):
+			continue
+		var d := (_items[cand[k]]["at"] as Vector2).distance_to(from)
+		mind[k] = minf(mind[k], d)
+		if mind[k] > best_d:
+			best_d = mind[k]
+			best = k
+	return best
 
 
 # --- The shop ---------------------------------------------------------------------------------------------------
