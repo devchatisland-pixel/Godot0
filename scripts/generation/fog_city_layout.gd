@@ -40,6 +40,8 @@ const CURB := 0.4
 ## The only shop model, and how many.
 const SHOP_ID := "shop-candy-b"
 const SHOP_COUNT := 50
+## More shops put in the free spaces left once every block is filled (parks, gaps).
+const EXTRA_SHOPS := 15
 
 ## Skyscrapers of the centre: [category, footprint, storeys, which model].
 const CORE := [
@@ -99,6 +101,8 @@ var _shops_left := SHOP_COUNT
 var _homes_n := 0
 var _car_n := 0
 var _block_shops := 0
+var _rects: Array[Rect2] = []     # footprint of everything put in a block
+var _block_list: Array[Rect2] = []
 
 
 func _run() -> void:
@@ -106,6 +110,7 @@ func _run() -> void:
 	_grid_lines()
 	_streets()
 	_blocks()
+	_extra_shops()
 	_cars()
 
 
@@ -263,6 +268,7 @@ func _blocks() -> void:
 			var r := Rect2(left, top, right - left, bottom - top)
 			if r.size.x < 3.0 or r.size.y < 3.0:
 				continue
+			_block_list.append(r)
 			_block(r, _hash(i, j))
 
 
@@ -398,6 +404,7 @@ func _put(spec: Array, p: Vector2, face: Vector2, group: String) -> void:
 	else:
 		e = _entry(spec, p, face)
 	_items.append(e)
+	_rects.append(Rect2(p - half, half * 2.0))
 	_stats[group] += 1
 
 
@@ -406,9 +413,57 @@ func _put_shop(p: Vector2, face: Vector2) -> void:
 	if not _land_box(p, half) or keep_out(p, maxf(half.x, half.y) + 0.3) or _near_extra(p, half.x + 0.5):
 		return
 	_items.append({"shop": SHOP_ID, "at": p, "dir": face, "scale": _shop_scale(), "city": true})
+	_rects.append(Rect2(p - half, half * 2.0))
 	_shops_left -= 1
 	_block_shops += 1
 	_stats["shops"] += 1
+
+
+# --- More shops in the free spaces ------------------------------------------------------------------------------
+## One more shop in a block that has room left (a park, a gap), the front to the nearest
+## north or south street, until EXTRA_SHOPS are put.
+func _extra_shops() -> void:
+	var left := EXTRA_SHOPS
+	var half := _shop_size * 0.5
+	var order := range(_block_list.size())
+	# Spread them over the city: every third block first, then the others.
+	var picked: Array = []
+	for pass_i in 3:
+		for i in order:
+			if i % 3 == pass_i:
+				picked.append(i)
+	for i in picked:
+		if left <= 0:
+			break
+		var r: Rect2 = _block_list[i]
+		if _dist(r.get_center()) > 80.0:
+			continue
+		var near: Array[Rect2] = []
+		for q in _rects:
+			if q.intersects(r.grow(1.0)):
+				near.append(q)
+		var y := r.position.y + half.y
+		var done := false
+		while y <= r.end.y - half.y and not done:
+			var x := r.position.x + half.x
+			while x <= r.end.x - half.x:
+				var p := Vector2(x, y)
+				var box := Rect2(p - half - Vector2(0.2, 0.2), _shop_size + Vector2(0.4, 0.4))
+				var free := true
+				for q in near:
+					if q.intersects(box):
+						free = false
+						break
+				if free and _land_box(p, half) and not keep_out(p, maxf(half.x, half.y) + 0.3) 						and not _near_extra(p, half.x + 0.5):
+					var face := Vector2(0, 1) if p.y < r.get_center().y else Vector2(0, -1)
+					_items.append({"shop": SHOP_ID, "at": p, "dir": face, "scale": _shop_scale(), "city": true})
+					_rects.append(Rect2(p - half, _shop_size))
+					_stats["shops"] += 1
+					left -= 1
+					done = true
+					break
+				x += 0.5
+			y += 0.5
 
 
 # --- The shop ---------------------------------------------------------------------------------------------------
