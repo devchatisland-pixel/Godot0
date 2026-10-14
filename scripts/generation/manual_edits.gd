@@ -267,6 +267,9 @@ const NEON_HALL_AT := Vector2i(148, 202)
 const NEON_HALL_MODEL := "neon_hall"
 const NEON_HALL_SCALE := 2.1215
 const NEON_HALL_RIBBON_HEIGHT := 0.6
+## Its two other places (a police station of 5 x 3 and a casino of 4 x 4) and the share of the lot they fill.
+const NEON_HALL_CELLS := [Vector2i(148, 202), Vector2i(122, 203), Vector2i(144, 202)]
+const NEON_HALL_FILL := 0.96
 ## The "Welcome to Las Vegas" sign stands in the desert beside the highway that enters Las Vegas
 ## (north side of its three lanes), turned west to face the traffic coming from the desert.
 const VEGAS_SIGN_LOT := Rect2i(116, 161, 1, 3)
@@ -1110,17 +1113,28 @@ static func _move_vegas_sign(data: CityData) -> void:
 		return
 
 
-## The police station at NEON_HALL_AT becomes the neon hall with the casino ribbon on its south-east corner.
+## The three buildings of NEON_HALL_CELLS (two police stations and a casino of Las Vegas) become the
+## neon hall with the casino ribbon on their south-east corner. The first keeps the size the police
+## station had; the others are drawn as big as their lot lets (NEON_HALL_FILL of the lot).
 static func _neon_hall(data: CityData) -> void:
-	for b in data.building_count():
-		if data.b_kind[b] != CityTypes.Kind.POLICE or data.building_rect(b).position != NEON_HALL_AT:
-			continue
-		data.b_facing[b] = 0
-		data.b_model[b] = NEON_HALL_MODEL
-		data.b_scale[b] = -NEON_HALL_SCALE
-		data.b_sign[b] = 0
-		data.b_sign_facing[b] = 2
-		data.b_more_signs[b] = [[ModelCatalog.Cat.TW_LED_BAND, "corner"]]
-		data.b_sign_fit[b] = {"height": NEON_HALL_RIBBON_HEIGHT}
-		return
-	push_warning("[Edits] no police station at %s for the neon hall" % NEON_HALL_AT)
+	var half := Vector2(1.74, 1.282)
+	for cell: Vector2i in NEON_HALL_CELLS:
+		var found := false
+		for b in data.building_count():
+			var r := data.building_rect(b)
+			if r.position != cell or not [CityTypes.Kind.POLICE, CityTypes.Kind.CASINO].has(data.b_kind[b]):
+				continue
+			found = true
+			data.b_facing[b] = 0
+			data.b_model[b] = NEON_HALL_MODEL
+			if cell == NEON_HALL_AT:
+				data.b_scale[b] = -NEON_HALL_SCALE
+			else:
+				data.b_scale[b] = -minf(r.size.x * NEON_HALL_FILL / half.x, r.size.y * NEON_HALL_FILL / half.y)
+			data.b_sign[b] = 0
+			data.b_sign_facing[b] = 2
+			data.b_more_signs[b] = [[ModelCatalog.Cat.TW_LED_BAND, "corner"]]
+			data.b_sign_fit[b] = {"height": NEON_HALL_RIBBON_HEIGHT}
+			break
+		if not found:
+			push_warning("[Edits] no building at %s for the neon hall" % cell)
