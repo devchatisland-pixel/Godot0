@@ -60,6 +60,8 @@ var west_bridge := Vector3i(-1, -1, -1)
 var central_park := Rect2i()
 ## The island hidden in the fog, east of the map (FogIslandShaper).
 var fog: FogIslandShaper
+## The continent north and east of the fog island, joined to it by two bridges (ContinentShaper).
+var continent: ContinentShaper
 
 
 func _init(p_size: int, p_chunk: int) -> void:

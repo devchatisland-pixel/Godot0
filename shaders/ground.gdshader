@@ -18,6 +18,12 @@ uniform sampler2D fog_elevation_tex : filter_linear, repeat_disable;
 uniform sampler2D fog_zone_tex : source_color, filter_nearest, repeat_disable;
 uniform vec2 fog_origin = vec2(-100000.0);
 uniform float fog_size = 128.0;
+// The continent north and east of the fog island (ContinentShaper): its own rectangle, one
+// texel of elevation per cell, a finer colour texture (streets are one cell wide).
+uniform sampler2D cont_elevation_tex : filter_linear, repeat_disable;
+uniform sampler2D cont_zone_tex : source_color, filter_nearest, repeat_disable;
+uniform vec2 cont_origin = vec2(-100000.0);
+uniform vec2 cont_size = vec2(1.0);
 
 varying vec2 map_uv;
 
@@ -33,6 +39,16 @@ void fragment() {
 	if (fog_uv.x >= 0.0 && fog_uv.y >= 0.0 && fog_uv.x <= 1.0 && fog_uv.y <= 1.0) {
 		e = texture(fog_elevation_tex, fog_uv).r - 128.0 / 255.0;
 		zone = texture(fog_zone_tex, fog_uv);
+	}
+	vec2 cont_uv = (map_uv * map_size - cont_origin) / cont_size;
+	if (cont_uv.x >= 0.0 && cont_uv.y >= 0.0 && cont_uv.x <= 1.0 && cont_uv.y <= 1.0) {
+		// The two squares overlap (the fog island sits in the bay of the continent): the
+		// higher ground wins, so the sea of one never cuts the coast of the other.
+		float ce = texture(cont_elevation_tex, cont_uv).r - 128.0 / 255.0;
+		if (ce > e) {
+			e = ce;
+			zone = texture(cont_zone_tex, cont_uv);
+		}
 	}
 	vec3 land = zone.rgb;
 	vec3 col;

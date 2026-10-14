@@ -65,6 +65,16 @@ func build(cfg: CityConfig, data: CityData) -> void:
 				Image.create_from_data(n, n, false, Image.FORMAT_RGBA8, fog.colors)))
 		_material.set_shader_parameter("fog_origin", fog.origin)
 		_material.set_shader_parameter("fog_size", float(n))
+	if data.continent != null:
+		var c := data.continent
+		var cs := ContinentShaper.SIZE
+		_material.set_shader_parameter("cont_elevation_tex", ImageTexture.create_from_image(
+				Image.create_from_data(cs.x, cs.y, false, Image.FORMAT_L8, c.elevation)))
+		_material.set_shader_parameter("cont_zone_tex", ImageTexture.create_from_image(
+				Image.create_from_data(cs.x * ContinentShaper.RES, cs.y * ContinentShaper.RES, false,
+				Image.FORMAT_RGBA8, c.colors)))
+		_material.set_shader_parameter("cont_origin", ContinentShaper.ORIGIN)
+		_material.set_shader_parameter("cont_size", Vector2(cs))
 
 	# One plane for island and sea; it reaches far beyond the map so the ocean
 	# looks endless at any zoom.

@@ -79,7 +79,10 @@ enum Cat {
 	FOG_MARKET,
 	# Twenty-seventh wave: the old warehouses of the food depot of the fog island
 	FOG_WAREHOUSE,
-	# Twenty-eighth wave: the Eiffel tower alone (tools/make_eiffel_tower.py)
+	# Twenty-eighth wave: the buildings of the continent (continent_city.glb, ContinentShaper):
+	# two categories because the library keeps at most 24 models per category
+	CONTINENT, CONTINENT2,
+	# Twenty-ninth wave: the Eiffel tower alone (tools/make_eiffel_tower.py)
 	EIFFEL_TOWER,
 }
 

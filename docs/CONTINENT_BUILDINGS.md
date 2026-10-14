@@ -4,7 +4,7 @@
 
 Rebuild: `tools/build_continent.ps1` (`build_continent_pack.py` splits the city, `render_continent_previews.py` draws these PNGs in the Continent theme).
 
-Each building stands on y = 0, centred on x/z, 1 cell = 16 source units. The list file uses category `CONTINENT`, which is not a game category yet, so the game ignores the pack until one is added. Dense blocks shared walls in the source, so a few buildings are open on one side.
+Each building stands on y = 0, centred on x/z, 1 cell = 16 source units. This full-detail pack is for the docs (category `CONTINENT_PACK`, ignored by the game). The game uses `continent_city.glb`: the 26 buildings continent 01-08, 12, 14-16, 18-24, 28-32, 34 and 36, lighter (rooftop units and fire escapes dropped), laid out by `ContinentShaper` on the continent north and east of the fog island. Dense blocks shared walls in the source, so a few buildings are open on one side.
 
 ![Continent buildings](continent_buildings.png)
 

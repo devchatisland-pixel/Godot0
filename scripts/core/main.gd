@@ -118,6 +118,10 @@ func _start_city() -> void:
 	fog_base.name = "FogBase"
 	add_child(fog_base)
 	fog_base.build(data, library)
+	var continent := Continent.new()
+	continent.name = "Continent"
+	add_child(continent)
+	continent.build(cfg, data, library, camera)
 	var west_bridge := WestBridge.new()
 	west_bridge.name = "WestBridge"
 	add_child(west_bridge)
@@ -164,7 +168,10 @@ func _start_city() -> void:
 	# Start on the centre of the city (zoom out to see the islands).
 	var c := Vector2(data.size, data.size) * 0.5
 	camera.setup(cfg, data.size, Vector3(c.x, 0, c.y), START_ZOOM)
-	camera.set_bounds(Rect2(0, 0, data.fog.origin.x + FogIslandShaper.SIZE, data.size))
+	var bounds := Rect2(0, 0, data.fog.origin.x + FogIslandShaper.SIZE, data.size)
+	if data.continent != null:
+		bounds = bounds.merge(ContinentShaper.rect())
+	camera.set_bounds(bounds)
 	_overlay.finish(data.city_name)
 
 	day_night = DayNight.new()
