@@ -15,8 +15,13 @@ split back into single buildings:
   3. the small pieces (roof units, balconies, fire escapes) go to the building whose footprint
      contains them.
 
-Output: FREEMODELS/curated/continent_buildings.glb + .models.json (cat "CONTINENT", which is
-not a game category yet, so the game ignores the pack until one is added).
+Output:
+  FREEMODELS/curated/continent_buildings.glb + .models.json: the whole pack, full detail (cat
+  "CONTINENT_PACK", which is no game category: the game ignores this file);
+  FREEMODELS/curated/continent_city.glb + .models.json: the buildings of the continent
+  (GAME_IDS), lighter for the game: small rooftop units, fire escapes and the like dropped,
+  vertices welded, small textures. Two categories (CONTINENT, CONTINENT2): the library keeps at
+  most 24 models per category.
 """
 import json, os, sys
 import numpy as np
@@ -29,6 +34,10 @@ import build_wave16_models as B
 ROOT = B.ROOT
 SRC = os.path.join(os.path.expanduser("~"), "Downloads", "procedural_city_7.glb")
 UNIT = 16.0          # source units per cell: one scale for the whole pack, so sizes stay relative
+GAME_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 12, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, 34, 36]
+GAME_DROP = ["CityGenAC", "firescape", "rooftop_tank", "solar", "CityGenVent", "CityGenbasic_rough_metal_dark"]
+GAME_WELD = 0.012    # cells
+GAME_TEX = 256
 ANCHOR_TRIS = 300    # a piece with at least this many triangles decides the buildings
 OVERLAP = 0.6        # share of the smaller footprint two anchors must share to be one building
 
@@ -131,7 +140,7 @@ def main():
         size = B.shape(r["parts"], {"scale": 1.0 / UNIT})
         merged = B.merged(r["parts"])
         items.append((name, merged))
-        manifest.append({"cat": "CONTINENT", "node": name})
+        manifest.append({"cat": "CONTINENT_PACK", "node": name})
         info.append({"id": name, "cells": [round(float(x), 2) for x in size], "tris": B.triangles(merged)})
         print("%-14s %5.2f x %5.2f x %5.2f cells  %7d tris" % (name, *size, B.triangles(merged)))
     out = os.path.join(ROOT, "FREEMODELS", "curated", "continent_buildings")
@@ -140,6 +149,42 @@ def main():
         json.dump({"file": "continent_buildings.glb", "models": manifest}, f, indent="\t")
         f.write("\n")
     print("wrote", out + ".glb", "%.1f MB" % (os.path.getsize(out + ".glb") / 1048576), len(items), "buildings")
+    build_game(rows)
+
+
+def build_game(rows):
+    """continent_city.glb: GAME_IDS only, in the numbering of the full pack."""
+    items, manifest, total = [], [], 0
+    small = {}
+    for i, r in enumerate(rows, 1):
+        if i not in GAME_IDS:
+            continue
+        # The parts were already turned and stood on y = 0 by main(); keep what the game needs.
+        parts = [p for p in r["parts"] if not any(p["mat"]["name"].startswith(d) for d in GAME_DROP)]
+        parts = B.welded(parts, GAME_WELD)
+        parts = [p for p in parts if len(p["idx"])]
+        for p in parts:
+            m = p["mat"]
+            if m.get("image") is not None and max(m["image"].size) > GAME_TEX:
+                m = dict(m)
+                key = id(m["image"])
+                small.setdefault(key, B._small(m["image"], GAME_TEX))
+                m["image"] = small[key]
+                p["mat"] = m
+        parts = B.merged(parts)
+        name = "continent_%02d" % i
+        items.append((name, parts))
+        manifest.append({"cat": "CONTINENT" if len(manifest) < 13 else "CONTINENT2", "node": name})
+        total += B.triangles(parts)
+        lo, hi = B.box(parts)
+        print("game %-14s %6d tris   \"%s\": Vector3(%.2f, %.2f, %.2f)," % (name, B.triangles(parts), name,
+              hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]))
+    out = os.path.join(ROOT, "FREEMODELS", "curated", "continent_city")
+    B.write_glb(out + ".glb", "continent_city", items)
+    with open(out + ".models.json", "w", newline="\n") as f:
+        json.dump({"file": "continent_city.glb", "models": manifest}, f, indent="\t")
+        f.write("\n")
+    print("wrote", out + ".glb", "%.1f MB" % (os.path.getsize(out + ".glb") / 1048576), len(items), "buildings,", total, "tris")
 
 
 if __name__ == "__main__":

@@ -34,6 +34,7 @@ const PACK_GLOW := {
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
 	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
 	ModelCat.LIGHTHOUSE_CLUB: 0.45, ModelCat.CHECKPOINT: 0.25,
+	ModelCat.CONTINENT: 0.5, ModelCat.CONTINENT2: 0.5,
 	# The floodlights (concert camp, prison) shine by themselves at night: no light is added.
 	ModelCat.FLOODLIGHT: 1.3,
 }

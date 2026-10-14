@@ -12,9 +12,9 @@ from playwright.sync_api import sync_playwright
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 T = os.environ.get("PREVIEW_ROOT", os.path.join(HERE, "tools", "_preview_root"))
-PACK = os.path.join(HERE, "FREEMODELS", "curated", "continent_buildings.glb")
-OUT = os.path.join(HERE, "docs", "model_previews_continent")
-SHEET = os.path.join(HERE, "docs", "continent_buildings.png")
+PACK = os.environ.get("CONTINENT_PACK", os.path.join(HERE, "FREEMODELS", "curated", "continent_buildings.glb"))
+OUT = os.environ.get("CONTINENT_OUT", os.path.join(HERE, "docs", "model_previews_continent"))
+SHEET = os.environ.get("CONTINENT_SHEET", os.path.join(HERE, "docs", "continent_buildings.png"))
 os.makedirs(OUT, exist_ok=True)
 
 HTML = """<!doctype html><meta charset=utf-8><style>

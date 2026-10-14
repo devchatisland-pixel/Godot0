@@ -2,147 +2,147 @@
 	"file": "continent_buildings.glb",
 	"models": [
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_01"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_02"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_03"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_04"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_05"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_06"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_07"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_08"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_09"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_10"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_11"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_12"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_13"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_14"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_15"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_16"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_17"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_18"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_19"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_20"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_21"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_22"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_23"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_24"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_25"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_26"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_27"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_28"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_29"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_30"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_31"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_32"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_33"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_34"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_35"
 		},
 		{
-			"cat": "CONTINENT",
+			"cat": "CONTINENT_PACK",
 			"node": "continent_36"
 		}
 	]
