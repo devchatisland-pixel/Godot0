@@ -80,6 +80,8 @@ func generate() -> CityData:
 	# The street and the little port of the development island (the shops and modular buildings
 	# stand along the street, see ShopSites).
 	print("[City] development island: ", DevIsland.apply(data))
+	# The candy shop in the free corners of the streets of the residential and commercial zones.
+	print("[City] candy shops: ", CityShops.apply(data))
 	AmenitiesPlanner.apply(data)
 	ManualEdits.final_tweaks(data)
 	data.build_chunk_index()
