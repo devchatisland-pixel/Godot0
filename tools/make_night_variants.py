@@ -77,6 +77,7 @@ SIGN_ORANGE = (1.0, 0.4, 0.0)
 SIGN_GREEN = (0.1, 1.0, 0.2)
 SIGN_BLUE_BRIGHT = (0.3, 0.65, 1.0)
 SIGN_RED = (1.0, 0.04, 0.03)
+SIGN_PINK = CANDY_PINK
 SIGN_MAUVE = (0.85, 0.6, 1.0)
 SIGN_PURPLE = (0.6, 0.25, 1.0)
 ## Pharmacy facade at night: the share of its own colour it glows with (a little brighter
@@ -722,39 +723,79 @@ def drop_triangles(tri, drop):
     tri.prims = prims
 
 
-def coffee_shop_sign(rgb):
-    """shop-coffee-a_night.glb: the ten purple letters of COFFEE SHOP come off the front, the four
-    letters SHOP of the business shop (bigger) glow `rgb` in the middle of it."""
+def swap_letters(base, rgb, old_letters, centres, scale, reach=0.2, strength=0.4):
+    """<base>_night.glb: the faces `old_letters(tri)` (a word of the front) come off, the four
+    letters SHOP of the business shop glow `rgb` instead. `centres`: one (x, y, z) for the whole
+    word (the middle of it, z of its front), or four, one per letter as seen from the front (S, H,
+    O, P: x going down); `scale`: size next to the letters of the business shop."""
     b = GLB(os.path.join(SHOPS, 'shop-business.glb'))
     tb = Triangles(b)
     letters = shop_business_letters(tb)
-    lo, hi = tb.pos[letters].reshape(-1, 3).min(0), tb.pos[letters].reshape(-1, 3).max(0)
-    centre = np.array([(lo[0] + hi[0]) / 2.0, (lo[1] + hi[1]) / 2.0, lo[2]])
-    target = np.array([-0.05, 5.18, -1.47])
-    g = GLB(os.path.join(SHOPS, 'shop-coffee-a.glb'))
-    add_prim(g, 'sign_letters', (tb.pos[letters] - centre) * 1.8 + target, tb.nrm[letters], np.array(rgb))
+    isl = tb.islands()
+    g = GLB(os.path.join(SHOPS, base + '.glb'))
+    def box(sel):
+        P = tb.pos[sel].reshape(-1, 3)
+        return P.min(0), P.max(0)
+    pieces = []
+    if len(centres) == 1:
+        pieces.append((letters, centres[0]))
+    else:
+        ids = sorted({int(k) for k in isl[letters]}, key=lambda k: -box(isl == k)[0][0])
+        assert len(ids) == len(centres), 'found %d letters' % len(ids)
+        pieces = [(isl == k, c) for k, c in zip(ids, centres)]
+    pos, nrm = [], []
+    for sel, c in pieces:
+        lo, hi = box(sel)
+        mid = np.array([(lo[0] + hi[0]) / 2.0, (lo[1] + hi[1]) / 2.0, lo[2]]) if len(centres) > 1 else             np.array([(box(letters)[0][0] + box(letters)[1][0]) / 2.0, (box(letters)[0][1] + box(letters)[1][1]) / 2.0, lo[2]])
+        pos.append((tb.pos[sel] - mid) * scale + np.array(c))
+        nrm.append(tb.nrm[sel])
+    old0 = old_letters(Triangles(g))
+    add_prim(g, 'sign_letters', np.concatenate(pos), np.concatenate(nrm), np.array(rgb))
     tri = Triangles(g)
-    old = island_where(tri, lambda lo, hi, n: lo[1] >= 4.8 and hi[1] < 5.6 and hi[2] < -1.2)
-    old[tri.prims[-1][1]:] = False
-    print('  shop-coffee-a: %d triangles of COFFEE SHOP removed' % old.sum())
+    old = np.zeros(len(tri.pos), bool)
+    old[:len(old0)] = old0
+    print('  %s: %d triangles of the old word removed' % (base, old.sum()))
     drop_triangles(tri, old)
     start, count = tri.prims[-1][1:]
     lit = np.zeros(len(tri.pos), bool)
     lit[start:start + count] = True
-    uv2, img = night_map(tri, [(lit, rgb)], reach=0.2, strength=0.4, base=0.0, plain=True)
-    write_night(g, tri, uv2, img, 'shop-coffee-a_night')
-    g.save(os.path.join(SHOPS, 'shop-coffee-a_night.glb'))
+    uv2, img = night_map(tri, [(lit, rgb)], reach=reach, strength=strength, base=0.0, plain=True)
+    write_night(g, tri, uv2, img, base + '_night')
+    g.save(os.path.join(SHOPS, base + '_night.glb'))
+
+
+def coffee_a_old(tri):
+    # The ten purple letters of COFFEE SHOP over the awning (y 4.82 to 5.54).
+    return island_where(tri, lambda lo, hi, n: lo[1] >= 4.8 and hi[1] < 5.6 and hi[2] < -1.2)
+
+
+def coffee_b_old(tri):
+    # The six tan letters of COFFEE, each on its own dark tile (y 5.15 to 5.7, z -1.94 to -1.74).
+    return islands_in(tri, (-2.1, 5.1, -2.0), (3.4, 5.75, -1.7), 6)
+
+
+def candy_b_old(tri):
+    return np.zeros(len(tri.pos), bool)  # the board is blank
+
+
+def candy_a_old(tri):
+    return shop_candy_letters(tri)
 
 
 def sign_shops():
     # (shop, colour of the letters, middle x, roof height, front of the roof, sign scale)
-    add_sign('shop-general-mini', SIGN_GREEN, 0.0, 1.76, -1.34, 0.65)
+    add_sign('shop-general-mini', SIGN_GREEN, 0.0, 1.76, -1.34, 0.85)
     add_sign('shop-general-orange-b', SIGN_ORANGE, -0.27, 3.31, -1.61, 1.0)
     add_sign('shop-general-orange-a', SIGN_BLUE_BRIGHT, 0.0, 3.3, -1.27, 1.1, strength=1.0)
     add_sign('shop-building-multi', SIGN_MAUVE, 0.0, 6.37, -2.2, 1.4)
     add_sign('shop-townhouse-blue', SIGN_PURPLE, -1.35, 8.3, -2.98, 1.3)
     add_sign('shop-flower-a', SIGN_GREEN, 0.0, 2.40, -2.14, 1.1)
-    coffee_shop_sign(SIGN_RED)
+    swap_letters('shop-coffee-a', SIGN_RED, coffee_a_old, [(-0.05, 5.18, -1.47)], 1.8)
+    # Coffee-b: one letter per tile, on the four middle tiles (x 2.07, 1.09, 0.11, -0.86).
+    swap_letters('shop-coffee-b', SIGN_RED, coffee_b_old, [(x, 5.42, -1.95) for x in (2.07, 1.09, 0.11, -0.86)], 1.0,
+                 reach=0.15)
+    swap_letters('shop-candy-a', SIGN_PINK, candy_a_old, [(-0.05, 3.03, -1.57)], 1.2, reach=0.15)
+    swap_letters('shop-candy-b', SIGN_PINK, candy_b_old, [(0.2, 2.4, -1.73)], 1.4, reach=0.15)
 
 
 def shops():
