@@ -210,6 +210,133 @@ At night the fog turns dark blue-grey.
 **Nineteenth wave (`lighthouse_island.gd`, the last step of the generation; `FogBaseSites`, `MapFences`; models from
 `tools/build_wave16_models.py`):**
 
+* **Golden Gate blockade (fog island)**: the road leaves the bridge through a roadblock like the one of the east end
+  (three barriers and cones across the lanes, `FogBaseSites.BLOCKADE_AT`), with the vehicles that guarded the old
+  checkpoint behind it, noses to the bridge: the two T-55 and the two BRDM, and the grey Humvee parked beside the road.
+* **Jail of the prison island** (`PrisonCompound`): the military post of the pack (`checkpoint.glb`: walls, two gates, guard
+  posts, two watchtowers, the garage) is the wall of the prison, 1.5 to 1.9 times its size, round the cellhouse in its
+  north yard, with a water tower in the south yard. The prison island is bigger (radii 20 x 13.5) and the wire fence is gone.
+* **Development island**: the brick shop S-01 (`shop-general-brick`) is gone (`ShopSites.REMOVED`).
+* The day and night cycle lasts one minute (`CityConfig.day_cycle_seconds`).
+* **Red district**: every building that faced east faces west (`MapRetouch.RED_DISTRICT_KEEP` lists what is left alone).
+* **Secret base**: a helicopter parked on a helipad near the bunker.
+* **Sky and beaches**: three F-111 fly in a V over the sea far north of the island; deck chairs and beach
+  balls stand on six lonely beaches, away from the lighthouses and from everything else (`scenic_props.gd`).
+
+**Sixteenth wave (`map_retouch.gd`, `map_fences.gd`, `tools/build_wave16_models.py`):**
+
+* **Urban island**: four towers carry a sign on their east wall, a little narrower than the wall: the Windows
+  logo, the white neon joystick, the woman in a martini glass and the "BAR" board (`MapRetouch.TOWER_SIGNS`,
+  mount "face" of `BuildingExtras.SIGNS`). They glow at night like the other neon signs.
+* **City**: ten more billboards and two basketball courts on bare ground beside a street; every hotel is the
+  orange low poly hotel; the school bus is parked in front of the main school; a Burger King and two Las Vegas
+  clubs are gone; the neon tower of Las Vegas faces east.
+* **Prison**: a wire fence all round it, on dry ground only, with floodlights and bleachers in its yard.
+* **Secret base**: 1.5 times bigger (its jets too), inside a wire fence. Ground helipads are the painted H of the
+  hospital roof, and helicopters are a third bigger.
+* **Fog island**: the jets and four of the carriers are turned about, the army and medical tents are mixed, half
+  of the army vehicles are gone, the plant has no air defence any more and its barracks has the size of the
+  others; jeeps stand by the tents, grey Humvees drive on the roads, a fire truck and a tow truck wait on the
+  apron. A sand Humvee stands at the west end of the Golden Gate.
+* **Farmland**: one harvester moved to another wheat field, the forwarder and a tractor turned.
+* **Development island**: one more shop, the blue townhouse.
+
+**Eighteenth wave (`port_rework.gd`, the last step of the generation; models from `tools/build_wave16_models.py`):**
+
+* **Hotels**: each of the four hotels has its own model (`PortRework.HOTEL_MODELS`): the orange hotel, the small
+  purple hotel, the five-star hotel with awnings and the glass twin tower with a rooftop pool. When there are
+  fewer hotels than models, hotels are added on bare plots beside a street in the city.
+* **Industrial zone and port**: the old factories (concrete factory, brick works, ruin, garage, Kenney
+  factories and sheds) and the container yards far from the crane are gone (the 32 yards nearest the crane
+  stay, with the oil silos). Each of the 37 models of `PortRework.PORT_MODELS` stands on its own lot, the big
+  ones nearest the centre of the zone and beside a street: the industrial buildings set (halls, power plant,
+  warehouses, sheds, a portal crane, a water tower, a radio mast and tanks), the storage tanks, three oil tanks
+  and the brick factory.
+* **Sea**: the offshore oil rig stands off the port, with open sea all round it.
+* `tests/dump_sites.gd` prints the hotels and the buildings of the industrial zone with their cells and models.
+
+**Nineteenth wave (`map_retouch.gd`, models from `tools/build_wave16_models.py`):**
+
+* **Urban island**: Taiwan style signboards on the row of towers, on the same east side as the neon signs. A
+  tower whose east wall is free carries its sign on that wall: the "Banasonic", McDonald's and Japanese
+  Coca-Cola boards stick out of the wall from their brackets (mount "blade"), and an LED ticker band wraps the
+  free south-east corner of a tower (mount "corner"). A tower with a lower one in front of it carries its board
+  on the roof instead, seen over the other one: the Coca-Cola billboard and the LED safety board (mount "roof",
+  `deep`). The neon bull moved from its wall to the roof of its tower. At night only the boards light up, in
+  their own colours; the steel frames stay dark (`NightWindows.LOGO_PACKS`, `LOGO_DARK`).
+
+| Where (on screen) | District | What you find |
+| --- | --- | --- |
+| centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
+| just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
+| left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the shopping center; the neon signs are all on the roofs, none at street level |
+| west coast | **West desert** | reaches the sea without a beach: the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
+| south-west coast, next to the desert and Vegas | **Industrial zone and port** | 37 different industrial buildings and tanks (one of each model, eighteenth wave), container yards round the crane on the quay (no beach), the oil rig at sea |
+| centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
+| north-east | **Mountain forest** | a forest with three snow-capped mountains standing together far from the city (the one of the core is the biggest), and a wide sand beach on its coast; the forest thins to meadow at its edge |
+| below the park | **Civic center** | the main city hall and the police headquarters (each on its own plot), the bank, fire station, post office |
+| right of the park | **United Nations** | the U.N. tower (half the size it was) with a small emblem, on its own plot where everyone sees it |
+| left of the park | **Shopping streets** | the main hospital, the shopping center, hotels, New York street buildings, mini hotels; three pharmacies and many more shops, all facing the camera |
+| right / bottom | **Residential** | houses with gardens (Kenney, cartoon), the main school with its sports ground, the big church (far from the U.N.), the cemetery, gas stations |
+| south | **Red district** | white and red low-rise town, bigger than before, mixed with colourful houses; the drive-in cinema, a crane, McDonald's and Burger King, the big ferris wheel at the beach, and one of each food stall (ice cream kiosks, and half-size food trucks) |
+| left | **Sports corner** | the big stadium (own plot, floodlit at night) |
+| south-east | **Farmland** | the one farming district: crop fields (wheat, corn, plowed soil, green rows) with farms and a country road |
+| everywhere | **Hotels** | four hotels, each with its own model (eighteenth wave) |
+| far west, across the metal bridge | **Urban island** | the third island, long from north to south, planned end to end (`urban_island_planner.gd`): the **airport** at the south end (the left end on screen) with nothing built in front of it, the **tower city** in the middle (towers of three packs, all showing their front to the camera, a few futuristic ones in the centre), and the **nuclear plant** at the north end (the right end) with its cooling towers and hall beside it, a small yard and only low industry in front. No trees |
+| just south of the urban island | **BT tower islet** | a tiny industrial islet with the BT tower in its middle and three satellite dishes round it |
+| the two forests | **Watchtowers** | two simplified wooden lookouts, one in the north-east forest and one in the forest of the old city |
+| far north-west, at sea | **Prison island** | a long rocky island far from the coast: a very big cellhouse (no sign), stone blocks, a villa, a workshop, lighthouses |
+| east, across the Golden Gate | **The fog island** | a second island under a clear sky, with the military base and its nuclear plant (it was hidden in a thick bank of fog). A three-lane highway leads to the Golden Gate (no roadblocks, the deck is level with the road; the fog stays clear only over the bridge itself and covers the island from its coast). The "SEASON 2" title is switched off |
+| coast | **Beaches, rocky shores, islets** | six lighthouses, each on a real coast cell (four round the main island, two on the prison island), and palm islets; on the smallest one a pirate grave |
+
+How it is built (`scripts/generation/`, one seed in `CityConfig.seed`, the same map on every device):
+
+**0. The layout** (`map_layout.gd`): every island, round district and single place of the big map, in
+cells of the first map and scaled by `CityConfig.map_scale`. The planners ask for them by name.
+
+**1. The core city** (on a 180×180 grid):
+
+1. **`island_shaper.gd`**: an elliptical island with a little noise, sandy and rocky shores.
+2. **`district_planner.gd`**: the district layout (anchors, hints and the park, mountain forest and big-building plots, in island units).
+3. **`road_planner.gd`**: recursive splitting (BSP) into blocks. The borders of the park, the forest and the plots of the big buildings are cut first, so they become ring roads. The first splits are avenues with street lights.
+4. **`lot_planner.gd`**: blocks cut into lots, every building facing its street.
+5. **`service_planner.gd`**: the big buildings fill their plots; every main public building once, never two close together; then the small services of each district (4 hotels, 3 pharmacies...).
+6. **`landmark_planner.gd`**: the park lake and paths, the first mountain, the road to the Golden Gate, the lighthouses.
+
+**2. Everything around it** (`core_embed.gd`, `extension_island.gd`, `extension_planner.gd`):
+
+7. **`core_embed.gd`** copies the finished core city into the 384×384 map.
+8. **`extension_island.gd`** raises the rounded main island around it (the core keeps its own streets, shores and forests), the urban island, palm islets and the prison island.
+9. **`extension_planner.gd`** works only on free land, with round blobs, and calls its helpers: `extension_roads.gd` (the two highways, east to the Golden Gate and west to the metal bridge, and the shortest-road links), `extension_spots.gd` (free plots and spots), `urban_island_planner.gd` (the urban island, with its own random numbers), `extension_features.gd` (the desert with the base, the industrial zone and port, the farmland, two more mountains, the watchtowers, the prison compound, the lighthouses). The poor and red districts get BSP streets and lots with round shapes. Everything is linked to the old city by the shortest road.
+10. **`fog_island_shaper.gd`**: the island in the fog, placed right after the end of the east highway.
+
+**3. The rules of the finished map**:
+
+11. **`manual_edits.gd`**: hand-made corrections, each one named by a kind of building near a place (no cell, no building number).
+12. **`road_network.gd`**: makes one clean network of the roads the planners drew: no two roads side by side, no corner contacts, no stubs, no loose groups; the highways end at a bridge or at an avenue that crosses their three lanes.
+13. **`building_budget.gd`**: how many buildings of each kind the map holds, whatever its size. The surplus is cleared (bare ground), the few missing ones are added.
+14. **`map_audit.gd`** measures all this; `tests/test_map_audit.gd` checks it against `tests/baseline/map_snapshot.json` (see `docs/map_rebuild_plan.md`).
+
+Which family of models a building uses (Kenney, photo towers, New York, the quarter...) is decided per district in `scripts/world/model_pools.gd`.
+
+To move a district or change its size, edit `ANCHORS`, `PARK_AREA`, `FOREST_AREA`, `PLOTS` or `HINTS` in `district_planner.gd` (core city), or the blobs at the top of `extension_planner.gd` and `extension_features.gd`, and `MAIN` / `URBAN` / `URBAN_NORTH` / `TOWER_ISLET` / `PRISON` in `extension_island.gd` (everything around). The plots of the airport and the nuclear plant are at the top of `urban_island_planner.gd`. The size of the fog island is `FogIslandShaper.SIZE`.
+
+### The fog island
+
+East of Chat City, a metal bridge (the same model as the west one) leaves the east coast and disappears into the fog (`scripts/world/fog_island.gd`).
+The island itself lies next to the city map and costs very little: it is not streamed, it has no streets and it is drawn with a few MultiMeshes.
+The fog is made of pictures, not 3D volumes:
+
+* four sheets of drifting cloud texture at different heights (`shaders/fog_layer.gdshader`), whose holes open and close over the buildings;
+* about 50 big painted billows and two smoke plumes on camera-facing quads (`shaders/fog_puff.gdshader`);
+* the "SEASON 2" title, always on top (switched off: `FogIsland.SHOW_TITLE`).
+
+The textures (`textures/fog_noise.png`, `fog_puffs.png`, `season2.png`) are drawn by `tools/make_fog_textures.py` from fractal noise.
+At night the fog turns dark blue-grey.
+
+**Nineteenth wave (`lighthouse_island.gd`, the last step of the generation; `FogBaseSites`, `MapFences`; models from
+`tools/build_wave16_models.py`):**
+
 * **Golden Gate checkpoint (fog island)**: where the road leaves the bridge it runs through a military post
   (`checkpoint.glb`, the "military base asset pack" without its ground, tank, transformer and vehicle shelter): walls,
   a gate with barriers at each end, two guard posts, two watchtowers, the garage and road lights, on a concrete pad.

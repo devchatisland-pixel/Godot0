@@ -175,6 +175,10 @@ func _start_city() -> void:
 	fences.name = "Fences"
 	add_child(fences)
 	fences.build(data, library)
+	var jail := PrisonCompound.new()
+	jail.name = "Jail"
+	add_child(jail)
+	jail.build(data, library)
 
 	# Every building can be clicked: glow and information bubble.
 	picker = BuildingPicker.new()
@@ -182,7 +186,7 @@ func _start_city() -> void:
 	add_child(picker)
 	picker.setup(camera, data, library)
 	# Vehicles, shops and roadblock pieces are not numbered buildings: clickable all the same.
-	var props := picker.add_props(vehicles) + picker.add_props(shops) + picker.add_props(roadblocks) + picker.add_props(fences)
+	var props := picker.add_props(vehicles) + picker.add_props(shops) + picker.add_props(roadblocks) + picker.add_props(fences) + picker.add_props(jail)
 	# The military base, the carriers, the F-111 and the Golden Gate as well.
 	if fog_island != null:
 		props += picker.add_props(fog_island) + fog_base.picks.size()

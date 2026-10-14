@@ -58,7 +58,7 @@ var camera_yaw_deg := 45.0
 # --- Rendering ------------------------------------------------------------------
 var shadows := false
 ## Length of a full day and night cycle, in seconds.
-var day_cycle_seconds := 240.0
+var day_cycle_seconds := 60.0
 var is_mobile := false
 ## False on single-threaded web builds: work then runs on the main thread.
 var use_threads := true

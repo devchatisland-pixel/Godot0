@@ -27,6 +27,8 @@ const FRONT_GAP := 0.4
 const ROW_SAMPLE := 2
 ## Catalog ids of the modular buildings (tools/build_modular_buildings.py): the south row.
 const MODULAR_PREFIX := "modular-"
+## Shops taken off the island, on request (S-01, the brick shop with a balcony).
+const REMOVED := ["shop-general-brick"]
 
 
 ## `shops`: [{"id", "width", "depth", "height"} in metres].
@@ -59,7 +61,7 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 	var south := []
 	for s in shops:
 		var id := String(s["id"])
-		if id.begins_with("container-"):
+		if id.begins_with("container-") or REMOVED.has(id):
 			continue
 		# The modular buildings (S-16 .. S-21) are gone from the island, on request.
 		if id.begins_with(MODULAR_PREFIX):

@@ -33,7 +33,8 @@ const BLOBS := {
 	"dev_island": {"at": Vector2(41, 233), "r": Vector2(44, 18), "fixed": true},
 	# The prison island: centre, radii (long and short side) and turn in radians.
 	# Far out in the north-west, well away from the coast of the main island.
-	"prison": {"at": Vector2(34, 38), "r": Vector2(15.0, 10.0), "turn": 0.45},
+	# Bigger than it was (15 x 10): the jail of PrisonCompound is a walled post 1.5 to 1.9 times its size.
+	"prison": {"at": Vector2(34, 38), "r": Vector2(20.0, 13.5), "turn": 0.45},
 	# Round districts of the main island.
 	"desert": {"at": Vector2(78, 128), "r": Vector2(22, 36)},
 	"industrial": {"at": Vector2(84, 182), "r": Vector2(22, 19)},

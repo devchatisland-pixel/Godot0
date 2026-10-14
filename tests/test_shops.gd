@@ -24,7 +24,8 @@ func _init() -> void:
 
 	# The shipping containers and the modular buildings of the catalog are not put on the island (ShopSites).
 	var wanted := catalog.filter(func(e) -> bool:
-		return not String(e["id"]).begins_with("container-") and not String(e["id"]).begins_with("modular-"))
+		return not String(e["id"]).begins_with("container-") and not String(e["id"]).begins_with("modular-") \
+				and not ShopSites.REMOVED.has(e["id"]))
 	if plan.size() != wanted.size():
 		_fail("expected one shop per catalog entry (containers and modular buildings left out), got %d for %d" % [plan.size(), wanted.size()])
 	var seen := {}
