@@ -9,8 +9,8 @@ as it is (a backup); only the lists the game reads (.models.json) point to the d
   FREEMODELS/curated/hotel_stars_night.glb   hotel_stars of hotels.glb; its five stars glow yellow
   FREEMODELS/curated/police_hq_night.glb     police_hq of public_main.glb; the word POLICE and the
                                              round sign on the roof glow blue
-  FREEMODELS/curated/hospital_night.glb      hospital of public_main.glb; the blue cross of the front
-                                             glows strong blue (the lit H of the helipad is added by
+  FREEMODELS/curated/hospital_night.glb      hospital of public_main.glb; the blue cross of the front and
+                                             the word HOSPITAL on the roof glow strong blue (the lit H of the helipad is added by
                                              the game, BuildingExtras)
   FREEMODELS/curated/city_hall_night.glb     city_hall of public_main.glb; the words CITY HALL glow
                                              coral red, the colour of the letters
@@ -580,6 +580,15 @@ def hospital_cross(tri):
     return islands_in(tri, (-0.17, 0.34, 1.31), (0.17, 0.69, 1.37), 1)
 
 
+def hospital_sign(tri):
+    # The word HOSPITAL and its two small crosses on the board over the roof (z 0.62 to 0.91).
+    return islands_in(tri, (-0.7, 1.97, 0.6), (0.7, 2.17, 0.92), 9)
+
+
+def hospital_lights(tri):
+    return hospital_cross(tri) | hospital_sign(tri)
+
+
 def city_hall_letters(tri):
     # The eight letters of CITY HALL on the front (z 0.463 to 0.472).
     return islands_in(tri, (-0.3, 0.81, 0.46), (0.32, 0.915, 0.475), 8)
@@ -594,8 +603,8 @@ def signs():
              'the stars')
     lit_sign('public_main', 'police_hq', 'POLICE_MAIN', police_signs, POLICE_BLUE, 0.12, 0.5, police_base,
              'the word POLICE and the roof sign')
-    lit_sign('public_main', 'hospital', 'HOSPITAL_MAIN', hospital_cross, HOSPITAL_BLUE, 0.35, 0.8,
-             FACADE / OWN_NIGHT, 'the blue cross')
+    lit_sign('public_main', 'hospital', 'HOSPITAL_MAIN', hospital_lights, HOSPITAL_BLUE, 0.35, 0.8,
+             FACADE / OWN_NIGHT, 'the blue cross and the word HOSPITAL')
     lit_sign('public_main', 'city_hall', 'CITY_HALL_MAIN', city_hall_letters, CITY_HALL_CORAL, 0.04, 0.3,
              FACADE / OWN_NIGHT, 'the words CITY HALL')
 
