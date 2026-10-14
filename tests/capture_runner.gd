@@ -40,6 +40,9 @@ func _run() -> void:
 	var cam: IsoCamera = main.camera
 	var data: CityData = main.data
 	var args := OS.get_cmdline_user_args()
+	if "--continent" in args:
+		await _continent(main)
+		return
 	var bi := args.find("--building")
 	if bi >= 0 and bi + 1 < args.size():
 		await _single(main, int(args[bi + 1]))
@@ -74,6 +77,31 @@ func _run() -> void:
 		var path: String = _dir.path_join("shot_%d.png" % s)
 		get_viewport().get_texture().get_image().save_png(path)
 		print("[Capture] ", path, " at ", shot["at"], " chunks ", main.streamer.loaded_counts())
+	get_tree().quit()
+
+
+## `-- --capture <dir> --continent`: the continent from several places (bridges, streets, far).
+func _continent(main: Node) -> void:
+	var cam: IsoCamera = main.camera
+	var shots := [
+		[Vector3(472, 0, 120), 55.0, false], [Vector3(515, 0, 191), 55.0, false],
+		[Vector3(560, 0, 50), 70.0, false], [Vector3(640, 0, 230), 110.0, false],
+		[Vector3(580, 0, 140), 330.0, false], [Vector3(580, 0, 140), 330.0, true],
+		[Vector3(600, 0, 60), 45.0, true], [Vector3(472, 0, 120), 40.0, true],
+	]
+	for s in shots.size():
+		cam.target = shots[s][0]
+		cam.zoom = shots[s][1]
+		cam.set("_zoom_goal", shots[s][1])
+		for k in 40:
+			await get_tree().process_frame
+		if main.day_night != null:
+			main.day_night.set_phase(0.78 if shots[s][2] else 0.2)
+		for k in 8:
+			await get_tree().process_frame
+		var path := _dir.path_join("continent_%d.png" % s)
+		get_viewport().get_texture().get_image().save_png(path)
+		print("[Capture] ", path)
 	get_tree().quit()
 
 

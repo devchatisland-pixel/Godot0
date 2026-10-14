@@ -38,6 +38,9 @@ func generate() -> CityData:
 	_report(0.97, "Hiding an island in the fog")
 	data.fog = FogIslandShaper.new(_cfg, data)
 	data.fog.shape(FogIslandShaper.SIZE / 2)
+	_report(0.98, "Raising a continent")
+	data.continent = ContinentShaper.new(_cfg, data)
+	data.continent.shape()
 
 	var fill := UrbanFill.apply(data)
 	print("[City] %d towers added south of the airport" % fill)
