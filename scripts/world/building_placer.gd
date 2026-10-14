@@ -292,6 +292,7 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	if ModelPools.is_new_york(lib, id):
 		# The New York street buildings stand taller than the Kenney kit.
 		stretch = 1.5
+	stretch *= data.b_stretch[i]
 	var boost: float = MODEL_BOOST.get(lib.model_name(id), 1.0)
 	if boost != 1.0:
 		scale = maxf(scale, 1.0) * boost # not limited by the lot: the house may overhang
