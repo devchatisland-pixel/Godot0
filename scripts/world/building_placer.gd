@@ -166,11 +166,16 @@ static func pick_for(data: CityData, lib: ModelLibrary, i: int, facing: int = -1
 
 # --- Model choice ------------------------------------------------------------------------
 ## The cartoon houses "house1" and "house2" never face north: they are turned to face south.
+## Buildings drawn with a model whose name starts like this are left out of the city.
+const REMOVED_MODEL_PREFIX := "ny_buildings.glb: ny_brick_"
 const SOUTH_ONLY_MODELS := ["carto.glb: house1", "carto.glb: house2"]
 
 
 static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
 	var pick := _pick_model_raw(data, lib, i, facing_override)
+	# The New York brick buildings are not built at all (taken away by hand).
+	if not pick.is_empty() and lib.model_name(pick["id"]).begins_with(REMOVED_MODEL_PREFIX):
+		return {}
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
 	if facing == 0 and not pick.is_empty() and SOUTH_ONLY_MODELS.has(lib.model_name(pick["id"])):
 		return _pick_model_raw(data, lib, i, 2)

@@ -217,6 +217,19 @@ const GLASS_MODEL := "ny_buildings.glb: ny_glass_1"
 const FINAL_TO_GLASS := [Vector2i(128, 199), Vector2i(132, 171)]
 const FINAL_TO_CASINO := [Vector2i(122, 182), Vector2i(144, 202)]
 const FINAL_DELETED_LATE := [["CASINO", Vector2i(146, 189)], ["NIGHTCLUB", Vector2i(153, 187)], ["NIGHTCLUB", Vector2i(141, 213)]]
+## Last hand changes of Las Vegas (kind, top-left cell of the lot on the final map): buildings taken
+## away after the swaps above, casinos that become the police station (model of the main one, facing
+## north), casinos that get one of the new neon signs (cell, ModelCatalog.Cat name), and the casino
+## that gets the word CASINO of the casino towers (cell; the sign is made to fit its wall, FINAL_SIGN_FIT).
+const FINAL2_DELETED := [["SKYSCRAPER", Vector2i(128, 199)], ["SKYSCRAPER", Vector2i(132, 171)],
+	["NIGHTCLUB", Vector2i(131, 213)], ["SKYSCRAPER", Vector2i(143, 174)], ["SKYSCRAPER", Vector2i(146, 174)]]
+const FINAL2_TO_POLICE := [Vector2i(118, 198), Vector2i(122, 203), Vector2i(147, 181), Vector2i(137, 178),
+	Vector2i(131, 158), Vector2i(148, 202)]
+const FINAL2_NEW_SIGNS := [[Vector2i(131, 194), "NEON_CLUB"], [Vector2i(131, 202), "NEON_GIRL"]]
+const FINAL2_CASINO_WORD := Vector2i(122, 186)
+const FINAL2_SIGN_FIT := {"fill": 1.0, "shift": 0.0}
+## Burger King (cell): size factor.
+const FINAL2_RESIZED := [["BURGER_KING", Vector2i(198, 295), 1.12]]
 ## The oil tank (top-left cell of its lot on the final map, model) that gets a line of more tanks to the east.
 const TANK_LINE_FROM := Vector2i(131, 241)
 const TANK_LINE_MODEL := "port_tanks.glb: tank_oil"
@@ -673,6 +686,7 @@ static func final_tweaks(data: CityData) -> void:
 	_real_dishes(data)
 	_tank_line(data)
 	_downtown_and_vegas_swaps(data)
+	_vegas_second_pass(data)
 
 
 ## The row of casino towers on the square of Las Vegas (CASINO2_LOTS).
@@ -921,6 +935,47 @@ static func _downtown_and_vegas_swaps(data: CityData) -> void:
 			if kind == d[0] and at == d[1]:
 				data.b_kind[b] = CityTypes.Kind.EMPTY
 				hand_deleted[b] = true
+
+
+## FINAL2_*: buildings taken away, casinos become police stations facing north, two casinos get a
+## new neon sign, the casino of FINAL2_CASINO_WORD gets the word CASINO of the casino towers.
+static func _vegas_second_pass(data: CityData) -> void:
+	var word := -1
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.CASINO and data.b_sign[b] == ModelCatalog.Cat.NEON_CASINO:
+			word = b
+	for b in data.building_count():
+		var at := data.building_rect(b).position
+		var kind: String = CityTypes.Kind.keys()[data.b_kind[b]]
+		for d in FINAL2_DELETED:
+			if kind == d[0] and at == d[1]:
+				data.b_kind[b] = CityTypes.Kind.EMPTY
+				hand_deleted[b] = true
+		for d in FINAL2_RESIZED:
+			if kind == d[0] and at == d[1]:
+				data.b_scale[b] = d[2]
+		if kind != "CASINO":
+			continue
+		if FINAL2_TO_POLICE.has(at):
+			data.b_kind[b] = CityTypes.Kind.POLICE
+			data.b_facing[b] = 0
+			data.b_scale[b] = 1.0
+			data.b_model.erase(b)
+			data.b_sign[b] = 0
+			data.b_more_signs.erase(b)
+		for s in FINAL2_NEW_SIGNS:
+			if at == s[0]:
+				data.b_sign[b] = ModelCatalog.Cat[s[1]]
+				data.b_sign_facing[b] = 2
+				data.b_more_signs.erase(b)
+		if at == FINAL2_CASINO_WORD:
+			if word < 0:
+				push_warning("[Edits] no casino tower carries the word CASINO")
+				continue
+			data.b_sign[b] = ModelCatalog.Cat.NEON_CASINO
+			data.b_sign_facing[b] = data.b_facing[b]
+			data.b_sign_fit[b] = FINAL2_SIGN_FIT
+			data.b_more_signs.erase(b)
 
 
 ## The oil tank of TANK_LINE_FROM is copied to make a line of TANK_LINE_COUNT more towards the east

@@ -42,6 +42,9 @@ var b_sign := PackedByteArray()      # neon sign on the building: 0 none, else a
 ## Building id -> more signs on the same building: [[ModelCatalog.Cat, mount ("roof", "face"...)]]
 ## (MapRetouch; BuildingExtras.SIGNS says how each is drawn).
 var b_more_signs := {}
+## Building id -> changes to the SIGNS entry of its sign (e.g. {"fill": 1.0, "shift": 0.0}): a sign drawn
+## for one building reused on another of another size (ManualEdits).
+var b_sign_fit := {}
 
 # Chunk index -> building ids whose lot origin is inside the chunk
 var chunk_buildings: Array[PackedInt32Array] = []

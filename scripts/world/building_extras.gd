@@ -298,6 +298,9 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		spec["mount"] = mount
 		if mount == "roof" and int(data.b_sign_facing[i]) == 1:
 			spec["yaw"] = PI * 0.5
+	if data.b_sign_fit.has(i):
+		spec = spec.duplicate()
+		spec.merge(data.b_sign_fit[i], true)
 	var s: float = spec.get("scale", 1.0)
 	var yaw: float = spec.get("yaw", 0.0)
 	# The sign stays where it was put when the building is turned afterwards.
