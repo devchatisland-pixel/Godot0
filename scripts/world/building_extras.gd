@@ -48,7 +48,7 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 				# A big light on the tip: red on the radio tower, green on the one that replaced the BT tower.
 				var top := Vector3(box.get_center().x, box.end.y, box.get_center().z)
 				var size := box.size.y * BEACON_SIZE
-				var light := lib.named_id("nav_red" if kind == Kind.TELECOM_TOWER else "nav_green")
+				var light := lib.named_id("beacon_red" if kind == Kind.TELECOM_TOWER else "beacon_green")
 				batch.add(light, xform * Transform3D(Basis.from_scale(Vector3.ONE * size), top + Vector3(0, size * 0.5, 0)))
 		Kind.CHURCH:
 			if lib.model_name(pid) == CROSS_LIGHT_MODEL:
@@ -160,8 +160,8 @@ static func place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, b
 		_place_yard(lib, data.building_rect(i), data.b_seed[i], batch)
 
 
-## Every container of the yards is drawn the same size (the five models are not): 6.1 x 2.44 x 2.59 m.
-const YARD_BOX_SIZE := Vector3(0.488, 0.518, 1.22)
+## Every container of the yards is drawn the same size (the five models are not): 6.1 x 2.44 x 2.59 m, 15 % smaller than modelled (1.04 cells long).
+const YARD_BOX_SIZE := Vector3(0.415, 0.44, 1.04)
 
 
 ## Scale that turns container mesh `id` into a YARD_BOX_SIZE container (x = width, y = height, z = length),
@@ -242,8 +242,8 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 const CROSS_LIGHT_MODEL := "free_mini.glb: m12"
 const CROSS_TIP := Vector3(0.48, 1.0, 0.83)
 const CROSS_LIGHT_SIZE := 0.035
-## The light on top of the radio tower model: its size, a share of the height of the model.
-const BEACON_SIZE := 0.07
+## The light on top of the radio tower model (a tiny ball): its size, a share of the height of the model.
+const BEACON_SIZE := 0.015
 ## "blade" (Taiwan signboards) sticks out of the east wall from its brackets (the -X end of the
 ## model), `out` cells long, its face to the south; "corner" (the LED band) wraps the south-east
 ## corner, along `fill` of the east wall. A roof sign with `deep` stands wholly on the roof

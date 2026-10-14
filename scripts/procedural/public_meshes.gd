@@ -28,6 +28,8 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("cross_light", cross_light())
 	lib.add_named("nav_light_red", nav_light(Color(1.0, 0.03, 0.0)))
 	lib.add_named("nav_light_green", nav_light(Color(0.0, 1.0, 0.12)))
+	lib.add_named("beacon_red", beacon(Color(1.0, 0.03, 0.0)))
+	lib.add_named("beacon_green", beacon(Color(0.0, 1.0, 0.12)))
 
 
 # --- Art museum (7x5): wide temple front, two wings, glass pyramid --------------------
@@ -210,6 +212,25 @@ static func cross_light() -> ArrayMesh:
 # --- Navigation light (unit cube): red on port, green on starboard of the boats ------------------
 ## A small dark lens by day, glowing in its colour at night.
 const NAV_LIGHT_NIGHT := 2.5
+
+
+## A ball of 1 cell across (the lights on top of the radio towers): bright in its colour, glowing at night.
+static func beacon(color: Color) -> ArrayMesh:
+	var sphere := SphereMesh.new()
+	sphere.radius = 0.5
+	sphere.height = 1.0
+	sphere.radial_segments = 12
+	sphere.rings = 6
+	var m := StandardMaterial3D.new()
+	m.albedo_color = color
+	m.emission_enabled = true
+	m.emission = color
+	SignAtlas.register_night(m, 0.0, NAV_LIGHT_NIGHT)
+	sphere.material = m
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, sphere.get_mesh_arrays())
+	mesh.surface_set_material(0, m)
+	return mesh
 
 
 static func nav_light(color: Color) -> ArrayMesh:

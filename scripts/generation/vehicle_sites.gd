@@ -937,6 +937,10 @@ func _plant_road() -> void:
 const HELI_LIFT := 3.0
 ## The lighthouse of the prison island (top-left cell of its lot).
 const PRISON_LIGHTHOUSE := Vector2i(29, 46)
+## The three Rosomaks beside it stand in a row, this many cells apart, facing the jail whose yard
+## lies this many cells south of the middle of the cellhouse.
+const ROW_GAP := 1.1
+const JAIL_SOUTH := 5.0
 
 
 func _prison_helicopters() -> void:
@@ -956,10 +960,22 @@ func _prison_helicopters() -> void:
 	if light < 0:
 		push_warning("[Vehicles] no lighthouse on the prison island")
 		return
-	_beside("rosomak_apc", _d.building_rect(light), "next to the lighthouse of the prison island", 97, 0.6, 4.0)
-	# Two more of the same, parked with it.
-	for salt in [98, 99]:
-		_beside("rosomak_apc", _d.building_rect(light), "next to the lighthouse of the prison island", salt, 0.6, 4.0)
+	var why := "next to the lighthouse of the prison island"
+	var first := out.size()
+	if not _beside("rosomak_apc", _d.building_rect(light), why, 97, 0.6, 4.0):
+		return
+	# Parked in a row with two more, all three facing the jail (its yard lies a little south of the cellhouse).
+	var anchor: Vector2 = out[first]["at"]
+	var jail := Vector2(_d.building_rect(b).get_center()) + Vector2(0, JAIL_SOUTH)
+	var head := (jail - anchor).normalized()
+	out[first]["yaw"] = atan2(-head.x, -head.y)
+	var side := Vector2(-head.y, head.x)
+	for k in [1.0, -1.0]:
+		var p: Vector2 = anchor + side * k * ROW_GAP
+		if _d.is_land(int(floor(p.x)), int(floor(p.y))):
+			_add("rosomak_apc", p, head, why)
+		else:
+			push_warning("[Vehicles] no land for a Rosomak of the row at %s" % p)
 
 
 ## Middle of the water met going from `from` towards `to` (first sea after the land of
