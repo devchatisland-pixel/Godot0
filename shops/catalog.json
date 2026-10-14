@@ -84,7 +84,7 @@
   },
   {
    "id": "shop-general-orange-a",
-   "file": "res://shops/models/shop-general-orange-a.glb",
+   "file": "res://shops/models/shop-general-orange-a_night.glb",
    "category": "General",
    "name": "Low Poly Shop (orange awning)",
    "credit": {
@@ -104,7 +104,7 @@
   },
   {
    "id": "shop-general-orange-b",
-   "file": "res://shops/models/shop-general-orange-b.glb",
+   "file": "res://shops/models/shop-general-orange-b_night.glb",
    "category": "General",
    "name": "2nd Low Poly Shop (orange awning)",
    "credit": {
@@ -164,7 +164,7 @@
   },
   {
    "id": "shop-general-mini",
-   "file": "res://shops/models/shop-general-mini.glb",
+   "file": "res://shops/models/shop-general-mini_night.glb",
    "category": "General",
    "name": "Low-Poly Shop (mini)",
    "credit": {
@@ -244,7 +244,7 @@
   },
   {
    "id": "shop-building-multi",
-   "file": "res://shops/models/shop-building-multi.glb",
+   "file": "res://shops/models/shop-building-multi_night.glb",
    "category": "Building",
    "name": "Building (multi-part cubes)",
    "credit": {
@@ -577,7 +577,7 @@
     "license": "CC-BY-4.0"
    },
    "notes": "Blue 3-storey townhouse with pink awnings and window boxes.",
-   "file": "res://shops/models/shop-townhouse-blue.glb",
+   "file": "res://shops/models/shop-townhouse-blue_night.glb",
    "triangles": 4664,
    "size_m": {
     "width": 9.84,
