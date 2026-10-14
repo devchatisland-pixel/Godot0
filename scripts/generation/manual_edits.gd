@@ -168,7 +168,9 @@ const FINAL_DELETED := [["GRAVE", Vector2i(353, 130)],
 	# The island of the old BT tower: the ruin and two industrial buildings are taken away.
 	["INDUSTRIAL", Vector2i(44, 88)], ["INDUSTRIAL", Vector2i(27, 96)], ["INDUSTRIAL", Vector2i(24, 91)]]
 ## Kind, top-left cell of the lot, size factor of the model.
-const FINAL_RESIZED := [["MUSEUM", Vector2i(213, 207), 0.7]]
+const FINAL_RESIZED := [["MUSEUM", Vector2i(213, 207), 0.7],
+	# A little bigger: the glass tower (ny_glass_2) and the One World Trade Center of downtown.
+	["SKYSCRAPER", Vector2i(149, 150), 1.15], ["LANDMARK", Vector2i(155, 155), 1.15]]
 ## More shops like the corner ones in the square of the main cinema (model, size factor): top-left
 ## cell of the 2x2 lot, facing. None in front of the cinema (its south side).
 const FINAL_SHOP_MODEL := "building-e.glb"
