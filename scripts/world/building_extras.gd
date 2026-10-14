@@ -160,8 +160,17 @@ static func place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, b
 		_place_yard(lib, data.building_rect(i), data.b_seed[i], batch)
 
 
-## Scale of the shipping containers of the yards (cells per metre): 6.1 m long = 1.2 cells.
-const YARD_BOX_SCALE := 0.2
+## Every container of the yards is drawn the same size (the five models are not): 6.1 x 2.44 x 2.59 m.
+const YARD_BOX_SIZE := Vector3(0.488, 0.518, 1.22)
+
+
+## Scale that turns container mesh `id` into a YARD_BOX_SIZE container (x = width, y = height, z = length),
+## its long side along the length.
+static func _box_scale(lib: ModelLibrary, id: int) -> Basis:
+	var s := lib.bounds[id].size
+	if s.x > s.z:
+		return Basis.from_scale(Vector3(YARD_BOX_SIZE.z / s.x, YARD_BOX_SIZE.y / maxf(s.y, 0.01), YARD_BOX_SIZE.x / maxf(s.z, 0.01)))
+	return Basis.from_scale(Vector3(YARD_BOX_SIZE.x / maxf(s.x, 0.01), YARD_BOX_SIZE.y / maxf(s.y, 0.01), YARD_BOX_SIZE.z / maxf(s.z, 0.01)))
 
 
 ## The shipping containers of the Low-poly Container pack used on the map (named meshes).
@@ -185,11 +194,11 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 			if not boxes.is_empty():
 				for i in 3:
 					var p := c + turn * Vector3(0.0, 0.0, (i - 1) * 0.55)
-					var s := Basis.from_scale(Vector3.ONE * YARD_BOX_SCALE)
-					batch.add(boxes[((seed >> 3) + i) % boxes.size()], Transform3D(turn * s, p))
+					var low := boxes[((seed >> 3) + i) % boxes.size()]
+					batch.add(low, Transform3D(turn * _box_scale(lib, low), p))
 					if i == 1:
-						batch.add(boxes[(seed >> 5) % boxes.size()],
-								Transform3D(turn * s, p + Vector3(0, 2.65 * YARD_BOX_SCALE, 0)))
+						var top := boxes[(seed >> 5) % boxes.size()]
+						batch.add(top, Transform3D(turn * _box_scale(lib, top), p + Vector3(0, YARD_BOX_SIZE.y, 0)))
 				return
 			var old := lib.ids(Cat.CONTAINER)
 			if not old.is_empty():
@@ -215,7 +224,8 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 		var prop := props[seed % props.size()]
 		var boxes := _yard_boxes(lib)
 		if not boxes.is_empty() and lib.model_name(prop).contains("shipping-container"):
-			batch.add(boxes[seed % boxes.size()], Transform3D(turn * Basis.from_scale(Vector3.ONE * YARD_BOX_SCALE), c))
+			var one := boxes[seed % boxes.size()]
+			batch.add(one, Transform3D(turn * _box_scale(lib, one), c))
 			return
 		batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c))
 
