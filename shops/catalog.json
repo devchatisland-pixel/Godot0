@@ -144,7 +144,7 @@
   },
   {
    "id": "shop-general-brick",
-   "file": "res://shops/models/shop-general-brick.glb",
+   "file": "res://shops/models/shop-general-brick_night.glb",
    "category": "General",
    "name": "Low Poly Shop (brick, balcony)",
    "credit": {
@@ -596,7 +596,7 @@
     "license": "see the pack"
    },
    "notes": "ShopBuilding of the business pack: pink shop with a striped awning.",
-   "file": "res://shops/models/shop-business.glb",
+   "file": "res://shops/models/shop-business_night.glb",
    "triangles": 4684,
    "size_m": {
     "width": 6.0,

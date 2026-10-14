@@ -46,6 +46,8 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		var mid := mesh_id(lib, p["id"])
 		if mid < 0:
 			continue
+		# Shops with a night map (tools/make_night_variants.py): their lit word shows at night.
+		NightWindows.light_own(lib.meshes[mid])
 		var at: Vector2 = p["at"]
 		var s: float = p.get("scale", ShopSites.CELLS_PER_METRE)
 		var mi := MeshInstance3D.new()

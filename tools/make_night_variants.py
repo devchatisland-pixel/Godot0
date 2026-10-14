@@ -16,6 +16,8 @@ as it is (a backup); only the lists the game reads (.models.json) point to the d
                                              coral red, the colour of the letters
   FREEMODELS/curated/stadium_night.glb       the stadium; only the inside (pitch, stands) is lit, the
                                              outer walls stay dark (its floodlights: BuildingExtras)
+  shops/models/shop-business_night.glb       the shop of the business pack; the word SHOP glows red
+  shops/models/shop-general-brick_night.glb  the brick shop; the word SHOP glows warm white
   vehicles/.../police_us_cruiser_night.glb   the red and the blue lens of the light bar glow
   vehicles/.../police_jp_black_night.glb     the red roof beacon glows
 
@@ -39,6 +41,7 @@ when the map is averaged with the dark faces around them.
 Usage:  python tools/make_night_variants.py          (everything)
         python tools/make_night_variants.py signs    (the cinema, the hotels, the police, the
                                                       hospital and the city hall only)
+        python tools/make_night_variants.py shops    (the lit words of the shops only)
         python tools/make_night_variants.py stadium  (the stadium only)
 Needs:  numpy, Pillow.
 """
@@ -49,6 +52,7 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VEH = os.path.join(ROOT, 'vehicles', 'models', 'municipal_emergency')
 CUR = os.path.join(ROOT, 'FREEMODELS', 'curated')
+SHOPS = os.path.join(ROOT, 'shops', 'models')
 OWN_NIGHT = 3.0
 ## Night colours of the lamps, as they look at night (linear).
 CROSS_GREEN = (0.0, 1.0, 0.25)
@@ -62,6 +66,8 @@ STAR_YELLOW = (1.0, 0.8, 0.0)
 POLICE_BLUE = (0.08, 0.35, 1.0)
 HOSPITAL_BLUE = (0.04, 0.4, 1.0)
 CITY_HALL_CORAL = (1.0, 0.25, 0.15)
+SHOP_RED = (1.0, 0.04, 0.03)
+SHOP_WHITE = (1.0, 0.92, 0.75)
 ## Pharmacy facade at night: the share of its own colour it glows with (a little brighter
 ## than the public buildings around it, far from white).
 FACADE = 0.25
@@ -584,6 +590,34 @@ def signs():
              FACADE / OWN_NIGHT, 'the words CITY HALL')
 
 
+# --- Shops of the development island: the lit word on the sign ---------------------------
+def shop_sign(name, pick, rgb, what, reach=0.1, strength=0.4):
+    """shops/models/<name>.glb as <name>_night.glb: the faces `pick(tri)` glow `rgb`; the shop
+    is dark otherwise (shops/catalog.json points to the night file, the model is kept)."""
+    g = GLB(os.path.join(SHOPS, name + '.glb'))
+    tri = Triangles(g)
+    mask = pick(tri)
+    print('  %s: %d triangles in %s' % (name, mask.sum(), what))
+    uv2, img = night_map(tri, [(mask, rgb)], reach=reach, strength=strength, base=0.0, plain=True)
+    write_night(g, tri, uv2, img, name + '_night')
+    g.save(os.path.join(SHOPS, name + '_night.glb'))
+
+
+def shop_business_letters(tri):
+    # The four orange letters of SHOP on the sign over the roof (z -1.46 to -1.39).
+    return islands_in(tri, (-0.9, 3.6, -1.47), (1.05, 4.2, -1.38), 4)
+
+
+def shop_brick_letters(tri):
+    # The four white letters of SHOP on the brown board (z -2.44 to -2.36).
+    return islands_in(tri, (0.2, 1.7, -2.46), (1.35, 2.1, -2.34), 4)
+
+
+def shops():
+    shop_sign('shop-business', shop_business_letters, SHOP_RED, 'the word SHOP')
+    shop_sign('shop-general-brick', shop_brick_letters, SHOP_WHITE, 'the word SHOP')
+
+
 # --- Stadium: the inside floodlit, the facade dark --------------------------------------
 ## Share of their own colour the pitch, the stands and the outside (roof, walls) glow with.
 STADIUM_PITCH = 1.0
@@ -708,11 +742,15 @@ if __name__ == '__main__':
     if sys.argv[1:] == ['signs']:
         signs()
         sys.exit()
+    if sys.argv[1:] == ['shops']:
+        shops()
+        sys.exit()
     if sys.argv[1:] == ['stadium']:
         stadium()
         sys.exit()
     pharmacy()
     signs()
+    shops()
     stadium()
     vehicle(VEH, 'police_us_cruiser', cruiser_bar)
     vehicle(VEH, 'police_jp_black', jp_beacon)
