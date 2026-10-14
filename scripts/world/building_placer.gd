@@ -199,7 +199,13 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	var seed: int = data.b_seed[i]
 	var density: float = data.b_height[i]
 	var candidates := ModelPools.candidates(data, lib, i, kind)
-	var forced: int = lib.names.find(data.b_model.get(i, "")) if data.b_model.has(i) else -1
+	var wanted: String = data.b_model.get(i, "")
+	if wanted.begins_with("shop:") and lib.named_id(wanted) < 0:
+		# A shop of the catalog (res://shops) standing in the city: loaded the first time it is needed.
+		var sid := MapShops.mesh_id(lib, wanted.substr(5))
+		if sid >= 0:
+			NightWindows.light_own(lib.meshes[sid])
+	var forced: int = lib.names.find(wanted) if data.b_model.has(i) else -1
 	if forced >= 0:
 		candidates = PackedInt32Array([forced])
 	if kind == Kind.FIELD and candidates.is_empty():
