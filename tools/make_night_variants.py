@@ -75,6 +75,8 @@ CANDY_PINK = (1.0, 0.1, 0.5)
 SIGN_BLUE = (0.05, 0.4, 1.0)
 SIGN_ORANGE = (1.0, 0.4, 0.0)
 SIGN_GREEN = (0.1, 1.0, 0.2)
+SIGN_BLUE_BRIGHT = (0.3, 0.65, 1.0)
+SIGN_RED = (1.0, 0.04, 0.03)
 SIGN_MAUVE = (0.85, 0.6, 1.0)
 SIGN_PURPLE = (0.6, 0.25, 1.0)
 ## Pharmacy facade at night: the share of its own colour it glows with (a little brighter
@@ -462,6 +464,17 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False)
 def write_night(g, tri, uv2, img, name):
     """The triangles get their new coordinates, every material the night map."""
     for p, start, count in tri.prims:
+        if count == 0:
+            # Every triangle of it was taken away: the primitive goes, and its mesh with it when
+            # it was the last one.
+            for k, mesh in enumerate(g.j['meshes']):
+                if any(q is p for q in mesh['primitives']):
+                    mesh['primitives'] = [q for q in mesh['primitives'] if q is not p]
+                    if not mesh['primitives']:
+                        for nd in g.j['nodes']:
+                            if nd.get('mesh') == k:
+                                del nd['mesh']
+            continue
         sl = slice(start, start + count)
         g.set_geometry(p, tri.local[sl].reshape(-1, 3), tri.local_nrm[sl].reshape(-1, 3), tri.uv[sl].reshape(-1, 2),
                        uv2[sl].reshape(-1, 2))
@@ -663,7 +676,7 @@ def add_prim(g, name, pos, nrm, colour):
     root.setdefault('children', []).append(len(j['nodes']) - 1)
 
 
-def add_sign(base, rgb, xc, roof_y, z_front, scale):
+def add_sign(base, rgb, xc, roof_y, z_front, scale, strength=0.4):
     """<base>_night.glb: the model `base` of shops/models with the SHOP sign of shop-business
     (board, letters, posts) on its roof, its letters glowing `rgb` (and drawn in it by day).
     `xc`, `roof_y`, `z_front`: middle, height and front edge of the roof; `scale`: size of the
@@ -691,18 +704,57 @@ def add_sign(base, rgb, xc, roof_y, z_front, scale):
     lit = np.zeros(len(tri.pos), bool)
     lit[start:start + count] = True
     print('  %s: %d letter triangles on the sign' % (base, lit.sum()))
-    uv2, img = night_map(tri, [(lit, rgb)], reach=0.1 * scale, strength=0.4, base=0.0, plain=True)
+    uv2, img = night_map(tri, [(lit, rgb)], reach=0.1 * scale, strength=strength, base=0.0, plain=True)
     write_night(g, tri, uv2, img, base + '_night')
     g.save(os.path.join(SHOPS, base + '_night.glb'))
+
+
+def drop_triangles(tri, drop):
+    """Takes the triangles `drop` (bool per triangle) out of `tri`, primitive by primitive."""
+    keep = ~drop
+    prims, first = [], 0
+    for p, start, count in tri.prims:
+        n = int(keep[start:start + count].sum())
+        prims.append((p, first, n))
+        first += n
+    for name in ('local', 'local_nrm', 'pos', 'nrm', 'uv', 'mat', 'mesh'):
+        setattr(tri, name, getattr(tri, name)[keep])
+    tri.prims = prims
+
+
+def coffee_shop_sign(rgb):
+    """shop-coffee-a_night.glb: the ten purple letters of COFFEE SHOP come off the front, the four
+    letters SHOP of the business shop (bigger) glow `rgb` in the middle of it."""
+    b = GLB(os.path.join(SHOPS, 'shop-business.glb'))
+    tb = Triangles(b)
+    letters = shop_business_letters(tb)
+    lo, hi = tb.pos[letters].reshape(-1, 3).min(0), tb.pos[letters].reshape(-1, 3).max(0)
+    centre = np.array([(lo[0] + hi[0]) / 2.0, (lo[1] + hi[1]) / 2.0, lo[2]])
+    target = np.array([-0.05, 5.18, -1.47])
+    g = GLB(os.path.join(SHOPS, 'shop-coffee-a.glb'))
+    add_prim(g, 'sign_letters', (tb.pos[letters] - centre) * 1.8 + target, tb.nrm[letters], np.array(rgb))
+    tri = Triangles(g)
+    old = island_where(tri, lambda lo, hi, n: lo[1] >= 4.8 and hi[1] < 5.6 and hi[2] < -1.2)
+    old[tri.prims[-1][1]:] = False
+    print('  shop-coffee-a: %d triangles of COFFEE SHOP removed' % old.sum())
+    drop_triangles(tri, old)
+    start, count = tri.prims[-1][1:]
+    lit = np.zeros(len(tri.pos), bool)
+    lit[start:start + count] = True
+    uv2, img = night_map(tri, [(lit, rgb)], reach=0.2, strength=0.4, base=0.0, plain=True)
+    write_night(g, tri, uv2, img, 'shop-coffee-a_night')
+    g.save(os.path.join(SHOPS, 'shop-coffee-a_night.glb'))
 
 
 def sign_shops():
     # (shop, colour of the letters, middle x, roof height, front of the roof, sign scale)
     add_sign('shop-general-mini', SIGN_GREEN, 0.0, 1.76, -1.34, 0.65)
     add_sign('shop-general-orange-b', SIGN_ORANGE, -0.27, 3.31, -1.61, 1.0)
-    add_sign('shop-general-orange-a', SIGN_BLUE, 0.0, 3.3, -1.27, 1.1)
-    add_sign('shop-building-multi', SIGN_MAUVE, 0.0, 6.37, -2.2, 0.75)
+    add_sign('shop-general-orange-a', SIGN_BLUE_BRIGHT, 0.0, 3.3, -1.27, 1.1, strength=1.0)
+    add_sign('shop-building-multi', SIGN_MAUVE, 0.0, 6.37, -2.2, 1.4)
     add_sign('shop-townhouse-blue', SIGN_PURPLE, -1.35, 8.3, -2.98, 1.3)
+    add_sign('shop-flower-a', SIGN_GREEN, 0.0, 2.40, -2.14, 1.1)
+    coffee_shop_sign(SIGN_RED)
 
 
 def shops():

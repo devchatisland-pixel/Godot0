@@ -15,9 +15,9 @@ const CELLS_PER_METRE := 0.34
 ## Hand-made size factors per catalog id (on top of CELLS_PER_METRE).
 const SCALE := {
 	"shop-candy-b": 2.0, "shop-candy-a": 1.3, "shop-townhouse-gabled": 2.0,
-	"shop-general-generic": 2.0, "shop-coffee-a": 0.5, "shop-general-mini": 1.15,
-	"shop-general-brick": 1.15, "shop-flower-a": 1.15, "shop-general-orange-a": 1.15,
-	"shop-business": 1.3,
+	"shop-coffee-a": 0.5, "shop-general-mini": 1.85,
+	"shop-general-brick": 2.0, "shop-flower-a": 1.15, "shop-general-orange-a": 1.15,
+	"shop-business": 1.3, "shop-steel-glass": 1.6,
 }
 ## Empty cells between two neighbours in the row.
 const GAP := 1.5
