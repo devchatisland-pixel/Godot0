@@ -281,7 +281,7 @@ const NEON_HALL_PLACES := [[Vector2i(148, 202), "neon_hall"], [Vector2i(122, 203
 	[Vector2i(130, 185), "neon_hall_purple"], [Vector2i(147, 181), "neon_hall_red"],
 	[Vector2i(117, 203), "neon_hall_gold"], [Vector2i(118, 207), "neon_hall_pink"],
 	[Vector2i(122, 182), "neon_hall_tall_pink"], [Vector2i(123, 191), "neon_hall"],
-	[Vector2i(130, 191), "neon_hall_tall_gold"], [Vector2i(127, 178), "neon_hall_tall_pink"]]
+	[Vector2i(130, 191), "neon_hall_tall_gold"]]
 ## Neon signs on two of the halls (about 15 % of the 11 places each): the two signs of the casino at
 ## NEON_HALL_SIGN_SOURCE (the girl on the roof and the club on the wall) go to the first place, the XXX
 ## sign on the south wall to the second.
