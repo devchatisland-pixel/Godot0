@@ -289,6 +289,16 @@ const NEON_HALL_SIGN_SOURCE := Vector2i(131, 202)
 const NEON_HALL_SIGNS_AT := Vector2i(147, 181)
 const NEON_HALL_XXX_AT := Vector2i(130, 185)
 const NEON_HALL_FILL := 0.96
+## Free ground of Las Vegas (ENTERTAINMENT zone, no road, no building) gets more neon halls (5 x 3, drawn
+## like the others, models in turn), shops of the catalog (the 2nd low poly shop with the orange awning,
+## 3 x 2 at the scale of the development island) and little parks (trees on 3 x 3 or 2 x 2 spots).
+const VEGAS_FILL_HALLS := 11
+const VEGAS_FILL_SHOPS := 15
+const VEGAS_FILL_PARKS := 6
+const VEGAS_HALL_MODELS := ["neon_hall", "neon_hall_pink", "neon_hall_purple", "neon_hall_red", "neon_hall_gold",
+	"neon_hall_tall_gold", "neon_hall_tall_pink"]
+const VEGAS_SHOP_MODEL := "shop:shop-general-orange-b"
+const VEGAS_SHOP_SCALE := 0.34
 ## The "Welcome to Las Vegas" sign stands in the desert beside the highway that enters Las Vegas
 ## (north side of its three lanes), turned west to face the traffic coming from the desert.
 const VEGAS_SIGN_LOT := Rect2i(116, 161, 1, 3)
@@ -734,6 +744,7 @@ static func final_tweaks(data: CityData) -> void:
 	_downtown_and_vegas_swaps(data)
 	_vegas_second_pass(data)
 	_neon_hall(data)
+	_vegas_fill(data)
 
 
 ## The row of casino towers on the square of Las Vegas (CASINO2_LOTS).
@@ -1063,6 +1074,101 @@ static func _downtown_towers(data: CityData) -> void:
 				data.zone[data.idx(x, y)] = CityTypes.Zone.DOWNTOWN
 		n += 1
 	print("[Edits] skyscrapers added to downtown: ", n)
+
+
+## Free rectangles of `size` (either way round) on the free cells of `free` (a set of cell index -> true),
+## taken greedily row by row and not overlapping: [[Rect2i, turned]].
+static func _free_rects(data: CityData, free: Dictionary, size: Vector2i) -> Array:
+	var used := {}
+	var out := []
+	for y in range(data.size):
+		for x in range(data.size):
+			if not free.has(data.idx(x, y)):
+				continue
+			for turned in [false, true]:
+				var sz := Vector2i(size.y, size.x) if turned else size
+				var r := Rect2i(x, y, sz.x, sz.y)
+				var ok := true
+				for yy in range(r.position.y, r.end.y):
+					for xx in range(r.position.x, r.end.x):
+						if not data.in_bounds(xx, yy):
+							ok = false
+						else:
+							var i := data.idx(xx, yy)
+							if not free.has(i) or used.has(i):
+								ok = false
+				if ok:
+					for yy in range(r.position.y, r.end.y):
+						for xx in range(r.position.x, r.end.x):
+							used[data.idx(xx, yy)] = true
+					out.append([r, turned])
+					break
+	return out
+
+
+## `count` of `list`, spread evenly over it.
+static func _spread(list: Array, count: int) -> Array:
+	var out := []
+	if list.is_empty():
+		return out
+	count = mini(count, list.size())
+	for k in count:
+		out.append(list[k * list.size() / count])
+	return out
+
+
+## FINAL VEGAS_FILL_*: neon halls, then shops, then little parks on the free ground of Las Vegas.
+static func _vegas_fill(data: CityData) -> void:
+	var free := {}
+	for y in range(data.size):
+		for x in range(data.size):
+			var i := data.idx(x, y)
+			if data.zone[i] == CityTypes.Zone.ENTERTAINMENT and data.terrain[i] == CityTypes.Terrain.LAND and data.road[i] == 0:
+				free[i] = true
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.EMPTY:
+			continue
+		var r := data.building_rect(b)
+		for y in range(r.position.y, r.end.y):
+			for x in range(r.position.x, r.end.x):
+				if data.in_bounds(x, y):
+					free.erase(data.idx(x, y))
+	var halls := 0
+	for h in _spread(_free_rects(data, free, Vector2i(5, 3)), VEGAS_FILL_HALLS):
+		var lot: Rect2i = h[0]
+		var facing := 1 if h[1] else 0
+		var b := data.add_building(lot, CityTypes.Kind.POLICE, facing, CityTypes.hash2(lot.position.x, lot.position.y, 919), 0.3)
+		data.b_model[b] = VEGAS_HALL_MODELS[halls % VEGAS_HALL_MODELS.size()]
+		var along := Vector2(lot.size.y, lot.size.x) if h[1] else Vector2(lot.size.x, lot.size.y)
+		data.b_scale[b] = -minf(along.x * NEON_HALL_FILL / 1.76, along.y * NEON_HALL_FILL / 1.31)
+		data.b_sign_facing[b] = 2
+		halls += 1
+		for y in range(lot.position.y, lot.end.y):
+			for x in range(lot.position.x, lot.end.x):
+				free.erase(data.idx(x, y))
+	var shops := 0
+	for h in _spread(_free_rects(data, free, Vector2i(3, 2)), VEGAS_FILL_SHOPS):
+		var lot: Rect2i = h[0]
+		var facing := 1 if h[1] else 2
+		var b := data.add_building(lot, CityTypes.Kind.SHOP, facing, CityTypes.hash2(lot.position.x, lot.position.y, 929), 0.3)
+		data.b_model[b] = VEGAS_SHOP_MODEL
+		data.b_scale[b] = -VEGAS_SHOP_SCALE
+		shops += 1
+		for y in range(lot.position.y, lot.end.y):
+			for x in range(lot.position.x, lot.end.x):
+				free.erase(data.idx(x, y))
+	var parks := 0
+	var spots := _free_rects(data, free, Vector2i(3, 3))
+	spots.append_array(_free_rects(data, free, Vector2i(2, 2)))
+	for h in _spread(spots, VEGAS_FILL_PARKS):
+		var lot: Rect2i = h[0]
+		for y in range(lot.position.y, lot.end.y):
+			for x in range(lot.position.x, lot.end.x):
+				var i := data.idx(x, y)
+				data.zone[i] = CityTypes.Zone.PARK
+				data.forest[i] = 200
+		parks += 1
+	print("[Edits] Las Vegas: %d neon halls, %d shops, %d parks added" % [halls, shops, parks])
 
 
 ## The two casinos of FINAL2_EXCHANGED trade everything but their lots: facing, seed, height, size
