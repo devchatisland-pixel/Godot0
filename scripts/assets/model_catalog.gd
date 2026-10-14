@@ -79,6 +79,8 @@ enum Cat {
 	FOG_MARKET,
 	# Twenty-seventh wave: the old warehouses of the food depot of the fog island
 	FOG_WAREHOUSE,
+	# Twenty-eighth wave: the Eiffel tower alone (tools/make_eiffel_tower.py)
+	EIFFEL_TOWER,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
