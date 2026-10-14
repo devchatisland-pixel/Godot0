@@ -166,11 +166,13 @@ const FARMS_AS_MARKET := [0, 3]
 ## tanks, a crane, shipping containers): [model, place, the way the front looks, footprint in
 ## cells, which model of the category, storeys]. A String model is a named mesh (a container).
 const INDUSTRY_PLAN := [
-	# North-west block: a factory hall, two sheds, a water tank.
-	[Cat.IND_HALL, Vector2(79, 104.5), Vector2(0, 1), 8.0, 2],
-	[Cat.IND_SHED, Vector2(83.8, 103), Vector2(0, 1), 4.0, 2],
-	[Cat.IND_TOWER, Vector2(85.5, 109), Vector2(0, 1), 3.0, 4],
-	[Cat.IND_SHED, Vector2(76, 111.5), Vector2(0, 1), 4.0, 4],
+	# North border of the square: the factory hall, turned along the border.
+	[Cat.IND_HALL, Vector2(80, 101.5), Vector2(1, 0), 8.0, 2],
+	# Two lines of food warehouses (the old warehouse model), fronts to the south.
+	[Cat.FOG_WAREHOUSE, Vector2(77, 107), Vector2(0, 1), 6.0, 0],
+	[Cat.FOG_WAREHOUSE, Vector2(83.8, 107), Vector2(0, 1), 6.0, 0],
+	[Cat.FOG_WAREHOUSE, Vector2(77, 112), Vector2(0, 1), 6.0, 0],
+	[Cat.FOG_WAREHOUSE, Vector2(83.8, 112), Vector2(0, 1), 6.0, 0],
 	# North-east block: a warehouse and the oil and gas tanks.
 	[Cat.IND_HALL, Vector2(94.5, 101.5), Vector2(0, 1), 6.0, 8],
 	[Cat.PORT_TANK, Vector2(92.5, 108), Vector2(0, 1), 4.0, 0],
@@ -179,16 +181,20 @@ const INDUSTRY_PLAN := [
 	# South-west block: the hangar and the crane of the quay.
 	[Cat.IND_HALL, Vector2(79.5, 122), Vector2(0, -1), 8.0, 4],
 	[Cat.IND_TOWER, Vector2(85.5, 122.5), Vector2(0, 1), 4.0, 0],
-	# South-east block: the container yard, stacked up to two high, and a shed.
-	["yardbox:01", Vector2(91.5, 118.5), Vector2(1, 0), 2.4, 0, 2],
-	["yardbox:04", Vector2(94, 118.5), Vector2(1, 0), 2.4, 0, 1],
-	["yardbox:09", Vector2(96.5, 118.5), Vector2(1, 0), 2.4, 0, 2],
-	["yardbox:02", Vector2(91.5, 120.2), Vector2(1, 0), 2.4, 0, 1],
-	["yardbox:10", Vector2(94, 120.2), Vector2(1, 0), 2.4, 0, 2],
-	["yardbox:01", Vector2(96.5, 120.2), Vector2(1, 0), 2.4, 0, 1],
-	["yardbox:04", Vector2(91.5, 121.9), Vector2(1, 0), 2.4, 0, 1],
-	["yardbox:09", Vector2(94, 121.9), Vector2(1, 0), 2.4, 0, 2],
-	["yardbox:02", Vector2(96.5, 121.9), Vector2(1, 0), 2.4, 0, 1],
+	# South-east block: the container yard (containers as small as on the main island's yards,
+	# 1.3 cells long, stacked up to two high) and a shed.
+	["yardbox:01", Vector2(91.6, 118.6), Vector2(1, 0), 1.3, 0, 2],
+	["yardbox:04", Vector2(93.2, 118.6), Vector2(1, 0), 1.3, 0, 1],
+	["yardbox:09", Vector2(94.8, 118.6), Vector2(1, 0), 1.3, 0, 2],
+	["yardbox:02", Vector2(96.4, 118.6), Vector2(1, 0), 1.3, 0, 1],
+	["yardbox:10", Vector2(91.6, 119.6), Vector2(1, 0), 1.3, 0, 1],
+	["yardbox:01", Vector2(93.2, 119.6), Vector2(1, 0), 1.3, 0, 2],
+	["yardbox:04", Vector2(94.8, 119.6), Vector2(1, 0), 1.3, 0, 1],
+	["yardbox:09", Vector2(96.4, 119.6), Vector2(1, 0), 1.3, 0, 2],
+	["yardbox:02", Vector2(91.6, 120.6), Vector2(1, 0), 1.3, 0, 2],
+	["yardbox:10", Vector2(93.2, 120.6), Vector2(1, 0), 1.3, 0, 1],
+	["yardbox:01", Vector2(94.8, 120.6), Vector2(1, 0), 1.3, 0, 2],
+	["yardbox:04", Vector2(96.4, 120.6), Vector2(1, 0), 1.3, 0, 1],
 	[Cat.IND_SHED, Vector2(95, 125), Vector2(0, -1), 4.0, 0],
 ]
 
@@ -212,7 +218,11 @@ const VEHICLES := [
 	["p54_33_fire_truck", Vector2(45, 86.6), Vector2(1, 0)],
 	["p54_11_ambulance", Vector2(118, 86.6), Vector2(-1, 0)],
 	["p54_14_semi_longnose_red", Vector2(88.6, 104), Vector2(0, -1)],
-	["p54_07_box_truck_delivery_yellow", Vector2(87.4, 121), Vector2(0, 1)],
+	# The yellow delivery box truck of the road to the yard became a red tractor (p54_14); a cream
+	# tractor and the DYRER box truck park in the same stretch of road.
+	["p54_14_semi_longnose_red", Vector2(87.4, 121), Vector2(0, 1)],
+	["p54_20_semi_cabover_yellow", Vector2(88.6, 118.4), Vector2(0, -1)],
+	["p54_07_box_truck_delivery_yellow", Vector2(87.4, 125.2), Vector2(0, 1)],
 	["p54_15_dump_truck_yellow", Vector2(80, 115.6), Vector2(1, 0)],
 	["p54_43_tractor_vintage_trailer", Vector2(87, 57.5), Vector2(1, 0)],
 	["p54_21_harvester_olive", Vector2(97.3, 51.5), Vector2(-1, 0)],

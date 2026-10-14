@@ -77,6 +77,8 @@ enum Cat {
 	VEGAS_SIGN,
 	# Twenty-sixth wave: the country market store of the fog island (farms)
 	FOG_MARKET,
+	# Twenty-seventh wave: the old warehouses of the food depot of the fog island
+	FOG_WAREHOUSE,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
