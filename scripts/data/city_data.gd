@@ -34,6 +34,7 @@ var b_seed := PackedInt32Array()
 var b_height := PackedFloat32Array() # relative height factor (density driven)
 var b_scale := PackedFloat32Array()  # size factor of the model (1 = as placed; ManualEdits changes it)
 var b_sign_facing := PackedByteArray() # facing the sign was set up for (the sign does not turn with the building)
+var b_stretch := PackedFloat32Array() # extra height factor of the model, width and depth untouched (1 = as placed; ManualEdits)
 var b_lay := PackedByteArray()       # 1 = a flat model (crop field) is laid along the facing (ManualEdits)
 ## Building id -> name of the model it must use (ManualEdits "model").
 var b_model := {}
@@ -126,6 +127,7 @@ func add_building(r: Rect2i, kind: int, facing: int, seed: int, height: float) -
 	b_seed.append(seed)
 	b_height.append(height)
 	b_scale.append(1.0)
+	b_stretch.append(1.0)
 	b_sign.append(0)
 	b_sign_facing.append(facing)
 	b_lay.append(0)
@@ -154,6 +156,7 @@ func remove_buildings(removed: Dictionary) -> void:
 	var s := PackedInt32Array()
 	var h := PackedFloat32Array()
 	var sc := PackedFloat32Array()
+	var st := PackedFloat32Array()
 	var sg := PackedByteArray()
 	var sf := PackedByteArray()
 	var la := PackedByteArray()
@@ -167,6 +170,7 @@ func remove_buildings(removed: Dictionary) -> void:
 		s.append(b_seed[i])
 		h.append(b_height[i])
 		sc.append(b_scale[i])
+		st.append(b_stretch[i])
 		sg.append(b_sign[i])
 		sf.append(b_sign_facing[i])
 		la.append(b_lay[i])
@@ -176,6 +180,7 @@ func remove_buildings(removed: Dictionary) -> void:
 	b_seed = s
 	b_height = h
 	b_scale = sc
+	b_stretch = st
 	b_sign = sg
 	b_sign_facing = sf
 	b_lay = la

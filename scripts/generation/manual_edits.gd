@@ -205,6 +205,18 @@ const REAL_DISHES := [Vector2i(104, 188), Vector2i(108, 187), Vector2i(108, 183)
 ## The three dishes of the island of the old BT tower, drawn with the second realistic dish.
 const REAL_DISH_MODEL_2 := "dish_real2.glb: dish_real2"
 const REAL_DISHES_2 := [Vector2i(32, 93), Vector2i(36, 91), Vector2i(36, 88)]
+## Skyscrapers of downtown that get taller: kind, top-left cell of the lot, height factor (width and depth stay).
+const FINAL_TALLER := [
+	["SKYSCRAPER", Vector2i(146, 174), 1.35], ["SKYSCRAPER", Vector2i(146, 166), 1.35],
+	["SKYSCRAPER", Vector2i(143, 169), 1.35], ["SKYSCRAPER", Vector2i(163, 165), 1.35],
+	["SKYSCRAPER", Vector2i(159, 162), 1.35],
+]
+## Casinos (top-left cell of the lot) that become the glass tower, clubs that become casinos of the
+## Vegas model, and buildings taken away (kind, top-left cell).
+const GLASS_MODEL := "ny_buildings.glb: ny_glass_1"
+const FINAL_TO_GLASS := [Vector2i(128, 199), Vector2i(132, 171)]
+const FINAL_TO_CASINO := [Vector2i(122, 182), Vector2i(144, 202)]
+const FINAL_DELETED_LATE := [["CASINO", Vector2i(146, 189)], ["NIGHTCLUB", Vector2i(153, 187)], ["NIGHTCLUB", Vector2i(141, 213)]]
 ## The oil tank (top-left cell of its lot on the final map, model) that gets a line of more tanks to the east.
 const TANK_LINE_FROM := Vector2i(131, 241)
 const TANK_LINE_MODEL := "port_tanks.glb: tank_oil"
@@ -660,6 +672,7 @@ static func final_tweaks(data: CityData) -> void:
 	_bt_tower_to_radio_tower(data)
 	_real_dishes(data)
 	_tank_line(data)
+	_downtown_and_vegas_swaps(data)
 
 
 ## The row of casino towers on the square of Las Vegas (CASINO2_LOTS).
@@ -878,6 +891,36 @@ static func _real_dishes(data: CityData) -> void:
 			n += 1
 	if n < REAL_DISHES.size() + REAL_DISHES_2.size():
 		push_warning("[Edits] only %d of the %d realistic dishes found" % [n, REAL_DISHES.size() + REAL_DISHES_2.size()])
+
+
+## Last hand changes of Las Vegas and downtown (after the casino towers and their side casino exist):
+## FINAL_TALLER skyscrapers get taller, FINAL_TO_GLASS casinos become the glass tower, FINAL_TO_CASINO
+## clubs become casinos of the Vegas model, FINAL_DELETED_LATE buildings are taken away.
+static func _downtown_and_vegas_swaps(data: CityData) -> void:
+	for b in data.building_count():
+		var at := data.building_rect(b).position
+		var kind: String = CityTypes.Kind.keys()[data.b_kind[b]]
+		for t in FINAL_TALLER:
+			if kind == t[0] and at == t[1]:
+				data.b_stretch[b] = t[2]
+		for c in FINAL_TO_GLASS:
+			if kind == "CASINO" and at == c:
+				data.b_kind[b] = CityTypes.Kind.SKYSCRAPER
+				data.b_model[b] = GLASS_MODEL
+				data.b_scale[b] = 1.0
+				data.b_sign[b] = 0
+				data.b_more_signs.erase(b)
+		for c in FINAL_TO_CASINO:
+			if kind == "NIGHTCLUB" and at == c:
+				data.b_kind[b] = CityTypes.Kind.CASINO
+				data.b_model[b] = VEGAS_CASINO_MODEL
+				data.b_scale[b] = 1.0
+				data.b_sign[b] = 0
+				data.b_more_signs.erase(b)
+		for d in FINAL_DELETED_LATE:
+			if kind == d[0] and at == d[1]:
+				data.b_kind[b] = CityTypes.Kind.EMPTY
+				hand_deleted[b] = true
 
 
 ## The oil tank of TANK_LINE_FROM is copied to make a line of TANK_LINE_COUNT more towards the east
