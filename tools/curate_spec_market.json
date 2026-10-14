@@ -1,5 +1,5 @@
 {
- "comment": "Country market store for the fog island (SketchUp model: the ground planes were cut away; the farm sign stands in front of the porch, front = +Z).",
+ "comment": "Country market store for the fog island (SketchUp model: the ground planes were cut away; the farm sign stands in front of the porch, front = +Z). The PSX old warehouse is the food depot of the fog island industrial zone.",
  "packs": [
   {
    "src": "res://FREEMODELS/_incoming/country_market_store.glb",
@@ -13,6 +13,21 @@
      ],
      "cat": "FOG_MARKET",
      "footprint": 4.0
+    }
+   ]
+  },
+  {
+   "src": "res://FREEMODELS/_incoming/psx_old_warehouse.glb",
+   "out": "fog_warehouse",
+   "texture_max": 512,
+   "items": [
+    {
+     "id": "fog_warehouse",
+     "nodes": [
+      "Sketchfab_model"
+     ],
+     "cat": "FOG_WAREHOUSE",
+     "footprint": 6.0
     }
    ]
   }
