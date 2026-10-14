@@ -277,7 +277,17 @@ const PIZZERIA_MOVE_APART := 12.0
 const NEON_HALL_AT := Vector2i(148, 202)
 const NEON_HALL_SCALE := 2.1215
 const NEON_HALL_PLACES := [[Vector2i(148, 202), "neon_hall"], [Vector2i(122, 203), "neon_hall_pink"],
-	[Vector2i(144, 202), "neon_hall_tall_gold"]]
+	[Vector2i(144, 202), "neon_hall_tall_gold"],
+	[Vector2i(130, 185), "neon_hall_purple"], [Vector2i(147, 181), "neon_hall_red"],
+	[Vector2i(117, 203), "neon_hall_gold"], [Vector2i(118, 207), "neon_hall_pink"],
+	[Vector2i(122, 182), "neon_hall_tall_pink"], [Vector2i(123, 191), "neon_hall"],
+	[Vector2i(130, 191), "neon_hall_tall_gold"], [Vector2i(127, 178), "neon_hall_tall_pink"]]
+## Neon signs on two of the halls (about 15 % of the 11 places each): the two signs of the casino at
+## NEON_HALL_SIGN_SOURCE (the girl on the roof and the club on the wall) go to the first place, the XXX
+## sign on the south wall to the second.
+const NEON_HALL_SIGN_SOURCE := Vector2i(131, 202)
+const NEON_HALL_SIGNS_AT := Vector2i(147, 181)
+const NEON_HALL_XXX_AT := Vector2i(130, 185)
 const NEON_HALL_FILL := 0.96
 ## The "Welcome to Las Vegas" sign stands in the desert beside the highway that enters Las Vegas
 ## (north side of its three lanes), turned west to face the traffic coming from the desert.
@@ -1139,9 +1149,16 @@ static func _move_vegas_sign(data: CityData) -> void:
 		return
 
 
-## The buildings of NEON_HALL_PLACES (police stations and a casino) become neon halls.
+## The buildings of NEON_HALL_PLACES (police stations and casinos) become neon halls.
 static func _neon_hall(data: CityData) -> void:
 	var half := Vector2(1.76, 1.31)
+	var src := {}
+	for b in data.building_count():
+		if data.building_rect(b).position == NEON_HALL_SIGN_SOURCE and data.b_kind[b] != CityTypes.Kind.EMPTY:
+			src = {"sign": data.b_sign[b], "facing": data.b_sign_facing[b],
+					"more": data.b_more_signs.get(b, []).duplicate(true), "fit": data.b_sign_fit.get(b, {}).duplicate()}
+	if src.is_empty() or (src["sign"] == 0 and src["more"].is_empty()):
+		push_warning("[Edits] no neon signs on the casino at %s to copy" % NEON_HALL_SIGN_SOURCE)
 	for place: Array in NEON_HALL_PLACES:
 		var cell: Vector2i = place[0]
 		var found := false
@@ -1159,6 +1176,16 @@ static func _neon_hall(data: CityData) -> void:
 			data.b_sign[b] = 0
 			data.b_more_signs.erase(b)
 			data.b_sign_fit.erase(b)
+			if cell == NEON_HALL_SIGNS_AT and not src.is_empty():
+				data.b_sign[b] = src["sign"]
+				data.b_sign_facing[b] = src["facing"]
+				if not src["more"].is_empty():
+					data.b_more_signs[b] = src["more"]
+				if not src["fit"].is_empty():
+					data.b_sign_fit[b] = src["fit"]
+			elif cell == NEON_HALL_XXX_AT:
+				data.b_sign_facing[b] = 2
+				data.b_more_signs[b] = [[ModelCatalog.Cat.NEON_XXX, "face"]]
 			break
 		if not found:
 			push_warning("[Edits] no building at %s for the neon hall" % cell)
