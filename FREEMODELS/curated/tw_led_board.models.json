@@ -1,0 +1,9 @@
+{
+	"file": "tw_led_board.glb",
+	"models": [
+		{
+			"cat": "TW_LED_BOARD",
+			"node": "tw_led_board"
+		}
+	]
+}
