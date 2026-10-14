@@ -29,9 +29,9 @@ const FARM := Color("a59a62")
 ## The zones (local cells): the city is laid out round them (FogCityLayout.keep_out).
 const CHECKPOINT_RECT := Rect2(18.8, 89.7, 14.4, 11.1)
 const BASE_RECT := Rect2(49.5, 52.5, 20, 16.5)
-const PLANT_RECT := Rect2(134.0, 103.0, 18.0, 16.0)
-const INDUSTRY_RECT := Rect2(60.0, 124.0, 58.0, 30.0)
-const FARM_RECT := Rect2(75.0, 43.0, 53.0, 23.0)
+const PLANT_RECT := Rect2(147.0, 105.0, 12.0, 10.0)
+const INDUSTRY_RECT := Rect2(76.0, 134.0, 16.0, 17.0)
+const FARM_RECT := Rect2(98.0, 43.0, 36.0, 14.5)
 const KEEP_OUT := [
 	Rect2(0, 89.0, 36.0, 15.0), BASE_RECT, PLANT_RECT, INDUSTRY_RECT, FARM_RECT,
 ]
@@ -55,14 +55,18 @@ const ROADS := [
 	[Vector2(18.8, 96.5), Vector2(33.2, 96.5), 1.5], # between the walls of its two gates,
 	[Vector2(33.2, 96.5), Vector2(150, 96.5), 3.0], # then the avenue across the island
 ]
-## Inside the industrial port (moved with INDUSTRY_SHIFT).
-const INDUSTRY_ROADS := [[Vector2(70, 139), Vector2(100, 139), 2.0]]
-const INDUSTRY_SHIFT := Vector2(0, 24)
+## Inside the industrial port (moved with INDUSTRY_AT).
+const INDUSTRY_ROADS := [[Vector2(77, 142.5), Vector2(91, 142.5), 2.0]]
+## The port of the main island is drawn smaller: its layout (INDUSTRY_PLAN, first corner) is
+## squeezed to this scale and put at INDUSTRY_AT.
+const INDUSTRY_FROM := Vector2(77.0, 101.5)
+const INDUSTRY_AT := Vector2(79.0, 136.0)
+const INDUSTRY_SCALE := 0.62
 
 ## Wire fences: [rect in cells, side of the gate (0 N, 1 E, 2 S, 3 W), height].
 const FENCES := [
 	[Rect2(49.5, 52.5, 20, 16.5), 2, 0.45],  # army base, gate on the road of the city
-	[Rect2(134.5, 103.5, 17, 15), 3, 0.5],   # nuclear plant, gate on the road of the city
+	[Rect2(147.5, 105.5, 11, 9), 3, 0.5],    # nuclear plant, gate on the road of the city
 ]
 
 ## The army base: the landing zone (the model of the secret base, at its size on the main island).
@@ -88,17 +92,17 @@ const BLOCKADE_PARK := [
 const BLOCKADE_HUMVEE := Vector2(-1.6, 2.7)
 
 ## Crop fields of the one farmland: columns and rows (top-left cell of the first, pitch, size).
-const FIELD_ORIGIN := Vector2(78.0, 45.0)
-const FIELD_COLS := 6
-const FIELD_ROWS := 3
+const FIELD_ORIGIN := Vector2(100.0, 44.5)
+const FIELD_COLS := 4
+const FIELD_ROWS := 2
 const FIELD_PITCH := Vector2(8.4, 6.7)
 const FIELD_SIZE := Vector2(6.5, 5.0)
 const FIELD_MESHES := ["field_wheat", "field_corn", "field_plowed", "field_green"]
 ## Farm buildings: [place, footprint]; the first and the last are country market stores.
-const FARMS := [[Vector2(72.5, 49), 4.4], [Vector2(72.5, 63), 3.0], [Vector2(131.5, 49), 4.4]]
-const FARMS_AS_MARKET := [0, 2]
+const FARMS := [[Vector2(95.8, 49), 3.6], [Vector2(136.5, 49), 3.0]]
+const FARMS_AS_MARKET := [0]
 ## The nuclear plant, smaller than it was: scale of the model.
-const PLANT_SCALE := 0.62
+const PLANT_SCALE := 0.36
 
 ## The industrial zone, drawn with the buildings of the port of the main island (halls, sheds,
 ## tanks, a crane, shipping containers): [model, place, the way the front looks, footprint in
@@ -140,22 +144,30 @@ const INDUSTRY_PLAN := [
 const CARS := ["m8_long_sedan_black", "p54_04_sedan_modern_silver", "m8_wagon_blue", "m8_sedan_dark_red",
 		"p54_03_sedan_classic_maroon", "m8_pickup_blue", "m8_wagon_teal", "p54_05_sedan_90s_teal",
 		"m8_sedan_mustard", "p54_01_suv_offroad_navy"]
-## Other vehicles: [catalog id, place, nose]. `ring` ones are on a ring of the city: [R, degrees].
+## Other vehicles: [catalog id, place, nose]. The ones of the port are in the coordinates of
+## the first layout of the port (INDUSTRY_FROM, INDUSTRY_SCALE).
 const VEHICLES := [
-	["school_bus", Vector2(0, 0), Vector2(1, 0), 27.0, 200.0],
-	["p54_33_fire_truck", Vector2(0, 0), Vector2(1, 0), 15.0, 60.0],
-	["p54_11_ambulance", Vector2(0, 0), Vector2(-1, 0), 15.0, 235.0],
-	["p54_14_semi_longnose_red", Vector2(88.6, 128), Vector2(0, -1)],
-	["p54_14_semi_longnose_red", Vector2(87.4, 145), Vector2(0, 1)],
-	["p54_20_semi_cabover_yellow", Vector2(88.6, 142.4), Vector2(0, -1)],
-	["p54_07_box_truck_delivery_yellow", Vector2(87.4, 149.2), Vector2(0, 1)],
-	["p54_15_dump_truck_yellow", Vector2(80, 139.6), Vector2(1, 0)],
-	["p54_43_tractor_vintage_trailer", Vector2(92, 51.6), Vector2(1, 0)],
-	["p54_21_harvester_olive", Vector2(108, 58.0), Vector2(-1, 0)],
-	["p54_42_forwarder_green", Vector2(122, 51.4), Vector2(0, 1)],
-	[HUMVEE, Vector2(131.6, 112.2), Vector2(1, 0)],  # at the gate of the plant
-	[HUMVEE, Vector2(36, 96.7), Vector2(1, 0)],    # on the avenue, past the blockade
+	["school_bus", Vector2(100, 97.2), Vector2(1, 0)],
+	["p54_33_fire_truck", Vector2(76, 95.8), Vector2(1, 0)],
+	["p54_11_ambulance", Vector2(112, 95.8), Vector2(-1, 0)],
+	["p54_43_tractor_vintage_trailer", Vector2(110, 51.0), Vector2(1, 0)],
+	["p54_21_harvester_olive", Vector2(124, 59.2), Vector2(-1, 0)],
+	["p54_42_forwarder_green", Vector2(132, 52.4), Vector2(0, 1)],
+	[HUMVEE, Vector2(145.0, 111.2), Vector2(1, 0)],   # at the gate of the plant
+	[HUMVEE, Vector2(36, 96.7), Vector2(1, 0)],       # on the avenue, past the blockade
 ]
+const INDUSTRY_VEHICLES := [
+	["p54_14_semi_longnose_red", Vector2(88.6, 104), Vector2(0, -1)],
+	["p54_14_semi_longnose_red", Vector2(87.4, 121), Vector2(0, 1)],
+	["p54_20_semi_cabover_yellow", Vector2(88.6, 118.4), Vector2(0, -1)],
+	["p54_07_box_truck_delivery_yellow", Vector2(87.4, 125.2), Vector2(0, 1)],
+	["p54_15_dump_truck_yellow", Vector2(80, 115.6), Vector2(1, 0)],
+]
+
+
+## A point of the first layout of the port, on the island.
+static func port_point(p: Vector2) -> Vector2:
+	return INDUSTRY_AT + (p - INDUSTRY_FROM) * INDUSTRY_SCALE
 
 
 ## The roads of the island: the avenue and the way from the bridge, the streets of the city and
@@ -203,10 +215,10 @@ static func plan(fog: FogIslandShaper) -> Array[Dictionary]:
 	_veh(out, HUMVEE, Vector2(61.0, 64.0), south)
 	# --- Nuclear plant, in its (smaller) fence, on the east shore ---
 	var pc := PLANT_RECT.get_center()
-	_add(out, Cat.NUCLEAR2, pc + Vector2(1.5, -0.5), east, PLANT_SCALE)
-	out.append({"cat": Cat.BASE_HALL, "at": Vector2(PLANT_RECT.position.x + 4.0, PLANT_RECT.end.y - 2.4), "dir": north, "fit": 3.6})
+	_add(out, Cat.NUCLEAR2, pc + Vector2(1.2, -0.3), east, PLANT_SCALE)
+	out.append({"cat": Cat.BASE_HALL, "at": Vector2(PLANT_RECT.position.x + 3.0, PLANT_RECT.end.y - 2.0), "dir": north, "fit": 2.6})
 	for i in 2:
-		_add(out, Cat.APC_BRDM, Vector2(PLANT_RECT.position.x + 2.2, pc.y - 1.0 + i * 1.6), west)
+		_add(out, Cat.APC_BRDM, Vector2(PLANT_RECT.position.x + 1.6, pc.y - 0.8 + i * 1.5), west)
 	# --- The city ---
 	var layout := FogCityLayout.build(fog.elevation)
 	for e: Dictionary in layout["items"]:
@@ -216,7 +228,7 @@ static func plan(fog: FogIslandShaper) -> Array[Dictionary]:
 		out.append(item)
 	# --- Industrial zone: the buildings, tanks, crane and containers of the port of the main island ---
 	for e in INDUSTRY_PLAN:
-		var item := {"at": (e[1] as Vector2) + INDUSTRY_SHIFT, "dir": e[2], "fit": e[3]}
+		var item := {"at": port_point(e[1]), "dir": e[2], "fit": float(e[3]) * INDUSTRY_SCALE}
 		if e[0] is String:
 			item["named"] = e[0]
 		else:
@@ -238,12 +250,9 @@ static func plan(fog: FogIslandShaper) -> Array[Dictionary]:
 		out.append({"cat": farm_cat, "at": FARMS[i][0], "dir": south, "fit": FARMS[i][1]})
 	# --- Other vehicles ---
 	for v in VEHICLES:
-		if v.size() > 3:
-			var a: float = deg_to_rad(float(v[4]))
-			var rr: float = float(v[3]) + 0.55
-			_veh(out, v[0], FogCityLayout.CENTER + Vector2(cos(a), sin(a)) * rr, Vector2(-sin(a), cos(a)))
-		else:
-			_veh(out, v[0], v[1], v[2])
+		_veh(out, v[0], v[1], v[2])
+	for v in INDUSTRY_VEHICLES:
+		_veh(out, v[0], port_point(v[1]), v[2])
 	return out
 
 
@@ -262,9 +271,11 @@ static func pad_color(p: Vector2) -> Variant:
 	for pad in PADS:
 		if (pad[0] as Rect2).has_point(p):
 			return pad[1]
-	var d := p.distance_to(FogCityLayout.CENTER)
-	if d < 34.0:
+	var d := Vector2(p.x - FogCityLayout.CENTER.x, (p.y - FogCityLayout.CENTER.y) * 1.1).length()
+	if d < FogCityLayout.MID_R:
 		return PAVED
-	if d < 68.0:
-		return PAVED.lerp(SUBURB, clampf((d - 34.0) / 12.0, 0.0, 1.0))
+	if d < FogCityLayout.MIXED_R + 6.0:
+		return PAVED.lerp(SUBURB, clampf((d - FogCityLayout.MID_R) / 18.0, 0.0, 1.0))
+	if d < 100.0:
+		return SUBURB
 	return null
