@@ -3,8 +3,9 @@ extends RefCounted
 ## The fog island as an inhabited island, laid out like the main one (local cells of the
 ## island, FogIslandShaper; x east, y south). The avenue from the Golden Gate runs west to east
 ## through it:
-##   - the checkpoint where the road leaves the bridge (the military post of the pack, its
-##     T-55 and BRDM inside);
+##   - the blockade where the road leaves the bridge (barriers and cones across the three lanes like
+##     the one of the east end of the bridge, the T-55, the BRDM and the Humvee that guarded the old
+##     checkpoint behind it, noses to the bridge; the checkpoint model itself is the jail of the prison island);
 ##   - the capital (west): a business centre of towers on both sides of the avenue, suburbs of
 ##     houses north and south of it;
 ##   - Eastbay (east, north of the avenue): a small centre of offices and shops, houses behind;
@@ -30,7 +31,7 @@ const FARM := Color("a59a62")
 
 ## Ground painted under the island's places: [rect in cells, colour] (the first match wins).
 const PADS := [
-	[Rect2(18.8, 89.7, 14.4, 11.1), CONCRETE], # checkpoint (CHECKPOINT_AT + the box of the post)
+	[Rect2(16.0, 93.2, 12.0, 6.6), CONCRETE],  # blockade (BLOCKADE_AT)
 	[Rect2(49.5, 52.5, 20, 16.5), CONCRETE],   # army base (inside its fence)
 	[Rect2(100, 102, 30, 26), CONCRETE],       # nuclear plant
 	[Rect2(39, 85, 33, 22), PAVED],            # capital: business centre
@@ -52,9 +53,7 @@ const PADS := [
 const ROADS := [
 	# The avenue is centred on the deck of the bridge: row 96 of the island is the bridge row of
 	# the city, whose middle is half a cell further south.
-	[Vector2(15, 96.5), Vector2(18.8, 96.5), 3.0],  # from the bridge to the checkpoint,
-	[Vector2(18.8, 96.5), Vector2(33.2, 96.5), 1.5], # between the walls of its two gates,
-	[Vector2(33.2, 96.5), Vector2(150, 96.5), 3.0], # then the avenue across the island
+	[Vector2(15, 96.5), Vector2(150, 96.5), 3.0],   # from the bridge across the island
 	# Capital: streets north-south (the one at x 60 goes on to the gate of the base) and east-west.
 	[Vector2(40, 76), Vector2(40, 126), 2.0], [Vector2(50, 76), Vector2(50, 126), 2.0],
 	[Vector2(60, 70), Vector2(60, 126), 2.0], [Vector2(70, 76), Vector2(70, 126), 2.0],
@@ -92,17 +91,19 @@ const HELICOPTER := "p54_46_helicopter_military"
 
 const JEEP := "jeep_willys"
 const HUMVEE := "humvee_grey"
-## The checkpoint (checkpoint.glb): where the middle of the road between its two gates is.
-## The model runs 7.2 cells either side along the road, 6.2 north and 4.7 south of it.
-const CHECKPOINT_AT := Vector2(26, 96.5)
-## The vehicles that guard the end of the bridge, inside the checkpoint (cells from
-## CHECKPOINT_AT): the two T-55 and the two BRDM side by side in the north yard, their noses
-## to the road (south); the grey Humvee in the south yard beside the garage, ready to drive out.
-const CHECKPOINT_PARK := [
-	[Cat.TANK_T55, Vector2(-2.3, -2.9)], [Cat.TANK_T55, Vector2(-1.15, -2.9)],
-	[Cat.APC_BRDM, Vector2(0.1, -2.6)], [Cat.APC_BRDM, Vector2(1.05, -2.6)],
+## The blockade at the west end of the avenue: the column of its barriers, the three lanes (rows
+## of their middles) and how far behind it (cells towards the island) the vehicles stand.
+const BLOCKADE_AT := Vector2(19, 96.5)
+const BLOCKADE_LANES := [95.5, 96.5, 97.5]
+const BARRIER_LEN := 1.05
+const CONE_LEN := 0.15
+## Vehicles behind the barriers: [category, cells behind the barriers, lane row offset]; their noses
+## look to the bridge (west). The grey Humvee parks beside the road, before the barriers.
+const BLOCKADE_PARK := [
+	[Cat.TANK_T55, 2.4, -1.0], [Cat.TANK_T55, 2.4, 1.0],
+	[Cat.APC_BRDM, 4.4, -1.0], [Cat.APC_BRDM, 4.4, 1.0],
 ]
-const CHECKPOINT_HUMVEE := Vector2(-1.3, 2.5)
+const BLOCKADE_HUMVEE := Vector2(-1.6, 2.7)
 
 ## Towns: the business blocks (top-left cell, size) and the order of their buildings, the
 ## house blocks. A building entry: [category, footprint in cells, storeys (a stack of FOG_FLOOR)].
@@ -228,7 +229,7 @@ const VEHICLES := [
 	["p54_21_harvester_olive", Vector2(97.3, 51.5), Vector2(-1, 0)],
 	["p54_42_forwarder_green", Vector2(69.3, 132), Vector2(0, 1)],
 	[HUMVEE, Vector2(97, 115.6), Vector2(1, 0)],   # at the gate of the plant
-	[HUMVEE, Vector2(36, 96.7), Vector2(1, 0)],    # on the avenue, out of the checkpoint
+	[HUMVEE, Vector2(36, 96.7), Vector2(1, 0)],    # on the avenue, past the blockade
 ]
 
 
@@ -242,13 +243,17 @@ static func plan() -> Array[Dictionary]:
 	var south := Vector2(0, 1)
 	var east := Vector2(1, 0)
 	var west := Vector2(-1, 0)
-	# --- Checkpoint at the end of the bridge, the vehicles that guard it inside ---
-	out.append({"cat": Cat.CHECKPOINT, "at": CHECKPOINT_AT, "dir": south, "scale": 1.0, "origin": true})
+	# --- Blockade at the end of the bridge, the vehicles of the old checkpoint behind it ---
+	for row: float in BLOCKADE_LANES:
+		out.append({"cat": Cat.ROADBLOCK_A, "at": Vector2(BLOCKADE_AT.x + 0.5, row), "dir": east, "fit": BARRIER_LEN})
+	for k in 4:
+		out.append({"cat": Cat.CONE, "at": Vector2(BLOCKADE_AT.x - 1.4, BLOCKADE_AT.y + (float(k) - 1.5)), "dir": south,
+				"fit": CONE_LEN})
 	# The T-55 and the BRDM of the pack look along -Z (the gun of the tank points that way), so they are
-	# stood with `north` to look south, at the road.
-	for v in CHECKPOINT_PARK:
-		_add(out, v[0], CHECKPOINT_AT + (v[1] as Vector2), north)
-	_veh(out, HUMVEE, CHECKPOINT_AT + CHECKPOINT_HUMVEE, north)
+	# stood with `east` to look west, at the bridge.
+	for v in BLOCKADE_PARK:
+		_add(out, v[0], Vector2(BLOCKADE_AT.x + 0.5 + float(v[1]), BLOCKADE_AT.y + float(v[2])), east)
+	_veh(out, HUMVEE, BLOCKADE_AT + BLOCKADE_HUMVEE, west)
 	# --- The army base: landing zone, helipad, tents, barracks, a few vehicles ---
 	out.append({"landing_zone": true, "at": LANDING_ZONE, "dir": south, "scale": 1.0})
 	_veh(out, HELICOPTER, HELIPAD, east)

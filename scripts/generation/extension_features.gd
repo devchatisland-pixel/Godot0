@@ -194,7 +194,8 @@ func build_pirate_islet() -> void:
 
 ## The prison compound: a big cellhouse, stone wings, a villa and lighthouses.
 func build_prison() -> void:
-	var c := Vector2i(MapLayout.blob("prison")["at"])
+	# The cellhouse stands north of the middle: the garage of the jail takes the south of the yard.
+	var c := Vector2i(MapLayout.blob("prison")["at"]) + MapLayout.scaled(Vector2i(0, -4))
 	var main := Rect2i()
 	for size in [Vector2i(11, 8), Vector2i(10, 7), Vector2i(9, 6), Vector2i(7, 5)]:
 		main = _spots.find_spot(c - size / 2, size, Zone.PRISON, 6, 0)

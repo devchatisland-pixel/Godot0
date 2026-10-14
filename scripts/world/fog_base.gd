@@ -40,7 +40,7 @@ const TITLES := {
 	Cat.TANK_T55: ["T-55 tank", "VEHICLE"], Cat.APC_BMP1: ["BMP-1 infantry fighting vehicle", "VEHICLE"],
 	Cat.APC_BRDM: ["BRDM armoured car", "VEHICLE"], Cat.APC_EE11: ["EE-11 anti-aircraft vehicle", "VEHICLE"],
 	Cat.NUCLEAR2: ["Nuclear power plant", "MILITARY"], Cat.CARRIER: ["Aircraft carrier", "SHIP"],
-	Cat.CHECKPOINT: ["Golden Gate checkpoint", "MILITARY"],
+	Cat.ROADBLOCK_A: ["Roadblock barrier", "ROADBLOCK"], Cat.CONE: ["Traffic cone", "ROADBLOCK"],
 	Cat.FOG_OFFICE: ["Office building", "OFFICE"], Cat.FOG_HOUSE: ["House", "HOUSE"],
 	Cat.FOG_NIGHT_TOWER: ["Night tower", "SKYSCRAPER"], Cat.FOG_OFFICE_TOWER: ["Office tower", "SKYSCRAPER"],
 	Cat.FOG_FLOOR: ["Block of flats", "APARTMENT"], Cat.FOG_MOD_HOUSE: ["Town house", "HOUSE"],
@@ -114,7 +114,7 @@ func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
 			id = ids[int(p.get("v", 0)) % ids.size()] if not ids.is_empty() else -1
 			turn = FRONT.get(p["cat"], 0.0)
 			label = TITLES.get(p["cat"], [lib.model_name(id), "BUILDING"])
-			if label[1] != "MILITARY" and label[1] != "VEHICLE":
+			if label[1] != "MILITARY" and label[1] != "VEHICLE" and label[1] != "ROADBLOCK":
 				note = "town of the fog island"
 		if id < 0:
 			continue

@@ -63,6 +63,11 @@ const SIGN_WALL := 1
 const TURNED := []
 ## Kinds whose buildings all face the same way.
 const KIND_FACING := {"MCDONALDS": 1}
+## Red district (Zone.QUARTER): every building that faced east faces west. Not buildings, so left
+## alone: ground lots, props, boats, piers (the cars are no buildings at all).
+const RED_DISTRICT_KEEP: Array[int] = [Kind.EMPTY, Kind.BALLOON, Kind.BILLBOARD, Kind.BOAT, Kind.PIER,
+		Kind.FIELD, Kind.GARDEN, Kind.PLAZA, Kind.FOUNTAIN, Kind.CRANE, Kind.FIRE_TRUCK, Kind.UFO,
+		Kind.TANK, Kind.STALL, Kind.BASKET_COURT]
 const BASE_SCALE := 1.5
 
 const CITY_ZONES: Array[int] = [Zone.DOWNTOWN, Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN,
@@ -194,6 +199,12 @@ func _turned() -> int:
 		var kind: String = Kind.keys()[_d.b_kind[b]]
 		if KIND_FACING.has(kind) and _d.b_facing[b] != KIND_FACING[kind]:
 			_d.b_facing[b] = KIND_FACING[kind]
+			n += 1
+	for b in _d.building_count():
+		var p := _d.building_rect(b).position
+		if _d.b_facing[b] == 1 and not RED_DISTRICT_KEEP.has(_d.b_kind[b]) \
+				and _d.zone[_d.idx(p.x, p.y)] == Zone.QUARTER:
+			_d.b_facing[b] = 3
 			n += 1
 	return n
 

@@ -20,6 +20,7 @@ const SHOTS := [
 	{"zoom": 30.0, "at": Kind.NIGHTCLUB},
 	{"zoom": 16.0, "at": Kind.CONCERT},
 	{"zoom": 16.0, "at": Kind.FIRE_TRUCK},
+	{"zoom": 14.0, "at": "blockade"},
 ]
 
 var _dir := "user://"
@@ -116,6 +117,9 @@ func _place(data: CityData, at, base: Vector3) -> Vector3:
 			return Vector3(c.x, 0, c.y)
 		"bridge":
 			return Vector3(data.bridge.x + 4, 0, data.bridge.y)
+		"blockade":
+			var b := FogBaseSites.BLOCKADE_AT
+			return Vector3(data.fog.origin.x + b.x + 3.0, 0, data.fog.origin.y + b.y)
 		"west_bridge":
 			return Vector3(data.west_bridge.x - 6, 0, data.west_bridge.z)
 		"urban":
