@@ -957,6 +957,9 @@ func _prison_helicopters() -> void:
 		push_warning("[Vehicles] no lighthouse on the prison island")
 		return
 	_beside("rosomak_apc", _d.building_rect(light), "next to the lighthouse of the prison island", 97, 0.6, 4.0)
+	# Two more of the same, parked with it.
+	for salt in [98, 99]:
+		_beside("rosomak_apc", _d.building_rect(light), "next to the lighthouse of the prison island", salt, 0.6, 4.0)
 
 
 ## Middle of the water met going from `from` towards `to` (first sea after the land of

@@ -164,7 +164,9 @@ const RESIZED_AT := [
 ]
 
 ## Last hand changes of the finished map (`final_tweaks`), cells of the final map.
-const FINAL_DELETED := [["GRAVE", Vector2i(353, 130)]]
+const FINAL_DELETED := [["GRAVE", Vector2i(353, 130)],
+	# The island of the old BT tower: the ruin and two industrial buildings are taken away.
+	["INDUSTRIAL", Vector2i(44, 88)], ["INDUSTRIAL", Vector2i(27, 96)], ["INDUSTRIAL", Vector2i(24, 91)]]
 ## Kind, top-left cell of the lot, size factor of the model.
 const FINAL_RESIZED := [["MUSEUM", Vector2i(213, 207), 0.7]]
 ## More shops like the corner ones in the square of the main cinema (model, size factor): top-left
@@ -193,7 +195,23 @@ const VEGAS_CASINO_MODEL := "vegas_casino.glb: casino_building"
 ## at EIFFEL_BLOCK (that casino's lot grows to the whole 8 x 6 block), drawn at an absolute scale.
 const EIFFEL_MODEL := "eiffel_tower.glb: eiffel_tower"
 const EIFFEL_BLOCK := Rect2i(134, 184, 8, 6)
-const EIFFEL_SCALE := 0.55
+const EIFFEL_SCALE := 0.38
+## The Eiffel tower moves to free Las Vegas ground at least this far from its old block (cells).
+## The dishes (top-left cell of their lot on the final map) drawn with the realistic dish.
+const REAL_DISH_MODEL := "dish_real.glb: dish_real"
+const REAL_DISHES := [Vector2i(104, 188), Vector2i(108, 187), Vector2i(108, 183)]
+## The three dishes of the island of the old BT tower, drawn with the second realistic dish.
+const REAL_DISH_MODEL_2 := "dish_real2.glb: dish_real2"
+const REAL_DISHES_2 := [Vector2i(32, 93), Vector2i(36, 91), Vector2i(36, 88)]
+const EIFFEL_MOVE_APART := 8.0
+## Its new lot (the model is 6 x 6 cells at its scale) and the small buildings that may make room for it.
+const EIFFEL_LOT := Vector2i(6, 6)
+const EIFFEL_CLEARABLE := ["OFFICE", "SHOP", "NIGHTCLUB", "RESTAURANT", "CAFE", "PIZZA_SHOP", "BURGER_SHOP",
+		"APARTMENT", "HOUSE", "GARDEN", "PLAZA"]
+## The pizzeria on the commercial ground that goes to another lot (top-left cell on the final map),
+## and how far at least (cells).
+const PIZZERIA_AT := Vector2i(198, 212)
+const PIZZERIA_MOVE_APART := 12.0
 ## The "Welcome to Las Vegas" sign stands in the desert beside the highway that enters Las Vegas
 ## (north side of its three lanes), turned west to face the traffic coming from the desert.
 const VEGAS_SIGN_LOT := Rect2i(116, 161, 1, 3)
@@ -626,10 +644,15 @@ static func final_tweaks(data: CityData) -> void:
 		var b := data.add_building(lot, CityTypes.Kind.SHOP, f[1], CityTypes.hash2(c.x, c.y, 717), 0.3)
 		data.b_model[b] = FINAL_SHOP_MODEL
 		data.b_scale[b] = FINAL_SHOP_SCALE
+	_delete_club_towers(data)
 	_casino_square(data)
 	_casino_fill(data)
 	_eiffel_tower(data)
+	_casinos_to_vegas_model(data)
 	_move_vegas_sign(data)
+	_move_pizzeria(data)
+	_bt_tower_to_radio_tower(data)
+	_real_dishes(data)
 
 
 ## The row of casino towers on the square of Las Vegas (CASINO2_LOTS).
@@ -679,7 +702,8 @@ static func _casino_fill(data: CityData) -> void:
 	print("[Edits] offices of Las Vegas turned into casinos: ", n)
 
 
-## The Eiffel tower takes the casino that stands in EIFFEL_BLOCK.
+## The Eiffel tower takes the casino that stands in EIFFEL_BLOCK, then moves to the free ground of
+## the Las Vegas zone nearest to it (EIFFEL_MOVE_APART or more cells away); the old block becomes park.
 static func _eiffel_tower(data: CityData) -> void:
 	var casino := -1
 	for b in data.building_count():
@@ -696,12 +720,165 @@ static func _eiffel_tower(data: CityData) -> void:
 	if casino < 0:
 		push_warning("[Edits] no casino in the block of the Eiffel tower at %s" % EIFFEL_BLOCK)
 		return
-	data.set_building_rect(casino, EIFFEL_BLOCK)
+	var lot := _free_vegas_lot(data, casino, EIFFEL_LOT, EIFFEL_BLOCK)
+	if lot.size.x == 0:
+		push_warning("[Edits] no free ground in Las Vegas for the Eiffel tower: it stays at %s" % EIFFEL_BLOCK)
+		lot = EIFFEL_BLOCK
+	else:
+		for b in data.building_count():
+			if b != casino and data.b_kind[b] != CityTypes.Kind.EMPTY and data.building_rect(b).intersects(lot):
+				data.b_kind[b] = CityTypes.Kind.EMPTY
+				hand_deleted[b] = true
+		for y in range(lot.position.y, lot.end.y):
+			for x in range(lot.position.x, lot.end.x):
+				data.forest[data.idx(x, y)] = 0
+		for y in range(EIFFEL_BLOCK.position.y, EIFFEL_BLOCK.end.y):
+			for x in range(EIFFEL_BLOCK.position.x, EIFFEL_BLOCK.end.x):
+				data.zone[data.idx(x, y)] = CityTypes.Zone.PARK
+	print("[Edits] Eiffel tower at ", lot)
+	data.set_building_rect(casino, lot)
 	data.b_facing[casino] = 2
 	data.b_model[casino] = EIFFEL_MODEL
 	data.b_scale[casino] = -EIFFEL_SCALE
 	data.b_sign[casino] = 0
 	data.b_more_signs.erase(casino)
+
+
+## The rectangle of `size` of the Las Vegas ground nearest to the middle of `from` and at least
+## EIFFEL_MOVE_APART cells from it, on dry ground with no road and none of the buildings that must
+## stay (only the small ones of EIFFEL_CLEARABLE may be in the way: fewest first, then nearest);
+## the empty rectangle when there is none. `skip` is the building that moves.
+static func _free_vegas_lot(data: CityData, skip: int, size: Vector2i, from: Rect2i) -> Rect2i:
+	var owner := PackedInt32Array()
+	owner.resize(data.size * data.size)
+	owner.fill(-1)
+	for b in data.building_count():
+		if b != skip and data.b_kind[b] != CityTypes.Kind.EMPTY:
+			var r := data.building_rect(b)
+			for y in range(r.position.y, r.end.y):
+				for x in range(r.position.x, r.end.x):
+					if data.in_bounds(x, y):
+						owner[data.idx(x, y)] = b
+	var centre := Vector2(from.get_center())
+	var best := Rect2i()
+	var best_score := INF
+	for y in range(from.position.y - 40, from.position.y + 40):
+		for x in range(from.position.x - 40, from.position.x + 40):
+			var lot := Rect2i(x, y, size.x, size.y)
+			var d := Vector2(lot.get_center()).distance_to(centre)
+			if d < EIFFEL_MOVE_APART:
+				continue
+			var in_the_way := _vegas_ground(data, lot, owner)
+			if in_the_way < 0:
+				continue
+			var score := float(in_the_way) * 100.0 + d
+			if score < best_score:
+				best = lot
+				best_score = score
+	return best
+
+
+## How many clearable buildings stand on `lot`, or -1 when it is not dry ground without road, with
+## its middle on Las Vegas ground, or holds a building that must stay.
+static func _vegas_ground(data: CityData, lot: Rect2i, owner: PackedInt32Array) -> int:
+	var found := {}
+	for y in range(lot.position.y, lot.end.y):
+		for x in range(lot.position.x, lot.end.x):
+			if not data.in_bounds(x, y):
+				return -1
+			var i := data.idx(x, y)
+			if data.terrain[i] != CityTypes.Terrain.LAND or data.road[i] != 0:
+				return -1
+			if owner[i] >= 0:
+				var b := owner[i]
+				if not EIFFEL_CLEARABLE.has(CityTypes.Kind.keys()[data.b_kind[b]]) or data.b_model.has(b) 						or data.b_sign[b] != 0 or data.b_more_signs.has(b):
+					return -1
+				found[b] = true
+	var c := lot.get_center()
+	if data.zone[data.idx(c.x, c.y)] != CityTypes.Zone.ENTERTAINMENT:
+		return -1
+	return found.size()
+
+
+## Every Las Vegas club drawn as the club tower is taken away (not those with a sign or a model of
+## their own: the signed clubs are the ones MapRetouch dressed).
+static func _delete_club_towers(data: CityData) -> void:
+	var n := 0
+	for b in data.building_count():
+		if data.b_kind[b] != CityTypes.Kind.NIGHTCLUB or data.b_model.has(b) or data.b_sign[b] != 0 				or data.b_more_signs.has(b):
+			continue
+		if BuildingPlacer.club_model_name(data, b) == "club_tower":
+			data.b_kind[b] = CityTypes.Kind.EMPTY
+			hand_deleted[b] = true
+			n += 1
+	print("[Edits] club towers taken away: ", n)
+
+
+## Every casino drawn with the old procedural model takes the model of the Las Vegas casino.
+static func _casinos_to_vegas_model(data: CityData) -> void:
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.CASINO and not data.b_model.has(b):
+			data.b_model[b] = VEGAS_CASINO_MODEL
+
+
+## The pizzeria of PIZZERIA_AT goes to the nearest cleared lot of the commercial ground that is at
+## least PIZZERIA_MOVE_APART cells away and big enough (2 x 3, either way).
+static func _move_pizzeria(data: CityData) -> void:
+	var pizza := -1
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.PIZZA_SHOP and data.building_rect(b).position == PIZZERIA_AT:
+			pizza = b
+	if pizza < 0:
+		push_warning("[Edits] no pizzeria at %s to move" % PIZZERIA_AT)
+		return
+	var from := Vector2(data.building_rect(pizza).get_center())
+	var best := -1
+	var best_d := INF
+	for b in data.building_count():
+		if data.b_kind[b] != CityTypes.Kind.EMPTY or hand_deleted.has(b):
+			continue
+		var r := data.building_rect(b)
+		if mini(r.size.x, r.size.y) < 2 or maxi(r.size.x, r.size.y) < 3 or data.zone_at(r.position.x, r.position.y) != CityTypes.Zone.COMMERCIAL:
+			continue
+		var d := Vector2(r.get_center()).distance_to(from)
+		if d >= PIZZERIA_MOVE_APART and d < best_d and _lot_is_free(data, b, r):
+			best = b
+			best_d = d
+	if best < 0:
+		push_warning("[Edits] no free lot for the pizzeria: it stays at %s" % PIZZERIA_AT)
+		return
+	print("[Edits] pizzeria moved to ", data.building_rect(best))
+	data.b_kind[best] = CityTypes.Kind.PIZZA_SHOP
+	data.b_seed[best] = data.b_seed[pizza]
+	data.b_height[best] = data.b_height[pizza]
+	data.b_scale[best] = data.b_scale[pizza]
+	data.b_kind[pizza] = CityTypes.Kind.EMPTY
+	hand_deleted[pizza] = true
+
+
+## The dishes of REAL_DISHES and REAL_DISHES_2 are drawn with the realistic dish models.
+static func _real_dishes(data: CityData) -> void:
+	var n := 0
+	for b in data.building_count():
+		if data.b_kind[b] != CityTypes.Kind.SAT_DISH:
+			continue
+		var at := data.building_rect(b).position
+		if REAL_DISHES.has(at):
+			data.b_model[b] = REAL_DISH_MODEL
+			n += 1
+		elif REAL_DISHES_2.has(at):
+			data.b_model[b] = REAL_DISH_MODEL_2
+			n += 1
+	if n < REAL_DISHES.size() + REAL_DISHES_2.size():
+		push_warning("[Edits] only %d of the %d realistic dishes found" % [n, REAL_DISHES.size() + REAL_DISHES_2.size()])
+
+
+## The BT tower becomes the radio tower model (the one of PortRework), at the same size, with a green light.
+static func _bt_tower_to_radio_tower(data: CityData) -> void:
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.BT_TOWER:
+			data.b_model[b] = PortRework.RADIO_TOWER
+			data.b_scale[b] = PortRework.RADIO_TOWER_SCALE
 
 
 ## The Las Vegas sign moves from the middle of the city to the desert road (VEGAS_SIGN_LOT).

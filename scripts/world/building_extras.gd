@@ -43,6 +43,13 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	if lib.cats[pid] == Cat.LIGHTHOUSE_CLUB:
 		_lighthouse_neon(lib, xform, batch)
 	match kind:
+		Kind.TELECOM_TOWER, Kind.BT_TOWER:
+			if lib.model_name(pid) == PortRework.RADIO_TOWER:
+				# A big light on the tip: red on the radio tower, green on the one that replaced the BT tower.
+				var top := Vector3(box.get_center().x, box.end.y, box.get_center().z)
+				var size := box.size.y * BEACON_SIZE
+				var light := lib.named_id("nav_red" if kind == Kind.TELECOM_TOWER else "nav_green")
+				batch.add(light, xform * Transform3D(Basis.from_scale(Vector3.ONE * size), top + Vector3(0, size * 0.5, 0)))
 		Kind.CHURCH:
 			if lib.model_name(pid) == CROSS_LIGHT_MODEL:
 				# A tiny red light glowing on the tip of the cross.
@@ -225,6 +232,8 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 const CROSS_LIGHT_MODEL := "free_mini.glb: m12"
 const CROSS_TIP := Vector3(0.48, 1.0, 0.83)
 const CROSS_LIGHT_SIZE := 0.035
+## The light on top of the radio tower model: its size, a share of the height of the model.
+const BEACON_SIZE := 0.07
 ## "blade" (Taiwan signboards) sticks out of the east wall from its brackets (the -X end of the
 ## model), `out` cells long, its face to the south; "corner" (the LED band) wraps the south-east
 ## corner, along `fill` of the east wall. A roof sign with `deep` stands wholly on the roof
