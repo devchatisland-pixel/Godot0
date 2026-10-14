@@ -24,7 +24,7 @@
   },
   {
    "id": "shop-candy-b",
-   "file": "res://shops/models/shop-candy-b.glb",
+   "file": "res://shops/models/shop-candy-b_night.glb",
    "category": "Candy",
    "name": "Low Poly Candy Shop",
    "credit": {
@@ -183,28 +183,8 @@
    "_x": 43.57
   },
   {
-   "id": "shop-steel-glass",
-   "file": "res://shops/models/shop-steel-glass.glb",
-   "category": "General",
-   "name": "Shop (steel & glass)",
-   "credit": {
-    "title": "Shop",
-    "author": "bystryakov.yuriy",
-    "url": "https://sketchfab.com/3d-models/shop-23e3cdb766bd40ac9c63fddfd2d39856",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 4.9,
-    "depth": 3.91,
-    "height": 3.42
-   },
-   "triangles": 448,
-   "notes": "Grey flat roof, glass front, red louvres/shutters. Pivot is centred vertically (y -1.6..1.8): needs lifting to sit on ground.",
-   "_x": 80.42
-  },
-  {
    "id": "shop-coffee-b",
-   "file": "res://shops/models/shop-coffee-b.glb",
+   "file": "res://shops/models/shop-coffee-b_night.glb",
    "category": "Coffee",
    "name": "Shop - Free model (coffee shop)",
    "credit": {
@@ -582,25 +562,6 @@
     "width": 6.0,
     "depth": 4.04,
     "height": 4.3
-   }
-  },
-  {
-   "id": "shop-house-balcony",
-   "category": "House",
-   "name": "Low Poly House (wooden balcony and tent)",
-   "credit": {
-    "title": "Low poly house with wooden balcony and tent",
-    "author": "unknown",
-    "url": "",
-    "license": "see the source"
-   },
-   "notes": "Wooden house with a balcony, plants and a striped tent on the roof.",
-   "file": "res://shops/models/shop-house-balcony.glb",
-   "triangles": 2955,
-   "size_m": {
-    "width": 8.0,
-    "depth": 12.34,
-    "height": 7.42
    }
   },
   {
