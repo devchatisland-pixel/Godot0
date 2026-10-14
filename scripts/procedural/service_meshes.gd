@@ -24,6 +24,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("school", school())
 	lib.add_named("fire_station", fire_station())
 	lib.add_named("police", police())
+	lib.add_named("neon_hall", neon_hall())
 	lib.add_named("church", church())
 
 
@@ -133,6 +134,29 @@ static func police() -> ArrayMesh:
 	# Radio antennas.
 	k.block(Vector3(0.5, 0.85, -0.5), Vector3(0.04, 0.6, 0.04), LAVENDER)
 	k.block(Vector3(0.3, 0.85, -0.6), Vector3(0.2, 0.12, 0.2), LAVENDER)
+	return k.commit()
+
+
+# --- Neon hall: the back of the police station, nothing else -----------------------------------
+## The wall of the police station that has no door (white facade, windows, one blue band), all
+## the way round, with no parking, entrance or antennas, and the band as a neon: a very pale blue,
+## almost white. Its box is the body alone, so signs mounted on it (the LED ribbon of the casinos)
+## sit on the real walls. Same body as police(): 1.7 x 0.85 x 1.25.
+const NEON_PALE_BLUE := Color("e4f4ff")
+
+
+static func neon_hall() -> ArrayMesh:
+	var k := MeshKit.new()
+	var body := Vector3(-0.85, 0, -0.85)
+	var body_size := Vector3(1.7, 0.85, 1.25)
+	k.box(body, body_size, Color("dcdde6"), ROOF)
+	k.windows(body, body_size, 3, 6, WINDOW)
+	k.neon(true)
+	k.box(Vector3(-0.86, 0.26, 0.4), Vector3(1.72, 0.07, 0.02), NEON_PALE_BLUE)
+	k.box(Vector3(-0.86, 0.26, -0.86), Vector3(1.72, 0.07, 0.02), NEON_PALE_BLUE)
+	k.box(Vector3(0.85, 0.26, -0.86), Vector3(0.02, 0.07, 1.28), NEON_PALE_BLUE)
+	k.box(Vector3(-0.87, 0.26, -0.86), Vector3(0.02, 0.07, 1.28), NEON_PALE_BLUE)
+	k.neon(false)
 	return k.commit()
 
 

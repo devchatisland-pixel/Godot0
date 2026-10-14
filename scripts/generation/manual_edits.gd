@@ -259,6 +259,14 @@ const EIFFEL_CLEARABLE := ["OFFICE", "SHOP", "NIGHTCLUB", "RESTAURANT", "CAFE", 
 ## and how far at least (cells).
 const PIZZERIA_AT := Vector2i(198, 212)
 const PIZZERIA_MOVE_APART := 12.0
+## The police station of (148, 202) is not one any more: it becomes the neon hall (the back of the
+## police station with its blue band as a pale neon, procedural mesh "neon_hall"), drawn at the size
+## the police station had on its 4 x 4 lot (3.84 / 1.81), turned north, with the LED ribbon of the casino
+## towers (TW_LED_BAND) wrapped round its south-east corner high on the wall (share of the wall height).
+const NEON_HALL_AT := Vector2i(148, 202)
+const NEON_HALL_MODEL := "neon_hall"
+const NEON_HALL_SCALE := 2.1215
+const NEON_HALL_RIBBON_HEIGHT := 0.6
 ## The "Welcome to Las Vegas" sign stands in the desert beside the highway that enters Las Vegas
 ## (north side of its three lanes), turned west to face the traffic coming from the desert.
 const VEGAS_SIGN_LOT := Rect2i(116, 161, 1, 3)
@@ -703,6 +711,7 @@ static func final_tweaks(data: CityData) -> void:
 	_tank_line(data)
 	_downtown_and_vegas_swaps(data)
 	_vegas_second_pass(data)
+	_neon_hall(data)
 
 
 ## The row of casino towers on the square of Las Vegas (CASINO2_LOTS).
@@ -1099,3 +1108,19 @@ static func _move_vegas_sign(data: CityData) -> void:
 		data.set_building_rect(b, VEGAS_SIGN_LOT)
 		data.b_facing[b] = VEGAS_SIGN_FACING
 		return
+
+
+## The police station at NEON_HALL_AT becomes the neon hall with the casino ribbon on its south-east corner.
+static func _neon_hall(data: CityData) -> void:
+	for b in data.building_count():
+		if data.b_kind[b] != CityTypes.Kind.POLICE or data.building_rect(b).position != NEON_HALL_AT:
+			continue
+		data.b_facing[b] = 0
+		data.b_model[b] = NEON_HALL_MODEL
+		data.b_scale[b] = -NEON_HALL_SCALE
+		data.b_sign[b] = 0
+		data.b_sign_facing[b] = 2
+		data.b_more_signs[b] = [[ModelCatalog.Cat.TW_LED_BAND, "corner"]]
+		data.b_sign_fit[b] = {"height": NEON_HALL_RIBBON_HEIGHT}
+		return
+	push_warning("[Edits] no police station at %s for the neon hall" % NEON_HALL_AT)
