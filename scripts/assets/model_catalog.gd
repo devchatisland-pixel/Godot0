@@ -75,6 +75,8 @@ enum Cat {
 	VEGAS_CASINO, NEON_CASINO,
 	# Twenty-fifth wave: the "Welcome to Las Vegas" sign (trimmed from the Vegas pod)
 	VEGAS_SIGN,
+	# Twenty-sixth wave: the country market store of the fog island (farms)
+	FOG_MARKET,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
