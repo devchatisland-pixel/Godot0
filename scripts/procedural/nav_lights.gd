@@ -12,6 +12,13 @@ extends RefCounted
 const Cat := ModelCatalog.Cat
 const RED := Color("ff2a3a")
 const GREEN := Color("2aff7a")
+const WHITE := Color("fff2c8")
+## The lights of the offshore oil rig: tiny dots (cells) on the highest point (red) and round the
+## edge of the deck (white), so that mostly the glow shows and not the lights themselves.
+const RIG_LIGHT_SIZE := 0.01
+const RIG_LIGHTS_AROUND := 12
+## Share of the rig's height under which no light is put (the legs in the water, the hull).
+const RIG_DECK := 0.3
 ## Front of each model in its own space: +Z is Vector3.BACK, -Z is Vector3.FORWARD.
 const FRONT := {
 	Cat.BOAT_FISHING: Vector3.FORWARD,
@@ -36,6 +43,7 @@ static var _sides := {}
 static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("nav_red", _light(RED))
 	lib.add_named("nav_green", _light(GREEN))
+	lib.add_named("nav_white", _light(WHITE))
 
 
 static func _light(color: Color) -> ArrayMesh:
@@ -61,6 +69,57 @@ static func for_vehicle(lib: ModelLibrary, vehicle: String, id: int, xform: Tran
 		return []
 	return _lights(lib, id, xform, VEHICLE_FRONT, false,
 			HELICOPTER_LOW if vehicle.contains("helicopter") else 1.0)
+
+
+## The lights of the oil rig (mesh `id` drawn at `xform`): a red one on its highest point and
+## RIG_LIGHTS_AROUND white ones on the farthest points of the deck, one per sector round its middle.
+static func for_rig(lib: ModelLibrary, id: int, xform: Transform3D) -> Array:
+	var red := lib.named_id("nav_red")
+	var white := lib.named_id("nav_white")
+	if red < 0 or white < 0:
+		return []
+	var mesh: Mesh = lib.meshes[id]
+	if not _rig_points.has(mesh):
+		_rig_points[mesh] = _find_rig_points(mesh)
+	var out := []
+	var basis := Basis.from_scale(Vector3.ONE * RIG_LIGHT_SIZE)
+	for p: Dictionary in _rig_points[mesh]:
+		out.append([red if p["top"] else white, Transform3D(basis, xform * (p["at"] as Vector3))])
+	return out
+
+
+## Mesh -> [{"at": point, "top": bool}] for the rig (read once per mesh).
+static var _rig_points := {}
+
+
+static func _find_rig_points(mesh: Mesh) -> Array:
+	var box := mesh.get_aabb()
+	var floor_y := box.position.y + box.size.y * RIG_DECK
+	var middle := box.get_center()
+	var top := Vector3(middle.x, -INF, middle.z)
+	var far := []
+	var reach := []
+	for k in RIG_LIGHTS_AROUND:
+		far.append(Vector3.ZERO)
+		reach.append(-1.0)
+	for s in mesh.get_surface_count():
+		for v: Vector3 in mesh.surface_get_arrays(s)[Mesh.ARRAY_VERTEX]:
+			if v.y > top.y:
+				top = v
+			if v.y < floor_y:
+				continue
+			var d := Vector2(v.x - middle.x, v.z - middle.z)
+			var sector := int(floorf((atan2(d.y, d.x) + PI) / TAU * float(RIG_LIGHTS_AROUND))) % RIG_LIGHTS_AROUND
+			if d.length() > reach[sector]:
+				reach[sector] = d.length()
+				far[sector] = v
+	var out := []
+	if top.y > -INF:
+		out.append({"at": top, "top": true})
+	for k in RIG_LIGHTS_AROUND:
+		if reach[k] > 0.0:
+			out.append({"at": far[k], "top": false})
+	return out
 
 
 ## Adds the lights of `for_model` to `batch`.

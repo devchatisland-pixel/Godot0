@@ -59,6 +59,9 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 		Kind.BOAT:
 			# Red light on the left side, green on the right (NavLights).
 			NavLights.add_to(batch, lib, pid, xform)
+			if lib.cats[pid] == Cat.OIL_RIG:
+				for l in NavLights.for_rig(lib, pid, xform):
+					batch.add(l[0], l[1])
 		Kind.AIRPORT:
 			batch.add(lib.named_id("runway_ext"), xform)
 		Kind.STADIUM:

@@ -74,7 +74,7 @@ const OIL_RIG_LOT := Vector2i(5, 6)
 const OIL_RIG_SEA := 3
 ## The rig stands this many cells off the coast at least, as near the port as it can (seen
 ## from the quays).
-const OIL_RIG_OFFSHORE := 8
+const OIL_RIG_OFFSHORE := 13
 
 ## Hand changes to the lots of the port, once every model has its lot (`_hand_edits`). A
 ## model stands once in the port, so its name says which building is meant.

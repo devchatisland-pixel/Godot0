@@ -111,7 +111,7 @@ const CAPITAL_CENTRE := [Rect2(41, 87.5, 8, 6.5), Rect2(51, 87.5, 8, 6.5), Rect2
 const CAPITAL_TOWERS := [
 	[Cat.FOG_NIGHT_TOWER, 3.4, 1], [Cat.FOG_MOD_TOWER, 3.6, 1, 1], [Cat.FOG_OFFICE_TOWER, 3.4, 1],
 	[Cat.FOG_MOD_TOWER, 3.8, 1, 2], [Cat.FOG_FLOOR, 3.2, 6], [Cat.FOG_MOD_TOWER, 3.4, 1, 0],
-	[Cat.FOG_NIGHT_TOWER, 3.4, 1], [Cat.FOG_MOD_TOWER, 3.6, 1, 1], [Cat.FOG_OFFICE, 3.4, 1],
+	[Cat.FOG_NIGHT_TOWER, 3.4, 1], [Cat.FOG_MOD_TOWER, 3.6, 1, 1], [Cat.FOG_OFFICE, 4.0, 1],
 	[Cat.FOG_MOD_TOWER, 3.8, 1, 2], [Cat.FOG_OFFICE_TOWER, 3.4, 1], [Cat.FOG_MOD_TOWER, 3.4, 1, 0],
 ]
 const CAPITAL_HOMES := [Rect2(41, 77, 8, 8), Rect2(51, 77, 8, 8), Rect2(61, 77, 8, 8),
@@ -122,7 +122,7 @@ const CAPITAL_HOMES := [Rect2(41, 77, 8, 8), Rect2(51, 77, 8, 8), Rect2(61, 77, 
 const EASTBAY_CENTRE := [Rect2(105, 87, 8, 7.5), Rect2(115, 87, 8, 7.5), Rect2(125, 87, 8, 7.5),
 		Rect2(135, 87, 8, 7.5)]
 const EASTBAY_SHOPS := [
-	[Cat.FOG_OFFICE, 3.2, 1], [Cat.FOG_MOD_TOWER, 3.2, 1, 0], [Cat.FOG_FLOOR, 3.0, 3], [Cat.FOG_MOD_HOUSE, 3.2, 1, 2],
+	[Cat.FOG_OFFICE, 3.8, 1], [Cat.FOG_MOD_TOWER, 3.2, 1, 0], [Cat.FOG_FLOOR, 3.0, 3], [Cat.FOG_MOD_HOUSE, 3.2, 1, 2],
 	[Cat.FOG_OFFICE_TOWER, 3.2, 1], [Cat.FOG_MOD_HOUSE, 2.8, 1, 1], [Cat.FOG_FLOOR, 3.0, 2], [Cat.FOG_MOD_TOWER, 3.4, 1, 1],
 ]
 const EASTBAY_HOMES := [Rect2(105, 77, 8, 8), Rect2(115, 77, 8, 8), Rect2(125, 77, 8, 8),
@@ -156,9 +156,41 @@ const FIELDS := [
 ]
 const FIELD_MESHES := ["field_wheat", "field_corn", "field_plowed", "field_green"]
 ## Farm buildings: [place, footprint].
-const FARMS := [[Vector2(80, 65), 3.0], [Vector2(86, 65), 3.0], [Vector2(97, 65), 3.0],
-		[Vector2(104, 64), 2.6], [Vector2(74, 133), 3.0], [Vector2(96.5, 132), 2.5],
-		[Vector2(127, 57), 2.6]]
+## The houses at (80, 65), (86, 65) and (104, 64) were taken away; the ones at (97, 65) and
+## (127, 57) are offices of the pack (FARMS_AS_OFFICE, indexes of FARMS).
+const FARMS := [[Vector2(97, 65), 3.4], [Vector2(74, 133), 3.0], [Vector2(96.5, 132), 2.5],
+		[Vector2(127, 57), 3.2]]
+const FARMS_AS_OFFICE := [0, 3]
+
+## The industrial zone, drawn with the buildings of the port of the main island (halls, sheds,
+## tanks, a crane, shipping containers): [model, place, the way the front looks, footprint in
+## cells, which model of the category, storeys]. A String model is a named mesh (a container).
+const INDUSTRY_PLAN := [
+	# North-west block: a factory hall, two sheds, a water tank.
+	[Cat.IND_HALL, Vector2(79, 104.5), Vector2(0, 1), 8.0, 2],
+	[Cat.IND_SHED, Vector2(83.8, 103), Vector2(0, 1), 4.0, 2],
+	[Cat.IND_TOWER, Vector2(85.5, 109), Vector2(0, 1), 3.0, 4],
+	[Cat.IND_SHED, Vector2(76, 111.5), Vector2(0, 1), 4.0, 4],
+	# North-east block: a warehouse and the oil and gas tanks.
+	[Cat.IND_HALL, Vector2(94.5, 101.5), Vector2(0, 1), 6.0, 8],
+	[Cat.PORT_TANK, Vector2(92.5, 108), Vector2(0, 1), 4.0, 0],
+	[Cat.PORT_TANK, Vector2(96.5, 106), Vector2(0, 1), 4.0, 1],
+	[Cat.PORT_TANK, Vector2(96.5, 110), Vector2(0, 1), 3.0, 3],
+	# South-west block: the hangar and the crane of the quay.
+	[Cat.IND_HALL, Vector2(79.5, 122), Vector2(0, -1), 8.0, 4],
+	[Cat.IND_TOWER, Vector2(85.5, 122.5), Vector2(0, 1), 4.0, 0],
+	# South-east block: the container yard, stacked up to two high, and a shed.
+	["yardbox:01", Vector2(91.5, 118.5), Vector2(1, 0), 2.4, 0, 2],
+	["yardbox:04", Vector2(94, 118.5), Vector2(1, 0), 2.4, 0, 1],
+	["yardbox:09", Vector2(96.5, 118.5), Vector2(1, 0), 2.4, 0, 2],
+	["yardbox:02", Vector2(91.5, 120.2), Vector2(1, 0), 2.4, 0, 1],
+	["yardbox:10", Vector2(94, 120.2), Vector2(1, 0), 2.4, 0, 2],
+	["yardbox:01", Vector2(96.5, 120.2), Vector2(1, 0), 2.4, 0, 1],
+	["yardbox:04", Vector2(91.5, 121.9), Vector2(1, 0), 2.4, 0, 1],
+	["yardbox:09", Vector2(94, 121.9), Vector2(1, 0), 2.4, 0, 2],
+	["yardbox:02", Vector2(96.5, 121.9), Vector2(1, 0), 2.4, 0, 1],
+	[Cat.IND_SHED, Vector2(95, 125), Vector2(0, -1), 4.0, 0],
+]
 
 ## Cars parked along the streets of the towns: [place, the way the nose looks].
 const CARS := ["m8_long_sedan_black", "p54_04_sedan_modern_silver", "m8_wagon_blue", "m8_sedan_dark_red",
@@ -243,15 +275,17 @@ static func plan() -> Array[Dictionary]:
 	var h := 0
 	for r: Rect2 in CAPITAL_HOMES + EASTBAY_HOMES:
 		h = _homes(out, r, h)
-	# --- Industrial zone ---
-	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(79.5, 102.5), "dir": east, "fit": 5.5, "stack": 2})
-	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(84.3, 109.5), "dir": east, "fit": 3.0, "stack": 2})
-	out.append({"cat": Cat.FOG_OFFICE, "at": Vector2(76.2, 109.5), "dir": south, "fit": 2.8})
-	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 101.5), "dir": west, "fit": 3.2})
-	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 108.5), "dir": south, "fit": 3.2, "stack": 2})
-	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(79, 121), "dir": north, "fit": 5.0, "stack": 2})
-	out.append({"cat": Cat.FOG_MOD_HOUSE, "at": Vector2(85, 121), "dir": south, "fit": 2.8, "v": 2})
-	out.append({"cat": Cat.FOG_FLOOR, "at": Vector2(93.5, 120.5), "dir": west, "fit": 3.0, "stack": 3})
+	# --- Industrial zone: the buildings, tanks, crane and containers of the port of the main island ---
+	for e in INDUSTRY_PLAN:
+		var item := {"at": e[1], "dir": e[2], "fit": e[3]}
+		if e[0] is String:
+			item["named"] = e[0]
+		else:
+			item["cat"] = e[0]
+			item["v"] = e[4]
+		if e.size() > 5:
+			item["stack"] = e[5]
+		out.append(item)
 	# --- Farmland ---
 	for k in FIELDS.size():
 		var f: Array = FIELDS[k]
@@ -259,7 +293,9 @@ static func plan() -> Array[Dictionary]:
 		out.append({"named": FIELD_MESHES[k % FIELD_MESHES.size()], "at": (f[0] as Vector2) + size * 0.5,
 				"dir": south, "size": size})
 	for k in FARMS.size():
-		out.append({"cat": Cat.FOG_HOUSE, "at": FARMS[k][0], "dir": south, "fit": FARMS[k][1]})
+		# The farm buildings of FARMS_AS_OFFICE are offices of the pack, not houses.
+		var farm_cat: int = Cat.FOG_OFFICE if FARMS_AS_OFFICE.has(k) else Cat.FOG_HOUSE
+		out.append({"cat": farm_cat, "at": FARMS[k][0], "dir": south, "fit": FARMS[k][1]})
 	# --- Vehicles ---
 	for k in CAR_SPOTS.size():
 		_veh(out, CARS[k % CARS.size()], CAR_SPOTS[k][0], CAR_SPOTS[k][1])

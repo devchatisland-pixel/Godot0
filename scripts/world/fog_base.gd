@@ -105,6 +105,9 @@ func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
 			id = lib.named_id(p["named"])
 			label = ["Crop field", "FIELD"]
 			note = "farmland of the fog island"
+			if String(p["named"]).begins_with("yardbox:"):
+				label = ["Shipping container", "PROP"]
+				note = "industrial zone of the fog island"
 		else:
 			var ids := lib.ids(p["cat"])
 			id = ids[int(p.get("v", 0)) % ids.size()] if not ids.is_empty() else -1
