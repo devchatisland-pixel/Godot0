@@ -1,0 +1,9 @@
+{
+	"file": "vegas_club.glb",
+	"models": [
+		{
+			"cat": "NEON_CLUB",
+			"node": "vegas_club"
+		}
+	]
+}
