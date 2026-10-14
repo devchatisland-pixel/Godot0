@@ -225,7 +225,7 @@ const FINAL2_DELETED := [["SKYSCRAPER", Vector2i(128, 199)], ["SKYSCRAPER", Vect
 	["NIGHTCLUB", Vector2i(131, 213)], ["SKYSCRAPER", Vector2i(143, 174)], ["SKYSCRAPER", Vector2i(146, 174)]]
 const FINAL2_TO_POLICE := [Vector2i(118, 198), Vector2i(122, 203), Vector2i(147, 181), Vector2i(137, 178),
 	Vector2i(131, 158), Vector2i(148, 202)]
-const FINAL2_NEW_SIGNS := [[Vector2i(131, 194), "NEON_CLUB"], [Vector2i(131, 202), "NEON_GIRL"]]
+const FINAL2_NEW_SIGNS := [[Vector2i(131, 194), "NEON_CLUB"], [Vector2i(131, 202), "NEON_GIRL"], [Vector2i(144, 202), "NEON_LOVE"]]
 const FINAL2_CASINO_WORD := Vector2i(122, 186)
 const FINAL2_SIGN_FIT := {"fill": 1.0, "shift": 0.0}
 ## Burger King (cell): size factor.
