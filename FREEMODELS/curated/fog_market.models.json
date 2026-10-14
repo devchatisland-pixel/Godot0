@@ -1,0 +1,9 @@
+{
+	"file": "fog_market.glb",
+	"models": [
+		{
+			"cat": "FOG_MARKET",
+			"node": "fog_market"
+		}
+	]
+}

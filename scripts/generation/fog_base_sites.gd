@@ -157,10 +157,10 @@ const FIELDS := [
 const FIELD_MESHES := ["field_wheat", "field_corn", "field_plowed", "field_green"]
 ## Farm buildings: [place, footprint].
 ## The houses at (80, 65), (86, 65) and (104, 64) were taken away; the ones at (97, 65) and
-## (127, 57) are offices of the pack (FARMS_AS_OFFICE, indexes of FARMS).
-const FARMS := [[Vector2(97, 65), 3.4], [Vector2(74, 133), 3.0], [Vector2(96.5, 132), 2.5],
-		[Vector2(127, 57), 3.2]]
-const FARMS_AS_OFFICE := [0, 3]
+## (127, 57) are country market stores (FARMS_AS_MARKET, indexes of FARMS).
+const FARMS := [[Vector2(97, 65), 4.4], [Vector2(74, 133), 3.0], [Vector2(96.5, 132), 2.5],
+		[Vector2(127, 57), 4.4]]
+const FARMS_AS_MARKET := [0, 3]
 
 ## The industrial zone, drawn with the buildings of the port of the main island (halls, sheds,
 ## tanks, a crane, shipping containers): [model, place, the way the front looks, footprint in
@@ -293,8 +293,8 @@ static func plan() -> Array[Dictionary]:
 		out.append({"named": FIELD_MESHES[k % FIELD_MESHES.size()], "at": (f[0] as Vector2) + size * 0.5,
 				"dir": south, "size": size})
 	for k in FARMS.size():
-		# The farm buildings of FARMS_AS_OFFICE are offices of the pack, not houses.
-		var farm_cat: int = Cat.FOG_OFFICE if FARMS_AS_OFFICE.has(k) else Cat.FOG_HOUSE
+		# The farm buildings of FARMS_AS_MARKET are the country market store, not houses.
+		var farm_cat: int = Cat.FOG_MARKET if FARMS_AS_MARKET.has(k) else Cat.FOG_HOUSE
 		out.append({"cat": farm_cat, "at": FARMS[k][0], "dir": south, "fit": FARMS[k][1]})
 	# --- Vehicles ---
 	for k in CAR_SPOTS.size():

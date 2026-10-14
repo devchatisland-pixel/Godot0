@@ -45,6 +45,7 @@ const TITLES := {
 	Cat.FOG_NIGHT_TOWER: ["Night tower", "SKYSCRAPER"], Cat.FOG_OFFICE_TOWER: ["Office tower", "SKYSCRAPER"],
 	Cat.FOG_FLOOR: ["Block of flats", "APARTMENT"], Cat.FOG_MOD_HOUSE: ["Town house", "HOUSE"],
 	Cat.FOG_MOD_TOWER: ["Tower", "SKYSCRAPER"], Cat.FOG_MOD_HOME: ["Town house", "HOUSE"],
+	Cat.FOG_MARKET: ["Country market store", "SHOP"],
 }
 
 ## Clickable things: {"mesh": Mesh, "xform": Transform3D, "pick": Dictionary} (see BuildingPicker).

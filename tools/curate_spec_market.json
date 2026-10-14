@@ -1,0 +1,20 @@
+{
+ "comment": "Country market store for the fog island (SketchUp model: the ground planes were cut away; the farm sign stands in front of the porch, front = +Z).",
+ "packs": [
+  {
+   "src": "res://FREEMODELS/_incoming/country_market_store.glb",
+   "out": "fog_market",
+   "texture_max": 512,
+   "items": [
+    {
+     "id": "fog_market",
+     "nodes": [
+      "Sketchfab_model"
+     ],
+     "cat": "FOG_MARKET",
+     "footprint": 4.0
+    }
+   ]
+  }
+ ]
+}
