@@ -47,7 +47,8 @@ class H(http.server.SimpleHTTPRequestHandler):
         super().do_GET()
 os.chdir(T)
 srv=http.server.ThreadingHTTPServer(('127.0.0.1',8765),H); threading.Thread(target=srv.serve_forever,daemon=True).start()
-files=sorted(f for f in os.listdir(SRC) if f.lower().endswith('.glb'))
+ONLY=set(sys.argv[1:])  # optional: render just these .glb names
+files=sorted(f for f in os.listdir(SRC) if f.lower().endswith('.glb') and (not ONLY or f in ONLY))
 ok=[];bad=[]
 with sync_playwright() as p:
     br=p.chromium.launch(channel='chromium',args=['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'])
