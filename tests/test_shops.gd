@@ -22,10 +22,11 @@ func _init() -> void:
 		elif not ResourceLoader.load(e["file"]) is PackedScene:
 			_fail("not a scene: " + String(e["file"]))
 
-	# The shipping containers of the catalog are not put on the island (ShopSites).
-	var wanted := catalog.filter(func(e) -> bool: return not String(e["id"]).begins_with("container-"))
+	# The shipping containers and the modular buildings of the catalog are not put on the island (ShopSites).
+	var wanted := catalog.filter(func(e) -> bool:
+		return not String(e["id"]).begins_with("container-") and not String(e["id"]).begins_with("modular-"))
 	if plan.size() != wanted.size():
-		_fail("expected one shop per catalog entry (containers left out), got %d for %d" % [plan.size(), wanted.size()])
+		_fail("expected one shop per catalog entry (containers and modular buildings left out), got %d for %d" % [plan.size(), wanted.size()])
 	var seen := {}
 	for p in plan:
 		if seen.has(p["id"]):

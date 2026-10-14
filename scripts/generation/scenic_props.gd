@@ -37,6 +37,8 @@ const CHAIR_FRONT := Vector3(1, 0, 0)
 const LONE_CHAIR_LOOK := Vector3(0, 0, -1)
 const LOOK_AT_BALL := {Vector2i(300, 129): [1], Vector2i(232, 61): []}
 const LOOK_WEST := {Vector2i(171, 62): []}
+## The outer chairs of the set at (300, 129) look east.
+const LOOK_EAST := {Vector2i(300, 129): [0, 2]}
 const HAND_REACH := 3.0
 
 ## Sizes in cells (a little bigger than life, so they can be seen).
@@ -185,10 +187,13 @@ func _lonely_beaches() -> void:
 		var ball := p + sea * 0.45 + side * 0.2
 		var at_ball: Variant = _hand_set(LOOK_AT_BALL, c)
 		var west: Variant = _hand_set(LOOK_WEST, c)
+		var east: Variant = _hand_set(LOOK_EAST, c)
 		for k in chairs:
 			var at := p + side * (float(k) - float(chairs - 1) * 0.5) * 0.55
 			var yaw := face
-			if _hand_has(at_ball, k):
+			if _hand_has(east, k):
+				yaw = _look_yaw(Vector3(1, 0, 0))
+			elif _hand_has(at_ball, k):
 				yaw = _look_yaw(ball - at)
 			elif _hand_has(west, k):
 				yaw = _look_yaw(Vector3(-1, 0, 0))
