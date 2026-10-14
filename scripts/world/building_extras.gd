@@ -42,6 +42,11 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 				more[4] if more.size() > 4 else 0.0)
 	if lib.cats[pid] == Cat.LIGHTHOUSE_CLUB:
 		_lighthouse_neon(lib, xform, batch)
+	if kind == Kind.CASINO and lib.model_name(pid) == ManualEdits.EIFFEL_MODEL:
+		# A little red light on the tip of the Eiffel tower, like the radio tower has.
+		var tip := Vector3(box.get_center().x, box.end.y, box.get_center().z)
+		var ball := box.size.y * BEACON_SIZE
+		batch.add(lib.named_id("beacon_red"), xform * Transform3D(Basis.from_scale(Vector3.ONE * ball), tip + Vector3(0, ball * 0.5, 0)))
 	match kind:
 		Kind.TELECOM_TOWER, Kind.BT_TOWER:
 			if lib.model_name(pid) == PortRework.RADIO_TOWER:
