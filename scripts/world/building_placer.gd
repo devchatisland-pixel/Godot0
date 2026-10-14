@@ -82,7 +82,10 @@ const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.
 ## Things that float: height above the ground (in cells).
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
-const MODEL_BOOST := {}
+const MODEL_BOOST := {"free_mini.glb: m7": 1.15}
+## The business pack shop is drawn like an office (0.8 to 1.15 of its size) whatever the kind of
+## the building, on the east side (a restaurant of that model was drawn much bigger).
+const BIZ_SHOP_MODEL := "business.glb: shop"
 ## The row of skyscraper towers of the Las Vegas casino (ManualEdits) is stretched this much in height.
 const CASINO_TOWER_STRETCH := 2.3
 ## Schools are drawn this much bigger (all round); tanks this much smaller.
@@ -175,6 +178,13 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 	if (facing == 0 or facing == 3) and not pick.is_empty() and lib.ids(Cat.BIZ_SHOP).has(pick["id"]):
 		return _pick_model_raw(data, lib, i, 2 if facing == 0 else 1)
 	return pick
+
+
+## Name of the procedural model a Las Vegas club is drawn with (the same choice as `_pick_model_raw`).
+static func club_model_name(data: CityData, i: int) -> String:
+	var r := data.building_rect(i)
+	var names: Array = VEGAS_BY_SIZE[clampi(mini(r.size.x, r.size.y), 1, 3)]
+	return names[(data.b_seed[i] >> 3) % names.size()]
 
 
 static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
@@ -275,6 +285,8 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 			stretch = 1.6
 		_:
 			scale = minf(room, MAX_FILL if CityTypes.is_service(kind) else 1.0)
+	if lib.model_name(id) == BIZ_SHOP_MODEL and facing == 1 and kind != Kind.OFFICE:
+		scale = clampf(room, 0.8, 1.15)
 	if kind == Kind.CASINO and data.b_model.get(i, "") == ManualEdits.CASINO_MODEL:
 		stretch = CASINO_TOWER_STRETCH
 	if ModelPools.is_new_york(lib, id):

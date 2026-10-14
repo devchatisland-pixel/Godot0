@@ -21,6 +21,13 @@ const SHOTS := [
 	{"zoom": 16.0, "at": Kind.CONCERT},
 	{"zoom": 16.0, "at": Kind.FIRE_TRUCK},
 	{"zoom": 14.0, "at": "blockade"},
+	{"zoom": 16.0, "at": "eiffel"},
+	{"zoom": 40.0, "at": Kind.TELECOM_TOWER},
+	{"zoom": 40.0, "at": Kind.BT_TOWER, "night": true},
+	{"zoom": 9.0, "at": Vector3(26, 0, 45)},
+	{"zoom": 12.0, "at": Vector3(196, 0, 212)},
+	{"zoom": 12.0, "at": Vector3(207, 0, 218)},
+	{"zoom": 9.0, "at": Vector3(9, 0, 9), "night": true},
 ]
 
 var _dir := "user://"
@@ -40,6 +47,12 @@ func _run() -> void:
 		await get_tree().process_frame
 	var cam: IsoCamera = main.camera
 	var data: CityData = main.data
+	# The loading screen stays up while the continent is raised: wait for it to go.
+	var overlay = main.get("_overlay")
+	var waited := 0
+	while overlay != null and overlay.visible and waited < 3000:
+		await get_tree().process_frame
+		waited += 1
 	var args := OS.get_cmdline_user_args()
 	if "--continent" in args:
 		await _continent(main)
@@ -107,6 +120,8 @@ func _continent(main: Node) -> void:
 
 
 func _place(data: CityData, at, base: Vector3) -> Vector3:
+	if at is Vector3:
+		return at
 	match at:
 		"center", "start":
 			return base
@@ -117,6 +132,12 @@ func _place(data: CityData, at, base: Vector3) -> Vector3:
 			return Vector3(c.x, 0, c.y)
 		"bridge":
 			return Vector3(data.bridge.x + 4, 0, data.bridge.y)
+		"eiffel":
+			for b in data.building_count():
+				if data.b_model.get(b, "") == ManualEdits.EIFFEL_MODEL:
+					var c := data.building_rect(b).get_center()
+					return Vector3(c.x, 0, c.y)
+			return base
 		"blockade":
 			var b := FogBaseSites.BLOCKADE_AT
 			return Vector3(data.fog.origin.x + b.x + 3.0, 0, data.fog.origin.y + b.y)

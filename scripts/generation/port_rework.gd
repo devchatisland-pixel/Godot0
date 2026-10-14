@@ -125,7 +125,7 @@ const PORT_ADDED := [
 ## RADIO_TOWER_AT), drawn RADIO_TOWER_SCALE times its own size.
 const RADIO_TOWER := "port_towers.glb: tower_radio"
 const RADIO_TOWER_AT := Vector2i(104, 184)
-const RADIO_TOWER_SCALE := 2.0
+const RADIO_TOWER_SCALE := 1.4
 ## The construction crane of the quay (top-left cell of its lot) moves beside the loading bay shed.
 const CRANE_MOVED := [Vector2i(123, 277), Rect2i(126, 244, 2, 2)]
 ## Billboards turned round: top-left cell of the lot, new facing (0 N, 1 E, 2 S, 3 W).

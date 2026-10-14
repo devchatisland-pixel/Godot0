@@ -84,6 +84,8 @@ enum Cat {
 	CONTINENT, CONTINENT2,
 	# Twenty-ninth wave: the Eiffel tower alone (tools/make_eiffel_tower.py)
 	EIFFEL_TOWER,
+	# Thirtieth wave: the realistic satellite dish of the radio tower of the city
+	SAT_DISH_REAL,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

@@ -619,6 +619,13 @@ PACKS = {
     # with its face to +Z. FogBase hangs it on the fence of the secret base.
     "danger_sign": {"src": "simple_chainlink_fence.glb", "tex": 512, "items": [
         {"id": "danger", "cat": "DANGER_SIGN", "nodes": ["Danger"], "yaw": -90, "width": 1.0}]},
+    # The realistic satellite dish that stands round the radio tower of the city (3 dishes, set by
+    # ManualEdits.REAL_DISHES); the old dish stays for the other dishes of the map.
+    "dish_real": {"src": "realistic_3d_satellite_dish.glb", "tex": 512, "items": [
+        {"id": "dish_real", "cat": "SAT_DISH_REAL", "length": 1.65}]},
+    # A second realistic dish, for the three dishes of the island of the old BT tower (ManualEdits.REAL_DISHES_2).
+    "dish_real2": {"src": "satellite_dish_3d_model_for_download.glb", "tex": 512, "items": [
+        {"id": "dish_real2", "cat": "SAT_DISH_REAL", "length": 1.65}]},
 }
 
 ## The lighthouse of the little island, a night club: the "Light House Club" sign of the club
