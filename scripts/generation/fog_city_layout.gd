@@ -409,6 +409,7 @@ func _put(spec: Array, p: Vector2, face: Vector2, group: String) -> void:
 
 
 func _put_shop(p: Vector2, face: Vector2) -> void:
+	face = _south_or_east(face)
 	var half := _shop_size * 0.5
 	if not _land_box(p, half) or keep_out(p, maxf(half.x, half.y) + 0.3) or _near_extra(p, half.x + 0.5):
 		return
@@ -455,7 +456,7 @@ func _extra_shops() -> void:
 						free = false
 						break
 				if free and _land_box(p, half) and not keep_out(p, maxf(half.x, half.y) + 0.3) 						and not _near_extra(p, half.x + 0.5):
-					var face := Vector2(0, 1) if p.y < r.get_center().y else Vector2(0, -1)
+					var face := _south_or_east(Vector2(0, 1) if p.y < r.get_center().y else Vector2(0, -1))
 					_items.append({"shop": SHOP_ID, "at": p, "dir": face, "scale": _shop_scale(), "city": true})
 					_rects.append(Rect2(p - half, _shop_size))
 					_stats["shops"] += 1
@@ -472,6 +473,16 @@ func _load_shop() -> void:
 		if s["id"] == SHOP_ID:
 			var k := _shop_scale()
 			_shop_size = Vector2(float(s["width"]) * k, float(s["depth"]) * k)
+
+
+## The shops look south or east, like the one of the development island: a front to the
+## north turns south, a front to the west turns east.
+func _south_or_east(face: Vector2) -> Vector2:
+	if face.y < -0.5:
+		return Vector2(0, 1)
+	if face.x < -0.5:
+		return Vector2(1, 0)
+	return face
 
 
 func _shop_scale() -> float:

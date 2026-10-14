@@ -70,6 +70,9 @@ static func apply(data: CityData) -> Dictionary:
 			var face := _street_facing(data, data.building_rect(b))
 			if face < 0:
 				face = data.b_facing[b]
+			# Every candy shop looks south or east, like the one of the development island: the ones
+			# that would face north face south, the ones that would face west face east.
+			face = 2 if face == 0 else (1 if face == 3 else face)
 			# The model's front is -Z: turn it the other way round so that it looks at the street.
 			data.b_kind[b] = Kind.SHOP
 			data.b_facing[b] = (face + 2) % 4
