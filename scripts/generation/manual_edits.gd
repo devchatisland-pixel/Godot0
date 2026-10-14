@@ -203,6 +203,10 @@ const REAL_DISHES := [Vector2i(104, 188), Vector2i(108, 187), Vector2i(108, 183)
 ## The three dishes of the island of the old BT tower, drawn with the second realistic dish.
 const REAL_DISH_MODEL_2 := "dish_real2.glb: dish_real2"
 const REAL_DISHES_2 := [Vector2i(32, 93), Vector2i(36, 91), Vector2i(36, 88)]
+## The oil tank (top-left cell of its lot on the final map, model) that gets a line of more tanks to the east.
+const TANK_LINE_FROM := Vector2i(131, 241)
+const TANK_LINE_MODEL := "port_tanks.glb: tank_oil"
+const TANK_LINE_COUNT := 4
 const EIFFEL_MOVE_APART := 8.0
 ## Its new lot (the model is 6 x 6 cells at its scale) and the small buildings that may make room for it.
 const EIFFEL_LOT := Vector2i(6, 6)
@@ -653,6 +657,7 @@ static func final_tweaks(data: CityData) -> void:
 	_move_pizzeria(data)
 	_bt_tower_to_radio_tower(data)
 	_real_dishes(data)
+	_tank_line(data)
 
 
 ## The row of casino towers on the square of Las Vegas (CASINO2_LOTS).
@@ -871,6 +876,33 @@ static func _real_dishes(data: CityData) -> void:
 			n += 1
 	if n < REAL_DISHES.size() + REAL_DISHES_2.size():
 		push_warning("[Edits] only %d of the %d realistic dishes found" % [n, REAL_DISHES.size() + REAL_DISHES_2.size()])
+
+
+## The oil tank of TANK_LINE_FROM is copied to make a line of TANK_LINE_COUNT more towards the east
+## (each one on the free lot next to the last).
+static func _tank_line(data: CityData) -> void:
+	var src := -1
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.INDUSTRIAL and data.building_rect(b).position == TANK_LINE_FROM 				and data.b_model.get(b, "") == TANK_LINE_MODEL:
+			src = b
+	if src < 0:
+		push_warning("[Edits] no tank at %s for the line of tanks" % TANK_LINE_FROM)
+		return
+	var r := data.building_rect(src)
+	var placed := 0
+	for k in range(1, TANK_LINE_COUNT + 1):
+		var lot := Rect2i(r.position + Vector2i(r.size.x * k, 0), r.size)
+		if not _lot_is_free(data, src, lot):
+			push_warning("[Edits] no room for the tank of the line at %s" % lot)
+			break
+		var b := data.add_building(lot, CityTypes.Kind.INDUSTRIAL, data.b_facing[src], data.b_seed[src], data.b_height[src])
+		data.b_model[b] = TANK_LINE_MODEL
+		data.b_scale[b] = data.b_scale[src]
+		for y in range(lot.position.y, lot.end.y):
+			for x in range(lot.position.x, lot.end.x):
+				data.zone[data.idx(x, y)] = data.zone[data.idx(r.position.x, r.position.y)]
+		placed += 1
+	print("[Edits] tanks added to the line: ", placed)
 
 
 ## The BT tower becomes the radio tower model (the one of PortRework), at the same size, with a green light.
