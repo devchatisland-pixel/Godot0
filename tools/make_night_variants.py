@@ -139,9 +139,20 @@ class GLB:
         return len(s.j['accessors']) - 1
 
     def set_geometry(s, prim, pos, nrm, uv, uv2):
-        """Gives `prim` new vertices, three per triangle (no index is shared)."""
+        """Gives `prim` new vertices, three per triangle (no index is shared; without `uv2`
+        the equal vertices are shared again, which keeps the file small)."""
+        if uv2 is None:
+            rows = np.concatenate([pos, nrm, uv], 1).astype(np.float32)
+            rows, index = np.unique(rows, axis=0, return_inverse=True)
+            pos, nrm, uv = rows[:, 0:3], rows[:, 3:6], rows[:, 6:8]
+            prim['attributes'] = {'POSITION': s.add_accessor(pos, 'VEC3', True), 'NORMAL': s.add_accessor(nrm, 'VEC3'),
+                                  'TEXCOORD_0': s.add_accessor(uv, 'VEC2')}
+            prim['indices'] = s.add_accessor(index.reshape(-1), 'SCALAR')
+            return
         prim['attributes'] = {'POSITION': s.add_accessor(pos, 'VEC3', True), 'NORMAL': s.add_accessor(nrm, 'VEC3'),
-                              'TEXCOORD_0': s.add_accessor(uv, 'VEC2'), 'TEXCOORD_1': s.add_accessor(uv2, 'VEC2')}
+                              'TEXCOORD_0': s.add_accessor(uv, 'VEC2')}
+        if uv2 is not None:
+            prim['attributes']['TEXCOORD_1'] = s.add_accessor(uv2, 'VEC2')
         prim['indices'] = s.add_accessor(np.arange(len(pos)), 'SCALAR')
 
     def add_texture(s, img, name):
@@ -466,12 +477,12 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False)
     return uv2, Image.fromarray((stored * 255).round().astype(np.uint8))
 
 
-def write_night(g, tri, uv2, img, name):
-    """The triangles get their new coordinates, every material the night map."""
+def write_geometry(g, tri, uv2=None):
+    """The triangles of `tri` become the vertices of their primitives (with the coordinates
+    `uv2` as TEXCOORD_1 when given); a primitive left without any triangle goes, and its mesh
+    with it when it was the last one."""
     for p, start, count in tri.prims:
         if count == 0:
-            # Every triangle of it was taken away: the primitive goes, and its mesh with it when
-            # it was the last one.
             for k, mesh in enumerate(g.j['meshes']):
                 if any(q is p for q in mesh['primitives']):
                     mesh['primitives'] = [q for q in mesh['primitives'] if q is not p]
@@ -482,7 +493,12 @@ def write_night(g, tri, uv2, img, name):
             continue
         sl = slice(start, start + count)
         g.set_geometry(p, tri.local[sl].reshape(-1, 3), tri.local_nrm[sl].reshape(-1, 3), tri.uv[sl].reshape(-1, 2),
-                       uv2[sl].reshape(-1, 2))
+                       None if uv2 is None else uv2[sl].reshape(-1, 2))
+
+
+def write_night(g, tri, uv2, img, name):
+    """The triangles get their new coordinates, every material the night map."""
+    write_geometry(g, tri, uv2)
     tex = g.add_texture(img, name)
     for m in g.j['materials']:
         m['emissiveTexture'] = {'index': tex, 'texCoord': 1}
