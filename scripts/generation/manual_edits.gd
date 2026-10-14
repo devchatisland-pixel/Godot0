@@ -182,6 +182,13 @@ const CASINO_AT := Vector2i(123, 174)
 const CASINO_SHOP := Vector2i(121, 175)
 const CASINO_LOTS := [Rect2i(121, 174, 2, 3), Rect2i(123, 174, 1, 3), Rect2i(124, 174, 2, 3), Rect2i(126, 174, 1, 3)]
 const CASINO_MODEL := "building-skyscraper-d.glb"
+## The square of Las Vegas: a night club (143,186) and two offices (143,188) and (143,192) make
+## room for four casino buildings of the vegas_casino model (CASINO2_LOTS, facing south), the word on
+## the southern one of the column. Entries: [kind, top-left cell] of the buildings taken away.
+const CASINO2_OLD := [["NIGHTCLUB", Vector2i(143, 186)], ["OFFICE", Vector2i(143, 188)], ["OFFICE", Vector2i(143, 192)]]
+const CASINO2_LOTS := [Rect2i(143, 186, 3, 3), Rect2i(143, 189, 3, 3), Rect2i(143, 192, 3, 3), Rect2i(146, 189, 2, 3)]
+## The big casino model of Las Vegas (vegas_casino.glb) draws the square and fills the free lots.
+const VEGAS_CASINO_MODEL := "vegas_casino.glb: casino_building"
 
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
@@ -611,6 +618,52 @@ static func final_tweaks(data: CityData) -> void:
 		data.b_model[b] = FINAL_SHOP_MODEL
 		data.b_scale[b] = FINAL_SHOP_SCALE
 	_casino(data)
+	_casino_square(data)
+	_casino_fill(data)
+
+
+## The second row of casino towers on the square of Las Vegas (CASINO2_LOTS).
+static func _casino_square(data: CityData) -> void:
+	var old: Array[int] = []
+	for d in CASINO2_OLD:
+		for b in data.building_count():
+			if data.b_kind[b] == CityTypes.Kind[d[0]] and data.building_rect(b).position == d[1] and not old.has(b):
+				old.append(b)
+				break
+	if old.size() < CASINO2_OLD.size():
+		push_warning("[Edits] the square of Las Vegas has %d of its %d buildings: no casino towers there" % [old.size(), CASINO2_OLD.size()])
+		return
+	var towers: Array[int] = []
+	for k in CASINO2_LOTS.size():
+		if k < old.size():
+			data.set_building_rect(old[k], CASINO2_LOTS[k])
+			towers.append(old[k])
+		else:
+			towers.append(data.add_building(CASINO2_LOTS[k], CityTypes.Kind.CASINO, 2, data.b_seed[old[0]], data.b_height[old[0]]))
+	for b: int in towers:
+		data.b_kind[b] = CityTypes.Kind.CASINO
+		data.b_facing[b] = 2
+		data.b_scale[b] = 1.0
+		data.b_model[b] = VEGAS_CASINO_MODEL
+		data.b_sign[b] = 0
+		data.b_more_signs.erase(b)
+	data.b_sign[towers[2]] = ModelCatalog.Cat.NEON_CASINO
+	data.b_sign_facing[towers[2]] = 2
+
+
+## The offices on big lots of the Las Vegas zone become casinos of the vegas_casino model.
+static func _casino_fill(data: CityData) -> void:
+	var n := 0
+	for b in data.building_count():
+		var r := data.building_rect(b)
+		if data.b_kind[b] != CityTypes.Kind.OFFICE or r.size.x < 3 or r.size.y < 3 or data.b_model.has(b):
+			continue
+		var c := r.get_center()
+		if data.in_bounds(c.x, c.y) and data.zone[data.idx(c.x, c.y)] == CityTypes.Zone.ENTERTAINMENT:
+			data.b_kind[b] = CityTypes.Kind.CASINO
+			data.b_model[b] = VEGAS_CASINO_MODEL
+			n += 1
+	print("[Edits] offices of Las Vegas turned into casinos: ", n)
 
 
 ## The row of casino towers of CASINO_LOTS and their word.
