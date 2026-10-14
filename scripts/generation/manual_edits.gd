@@ -297,8 +297,7 @@ const VEGAS_FILL_SHOPS := 15
 const VEGAS_FILL_PARKS := 6
 const VEGAS_HALL_MODELS := ["neon_hall", "neon_hall_pink", "neon_hall_purple", "neon_hall_red", "neon_hall_gold",
 	"neon_hall_tall_gold", "neon_hall_tall_pink"]
-const VEGAS_SHOP_MODEL := "shop:shop-general-orange-b"
-const VEGAS_SHOP_SCALE := 0.34
+const VEGAS_SHOP_MODEL := "business.glb: shop"
 ## The "Welcome to Las Vegas" sign stands in the desert beside the highway that enters Las Vegas
 ## (north side of its three lanes), turned west to face the traffic coming from the desert.
 const VEGAS_SIGN_LOT := Rect2i(116, 161, 1, 3)
@@ -1119,6 +1118,13 @@ static func _spread(list: Array, count: int) -> Array:
 
 ## FINAL VEGAS_FILL_*: neon halls, then shops, then little parks on the free ground of Las Vegas.
 static func _vegas_fill(data: CityData) -> void:
+	# Grass under the Eiffel tower.
+	for b in data.building_count():
+		if data.b_kind[b] != CityTypes.Kind.EMPTY and data.b_model.get(b, "") == EIFFEL_MODEL:
+			var lot := data.building_rect(b)
+			for y in range(lot.position.y, lot.end.y):
+				for x in range(lot.position.x, lot.end.x):
+					data.zone[data.idx(x, y)] = CityTypes.Zone.PARK
 	var free := {}
 	for y in range(data.size):
 		for x in range(data.size):
@@ -1149,10 +1155,9 @@ static func _vegas_fill(data: CityData) -> void:
 	var shops := 0
 	for h in _spread(_free_rects(data, free, Vector2i(3, 2)), VEGAS_FILL_SHOPS):
 		var lot: Rect2i = h[0]
-		var facing := 1 if h[1] else 2
+		var facing := 1 if h[1] else 0
 		var b := data.add_building(lot, CityTypes.Kind.SHOP, facing, CityTypes.hash2(lot.position.x, lot.position.y, 929), 0.3)
 		data.b_model[b] = VEGAS_SHOP_MODEL
-		data.b_scale[b] = -VEGAS_SHOP_SCALE
 		shops += 1
 		for y in range(lot.position.y, lot.end.y):
 			for x in range(lot.position.x, lot.end.x):
