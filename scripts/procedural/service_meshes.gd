@@ -24,7 +24,8 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("school", school())
 	lib.add_named("fire_station", fire_station())
 	lib.add_named("police", police())
-	lib.add_named("neon_hall", neon_hall())
+	for hall: String in NEON_HALLS:
+		lib.add_named(hall, neon_hall(NEON_HALLS[hall]))
 	lib.add_named("church", church())
 
 
@@ -138,24 +139,46 @@ static func police() -> ArrayMesh:
 
 
 # --- Neon hall: the back of the police station, nothing else -----------------------------------
-## The wall of the police station that has no door (white facade, windows, one blue band), all
-## the way round, with no parking, entrance or antennas, and the band as a neon: a very pale blue,
-## almost white. Its box is the body alone, so signs mounted on it (the LED ribbon of the casinos)
-## sit on the real walls. Same body as police(): 1.7 x 0.85 x 1.25.
-const NEON_PALE_BLUE := Color("e4f4ff")
+## The wall of the police station that has no door (white facade, windows, one band), all the way
+## round, with no parking, entrance or antennas, and the band as a neon (unshaded, so it keeps
+## its light at night). Its box is the body alone. A ribbon of three neon stripes in the colours of
+## the model wraps the corner that is the south-east one once the building faces north (the
+## north-west corner of the mesh, which the turn of 180 degrees brings round). Same body as
+## police(): 1.7 x 0.85 x 1.25; the tall models are 2.2 times higher with more floors.
+## Name -> [band, stripes light / medium / deep, height].
+const NEON_HALLS := {
+	"neon_hall": [Color("e4f4ff"), Color("f2faff"), Color("cfe8ff"), Color("8cc8ff"), 0.85],
+	"neon_hall_purple": [Color("c58bff"), Color("e4c8ff"), Color("c58bff"), Color("8f4de8"), 0.85],
+	"neon_hall_pink": [Color("ff8fd0"), Color("ffc4e6"), Color("ff8fd0"), Color("e83a9c"), 0.85],
+	"neon_hall_red": [Color("ff5a5a"), Color("ffa0a0"), Color("ff5a5a"), Color("d41f2c"), 0.85],
+	"neon_hall_gold": [Color("ffd45a"), Color("fff0b0"), Color("ffd45a"), Color("f0a020"), 0.85],
+	"neon_hall_tall_gold": [Color("ffd45a"), Color("fff0b0"), Color("ffd45a"), Color("f0a020"), 1.87],
+	"neon_hall_tall_pink": [Color("ff8fd0"), Color("ffc4e6"), Color("ff8fd0"), Color("e83a9c"), 1.87],
+}
 
 
-static func neon_hall() -> ArrayMesh:
+static func neon_hall(spec: Array) -> ArrayMesh:
 	var k := MeshKit.new()
+	var h: float = spec[4]
 	var body := Vector3(-0.85, 0, -0.85)
-	var body_size := Vector3(1.7, 0.85, 1.25)
+	var body_size := Vector3(1.7, h, 1.25)
 	k.box(body, body_size, Color("dcdde6"), ROOF)
-	k.windows(body, body_size, 3, 6, WINDOW)
+	k.windows(body, body_size, 3 if h < 1.0 else 7, 6, WINDOW)
 	k.neon(true)
-	k.box(Vector3(-0.86, 0.26, 0.4), Vector3(1.72, 0.07, 0.02), NEON_PALE_BLUE)
-	k.box(Vector3(-0.86, 0.26, -0.86), Vector3(1.72, 0.07, 0.02), NEON_PALE_BLUE)
-	k.box(Vector3(0.85, 0.26, -0.86), Vector3(0.02, 0.07, 1.28), NEON_PALE_BLUE)
-	k.box(Vector3(-0.87, 0.26, -0.86), Vector3(0.02, 0.07, 1.28), NEON_PALE_BLUE)
+	var rings := [0.26] if h < 1.0 else [0.26, h - 0.3]
+	for y: float in rings:
+		k.box(Vector3(-0.86, y, 0.4), Vector3(1.72, 0.07, 0.02), spec[0])
+		k.box(Vector3(-0.86, y, -0.86), Vector3(1.72, 0.07, 0.02), spec[0])
+		k.box(Vector3(0.85, y, -0.86), Vector3(0.02, 0.07, 1.28), spec[0])
+		k.box(Vector3(-0.87, y, -0.86), Vector3(0.02, 0.07, 1.28), spec[0])
+	# The ribbon: three stripes round the corner (x = -0.85, z = -0.85), the long arm along the
+	# side wall, the short one along the back wall, mitred at the corner.
+	var y0 := h * 0.5
+	for n in 3:
+		var y := y0 + float(n) * 0.075
+		var c: Color = spec[1 + n]
+		k.box(Vector3(-0.89, y, -0.89), Vector3(0.04, 0.05, 1.22), c)
+		k.box(Vector3(-0.85, y, -0.89), Vector3(0.8, 0.05, 0.04), c)
 	k.neon(false)
 	return k.commit()
 

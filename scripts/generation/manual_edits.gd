@@ -269,16 +269,15 @@ const EIFFEL_CLEARABLE := ["OFFICE", "SHOP", "NIGHTCLUB", "RESTAURANT", "CAFE", 
 ## and how far at least (cells).
 const PIZZERIA_AT := Vector2i(198, 212)
 const PIZZERIA_MOVE_APART := 12.0
-## The police station of (148, 202) is not one any more: it becomes the neon hall (the back of the
-## police station with its blue band as a pale neon, procedural mesh "neon_hall"), drawn at the size
-## the police station had on its 4 x 4 lot (3.84 / 1.81), turned north, with the LED ribbon of the casino
-## towers (TW_LED_BAND) wrapped round its south-east corner high on the wall (share of the wall height).
+## Two police stations and a casino of Las Vegas are not what they were: they become neon halls (the
+## back of the police station with its band as a neon, procedural meshes "neon_hall*" in different light
+## colours, ServiceMeshes.NEON_HALLS), turned north, the ribbon being part of the mesh. Top-left cell
+## of the lot, model. The first keeps the size the police station had (3.84 / 1.81 of its lot), the
+## others are drawn as big as their lot lets (NEON_HALL_FILL of the lot).
 const NEON_HALL_AT := Vector2i(148, 202)
-const NEON_HALL_MODEL := "neon_hall"
 const NEON_HALL_SCALE := 2.1215
-const NEON_HALL_RIBBON_HEIGHT := 0.6
-## Its two other places (a police station of 5 x 3 and a casino of 4 x 4) and the share of the lot they fill.
-const NEON_HALL_CELLS := [Vector2i(148, 202), Vector2i(122, 203), Vector2i(144, 202)]
+const NEON_HALL_PLACES := [[Vector2i(148, 202), "neon_hall"], [Vector2i(122, 203), "neon_hall_pink"],
+	[Vector2i(144, 202), "neon_hall_tall_gold"]]
 const NEON_HALL_FILL := 0.96
 ## The "Welcome to Las Vegas" sign stands in the desert beside the highway that enters Las Vegas
 ## (north side of its three lanes), turned west to face the traffic coming from the desert.
@@ -1140,12 +1139,11 @@ static func _move_vegas_sign(data: CityData) -> void:
 		return
 
 
-## The three buildings of NEON_HALL_CELLS (two police stations and a casino of Las Vegas) become the
-## neon hall with the casino ribbon on their south-east corner. The first keeps the size the police
-## station had; the others are drawn as big as their lot lets (NEON_HALL_FILL of the lot).
+## The buildings of NEON_HALL_PLACES (police stations and a casino) become neon halls.
 static func _neon_hall(data: CityData) -> void:
-	var half := Vector2(1.74, 1.282)
-	for cell: Vector2i in NEON_HALL_CELLS:
+	var half := Vector2(1.76, 1.31)
+	for place: Array in NEON_HALL_PLACES:
+		var cell: Vector2i = place[0]
 		var found := false
 		for b in data.building_count():
 			var r := data.building_rect(b)
@@ -1153,15 +1151,14 @@ static func _neon_hall(data: CityData) -> void:
 				continue
 			found = true
 			data.b_facing[b] = 0
-			data.b_model[b] = NEON_HALL_MODEL
+			data.b_model[b] = place[1]
 			if cell == NEON_HALL_AT:
 				data.b_scale[b] = -NEON_HALL_SCALE
 			else:
 				data.b_scale[b] = -minf(r.size.x * NEON_HALL_FILL / half.x, r.size.y * NEON_HALL_FILL / half.y)
 			data.b_sign[b] = 0
-			data.b_sign_facing[b] = 2
-			data.b_more_signs[b] = [[ModelCatalog.Cat.TW_LED_BAND, "corner"]]
-			data.b_sign_fit[b] = {"height": NEON_HALL_RIBBON_HEIGHT}
+			data.b_more_signs.erase(b)
+			data.b_sign_fit.erase(b)
 			break
 		if not found:
 			push_warning("[Edits] no building at %s for the neon hall" % cell)
