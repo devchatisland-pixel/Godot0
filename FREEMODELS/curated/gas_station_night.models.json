@@ -1,0 +1,9 @@
+{
+	"file": "gas_station_night.glb",
+	"models": [
+		{
+			"cat": "GAS_PACK",
+			"node": "m11"
+		}
+	]
+}

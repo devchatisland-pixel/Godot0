@@ -44,6 +44,7 @@ when the map is averaged with the dark faces around them.
 Usage:  python tools/make_night_variants.py          (everything)
         python tools/make_night_variants.py signs    (the cinema, the hotels, the police, the
                                                       hospital and the city hall only)
+        python tools/make_night_variants.py gas      (the gas station of free_mini only)
         python tools/make_night_variants.py shops    (the lit words of the shops only)
         python tools/make_night_variants.py stadium  (the stadium only)
 Needs:  numpy, Pillow.
@@ -160,6 +161,8 @@ class GLB:
         """Keeps only the materials the meshes use, and their textures and images (a model cut
         out of a pack would carry the textures of the whole pack)."""
         j = s.j
+        j.setdefault('images', [])
+        j.setdefault('textures', [])
         used = sorted({p['material'] for m in j['meshes'] for p in m['primitives'] if 'material' in p})
         mmap = {o: n for n, o in enumerate(used)}
         j['materials'] = [j['materials'][o] for o in used]
@@ -191,6 +194,7 @@ class GLB:
     def keep_only(s, root_children):
         """Drops every node outside `root_children` (and the unused data), repacking the buffer."""
         j = s.j
+        j.setdefault('images', [])
         keep_nodes = []
         def walk(i):
             keep_nodes.append(i)
@@ -804,6 +808,60 @@ def shops():
     shop_sign('shop-general-brick', shop_brick_letters, SHOP_WHITE, 'the word SHOP')
 
 
+# --- Gas station m11 of free_mini: stripes of low orange light ---------------------------
+GAS_ORANGE = (1.0, 0.45, 0.05)
+## Share of its own colour the stripes glow with at night (a low light).
+GAS_GLOW = 0.5
+
+
+def box_tris(lo, hi):
+    """The 12 triangles (pos, nrm: (12, 3, 3)) of the box between the corners `lo` and `hi`."""
+    lo, hi = np.array(lo, dtype=np.float64), np.array(hi, dtype=np.float64)
+    c = [np.array([x, y, z]) for x in (lo[0], hi[0]) for y in (lo[1], hi[1]) for z in (lo[2], hi[2])]
+    quads = [((0, 1, 3, 2), (-1, 0, 0)), ((4, 6, 7, 5), (1, 0, 0)), ((0, 4, 5, 1), (0, -1, 0)),
+             ((2, 3, 7, 6), (0, 1, 0)), ((0, 2, 6, 4), (0, 0, -1)), ((1, 5, 7, 3), (0, 0, 1))]
+    pos, nrm = [], []
+    for q, n in quads:
+        for tri in ((q[0], q[1], q[2]), (q[0], q[2], q[3])):
+            pos.append([c[i] for i in tri])
+            nrm.append([n] * 3)
+    return np.array(pos), np.array(nrm, dtype=np.float64)
+
+
+def gas_station():
+    """gas_station_night.glb: m11 of free_mini.glb with two stripes of low orange light running
+    round the building: one on the roof band, one over the foot of the walls."""
+    g = GLB(os.path.join(CUR, 'free_mini.glb'))
+    j = g.j
+    keep = next(c for c in j['nodes'][g.root()]['children'] if j['nodes'][c]['name'] == 'm11')
+    g.keep_only([keep])
+    g.drop_unused_materials()
+    j['nodes'][0]['name'] = 'm11_night'
+    x0, x1, z0, z1, e = -0.63, 0.63, -0.88, -0.07, 0.008
+    pos, nrm = [], []
+    for y0, y1 in ((0.300, 0.318), (0.062, 0.078)):
+        for lo, hi in (((x0 - e, y0, z0 - e), (x1 + e, y1, z0)),      # back
+                       ((x0 - e, y0, z1), (x1 + e, y1, z1 + e)),      # front
+                       ((x0 - e, y0, z0), (x0, y1, z1)),              # west
+                       ((x1, y0, z0), (x1 + e, y1, z1))):             # east
+            p, n = box_tris(lo, hi)
+            pos.append(p)
+            nrm.append(n)
+    add_prim(g, 'gas_stripes', np.concatenate(pos), np.concatenate(nrm), np.array(GAS_ORANGE))
+    tri = Triangles(g)
+    start, count = tri.prims[-1][1:]
+    base = np.zeros(len(tri.pos))
+    base[start:start + count] = GAS_GLOW / OWN_NIGHT
+    print('  gas station: %d stripe triangles' % count)
+    uv2, img = night_map(tri, [], reach=1.0, strength=0.0, base=base, plain=True)
+    write_night(g, tri, uv2, img, 'gas_station_night')
+    g.save(os.path.join(CUR, 'gas_station_night.glb'))
+    for file, models in (('gas_station_night', [{'cat': 'GAS_PACK', 'node': 'm11'}]),):
+        with open(os.path.join(CUR, file + '.models.json'), 'w', newline='\n') as f:
+            json.dump({'file': file + '.glb', 'models': models}, f, indent='\t')
+            f.write('\n')
+
+
 # --- Stadium: the inside floodlit, the facade dark --------------------------------------
 ## Share of their own colour the pitch, the stands and the outside (roof, walls) glow with.
 STADIUM_PITCH = 1.0
@@ -930,6 +988,9 @@ if __name__ == '__main__':
         sys.exit()
     if sys.argv[1:] == ['signs2']:
         sign_shops()
+        sys.exit()
+    if sys.argv[1:] == ['gas']:
+        gas_station()
         sys.exit()
     if sys.argv[1:] == ['shops']:
         shops()
