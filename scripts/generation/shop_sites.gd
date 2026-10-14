@@ -61,7 +61,10 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 		var id := String(s["id"])
 		if id.begins_with("container-"):
 			continue
-		(south if id.begins_with(MODULAR_PREFIX) else north).append(s)
+		# The modular buildings (S-16 .. S-21) are gone from the island, on request.
+		if id.begins_with(MODULAR_PREFIX):
+			continue
+		north.append(s)
 	# North of the street the shops, their fronts south; south of it the modular buildings,
 	# their fronts north. Each row is centred on the dry land of a line ROW_SAMPLE cells off
 	# the street.
