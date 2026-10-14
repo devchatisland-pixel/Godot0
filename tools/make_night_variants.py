@@ -792,9 +792,9 @@ def sign_shops():
     add_sign('shop-general-orange-b', SIGN_ORANGE, -0.27, 3.31, -1.61, 1.0)
     add_sign('shop-general-orange-a', SIGN_BLUE_BRIGHT, 0.0, 3.3, -1.27, 1.1, strength=1.0)
     add_sign('shop-building-multi', SIGN_MAUVE, 0.0, 6.37, -2.2, 1.4)
-    add_sign('shop-townhouse-blue', SIGN_PURPLE, -1.35, 8.3, -2.98, 1.3)
+    add_sign('shop-townhouse-blue', SIGN_MAUVE, -1.35, 8.3, -2.98, 1.4)
     add_sign('shop-flower-a', SIGN_GREEN, 0.0, 2.40, -2.14, 1.1)
-    swap_letters('shop-coffee-a', SIGN_RED, coffee_a_old, [(-0.05, 5.18, -1.47)], 1.8)
+    swap_letters('shop-coffee-a', SIGN_RED, coffee_a_old, [(-0.05, 5.4, -1.47)], 2.3)
     # Coffee-b: one letter per tile, on the four middle tiles (x 2.07, 1.09, 0.11, -0.86).
     swap_letters('shop-coffee-b', SIGN_RED, coffee_b_old, [(x, 5.42, -1.95) for x in (2.07, 1.09, 0.11, -0.86)], 1.0,
                  reach=0.15)
