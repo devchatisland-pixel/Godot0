@@ -221,7 +221,8 @@ const FINAL_DELETED_LATE := [["CASINO", Vector2i(146, 189)], ["NIGHTCLUB", Vecto
 ## away after the swaps above, casinos that become the police station (model of the main one, facing
 ## north), casinos that get one of the new neon signs (cell, ModelCatalog.Cat name), and the casino
 ## that gets the word CASINO of the casino towers (cell; the sign is made to fit its wall, FINAL_SIGN_FIT).
-const FINAL2_DELETED := [["SKYSCRAPER", Vector2i(128, 199)], ["SKYSCRAPER", Vector2i(132, 171)],
+const FINAL2_DELETED := [["SKYSCRAPER", Vector2i(137, 167)], ["SKYSCRAPER", Vector2i(143, 169)],
+	["SKYSCRAPER", Vector2i(128, 199)], ["SKYSCRAPER", Vector2i(132, 171)],
 	["NIGHTCLUB", Vector2i(131, 213)], ["SKYSCRAPER", Vector2i(143, 174)], ["SKYSCRAPER", Vector2i(146, 174)]]
 const FINAL2_TO_POLICE := [Vector2i(118, 198), Vector2i(122, 203), Vector2i(147, 181), Vector2i(137, 178),
 	Vector2i(131, 158), Vector2i(148, 202)]
@@ -244,6 +245,15 @@ const FINAL2_LEDS := [
 	[Vector2i(144, 202), "TW_LED_BAND", "corner"], [Vector2i(122, 182), "TW_LED_BOARD", "roof"],
 	[Vector2i(131, 194), "TW_LED_BOARD", "roof"],
 ]
+## Skyscrapers added in the middle of downtown, on the lots of the two towers taken away (split in two
+## rows) and on free ground: lot, facing (0 N, 2 S). Each is drawn with one of the Kenney skyscrapers
+## (FINAL2_TOWER_MODELS), turn by turn, when its lot is free.
+const FINAL2_NEW_TOWERS := [
+	[Rect2i(137, 167, 5, 2), 0], [Rect2i(137, 169, 5, 2), 2], [Rect2i(143, 169, 4, 2), 0], [Rect2i(143, 171, 4, 2), 2],
+	[Rect2i(155, 162, 4, 3), 2], [Rect2i(163, 172, 3, 2), 2], [Rect2i(130, 155, 4, 3), 2], [Rect2i(126, 158, 5, 3), 2],
+]
+const FINAL2_TOWER_MODELS := ["building-skyscraper-a.glb", "building-skyscraper-d.glb", "building-skyscraper-b.glb",
+	"building-skyscraper-e.glb", "building-skyscraper-c.glb"]
 ## Burger King (cell): size factor.
 const FINAL2_RESIZED := [["BURGER_KING", Vector2i(198, 295), 1.12]]
 ## The oil tank (top-left cell of its lot on the final map, model) that gets a line of more tanks to the east.
@@ -1027,6 +1037,23 @@ static func _vegas_second_pass(data: CityData) -> void:
 				wall.append([ModelCatalog.Cat[w[1]], w[2]])
 				data.b_more_signs[b] = wall
 	_exchange_casinos(data)
+	_downtown_towers(data)
+
+
+## Skyscrapers of FINAL2_NEW_TOWERS on their free lots.
+static func _downtown_towers(data: CityData) -> void:
+	var n := 0
+	for t in FINAL2_NEW_TOWERS:
+		var lot: Rect2i = t[0]
+		if not _lot_is_free(data, -1, lot):
+			continue
+		var b := data.add_building(lot, CityTypes.Kind.SKYSCRAPER, t[1], 7919 * (n + 3) + lot.position.x * 31 + lot.position.y, 0.8)
+		data.b_model[b] = FINAL2_TOWER_MODELS[n % FINAL2_TOWER_MODELS.size()]
+		for y in range(lot.position.y, lot.end.y):
+			for x in range(lot.position.x, lot.end.x):
+				data.zone[data.idx(x, y)] = CityTypes.Zone.DOWNTOWN
+		n += 1
+	print("[Edits] skyscrapers added to downtown: ", n)
 
 
 ## The two casinos of FINAL2_EXCHANGED trade everything but their lots: facing, seed, height, size

@@ -44,6 +44,11 @@ const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NE
 		ModelCat.NEON_BULL, ModelCat.NEON_FUN, ModelCat.NEON_PALM,
 		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE, ModelCat.NEON_LIGHTHOUSE,
 		ModelCat.NEON_XXX, ModelCat.NEON_PLAYBOY, ModelCat.NEON_CASINO]
+## The neon signs set up on top of the buildings of Las Vegas glow pink only (white-hot they were
+## washed out): their light is the sign's picture times NEON_PINK, a little less strong.
+const PINK_NEONS := [ModelCat.NEON_CASINO, ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE]
+const NEON_PINK := Color(1.0, 0.1, 0.55)
+const PINK_NIGHT := 2.4
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
 ## The Taiwan signboards are light boxes: only their "board" surface lights up, not the steel.
 const LOGO_PACKS := [ModelCat.SIGN_WINDOWS, ModelCat.TW_BANASONIC, ModelCat.TW_MCDONALDS,
@@ -85,10 +90,15 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE, ModelCat.NIGHT_SKYLINE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
+	var pink_done := {}
 	for cat in NEON_PACKS:
 		for id in lib.ids(cat):
-			_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
-			lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
+			if PINK_NEONS.has(cat):
+				_light_pink(lib.meshes[id], pink_done)
+				lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id], NEON_PINK))
+			else:
+				_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
+				lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
 	# The Banasonic sign hangs flat on a wall: only its board, no pole or brackets.
 	for id in lib.ids(ModelCat.TW_BANASONIC):
 		_strip_surfaces(lib, id, LOGO_DARK)
@@ -205,9 +215,28 @@ static func _light_facade(mesh: Mesh, energy: float, done: Dictionary, day: floa
 		mesh.surface_set_material(s, done[mat])
 
 
+## A neon sign that lights in NEON_PINK only: its picture (the shape of the tubes) times pink.
+static func _light_pink(mesh: Mesh, done: Dictionary) -> void:
+	for s in mesh.get_surface_count():
+		var mat := mesh.surface_get_material(s) as BaseMaterial3D
+		if mat == null:
+			continue
+		if not done.has(mat):
+			var m := mat.duplicate() as BaseMaterial3D
+			m.emission_enabled = true
+			m.emission = NEON_PINK
+			if mat.albedo_texture != null:
+				m.emission_texture = mat.albedo_texture
+				m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+			SignAtlas.register_night(m, NEON_DAY, PINK_NIGHT)
+			done[mat] = m
+			done[m] = m
+		mesh.surface_set_material(s, done[mat])
+
+
 ## A copy of a neon sign that only adds light (additive, invisible by day): drawn a bit
-## bigger behind the sign it thickens the glow.
-static func _halo(mesh: Mesh) -> ArrayMesh:
+## bigger behind the sign it thickens the glow. `tint` (when given) replaces the colour of its light.
+static func _halo(mesh: Mesh, tint: Color = Color(0, 0, 0, 0)) -> ArrayMesh:
 	var out := ArrayMesh.new()
 	for s in mesh.get_surface_count():
 		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh.surface_get_arrays(s))
@@ -224,6 +253,10 @@ static func _halo(mesh: Mesh) -> ArrayMesh:
 			m.emission_texture = src.emission_texture
 		elif src != null:
 			m.emission = src.emission if src.emission_enabled else src.albedo_color
+		if tint.a > 0.0:
+			m.emission = tint
+			if m.emission_texture != null:
+				m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
 		SignAtlas.register_night(m, 0.0, HALO_NIGHT)
 		out.surface_set_material(s, m)
 	return out
