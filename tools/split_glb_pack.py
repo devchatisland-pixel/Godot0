@@ -75,9 +75,25 @@ def build(j, binary, child_ids, root=None):
         v["byteOffset"] = len(out_bin); v["buffer"] = 0
         out_bin.extend(chunk); views.append(v)
         return len(views) - 1
+    sizes = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT2": 4, "MAT3": 9, "MAT4": 16}
+    widths = {5120: 1, 5121: 1, 5122: 2, 5123: 2, 5125: 4, 5126: 4}
     for a in acc_ids:
         ac = copy.deepcopy(j["accessors"][a])
-        if "bufferView" in ac: ac["bufferView"] = add_view(ac["bufferView"])
+        if "bufferView" in ac:
+            # An accessor may be one slice of a bufferView shared with others: keep only its bytes.
+            v = copy.deepcopy(j["bufferViews"][ac["bufferView"]])
+            elem = sizes[ac["type"]] * widths[ac["componentType"]]
+            stride = v.get("byteStride", elem)
+            start = v.get("byteOffset", 0) + ac.get("byteOffset", 0)
+            length = stride * (ac["count"] - 1) + elem
+            chunk = binary[start:start + length]
+            out_bin.extend(b"\0" * (-len(out_bin) % 4))
+            nv = {"buffer": 0, "byteOffset": len(out_bin), "byteLength": len(chunk)}
+            if "byteStride" in v: nv["byteStride"] = v["byteStride"]
+            if "target" in v: nv["target"] = v["target"]
+            out_bin.extend(chunk); views.append(nv)
+            ac["bufferView"] = len(views) - 1
+            ac.pop("byteOffset", None)
         accessors.append(ac)
     images = []
     for im in img_ids:

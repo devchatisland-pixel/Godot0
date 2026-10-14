@@ -221,7 +221,7 @@ const FINAL_DELETED_LATE := [["CASINO", Vector2i(146, 189)], ["NIGHTCLUB", Vecto
 ## away after the swaps above, casinos that become the police station (model of the main one, facing
 ## north), casinos that get one of the new neon signs (cell, ModelCatalog.Cat name), and the casino
 ## that gets the word CASINO of the casino towers (cell; the sign is made to fit its wall, FINAL_SIGN_FIT).
-const FINAL2_DELETED := [["SKYSCRAPER", Vector2i(137, 167)], ["SKYSCRAPER", Vector2i(143, 169)],
+const FINAL2_DELETED := [["BILLBOARD", Vector2i(46, 53)], ["SKYSCRAPER", Vector2i(137, 167)], ["SKYSCRAPER", Vector2i(143, 169)],
 	["SKYSCRAPER", Vector2i(128, 199)], ["SKYSCRAPER", Vector2i(132, 171)],
 	["NIGHTCLUB", Vector2i(131, 213)], ["SKYSCRAPER", Vector2i(143, 174)], ["SKYSCRAPER", Vector2i(146, 174)]]
 const FINAL2_TO_POLICE := [Vector2i(118, 198), Vector2i(122, 203), Vector2i(147, 181), Vector2i(137, 178),

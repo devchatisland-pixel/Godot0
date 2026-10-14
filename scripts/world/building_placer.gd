@@ -172,6 +172,9 @@ const SOUTH_ONLY_MODELS := ["carto.glb: house1", "carto.glb: house2"]
 
 
 static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
+	# The jail is the whole walled prison of PrisonCompound: the cellhouse lot has no model of its own.
+	if data.b_kind[i] == Kind.PRISON:
+		return {}
 	var pick := _pick_model_raw(data, lib, i, facing_override)
 	# The New York brick buildings are not built at all (taken away by hand).
 	if not pick.is_empty() and lib.model_name(pick["id"]).begins_with(REMOVED_MODEL_PREFIX):
