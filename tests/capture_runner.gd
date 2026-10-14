@@ -54,6 +54,9 @@ func _run() -> void:
 		await get_tree().process_frame
 		waited += 1
 	var args := OS.get_cmdline_user_args()
+	if "--cityshop" in args:
+		await _city_shops(main)
+		return
 	if "--fogcity" in args:
 		await _fog_city(main)
 		return
@@ -94,6 +97,33 @@ func _run() -> void:
 		var path: String = _dir.path_join("shot_%d.png" % s)
 		get_viewport().get_texture().get_image().save_png(path)
 		print("[Capture] ", path, " at ", shot["at"], " chunks ", main.streamer.loaded_counts())
+	get_tree().quit()
+
+
+## `-- --capture <dir> --cityshop`: four of the candy shops standing in the streets of the city.
+func _city_shops(main: Node) -> void:
+	var cam: IsoCamera = main.camera
+	var data: CityData = main.data
+	var found: Array[Vector3] = []
+	for b in data.building_count():
+		if data.b_model.get(b, "") == "shop:shop-candy-b":
+			var r := data.building_rect(b)
+			found.append(Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5))
+	print("[Capture] %d city candy shops" % found.size())
+	var n := mini(4, found.size())
+	for s in n:
+		cam.target = found[(s * found.size()) / n]
+		cam.zoom = 14.0
+		cam.set("_zoom_goal", 14.0)
+		for k in 120:
+			await get_tree().process_frame
+		if main.day_night != null:
+			main.day_night.set_phase(0.2)
+		for k in 8:
+			await get_tree().process_frame
+		var path := _dir.path_join("cityshop_%d.png" % s)
+		get_viewport().get_texture().get_image().save_png(path)
+		print("[Capture] ", path)
 	get_tree().quit()
 
 
