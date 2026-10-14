@@ -34,6 +34,12 @@ static func mesh_id(lib: ModelLibrary, id: String) -> int:
 	return lib.load_named("shop:" + id, _entries[id]["file"], _entries[id]["node"])
 
 
+## The catalog entry of shop `id` ({} when unknown).
+static func entry(id: String) -> Dictionary:
+	_ensure_catalog()
+	return _entries.get(id, {})
+
+
 ## The catalog as the list ShopSites.plan() takes.
 static func catalog() -> Array:
 	_ensure_catalog()

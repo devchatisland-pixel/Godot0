@@ -54,6 +54,9 @@ func _run() -> void:
 		await get_tree().process_frame
 		waited += 1
 	var args := OS.get_cmdline_user_args()
+	if "--fogcity" in args:
+		await _fog_city(main)
+		return
 	if "--continent" in args:
 		await _continent(main)
 		return
@@ -91,6 +94,30 @@ func _run() -> void:
 		var path: String = _dir.path_join("shot_%d.png" % s)
 		get_viewport().get_texture().get_image().save_png(path)
 		print("[Capture] ", path, " at ", shot["at"], " chunks ", main.streamer.loaded_counts())
+	get_tree().quit()
+
+
+## `-- --capture <dir> --fogcity`: the city of the fog island (centre, shops, port, plant, overview).
+func _fog_city(main: Node) -> void:
+	var cam: IsoCamera = main.camera
+	var shots := [
+		[Vector3(418, 0, 193), 60.0, false], [Vector3(418, 0, 193), 230.0, false],
+		[Vector3(418, 0, 160), 40.0, false], [Vector3(418, 0, 235), 50.0, false],
+		[Vector3(470, 0, 205), 40.0, false], [Vector3(418, 0, 193), 90.0, true],
+	]
+	for s in shots.size():
+		cam.target = shots[s][0]
+		cam.zoom = shots[s][1]
+		cam.set("_zoom_goal", shots[s][1])
+		for k in 40:
+			await get_tree().process_frame
+		if main.day_night != null:
+			main.day_night.set_phase(0.78 if shots[s][2] else 0.2)
+		for k in 8:
+			await get_tree().process_frame
+		var path := _dir.path_join("fogcity_%d.png" % s)
+		get_viewport().get_texture().get_image().save_png(path)
+		print("[Capture] ", path)
 	get_tree().quit()
 
 
