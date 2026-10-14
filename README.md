@@ -522,6 +522,7 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `police_hq_night` | the police station of `public_main`, with a night map (`tools/make_night_variants.py`) | POLICE_MAIN | the main police station; the word POLICE and the round sign on the roof glow blue at night |
 | `hospital_night` | the hospital of `public_main`, with a night map | HOSPITAL_MAIN | the main hospital; the blue cross of its front glows strong blue at night (the red H of the helipad stays) |
 | `city_hall_night` | the city hall of `public_main`, with a night map | CITY_HALL_MAIN | the city hall; the words CITY HALL glow coral red at night |
+| `gas_station_night` | `m11` of `free_mini`, with a night map (`tools/make_night_variants.py gas`) | GAS_PACK | the small gas station; two stripes of low orange light run round the building (roof band and foot of the walls) |
 | `cinema_night` | the cinema of `cinema2` (kept as it was, unused), with a night map | CINEMA2 | the main cinema; the word CINEMA glows red at night |
 | `hotel_small_night` | `hotel_small` of `hotels`, with a night map | HOTEL_LOW | the small purple hotel; the word HOTEL glows green at night |
 | `hotel_stars_night` | `hotel_stars` of `hotels`, with a night map | HOTEL_LOW | the five-star hotel; its five stars glow yellow at night |
@@ -543,7 +544,7 @@ The packs you added are kept untouched in `FREEMODELS/_incoming/`. Its `.gdignor
 | `future` | night skyline pack, cut into 11 towers | FUTURE | the futuristic towers of the urban island |
 | `carto` | CartoCity pack | BANK_PACK, HOUSE2, TOWN2, SHOP2, HOTEL_SMALL, BARRIER, CONE, TRUCK, CONTAINER, BARREL | the bank, colourful houses and shops, mini hotels, the orange barriers and cones of the bridge, industrial props |
 | `accommodations` | low poly accommodations buildings | HOTEL_PACK, HOUSE2, TOWN2 | the two big hotels, villas, small apartment blocks |
-| `free_mini` | free low-poly buildings (cut by position) | CHURCH_PACK, GAS_PACK, SHOP2, HOTEL_SMALL, TOWN2 | the big church, a gas station, bars, boutiques, mini hotels |
+| `free_mini` | free low-poly buildings (cut by position) | CHURCH_PACK, SHOP2, HOTEL_SMALL, TOWN2 | the big church (its gas station `m11` now lives in `gas_station_night`), bars, boutiques, mini hotels |
 | `street` | low-poly city street buildings | SHOP2, STALL | textured shop blocks, ice cream stalls and food trucks |
 | `euro` | somewhat low-poly buildings | TOWN2, HOUSE2, WAREHOUSE, FACTORY, FIELD | tall town houses, a garage, the brick works, a crop field |
 | `poor` | buildings pack (cut by position) | POOR_SLAB, POOR_BLOCK | grey panel towers and slabs of the poor district |

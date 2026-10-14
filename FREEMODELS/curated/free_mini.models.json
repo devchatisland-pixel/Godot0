@@ -34,10 +34,6 @@
 			"node": "m10"
 		},
 		{
-			"cat": "GAS_PACK",
-			"node": "m11"
-		},
-		{
 			"cat": "CHURCH_PACK",
 			"node": "m12"
 		}
