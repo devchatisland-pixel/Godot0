@@ -176,18 +176,18 @@ const FINAL_SHOPS := [
 	[Vector2i(198, 205), 3], [Vector2i(198, 207), 3],
 	[Vector2i(204, 205), 1], [Vector2i(204, 207), 1],
 ]
-## The casino of Las Vegas: the skyscraper at CASINO_AT and the shop behind it make room for a
-## row of four skyscrapers side by side (CASINO_LOTS, facing south), one neon word over them.
-const CASINO_AT := Vector2i(123, 174)
-const CASINO_SHOP := Vector2i(121, 175)
-const CASINO_LOTS := [Rect2i(121, 174, 2, 3), Rect2i(123, 174, 1, 3), Rect2i(124, 174, 2, 3), Rect2i(126, 174, 1, 3)]
+## The towers of the Las Vegas casino (the skyscraper model `building-skyscraper-d.glb`, drawn
+## stretched in height, see BuildingPlacer) stand side by side along the column of the square of
+## Las Vegas (CASINO2_LOTS, facing east), one neon word over them on the east wall.
 const CASINO_MODEL := "building-skyscraper-d.glb"
 ## The square of Las Vegas: a night club (143,186) and two offices (143,188) and (143,192) make
-## room for four casino buildings of the vegas_casino model (CASINO2_LOTS, facing south), the word on
-## the southern one of the column. Entries: [kind, top-left cell] of the buildings taken away.
+## room for the four towers (CASINO2_LOTS; the first three take the old buildings, the fourth is new),
+## the word on the northern one. A casino of the vegas_casino model stands beside them
+## (CASINO2_SIDE, facing south). Entries of CASINO2_OLD: [kind, top-left cell] of the buildings taken away.
 const CASINO2_OLD := [["NIGHTCLUB", Vector2i(143, 186)], ["OFFICE", Vector2i(143, 188)], ["OFFICE", Vector2i(143, 192)]]
-const CASINO2_LOTS := [Rect2i(143, 186, 3, 3), Rect2i(143, 189, 3, 3), Rect2i(143, 192, 3, 3), Rect2i(146, 189, 2, 3)]
-## The big casino model of Las Vegas (vegas_casino.glb) draws the square and fills the free lots.
+const CASINO2_LOTS := [Rect2i(143, 186, 3, 2), Rect2i(143, 188, 3, 1), Rect2i(143, 189, 3, 2), Rect2i(143, 191, 3, 1)]
+const CASINO2_SIDE := Rect2i(146, 189, 2, 3)
+## The big casino model of Las Vegas (vegas_casino.glb) draws the side casino and fills the free lots.
 const VEGAS_CASINO_MODEL := "vegas_casino.glb: casino_building"
 
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
@@ -617,12 +617,11 @@ static func final_tweaks(data: CityData) -> void:
 		var b := data.add_building(lot, CityTypes.Kind.SHOP, f[1], CityTypes.hash2(c.x, c.y, 717), 0.3)
 		data.b_model[b] = FINAL_SHOP_MODEL
 		data.b_scale[b] = FINAL_SHOP_SCALE
-	_casino(data)
 	_casino_square(data)
 	_casino_fill(data)
 
 
-## The second row of casino towers on the square of Las Vegas (CASINO2_LOTS).
+## The row of casino towers on the square of Las Vegas (CASINO2_LOTS).
 static func _casino_square(data: CityData) -> void:
 	var old: Array[int] = []
 	for d in CASINO2_OLD:
@@ -639,16 +638,19 @@ static func _casino_square(data: CityData) -> void:
 			data.set_building_rect(old[k], CASINO2_LOTS[k])
 			towers.append(old[k])
 		else:
-			towers.append(data.add_building(CASINO2_LOTS[k], CityTypes.Kind.CASINO, 2, data.b_seed[old[0]], data.b_height[old[0]]))
+			towers.append(data.add_building(CASINO2_LOTS[k], CityTypes.Kind.CASINO, 1, data.b_seed[old[0]], data.b_height[old[0]]))
 	for b: int in towers:
 		data.b_kind[b] = CityTypes.Kind.CASINO
-		data.b_facing[b] = 2
+		data.b_facing[b] = 1
 		data.b_scale[b] = 1.0
-		data.b_model[b] = VEGAS_CASINO_MODEL
+		data.b_model[b] = CASINO_MODEL
 		data.b_sign[b] = 0
 		data.b_more_signs.erase(b)
-	data.b_sign[towers[2]] = ModelCatalog.Cat.NEON_CASINO
-	data.b_sign_facing[towers[2]] = 2
+	data.b_sign[towers[0]] = ModelCatalog.Cat.NEON_CASINO
+	data.b_sign_facing[towers[0]] = 1
+	var side := data.add_building(CASINO2_SIDE, CityTypes.Kind.CASINO, 2, data.b_seed[old[0]], data.b_height[old[0]])
+	data.b_scale[side] = 1.0
+	data.b_model[side] = VEGAS_CASINO_MODEL
 
 
 ## The offices on big lots of the Las Vegas zone become casinos of the vegas_casino model.
@@ -664,29 +666,3 @@ static func _casino_fill(data: CityData) -> void:
 			data.b_model[b] = VEGAS_CASINO_MODEL
 			n += 1
 	print("[Edits] offices of Las Vegas turned into casinos: ", n)
-
-
-## The row of casino towers of CASINO_LOTS and their word.
-static func _casino(data: CityData) -> void:
-	var tower := -1
-	for b in data.building_count():
-		var at := data.building_rect(b).position
-		if data.b_kind[b] == CityTypes.Kind.SKYSCRAPER and at == CASINO_AT:
-			tower = b
-		elif data.b_kind[b] == CityTypes.Kind.SHOP and at == CASINO_SHOP:
-			data.b_kind[b] = CityTypes.Kind.EMPTY
-			hand_deleted[b] = true
-	if tower < 0:
-		push_warning("[Edits] no skyscraper at %s for the casino" % CASINO_AT)
-		return
-	data.set_building_rect(tower, CASINO_LOTS[0])
-	var towers: Array[int] = [tower]
-	for k in range(1, CASINO_LOTS.size()):
-		towers.append(data.add_building(CASINO_LOTS[k], CityTypes.Kind.CASINO, 2, data.b_seed[tower], data.b_height[tower]))
-	for b: int in towers:
-		data.b_kind[b] = CityTypes.Kind.CASINO
-		data.b_facing[b] = 2
-		data.b_scale[b] = 1.0
-		data.b_model[b] = CASINO_MODEL
-	data.b_sign[tower] = ModelCatalog.Cat.NEON_CASINO
-	data.b_sign_facing[tower] = 2

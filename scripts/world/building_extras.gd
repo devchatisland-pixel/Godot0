@@ -245,8 +245,8 @@ const SIGNS := {
 	ModelCatalog.Cat.NEON_PLAYBOY: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
 	# One word over the two casino buildings standing side by side: on the west one, as wide as
 	# 1.8 walls, its middle half a wall further east, on the wall behind the steps.
-	ModelCatalog.Cat.NEON_CASINO: {"mount": "face", "fill": 1.8, "shift": 0.5, "inset": 0.066, "height": 0.58,
-		"max_height": 0.72, "halo": 1.08},
+	ModelCatalog.Cat.NEON_CASINO: {"mount": "face", "fill": 1.8, "shift": 0.5, "inset": 0.066, "height": 0.8,
+		"max_height": 0.38, "halo": 1.08},
 	ModelCatalog.Cat.TW_BANASONIC: {"mount": "face", "fill": 0.9, "height": 0.72},
 	ModelCatalog.Cat.TW_MCDONALDS: {"mount": "blade", "out": 2.0, "height": 0.45},
 	ModelCatalog.Cat.TW_COLA_JP: {"mount": "blade", "out": 1.4, "height": 0.42},
