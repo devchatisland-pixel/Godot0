@@ -4,7 +4,7 @@
  "shops": [
   {
    "id": "shop-candy-a",
-   "file": "res://shops/models/shop-candy-a.glb",
+   "file": "res://shops/models/shop-candy-a_night.glb",
    "category": "Candy",
    "name": "Candy Shop (canopy)",
    "credit": {

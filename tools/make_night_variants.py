@@ -18,6 +18,7 @@ as it is (a backup); only the lists the game reads (.models.json) point to the d
                                              outer walls stay dark (its floodlights: BuildingExtras)
   shops/models/shop-business_night.glb       the shop of the business pack; the word SHOP glows red
   shops/models/shop-general-brick_night.glb  the brick shop; the word SHOP glows warm white
+  shops/models/shop-candy-a_night.glb        the candy stall; the word CANDY glows pink
   vehicles/.../police_us_cruiser_night.glb   the red and the blue lens of the light bar glow
   vehicles/.../police_jp_black_night.glb     the red roof beacon glows
 
@@ -68,6 +69,7 @@ HOSPITAL_BLUE = (0.04, 0.4, 1.0)
 CITY_HALL_CORAL = (1.0, 0.25, 0.15)
 SHOP_RED = (1.0, 0.04, 0.03)
 SHOP_WHITE = (1.0, 0.92, 0.75)
+CANDY_PINK = (1.0, 0.1, 0.5)
 ## Pharmacy facade at night: the share of its own colour it glows with (a little brighter
 ## than the public buildings around it, far from white).
 FACADE = 0.25
@@ -283,7 +285,8 @@ class Triangles:
                 for p in j['meshes'][node['mesh']]['primitives']:
                     P = g.acc(p['attributes']['POSITION']).astype(np.float64)
                     N = g.acc(p['attributes']['NORMAL']).astype(np.float64)
-                    U = g.acc(p['attributes']['TEXCOORD_0']).astype(np.float64)
+                    U = (g.acc(p['attributes']['TEXCOORD_0']).astype(np.float64) if 'TEXCOORD_0' in p['attributes']
+                         else np.zeros((len(P), 2)))
                     I = g.acc(p['indices']).reshape(-1, 3) if 'indices' in p else np.arange(len(P)).reshape(-1, 3)
                     s.prims.append((p, count[0], len(I)))
                     count[0] += len(I)
@@ -613,7 +616,13 @@ def shop_brick_letters(tri):
     return islands_in(tri, (0.2, 1.7, -2.46), (1.35, 2.1, -2.34), 4)
 
 
+def shop_candy_letters(tri):
+    # The five letters of CANDY on the pink board over the front (z -1.60 to -1.38).
+    return islands_in(tri, (-1.4, 2.7, -1.62), (1.25, 3.4, -1.36), 5)
+
+
 def shops():
+    shop_sign('shop-candy-a', shop_candy_letters, CANDY_PINK, 'the word CANDY', reach=0.12, strength=0.4)
     shop_sign('shop-business', shop_business_letters, SHOP_RED, 'the word SHOP')
     shop_sign('shop-general-brick', shop_brick_letters, SHOP_WHITE, 'the word SHOP')
 
