@@ -80,7 +80,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
 	var fog := data.fog
 	var n := 0
-	for p in FogBaseSites.plan():
+	for p in FogBaseSites.plan(fog):
 		var at: Vector2 = p["at"]
 		if not _on_land(fog, at, float(p.get("fit", 0.0)) * 0.5):
 			push_warning("[FogBase] %s is in the sea" % at)
@@ -102,6 +102,15 @@ func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
 			turn = PI # the vehicles of the catalog face -Z
 			label = [MapVehicles.entry(p["veh"]).get("name", p["veh"]), "VEHICLE"]
 			note = "on the fog island"
+		elif p.has("shop"):
+			id = MapShops.mesh_id(lib, p["shop"])
+			if id >= 0:
+				NightWindows.light_own(lib.meshes[id])
+			scale = float(p["scale"])
+			turn = PI # the shop models face -Z
+			var entry: Dictionary = MapShops.entry(p["shop"])
+			label = [entry.get("name", p["shop"]), "SHOP"]
+			note = "shops of the city of the fog island"
 		elif p.has("named"):
 			id = lib.named_id(p["named"])
 			label = ["Crop field", "FIELD"]
@@ -177,19 +186,20 @@ static func _standing(lib: ModelLibrary, id: int, at: Vector3, yaw: float, scale
 
 func _roads(fog: FogIslandShaper) -> void:
 	var panels: Array[Transform3D] = []
-	for r in FogBaseSites.ROADS:
+	for r in FogBaseSites.roads(fog):
 		var a: Vector2 = r[0]
 		var b: Vector2 = r[1]
-		var along_x := absf(b.x - a.x) >= absf(b.y - a.y)
 		var length := a.distance_to(b)
+		if length < 0.05:
+			continue
 		var count := maxi(1, ceili(length / SEGMENT))
 		var step := length / float(count)
 		var dir := (b - a).normalized()
+		# A little longer than its step, so a bend leaves no gap between two panels.
+		var basis := Basis(Vector3.UP, atan2(-dir.y, dir.x)) * Basis.from_scale(
+				Vector3(step + (0.25 if count > 1 or length < 6.0 else 0.0), 1.0, float(r[2])))
 		for k in count:
 			var c := fog.origin + a + dir * (step * (float(k) + 0.5))
-			var basis := Basis.from_scale(Vector3(step, 1.0, float(r[2])))
-			if not along_x:
-				basis = Basis(Vector3.UP, PI * 0.5) * basis
 			panels.append(Transform3D(basis, Vector3(c.x, LIFT, c.y)))
 	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = TEXTURE
