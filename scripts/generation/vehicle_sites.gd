@@ -391,15 +391,16 @@ func _crane_tanker() -> void:
 		push_warning("[Vehicles] no room next to the construction crane")
 
 
-## The shed the fuel tanker of the port parks beside.
+## The tank the fuel tanker of the port parks beside, and the shed the water tanker parks in front of.
+const PORT_LONG_TANK := "port_tanks.glb: tank_long"
 const PORT_LOADBAY := "port_sheds.glb: shed_loadbay"
 
 
 ## A fuel tanker next to the oil barrels of the port: the barrel yard (INDUSTRIAL_YARD whose
 ## seed draws barrels, see BuildingExtras) nearest to the quay of the cargo ship.
 func _port_fuel_tanker() -> void:
-	# First choice, by hand: beside the loading bay shed of the port.
-	if _beside_model("p54_18_tanker_fuel", PORT_LOADBAY, "next to the loading bay of the port"):
+	# First choice, by hand: beside the first long tank of the port.
+	if _beside_model("p54_18_tanker_fuel", PORT_LONG_TANK, "next to the long tank of the port"):
 		return
 	# The silos MapAdditions put beside the container yards come first.
 	var silos := Rect2i()
@@ -512,6 +513,11 @@ func _in_zone(id: String, center: Vector2, why: String) -> bool:
 
 ## A water tanker next to a stack of cargo containers (the yards of the port).
 func _container_tanker() -> void:
+	# First choice, by hand: parked in front of the loading bay shed of the port.
+	for b in _d.building_count():
+		if _d.b_kind[b] != Kind.EMPTY and _d.b_model.get(b, "") == PORT_LOADBAY:
+			_in_front("p54_10_tanker_water", b, "in front of the loading bay of the port")
+			return
 	var zones := industrial_zones()
 	var anchor := Vector2(_d.size, _d.size) * 0.5
 	if not zones.is_empty():
