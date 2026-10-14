@@ -25,6 +25,10 @@ var chunk_size: int = 32
 ## Folder scanned recursively for .glb / .gltf models.
 var models_root: String = "res://FREEMODELS"
 
+## Parts of the map chosen on the start screen (MapMenu).
+var show_continent := true
+var show_fog_island := true
+
 # --- Island shape -------------------------------------------------------------
 var island_radius := Vector2(0.8, 0.7) # fraction of half map size (x, y)
 var coast_noise := 0.45         # how ragged the coastline is
