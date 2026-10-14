@@ -225,7 +225,16 @@ const FINAL2_DELETED := [["SKYSCRAPER", Vector2i(128, 199)], ["SKYSCRAPER", Vect
 	["NIGHTCLUB", Vector2i(131, 213)], ["SKYSCRAPER", Vector2i(143, 174)], ["SKYSCRAPER", Vector2i(146, 174)]]
 const FINAL2_TO_POLICE := [Vector2i(118, 198), Vector2i(122, 203), Vector2i(147, 181), Vector2i(137, 178),
 	Vector2i(131, 158), Vector2i(148, 202)]
-const FINAL2_NEW_SIGNS := [[Vector2i(131, 194), "NEON_CLUB"], [Vector2i(131, 202), "NEON_GIRL"], [Vector2i(144, 202), "NEON_LOVE"]]
+## Neon signs on the roof of a building (top-left cell, ModelCatalog.Cat name, wall it looks at: 1 east,
+## 2 south); the police station of (118, 198) gets the girl of the casino at (131, 202), looking south.
+const FINAL2_NEW_SIGNS := [[Vector2i(131, 194), "NEON_CLUB", 2], [Vector2i(131, 202), "NEON_GIRL", 1],
+	[Vector2i(144, 202), "NEON_LOVE", 2], [Vector2i(128, 202), "NEON_LOVE", 1], [Vector2i(118, 198), "NEON_GIRL", 2]]
+## Casinos turned by hand (top-left cell, facing 0 N, 1 E, 2 S, 3 W).
+const FINAL2_TURNED := [[Vector2i(128, 202), 1]]
+## More signs on a wall (cell, Cat name, mount) and the two casinos that exchange places (everything that
+## belongs to the building but its lot: facing, seed, size factor, signs).
+const FINAL2_WALL_SIGNS := [[Vector2i(131, 202), "NEON_CLUB", "face"]]
+const FINAL2_EXCHANGED := [Vector2i(144, 202), Vector2i(127, 185)]
 const FINAL2_CASINO_WORD := Vector2i(122, 186)
 const FINAL2_SIGN_FIT := {"fill": 1.0, "shift": 0.0}
 ## Light stripes of the Taiwan signs (tw_led_band wraps the south-east corner, tw_led_board stands on the
@@ -233,7 +242,7 @@ const FINAL2_SIGN_FIT := {"fill": 1.0, "shift": 0.0}
 const FINAL2_LEDS := [
 	[Vector2i(122, 186), "TW_LED_BAND", "corner"], [Vector2i(131, 194), "TW_LED_BAND", "corner"],
 	[Vector2i(144, 202), "TW_LED_BAND", "corner"], [Vector2i(122, 182), "TW_LED_BOARD", "roof"],
-	[Vector2i(131, 202), "TW_LED_BOARD", "roof"],
+	[Vector2i(131, 194), "TW_LED_BOARD", "roof"],
 ]
 ## Burger King (cell): size factor.
 const FINAL2_RESIZED := [["BURGER_KING", Vector2i(198, 295), 1.12]]
@@ -970,11 +979,18 @@ static func _vegas_second_pass(data: CityData) -> void:
 			data.b_model.erase(b)
 			data.b_sign[b] = 0
 			data.b_more_signs.erase(b)
+		for t in FINAL2_TURNED:
+			if at == t[0]:
+				data.b_facing[b] = t[1]
 		for s in FINAL2_NEW_SIGNS:
 			if at == s[0]:
 				data.b_sign[b] = ModelCatalog.Cat[s[1]]
-				data.b_sign_facing[b] = 2
+				data.b_sign_facing[b] = s[2]
 				data.b_more_signs.erase(b)
+				data.b_sign_fit.erase(b)
+				if s[2] == 1:
+					# A roof sign looks south unless it is turned: the east one stands on the east edge.
+					data.b_sign_fit[b] = {"yaw": PI * 0.5}
 		if at == FINAL2_CASINO_WORD:
 			if word < 0:
 				push_warning("[Edits] no casino tower carries the word CASINO")
@@ -993,6 +1009,48 @@ static func _vegas_second_pass(data: CityData) -> void:
 				data.b_more_signs[b] = more
 				if data.b_sign[b] == 0:
 					data.b_sign_facing[b] = 2
+		for w in FINAL2_WALL_SIGNS:
+			if data.building_rect(b).position == w[0]:
+				var wall: Array = data.b_more_signs.get(b, [])
+				wall.append([ModelCatalog.Cat[w[1]], w[2]])
+				data.b_more_signs[b] = wall
+	_exchange_casinos(data)
+
+
+## The two casinos of FINAL2_EXCHANGED trade everything but their lots: facing, seed, height, size
+## factors, model, signs (so each building stands where the other one was, turned the way it was).
+static func _exchange_casinos(data: CityData) -> void:
+	var a := -1
+	var c := -1
+	for b in data.building_count():
+		if data.b_kind[b] != CityTypes.Kind.CASINO:
+			continue
+		var at := data.building_rect(b).position
+		if at == FINAL2_EXCHANGED[0]:
+			a = b
+		elif at == FINAL2_EXCHANGED[1]:
+			c = b
+	if a < 0 or c < 0:
+		push_warning("[Edits] the casinos to exchange were not found (%d, %d)" % [a, c])
+		return
+	var t_facing := data.b_facing[a]; data.b_facing[a] = data.b_facing[c]; data.b_facing[c] = t_facing
+	var t_seed := data.b_seed[a]; data.b_seed[a] = data.b_seed[c]; data.b_seed[c] = t_seed
+	var t_height := data.b_height[a]; data.b_height[a] = data.b_height[c]; data.b_height[c] = t_height
+	var t_scale := data.b_scale[a]; data.b_scale[a] = data.b_scale[c]; data.b_scale[c] = t_scale
+	var t_stretch := data.b_stretch[a]; data.b_stretch[a] = data.b_stretch[c]; data.b_stretch[c] = t_stretch
+	var t_sign := data.b_sign[a]; data.b_sign[a] = data.b_sign[c]; data.b_sign[c] = t_sign
+	var t_sf := data.b_sign_facing[a]; data.b_sign_facing[a] = data.b_sign_facing[c]; data.b_sign_facing[c] = t_sf
+	for d: Dictionary in [data.b_model, data.b_more_signs, data.b_sign_fit]:
+		var has_a := d.has(a)
+		var has_c := d.has(c)
+		var va = d.get(a)
+		var vc = d.get(c)
+		d.erase(a)
+		d.erase(c)
+		if has_c:
+			d[a] = vc
+		if has_a:
+			d[c] = va
 
 
 ## The oil tank of TANK_LINE_FROM is copied to make a line of TANK_LINE_COUNT more towards the east
