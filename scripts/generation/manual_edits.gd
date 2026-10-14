@@ -189,6 +189,15 @@ const CASINO2_LOTS := [Rect2i(143, 186, 3, 2), Rect2i(143, 188, 3, 1), Rect2i(14
 const CASINO2_SIDE := Rect2i(146, 189, 2, 3)
 ## The big casino model of Las Vegas (vegas_casino.glb) draws the side casino and fills the free lots.
 const VEGAS_CASINO_MODEL := "vegas_casino.glb: casino_building"
+## The Eiffel tower of Las Vegas (eiffel_tower.glb, 11 x 27 x 11): it takes the casino of the block
+## at EIFFEL_BLOCK (that casino's lot grows to the whole 8 x 6 block), drawn at an absolute scale.
+const EIFFEL_MODEL := "eiffel_tower.glb: eiffel_tower"
+const EIFFEL_BLOCK := Rect2i(134, 184, 8, 6)
+const EIFFEL_SCALE := 0.55
+## The "Welcome to Las Vegas" sign stands in the desert beside the highway that enters Las Vegas
+## (north side of its three lanes), turned west to face the traffic coming from the desert.
+const VEGAS_SIGN_LOT := Rect2i(116, 161, 1, 3)
+const VEGAS_SIGN_FACING := 3
 
 ## A balloon floats over the mountain nearest to this cell of the first map (and over the
 ## stadium and the north-east corner of the central park).
@@ -619,6 +628,8 @@ static func final_tweaks(data: CityData) -> void:
 		data.b_scale[b] = FINAL_SHOP_SCALE
 	_casino_square(data)
 	_casino_fill(data)
+	_eiffel_tower(data)
+	_move_vegas_sign(data)
 
 
 ## The row of casino towers on the square of Las Vegas (CASINO2_LOTS).
@@ -666,3 +677,41 @@ static func _casino_fill(data: CityData) -> void:
 			data.b_model[b] = VEGAS_CASINO_MODEL
 			n += 1
 	print("[Edits] offices of Las Vegas turned into casinos: ", n)
+
+
+## The Eiffel tower takes the casino that stands in EIFFEL_BLOCK.
+static func _eiffel_tower(data: CityData) -> void:
+	var casino := -1
+	for b in data.building_count():
+		if data.b_kind[b] == CityTypes.Kind.EMPTY:
+			continue
+		var r := data.building_rect(b)
+		if not r.intersects(EIFFEL_BLOCK):
+			continue
+		if data.b_kind[b] == CityTypes.Kind.CASINO and casino < 0 and EIFFEL_BLOCK.encloses(r):
+			casino = b
+		else:
+			push_warning("[Edits] the block of the Eiffel tower holds another building at %s" % r)
+			return
+	if casino < 0:
+		push_warning("[Edits] no casino in the block of the Eiffel tower at %s" % EIFFEL_BLOCK)
+		return
+	data.set_building_rect(casino, EIFFEL_BLOCK)
+	data.b_facing[casino] = 2
+	data.b_model[casino] = EIFFEL_MODEL
+	data.b_scale[casino] = -EIFFEL_SCALE
+	data.b_sign[casino] = 0
+	data.b_more_signs.erase(casino)
+
+
+## The Las Vegas sign moves from the middle of the city to the desert road (VEGAS_SIGN_LOT).
+static func _move_vegas_sign(data: CityData) -> void:
+	for b in data.building_count():
+		if data.b_kind[b] != CityTypes.Kind.VEGAS_SIGN:
+			continue
+		if not _lot_is_free(data, b, VEGAS_SIGN_LOT):
+			push_warning("[Edits] no room for the Las Vegas sign at %s" % VEGAS_SIGN_LOT)
+			return
+		data.set_building_rect(b, VEGAS_SIGN_LOT)
+		data.b_facing[b] = VEGAS_SIGN_FACING
+		return
