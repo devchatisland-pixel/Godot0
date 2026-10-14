@@ -16,14 +16,6 @@
 		{
 			"cat": "TW_COLA_BILLBOARD",
 			"node": "tw_cola_billboard"
-		},
-		{
-			"cat": "TW_LED_BOARD",
-			"node": "tw_led_board"
-		},
-		{
-			"cat": "TW_LED_BAND",
-			"node": "tw_led_band"
 		}
 	]
 }

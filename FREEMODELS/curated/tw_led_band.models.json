@@ -1,0 +1,9 @@
+{
+	"file": "tw_led_band.glb",
+	"models": [
+		{
+			"cat": "TW_LED_BAND",
+			"node": "tw_led_band"
+		}
+	]
+}

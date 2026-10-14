@@ -228,6 +228,13 @@ const FINAL2_TO_POLICE := [Vector2i(118, 198), Vector2i(122, 203), Vector2i(147,
 const FINAL2_NEW_SIGNS := [[Vector2i(131, 194), "NEON_CLUB"], [Vector2i(131, 202), "NEON_GIRL"], [Vector2i(144, 202), "NEON_LOVE"]]
 const FINAL2_CASINO_WORD := Vector2i(122, 186)
 const FINAL2_SIGN_FIT := {"fill": 1.0, "shift": 0.0}
+## Light stripes of the Taiwan signs (tw_led_band wraps the south-east corner, tw_led_board stands on the
+## roof) added to casinos of Las Vegas: top-left cell of the lot, ModelCatalog.Cat name, mount.
+const FINAL2_LEDS := [
+	[Vector2i(122, 186), "TW_LED_BAND", "corner"], [Vector2i(131, 194), "TW_LED_BAND", "corner"],
+	[Vector2i(144, 202), "TW_LED_BAND", "corner"], [Vector2i(122, 182), "TW_LED_BOARD", "roof"],
+	[Vector2i(131, 202), "TW_LED_BOARD", "roof"],
+]
 ## Burger King (cell): size factor.
 const FINAL2_RESIZED := [["BURGER_KING", Vector2i(198, 295), 1.12]]
 ## The oil tank (top-left cell of its lot on the final map, model) that gets a line of more tanks to the east.
@@ -976,6 +983,16 @@ static func _vegas_second_pass(data: CityData) -> void:
 			data.b_sign_facing[b] = data.b_facing[b]
 			data.b_sign_fit[b] = FINAL2_SIGN_FIT
 			data.b_more_signs.erase(b)
+	for b in data.building_count():
+		if data.b_kind[b] != CityTypes.Kind.CASINO:
+			continue
+		for l in FINAL2_LEDS:
+			if data.building_rect(b).position == l[0]:
+				var more: Array = data.b_more_signs.get(b, [])
+				more.append([ModelCatalog.Cat[l[1]], l[2]])
+				data.b_more_signs[b] = more
+				if data.b_sign[b] == 0:
+					data.b_sign_facing[b] = 2
 
 
 ## The oil tank of TANK_LINE_FROM is copied to make a line of TANK_LINE_COUNT more towards the east

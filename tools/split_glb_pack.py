@@ -1,6 +1,9 @@
 """Split a curated multi-node .glb pack into one .glb (+ .models.json) per model node.
 
   python tools/split_glb_pack.py FREEMODELS/curated/neon_vegas.glb [--keep]
+  python tools/split_glb_pack.py FREEMODELS/curated/taiwan_signs.glb --only tw_led_band,tw_led_board
+
+With --only the listed nodes are taken out into their own .glb files and the pack keeps the rest.
 
 Each child node of the root becomes <node>.glb with only the mesh, material, textures and
 images it uses; <node>.models.json is written from the pack's own .models.json entry.
@@ -26,83 +29,112 @@ def write_glb(path, j, binary):
         f.write(struct.pack("<II", len(js), 0x4E4F534A) + js)
         f.write(struct.pack("<II", len(binary), 0x004E4942) + binary)
 
-def split(src, keep):
-    j, binary = read_glb(src)
-    root = j["nodes"][j["scenes"][0]["nodes"][0]]
-    names = [j["nodes"][i]["name"] for i in root["children"]]
-    base = os.path.dirname(src)
-    manifest = json.load(open(src.replace(".glb", ".models.json")))
-    cats = {m["node"]: m["cat"] for m in manifest["models"]}
-    for ci in root["children"]:
-        node = copy.deepcopy(j["nodes"][ci])
-        mesh = copy.deepcopy(j["meshes"][node["mesh"]])
-        # collect accessors -> bufferViews
-        acc_ids, mats = [], []
-        def acc(i):
-            if i not in acc_ids: acc_ids.append(i)
-            return acc_ids.index(i)
+def build(j, binary, child_ids, root=None):
+    """A new glb json + binary holding only the nodes `child_ids` (with their mesh, material,
+    textures and images). `root` (the pack's root node) wraps them when given."""
+    nodes = [copy.deepcopy(j["nodes"][c]) for c in child_ids]
+    meshes, acc_ids, mats = [], [], []
+    def acc(i):
+        if i not in acc_ids: acc_ids.append(i)
+        return acc_ids.index(i)
+    for n in nodes:
+        mesh = copy.deepcopy(j["meshes"][n["mesh"]])
         for p in mesh["primitives"]:
             p["attributes"] = {k: acc(v) for k, v in p["attributes"].items()}
             if "indices" in p: p["indices"] = acc(p["indices"])
             if "material" in p:
                 if p["material"] not in mats: mats.append(p["material"])
                 p["material"] = mats.index(p["material"])
-        materials = [copy.deepcopy(j["materials"][m]) for m in mats]
-        tex_ids = []
-        def walk(o):
-            if isinstance(o, dict):
-                for k, v in o.items():
-                    if k == "index" and isinstance(v, int) and "texCoord" in o or k == "index" and isinstance(v, int):
-                        if v not in tex_ids: tex_ids.append(v)
-                        o[k] = tex_ids.index(v)
-                    else: walk(v)
-            elif isinstance(o, list):
-                for v in o: walk(v)
-        walk(materials)
-        img_ids, textures = [], []
-        for t in tex_ids:
-            tx = copy.deepcopy(j["textures"][t])
-            if "source" in tx:
-                if tx["source"] not in img_ids: img_ids.append(tx["source"])
-                tx["source"] = img_ids.index(tx["source"])
-            textures.append(tx)
-        # rebuild binary
-        out_bin, views, accessors = bytearray(), [], []
-        def add_view(vi):
-            v = copy.deepcopy(j["bufferViews"][vi])
-            start = v.get("byteOffset", 0)
-            chunk = binary[start:start + v["byteLength"]]
-            out_bin.extend(b"\0" * (-len(out_bin) % 4))
-            v["byteOffset"] = len(out_bin); v["buffer"] = 0
-            out_bin.extend(chunk); views.append(v)
-            return len(views) - 1
-        for a in acc_ids:
-            ac = copy.deepcopy(j["accessors"][a])
-            if "bufferView" in ac: ac["bufferView"] = add_view(ac["bufferView"])
-            accessors.append(ac)
-        images = []
-        for im in img_ids:
-            img = copy.deepcopy(j["images"][im])
-            if "bufferView" in img: img["bufferView"] = add_view(img["bufferView"])
-            images.append(img)
-        node["mesh"] = 0
-        out = {"asset": j["asset"], "scene": 0, "scenes": [{"nodes": [0]}],
-               "nodes": [node], "meshes": [mesh], "accessors": accessors,
-               "bufferViews": views, "buffers": [{"byteLength": len(out_bin)}]}
-        if materials: out["materials"] = materials
-        if textures: out["textures"] = textures
-        if images: out["images"] = images
-        if "samplers" in j: out["samplers"] = j["samplers"]
-        name = node["name"]
-        write_glb(os.path.join(base, name + ".glb"), out, bytes(out_bin))
-        with open(os.path.join(base, name + ".models.json"), "w") as f:
-            json.dump({"file": name + ".glb", "models": [{"cat": cats[name], "node": name}]}, f, indent="\t")
-            f.write("\n")
+        n["mesh"] = len(meshes)
+        meshes.append(mesh)
+    materials = [copy.deepcopy(j["materials"][m]) for m in mats]
+    tex_ids = []
+    def walk(o):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k == "index" and isinstance(v, int):
+                    if v not in tex_ids: tex_ids.append(v)
+                    o[k] = tex_ids.index(v)
+                else: walk(v)
+        elif isinstance(o, list):
+            for v in o: walk(v)
+    walk(materials)
+    img_ids, textures = [], []
+    for t in tex_ids:
+        tx = copy.deepcopy(j["textures"][t])
+        if "source" in tx:
+            if tx["source"] not in img_ids: img_ids.append(tx["source"])
+            tx["source"] = img_ids.index(tx["source"])
+        textures.append(tx)
+    out_bin, views, accessors = bytearray(), [], []
+    def add_view(vi):
+        v = copy.deepcopy(j["bufferViews"][vi])
+        start = v.get("byteOffset", 0)
+        chunk = binary[start:start + v["byteLength"]]
+        out_bin.extend(b"\0" * (-len(out_bin) % 4))
+        v["byteOffset"] = len(out_bin); v["buffer"] = 0
+        out_bin.extend(chunk); views.append(v)
+        return len(views) - 1
+    for a in acc_ids:
+        ac = copy.deepcopy(j["accessors"][a])
+        if "bufferView" in ac: ac["bufferView"] = add_view(ac["bufferView"])
+        accessors.append(ac)
+    images = []
+    for im in img_ids:
+        img = copy.deepcopy(j["images"][im])
+        if "bufferView" in img: img["bufferView"] = add_view(img["bufferView"])
+        images.append(img)
+    if root is None:
+        out_nodes = nodes
+    else:
+        r = copy.deepcopy(root)
+        r["children"] = list(range(1, len(nodes) + 1))
+        out_nodes = [r] + nodes
+    for k, n in enumerate(nodes):
+        n["mesh"] = k
+    out = {"asset": j["asset"], "scene": 0, "scenes": [{"nodes": [0]}],
+           "nodes": out_nodes, "meshes": meshes, "accessors": accessors,
+           "bufferViews": views, "buffers": [{"byteLength": len(out_bin)}]}
+    if materials: out["materials"] = materials
+    if textures: out["textures"] = textures
+    if images: out["images"] = images
+    if "samplers" in j: out["samplers"] = j["samplers"]
+    return out, bytes(out_bin)
+
+def write_manifest(path, glb, entries):
+    with open(path, "w") as f:
+        json.dump({"file": glb, "models": entries}, f, indent="\t")
+        f.write("\n")
+
+def split(src, keep, only=None):
+    j, binary = read_glb(src)
+    root = j["nodes"][j["scenes"][0]["nodes"][0]]
+    base = os.path.dirname(src)
+    man_path = src.replace(".glb", ".models.json")
+    manifest = json.load(open(man_path))
+    cats = {m["node"]: m["cat"] for m in manifest["models"]}
+    names = {c: j["nodes"][c]["name"] for c in root["children"]}
+    take = [c for c in root["children"] if not only or names[c] in only]
+    for c in take:
+        name = names[c]
+        out, out_bin = build(j, binary, [c])
+        write_glb(os.path.join(base, name + ".glb"), out, out_bin)
+        write_manifest(os.path.join(base, name + ".models.json"), name + ".glb", [{"cat": cats[name], "node": name}])
         print("wrote", name + ".glb", cats[name])
-    if not keep:
-        os.remove(src); os.remove(src.replace(".glb", ".models.json"))
+    if only:
+        rest = [c for c in root["children"] if c not in take]
+        out, out_bin = build(j, binary, rest, root)
+        write_glb(src, out, out_bin)
+        write_manifest(man_path, os.path.basename(src),
+                       [m for m in manifest["models"] if m["node"] not in only])
+        print("pack keeps", [names[c] for c in rest])
+    elif not keep:
+        os.remove(src); os.remove(man_path)
         imp = src + ".import"
         if os.path.exists(imp): os.remove(imp)
 
 if __name__ == "__main__":
-    split(sys.argv[1], "--keep" in sys.argv)
+    only = None
+    if "--only" in sys.argv:
+        only = set(sys.argv[sys.argv.index("--only") + 1].split(","))
+    split(sys.argv[1], "--keep" in sys.argv, only)
