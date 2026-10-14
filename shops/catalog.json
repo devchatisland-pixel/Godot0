@@ -44,7 +44,7 @@
   },
   {
    "id": "shop-coffee-a",
-   "file": "res://shops/models/shop-coffee-a.glb",
+   "file": "res://shops/models/shop-coffee-a_night.glb",
    "category": "Coffee",
    "name": "Coffee Shop (stall)",
    "credit": {
@@ -64,7 +64,7 @@
   },
   {
    "id": "shop-flower-a",
-   "file": "res://shops/models/shop-flower-a.glb",
+   "file": "res://shops/models/shop-flower-a_night.glb",
    "category": "Flower",
    "name": "Flower Shop (game asset)",
    "credit": {
@@ -121,26 +121,6 @@
    "triangles": 1799,
    "notes": "Variant of shop-general-orange-a (adds AC unit, plants, extra awnings).",
    "_x": 59.355
-  },
-  {
-   "id": "shop-general-generic",
-   "file": "res://shops/models/shop-general-generic.glb",
-   "category": "General",
-   "name": "Low Poly Generic Shop",
-   "credit": {
-    "title": "Low poly generic shop",
-    "author": "assetfactory",
-    "url": "https://sketchfab.com/3d-models/low-poly-generic-shop-58797c167b834d7ab982afa82f693415",
-    "license": "SKETCHFAB Standard"
-   },
-   "size_m": {
-    "width": 3.69,
-    "depth": 2.48,
-    "height": 2.64
-   },
-   "triangles": 5026,
-   "notes": "Single textured mesh 'ShopBuilding' + a Collider mesh (hide/remove Collider). License is Sketchfab Standard, not CC-BY.",
-   "_x": 50.565
   },
   {
    "id": "shop-general-brick",
