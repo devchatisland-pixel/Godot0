@@ -27,6 +27,9 @@ var _env: Environment
 var _sun: DirectionalLight3D
 
 
+var _t_begin := 0
+
+
 func _ready() -> void:
 	cfg = CityConfig.create()
 	_setup_environment()
@@ -54,12 +57,26 @@ func _on_map_chosen(show_continent: bool, show_fog_island: bool) -> void:
 
 func _begin() -> void:
 	_phase = Phase.GENERATING
+	_t_begin = Time.get_ticks_msec()
 	library = ModelLibrary.new()
+	library.lookahead = _loader_lookahead()
 	library.begin(cfg)
 	if cfg.use_threads:
 		_thread.start(_generate_city)
 	else:
 		_generate_without_thread()
+
+
+## Test switch for timing the web build: ?loader=old|all|<n> (default 4 files ahead).
+func _loader_lookahead() -> int:
+	if not OS.has_feature("web"):
+		return ModelLibrary.DEFAULT_LOOKAHEAD
+	var q := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('loader') || ''"))
+	if q == "old":
+		return 0
+	if q == "all":
+		return -1
+	return int(q) if q.is_valid_int() else ModelLibrary.DEFAULT_LOOKAHEAD
 
 
 func _generate_city() -> CityData:
@@ -92,11 +109,14 @@ func _update_loading() -> void:
 	# Models load on the main thread while the city generates in the background.
 	if _models_progress < 1.0:
 		_models_progress = library.load_next(3)
+		if _models_progress >= 1.0:
+			print("[Startup] models loaded in %d ms (lookahead %d)" % [Time.get_ticks_msec() - _t_begin, library.lookahead])
 	var total := _gen_progress * 0.6 + _models_progress * 0.4
 	var text := _gen_text if _gen_progress < 1.0 else "Loading buildings"
 	_overlay.set_progress(total, text)
 	if data == null and _thread.is_started() and not _thread.is_alive():
 		data = _thread.wait_to_finish()
+		print("[Startup] city generated in %d ms" % (Time.get_ticks_msec() - _t_begin))
 	if data != null and _models_progress >= 1.0:
 		_start_city()
 
@@ -219,6 +239,7 @@ func _start_city() -> void:
 	day_night.setup(_sun, _env, cfg.day_cycle_seconds, START_PHASE)
 	day_night.fog_island = fog_island
 	_phase = Phase.RUNNING
+	print("[Startup] map ready in %d ms" % (Time.get_ticks_msec() - _t_begin))
 
 
 func _setup_environment() -> void:

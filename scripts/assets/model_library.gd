@@ -29,8 +29,13 @@ const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "conta
 var _pending: Array[Dictionary] = []
 var _yard_loaded := false
 var _total := 0
+## How many model files are read ahead in the background (0 = none, read on the
+## main thread; -1 = all at once). A small window leaves CPU to the city generator.
+const DEFAULT_LOOKAHEAD := 4
+var lookahead := DEFAULT_LOOKAHEAD
 # Paths handed to ResourceLoader.load_threaded_request (path -> true).
 var _requested := {}
+var _fetched := {}
 # Curated pack currently open (packs hold many buildings, opened once each).
 var _pack_path := ""
 var _pack_root: Node
@@ -45,8 +50,7 @@ func begin(cfg: CityConfig) -> void:
 	_total = maxi(1, _pending.size())
 	# Start reading every model file in the background right away; load_next only
 	# picks up files that are ready, so disk and parsing never stall a frame.
-	for e in _pending:
-		_request(e["path"])
+	_request_ahead()
 	print("[Models] %d model files selected in %s" % [_pending.size(), cfg.models_root])
 
 
@@ -58,6 +62,7 @@ func load_next(count: int) -> float:
 		if not _ready(_pending[0]["path"]):
 			break
 		var e: Dictionary = _pending.pop_front()
+		_request_ahead()
 		var mesh := _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
 		if mesh == null:
 			push_warning("[Models] could not load %s %s" % [e["path"], e.get("node", "")])
@@ -146,10 +151,25 @@ func _limit_variants(entries: Array[Dictionary], limit: int) -> Array[Dictionary
 	return out
 
 
-func _request(path: String) -> void:
-	if _requested.has(path) or not ResourceLoader.exists(path):
+## Keeps `lookahead` distinct upcoming files requested.
+func _request_ahead() -> void:
+	if lookahead == 0:
 		return
-	if ResourceLoader.load_threaded_request(path, "", true) == OK:
+	var seen := {}
+	for e in _pending:
+		var path: String = e["path"]
+		if seen.has(path):
+			continue
+		seen[path] = true
+		if lookahead > 0 and seen.size() > lookahead:
+			break
+		_request(path)
+
+
+func _request(path: String) -> void:
+	if _requested.has(path) or _fetched.has(path) or not ResourceLoader.exists(path):
+		return
+	if ResourceLoader.load_threaded_request(path) == OK:
 		_requested[path] = true
 
 
@@ -163,6 +183,7 @@ func _ready(path: String) -> bool:
 func _fetch(path: String) -> Resource:
 	if _requested.has(path):
 		_requested.erase(path)
+		_fetched[path] = true
 		var r := ResourceLoader.load_threaded_get(path)
 		if r != null:
 			return r
