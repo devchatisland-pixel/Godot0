@@ -179,6 +179,10 @@ func _start_city() -> void:
 	wood_fences.name = "WoodFences"
 	add_child(wood_fences)
 	wood_fences.build(data, library)
+	var club_cycles := MapClubCycles.new()
+	club_cycles.name = "ClubCycles"
+	add_child(club_cycles)
+	club_cycles.build(data, library)
 	var jail := PrisonCompound.new()
 	jail.name = "Jail"
 	add_child(jail)
