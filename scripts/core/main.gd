@@ -67,16 +67,15 @@ func _begin() -> void:
 		_generate_without_thread()
 
 
-## Test switch for timing the web build: ?loader=old|all|<n> (default 4 files ahead).
+## Test switch for timing the web build: ?loader=old|all|<n>. The web build reads models
+## one by one by default (measured: 14 s, against 28 s with 4 files read ahead in the browser).
 func _loader_lookahead() -> int:
 	if not OS.has_feature("web"):
 		return ModelLibrary.DEFAULT_LOOKAHEAD
 	var q := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('loader') || ''"))
-	if q == "old":
-		return 0
 	if q == "all":
 		return -1
-	return int(q) if q.is_valid_int() else ModelLibrary.DEFAULT_LOOKAHEAD
+	return int(q) if q.is_valid_int() else 0
 
 
 func _generate_city() -> CityData:
