@@ -10,6 +10,11 @@ const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 
 const SHOP_ID := "shop-general-orange-b-unlit"
+## 60% of the shops (by the hash of their place) are one of these three instead, a third each.
+const OTHER_IDS := ["shop-general-mini-unlit", "shop-flower-a-unlit", "shop-general-orange-a-unlit"]
+const OTHER_SHARE := 60
+## Every shop id of the city, the main one first.
+const ALL_IDS := ["shop-general-orange-b-unlit", "shop-general-mini-unlit", "shop-flower-a-unlit", "shop-general-orange-a-unlit"]
 ## Absolute scale of the shop (cells per metre of its model): its normal size.
 const SHOP_SCALE := 0.34
 ## Zone -> number of shops.
@@ -24,6 +29,14 @@ const REPLACED := [Kind.EMPTY, Kind.SHOP, Kind.HOUSE, Kind.QUARTER_BLDG, Kind.AP
 ## Puts the shops, spread evenly over each zone: every new shop is the free lot farthest from
 ## the ones already put there (vacant lots are taken before the others at equal distance).
 ## Returns {zone name: shops put}.
+## Catalog id of the shop standing at (x, y): the main one, or (60%) one of the three others.
+static func shop_id_at(x: int, y: int) -> String:
+	var h := CityTypes.hash2(x, y, 6161)
+	if h % 100 < OTHER_SHARE:
+		return OTHER_IDS[(h / 100) % OTHER_IDS.size()]
+	return SHOP_ID
+
+
 static func apply(data: CityData) -> Dictionary:
 	var by_zone := {}
 	for zone in QUOTA:
@@ -77,7 +90,8 @@ static func apply(data: CityData) -> Dictionary:
 			# The model's front is -Z: turn it the other way round so that it looks at the street.
 			data.b_kind[b] = Kind.SHOP
 			data.b_facing[b] = (face + 2) % 4
-			data.b_model[b] = "shop:" + SHOP_ID
+			var at := data.building_rect(b).position
+			data.b_model[b] = "shop:" + shop_id_at(at.x, at.y)
 			data.b_scale[b] = -SHOP_SCALE
 			count += 1
 			# Next: the free lot farthest from the shops of this zone (vacant lots get a bonus).
@@ -150,7 +164,7 @@ static func _on_free_ground(data: CityData, zone: int, want: int) -> int:
 		face = 2 if face == 0 else (1 if face == 3 else face)
 		var b := data.add_building(rect, Kind.SHOP, (face + 2) % 4,
 				CityTypes.hash2(rect.position.x, rect.position.y, 5252), 0.3)
-		data.b_model[b] = "shop:" + SHOP_ID
+		data.b_model[b] = "shop:" + shop_id_at(rect.position.x, rect.position.y)
 		data.b_scale[b] = -SHOP_SCALE
 		for y in range(rect.position.y, rect.end.y):
 			for x in range(rect.position.x, rect.end.x):
