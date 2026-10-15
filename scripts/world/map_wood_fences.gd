@@ -22,8 +22,9 @@ const HIGHWAY_PIECE := 1.5
 ## Gap left in the fence in front of a house (cells).
 const GATE := 1.2
 ## The candy shops: id, absolute scale of the ones of the city, and the room left round a shop.
-const SHOP_ID := "shop-candy-b"
-const SHOP_SCALE := 0.68
+const SHOP_ID := "shop-general-orange-b-unlit"
+const DEV_SHOP_ID := "shop-candy-b"
+const SHOP_SCALE := 0.34
 const SPOT_PAD := 0.45
 ## The highway fences stand this far outside the edge of the road, and keep this far from a
 ## crossing highway.
@@ -77,8 +78,9 @@ func _ring(data: CityData, batch: _Batch, x0: float, y0: float, x1: float, y1: f
 			batch.line(a, b, gate, Callable())
 
 
-## A well-kept spot round every candy shop (shop-candy-b): the shops of the city and of the
-## quarter (buildings with the model "shop:shop-candy-b"), those of the development island and
+## A well-kept spot round every shop of the city (shop-general-orange-b-unlit): the shops of the city
+## and of the quarter (buildings with the model "shop:shop-general-orange-b-unlit"), the candy shops of
+## the development island and
 ## those of the fog island. The fence is a ring a little bigger than the shop, with a gate on its front.
 func _candy_shops(data: CityData, batch: _Batch) -> void:
 	for b in data.building_count():
@@ -89,8 +91,8 @@ func _candy_shops(data: CityData, batch: _Batch) -> void:
 		_spot(data, batch, Vector2(r.get_center()), (int(data.b_facing[b]) + 2) % 4, SHOP_SCALE)
 	var catalog := MapShops.catalog()
 	for p in ShopSites.plan(data, catalog):
-		if String(p["id"]).begins_with(SHOP_ID):
-			_spot(data, batch, p["at"], 2, float(p["scale"]))
+		if String(p["id"]).begins_with(DEV_SHOP_ID):
+			_spot(data, batch, p["at"], 2, float(p["scale"]), true, DEV_SHOP_ID)
 	if data.fog != null:
 		for p in FogBaseSites.plan(data.fog):
 			if String(p.get("shop", "")) == SHOP_ID:
@@ -100,8 +102,8 @@ func _candy_shops(data: CityData, batch: _Batch) -> void:
 
 
 ## Ring round a shop standing at `at`, its front towards `look` (0 N, 1 E, 2 S, 3 W), `scale` cells per metre.
-func _spot(data: CityData, batch: _Batch, at: Vector2, look: int, scale: float, on_grid: bool = true) -> void:
-	var entry := MapShops.entry(SHOP_ID)
+func _spot(data: CityData, batch: _Batch, at: Vector2, look: int, scale: float, on_grid: bool = true, shop_id: String = SHOP_ID) -> void:
+	var entry := MapShops.entry(shop_id)
 	if entry.is_empty():
 		return
 	var w := float(entry["width"]) * scale

@@ -106,7 +106,7 @@ func _city_shops(main: Node) -> void:
 	var data: CityData = main.data
 	var found: Array[Vector3] = []
 	for b in data.building_count():
-		if data.b_model.get(b, "") == "shop:shop-candy-b":
+		if data.b_model.get(b, "") == "shop:shop-general-orange-b-unlit":
 			var r := data.building_rect(b)
 			found.append(Vector3(r.position.x + r.size.x * 0.5, 0, r.position.y + r.size.y * 0.5))
 	print("[Capture] %d city candy shops" % found.size())
