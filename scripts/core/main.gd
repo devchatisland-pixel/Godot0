@@ -80,6 +80,12 @@ func _loader_lookahead() -> int:
 
 
 func _generate_city() -> CityData:
+	# Exported builds ship the city generated at export time (same seed = same city).
+	if OS.has_feature("template"):
+		_on_gen_progress(0.5, "Unpacking the city")
+		var stored := CitySnapshot.load_city(cfg)
+		if stored != null:
+			return stored
 	return CityGenerator.new(cfg, _on_gen_progress).generate()
 
 

@@ -68,7 +68,7 @@ var fog: FogIslandShaper
 var continent: ContinentShaper
 
 
-func _init(p_size: int, p_chunk: int) -> void:
+func _init(p_size: int = 0, p_chunk: int = 0) -> void:
 	size = p_size
 	chunk_size = p_chunk
 	var n := size * size

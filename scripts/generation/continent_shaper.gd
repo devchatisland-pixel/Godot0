@@ -141,7 +141,10 @@ var _w := 0                         # half cell grid width
 var _h := 0
 
 
-func _init(cfg: CityConfig, data: CityData) -> void:
+## Called without arguments when CitySnapshot rebuilds a stored city.
+func _init(cfg: CityConfig = null, data: CityData = null) -> void:
+	if cfg == null:
+		return
 	_cfg = cfg
 	_data = data
 	_rng.seed = cfg.seed + 31337

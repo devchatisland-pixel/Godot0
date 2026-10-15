@@ -31,7 +31,10 @@ var _height := PackedFloat32Array()
 var _noise := FastNoiseLite.new()
 
 
-func _init(cfg: CityConfig, data: CityData) -> void:
+## Called without arguments when CitySnapshot rebuilds a stored city.
+func _init(cfg: CityConfig = null, data: CityData = null) -> void:
+	if cfg == null:
+		return
 	_cfg = cfg
 	# East of the bridge: the island starts about 22 cells beyond the end of the highway.
 	origin = Vector2(data.bridge.x + 12, data.bridge.y - SIZE / 2) if data.bridge.x >= 0 \
