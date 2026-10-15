@@ -1,0 +1,187 @@
+class_name MapWoodFences
+extends Node3D
+## The fences made of whole models (res://fences/models), one MultiMesh per model:
+##   - wooden_fence: round the house and garden lots and the central park, with a gap in front
+##     of the door;
+##   - fence_wood: the sides of the crop fields that face a road (the farm land);
+##   - road_separation_fence: along both edges of the highways of the continent.
+## Each model is stretched so that one piece is PIECE cells long; its long side (x or z of
+## the model) runs along the line.
+
+const Kind := CityTypes.Kind
+
+const WOODEN := "res://fences/models/wooden_fence.glb"
+const FARM := "res://fences/models/fence_wood.glb"
+const HIGHWAY := "res://fences/models/road_separation_fence.glb"
+
+## Length of one piece (cells) of each model.
+const WOODEN_PIECE := 1.0
+const FARM_PIECE := 1.0
+const HIGHWAY_PIECE := 1.5
+## Gap left in the fence in front of a house (cells).
+const GATE := 1.2
+## The highway fences stand this far outside the edge of the road, and keep this far from a
+## crossing highway.
+const HIGHWAY_MARGIN := 0.1
+const CROSSING_CLEAR := 3.0
+
+var _count := 0
+
+
+func build(data: CityData, lib: ModelLibrary) -> void:
+	var wood := _Batch.new(lib, "fence:wooden", WOODEN, WOODEN_PIECE)
+	var farm := _Batch.new(lib, "fence:farm", FARM, FARM_PIECE)
+	var road := _Batch.new(lib, "fence:highway", HIGHWAY, HIGHWAY_PIECE)
+	for b in data.building_count():
+		var kind: int = data.b_kind[b]
+		var r := data.building_rect(b)
+		if kind == Kind.HOUSE or kind == Kind.GARDEN:
+			if r.size.x >= 2 and r.size.y >= 2:
+				_lot(data, wood, r, int(data.b_facing[b]) if kind == Kind.HOUSE else -1)
+		elif kind == Kind.FIELD:
+			_field(data, farm, r)
+	if data.central_park.size.x > 0:
+		_lot(data, wood, data.central_park, -1)
+	if data.continent != null:
+		_highways(data.continent, road)
+	for batch in [wood, farm, road]:
+		_count += batch.flush(self)
+	print("[WoodFences] %d fence pieces placed" % _count)
+
+
+## The four sides of `r`; `front` (0 N, 1 E, 2 S, 3 W, or -1) leaves a gate in the middle of that side.
+func _lot(data: CityData, batch: _Batch, r: Rect2i, front: int) -> void:
+	var x0 := float(r.position.x)
+	var y0 := float(r.position.y)
+	var x1 := float(r.end.x)
+	var y1 := float(r.end.y)
+	var sides := [
+		[Vector2(x0, y0), Vector2(x1, y0)],  # north
+		[Vector2(x1, y0), Vector2(x1, y1)],  # east
+		[Vector2(x0, y1), Vector2(x1, y1)],  # south
+		[Vector2(x0, y0), Vector2(x0, y1)],  # west
+	]
+	for s in 4:
+		var a: Vector2 = sides[s][0]
+		var b: Vector2 = sides[s][1]
+		var gate := GATE if s == front else 0.0
+		batch.line(a, b, gate, func(mid: Vector2) -> bool: return _dry(data, mid))
+
+
+## Only the sides of the field whose neighbour cells are road.
+func _field(data: CityData, batch: _Batch, r: Rect2i) -> void:
+	var x0 := r.position.x
+	var y0 := r.position.y
+	var x1 := r.end.x
+	var y1 := r.end.y
+	for x in range(x0, x1):
+		_field_edge(data, batch, Vector2(x, y0), Vector2(x + 1, y0), Vector2i(x, y0 - 1))
+		_field_edge(data, batch, Vector2(x, y1), Vector2(x + 1, y1), Vector2i(x, y1))
+	for y in range(y0, y1):
+		_field_edge(data, batch, Vector2(x0, y), Vector2(x0, y + 1), Vector2i(x0 - 1, y))
+		_field_edge(data, batch, Vector2(x1, y), Vector2(x1, y + 1), Vector2i(x1, y))
+
+
+func _field_edge(data: CityData, batch: _Batch, a: Vector2, b: Vector2, outside: Vector2i) -> void:
+	if data.in_bounds(outside.x, outside.y) and data.road[data.idx(outside.x, outside.y)] != 0:
+		batch.line(a, b, 0.0, Callable())
+
+
+func _dry(data: CityData, p: Vector2) -> bool:
+	var x := int(floor(p.x))
+	var y := int(floor(p.y))
+	return data.in_bounds(x, y) and data.terrain[data.idx(x, y)] == CityTypes.Terrain.LAND \
+			and data.road[data.idx(x, y)] == 0
+
+
+func _highways(c: ContinentShaper, batch: _Batch) -> void:
+	var half := ContinentShaper.HIGHWAY_WIDTH * 0.5 + HIGHWAY_MARGIN
+	for hi in c.highways.size():
+		var h: PackedVector2Array = c.highways[hi]
+		var clear := func(mid: Vector2) -> bool:
+			for oi in c.highways.size():
+				if oi == hi:
+					continue
+				if _near_line(c.highways[oi], mid, ContinentShaper.HIGHWAY_WIDTH * 0.5 + CROSSING_CLEAR):
+					return false
+			return true
+		for i in h.size() - 1:
+			var d := h[i + 1] - h[i]
+			if d.length() < 0.05:
+				continue
+			var n := Vector2(-d.y, d.x).normalized() * half
+			batch.line(h[i] + n, h[i + 1] + n, 0.0, clear)
+			batch.line(h[i] - n, h[i + 1] - n, 0.0, clear)
+
+
+static func _near_line(poly: PackedVector2Array, p: Vector2, dist: float) -> bool:
+	for i in poly.size() - 1:
+		var a := poly[i]
+		var ab := poly[i + 1] - a
+		var t := clampf((p - a).dot(ab) / maxf(ab.length_squared(), 0.0001), 0.0, 1.0)
+		if (a + ab * t).distance_to(p) < dist:
+			return true
+	return false
+
+
+## Collects the pieces of one model and draws them as one MultiMesh.
+class _Batch:
+	var _mesh: Mesh
+	var _piece: float
+	var _scale := 1.0
+	var _long_is_x := false
+	var _center := Vector3.ZERO
+	var _xforms: Array[Transform3D] = []
+
+	func _init(lib: ModelLibrary, name: String, path: String, piece: float) -> void:
+		_piece = piece
+		var id := lib.load_named(name, path)
+		if id < 0:
+			return
+		_mesh = lib.meshes[id]
+		var box: AABB = lib.bounds[id]
+		_long_is_x = box.size.x > box.size.z
+		var length := maxf(box.size.x, box.size.z)
+		if length <= 0.0001:
+			_mesh = null
+			return
+		_scale = piece / length
+		# Centre of the footprint, bottom of the model on the ground.
+		_center = Vector3(box.get_center().x, box.position.y, box.get_center().z)
+
+	## Pieces along a -> b, skipping `gate` cells in the middle and every piece whose middle is
+	## refused by `allow` (an invalid Callable allows all).
+	func line(a: Vector2, b: Vector2, gate: float, allow: Callable) -> void:
+		if _mesh == null:
+			return
+		var d := b - a
+		var len := d.length()
+		var n := maxi(1, int(round(len / _piece)))
+		var step := len / float(n)
+		var dir := d / len
+		var yaw := atan2(-dir.y, dir.x) if _long_is_x else atan2(dir.x, dir.y)
+		var s := _scale * step / _piece
+		var basis := Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3(s, _scale, s))
+		for k in n:
+			var mid := a + dir * (step * (float(k) + 0.5))
+			if gate > 0.0 and mid.distance_to((a + b) * 0.5) < gate * 0.5 + step * 0.5:
+				continue
+			if allow.is_valid() and not allow.call(mid):
+				continue
+			_xforms.append(Transform3D(basis, Vector3(mid.x, 0.0, mid.y) - basis * _center))
+
+	func flush(parent: Node3D) -> int:
+		if _mesh == null or _xforms.is_empty():
+			return 0
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = _mesh
+		mm.instance_count = _xforms.size()
+		for i in _xforms.size():
+			mm.set_instance_transform(i, _xforms[i])
+		var mmi := MultiMeshInstance3D.new()
+		mmi.name = "WoodFence_%d" % parent.get_child_count()
+		mmi.multimesh = mm
+		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		parent.add_child(mmi)
+		return _xforms.size()
