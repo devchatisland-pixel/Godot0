@@ -108,3 +108,6 @@ FREEMODELS/_incoming/game_ready_military_base_asset_pack.glb
 FREEMODELS/_incoming/simple_chainlink_fence.glb
 FREEMODELS/_incoming/light_house.glb
 FREEMODELS/_incoming/night_club_sign.glb
+
+# City generated at export time (tools/bake_city.gd, run by deploy.ps1)
+/baked/
