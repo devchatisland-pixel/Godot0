@@ -35,12 +35,16 @@ func generate() -> CityData:
 	var extension := ExtensionPlanner.new(_cfg, data, island, rng)
 	extension.build()
 
-	_report(0.97, "Hiding an island in the fog")
-	data.fog = FogIslandShaper.new(_cfg, data)
-	data.fog.shape(FogIslandShaper.SIZE / 2)
-	_report(0.98, "Raising a continent")
-	data.continent = ContinentShaper.new(_cfg, data)
-	data.continent.shape()
+	# The fog island is shaped only if shown, or if the continent needs it to land its bridges.
+	if _cfg.show_fog_island or _cfg.show_continent:
+		_report(0.97, "Hiding an island in the fog")
+		data.fog = FogIslandShaper.new(_cfg, data)
+		data.fog.shape(FogIslandShaper.SIZE / 2)
+	# A continent switched off on the start screen is never shaped (it was dropped unseen anyway).
+	if _cfg.show_continent:
+		_report(0.98, "Raising a continent")
+		data.continent = ContinentShaper.new(_cfg, data)
+		data.continent.shape()
 
 	var fill := UrbanFill.apply(data)
 	print("[City] %d towers added south of the airport" % fill)
