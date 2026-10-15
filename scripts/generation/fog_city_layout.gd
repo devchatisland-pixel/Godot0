@@ -417,7 +417,7 @@ func _put_shop(p: Vector2, face: Vector2) -> void:
 	var half := _shop_size * 0.5
 	if not _land_box(p, half) or keep_out(p, maxf(half.x, half.y) + 0.3) or _near_extra(p, half.x + 0.5):
 		return
-	_items.append({"shop": SHOP_ID, "at": p, "dir": face, "scale": _shop_scale(), "city": true})
+	_items.append({"shop": CityShops.shop_id_at(int(p.x * 4.0), int(p.y * 4.0)), "at": p, "dir": face, "scale": _shop_scale(), "city": true})
 	_rects.append(Rect2(p - half, half * 2.0))
 	_shops_left -= 1
 	_block_shops += 1
@@ -461,7 +461,7 @@ func _extra_shops() -> void:
 						break
 				if free and _land_box(p, half) and not keep_out(p, maxf(half.x, half.y) + 0.3) 						and not _near_extra(p, half.x + 0.5):
 					var face := _south_or_east(Vector2(0, 1) if p.y < r.get_center().y else Vector2(0, -1))
-					_items.append({"shop": SHOP_ID, "at": p, "dir": face, "scale": _shop_scale(), "city": true})
+					_items.append({"shop": CityShops.shop_id_at(int(p.x * 4.0), int(p.y * 4.0)), "at": p, "dir": face, "scale": _shop_scale(), "city": true})
 					_rects.append(Rect2(p - half, _shop_size))
 					_stats["shops"] += 1
 					left -= 1
@@ -511,7 +511,7 @@ func _convert_to_shops() -> void:
 			gone[cand[pick]] = true
 			for t in touched:
 				gone[t] = true
-			made.append({"shop": SHOP_ID, "at": at, "dir": Vector2(1, 0) if east else Vector2(0, 1),
+			made.append({"shop": CityShops.shop_id_at(int(at.x * 4.0), int(at.y * 4.0)), "at": at, "dir": Vector2(1, 0) if east else Vector2(0, 1),
 					"scale": _shop_scale(), "city": true})
 			_stats["shops"] += 1
 			count += 1
@@ -542,7 +542,7 @@ func _farthest(cand: Array[int], mind: PackedFloat32Array, gone: Dictionary, fro
 # --- The shop ---------------------------------------------------------------------------------------------------
 func _load_shop() -> void:
 	for s in MapShops.catalog():
-		if s["id"] == SHOP_ID:
+		if s["id"] == SHOP_ID:  # the main shop sets the footprint of the others too
 			var k := _shop_scale()
 			_shop_size = Vector2(float(s["width"]) * k, float(s["depth"]) * k)
 

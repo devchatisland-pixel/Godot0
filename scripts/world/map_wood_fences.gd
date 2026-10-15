@@ -84,21 +84,22 @@ func _ring(data: CityData, batch: _Batch, x0: float, y0: float, x1: float, y1: f
 ## those of the fog island. The fence is a ring a little bigger than the shop, with a gate on its front.
 func _candy_shops(data: CityData, batch: _Batch) -> void:
 	for b in data.building_count():
-		if data.b_kind[b] == Kind.EMPTY or data.b_model.get(b, "") != "shop:" + SHOP_ID:
+		var model := String(data.b_model.get(b, ""))
+		if data.b_kind[b] == Kind.EMPTY or not model.begins_with("shop:") or not CityShops.ALL_IDS.has(model.trim_prefix("shop:")):
 			continue
 		var r := data.building_rect(b)
 		# b_facing is turned half way round: the front of the model is -Z (CityShops).
-		_spot(data, batch, Vector2(r.get_center()), (int(data.b_facing[b]) + 2) % 4, SHOP_SCALE)
+		_spot(data, batch, Vector2(r.get_center()), (int(data.b_facing[b]) + 2) % 4, SHOP_SCALE, true, model.trim_prefix("shop:"))
 	var catalog := MapShops.catalog()
 	for p in ShopSites.plan(data, catalog):
 		if String(p["id"]).begins_with(DEV_SHOP_ID):
 			_spot(data, batch, p["at"], 2, float(p["scale"]), true, DEV_SHOP_ID)
 	if data.fog != null:
 		for p in FogBaseSites.plan(data.fog):
-			if String(p.get("shop", "")) == SHOP_ID:
+			if CityShops.ALL_IDS.has(String(p.get("shop", ""))):
 				var dir: Vector2 = p["dir"]
 				var look := (0 if dir.y < -0.5 else 2) if absf(dir.y) > absf(dir.x) else (1 if dir.x > 0.0 else 3)
-				_spot(data, batch, data.fog.origin + (p["at"] as Vector2), look, float(p["scale"]), false)
+				_spot(data, batch, data.fog.origin + (p["at"] as Vector2), look, float(p["scale"]), false, String(p["shop"]))
 
 
 ## Ring round a shop standing at `at`, its front towards `look` (0 N, 1 E, 2 S, 3 W), `scale` cells per metre.
