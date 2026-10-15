@@ -2,7 +2,8 @@ class_name ModelLibrary
 extends RefCounted
 ## Owns every mesh used by the city. Each mesh gets an integer id; chunks only
 ## store ids + transforms, so a model is in memory once however often it is used.
-## Models are loaded step by step on the main thread (keeps the loading screen alive);
+## Model files are read and parsed by ResourceLoader's worker threads (all CPU cores),
+## then turned into merged meshes step by step on the main thread (keeps the loading screen alive);
 ## after loading the library is read-only and safe to query from worker threads.
 
 const Cat := ModelCatalog.Cat
@@ -28,6 +29,8 @@ const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "conta
 var _pending: Array[Dictionary] = []
 var _yard_loaded := false
 var _total := 0
+# Paths handed to ResourceLoader.load_threaded_request (path -> true).
+var _requested := {}
 # Curated pack currently open (packs hold many buildings, opened once each).
 var _pack_path := ""
 var _pack_root: Node
@@ -40,6 +43,10 @@ func begin(cfg: CityConfig) -> void:
 	# Group buildings of the same pack so every pack file is opened only once.
 	_pending.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["path"] < b["path"])
 	_total = maxi(1, _pending.size())
+	# Start reading every model file in the background right away; load_next only
+	# picks up files that are ready, so disk and parsing never stall a frame.
+	for e in _pending:
+		_request(e["path"])
 	print("[Models] %d model files selected in %s" % [_pending.size(), cfg.models_root])
 
 
@@ -47,6 +54,8 @@ func begin(cfg: CityConfig) -> void:
 func load_next(count: int) -> float:
 	for i in count:
 		if _pending.is_empty():
+			break
+		if not _ready(_pending[0]["path"]):
 			break
 		var e: Dictionary = _pending.pop_front()
 		var mesh := _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
@@ -137,10 +146,31 @@ func _limit_variants(entries: Array[Dictionary], limit: int) -> Array[Dictionary
 	return out
 
 
+func _request(path: String) -> void:
+	if _requested.has(path) or not ResourceLoader.exists(path):
+		return
+	if ResourceLoader.load_threaded_request(path, "", true) == OK:
+		_requested[path] = true
+
+
+## True when `path` can be fetched without waiting (or was never requested).
+func _ready(path: String) -> bool:
+	if not _requested.has(path):
+		return true
+	return ResourceLoader.load_threaded_get_status(path) != ResourceLoader.THREAD_LOAD_IN_PROGRESS
+
+
+func _fetch(path: String) -> Resource:
+	if _requested.has(path):
+		_requested.erase(path)
+		var r := ResourceLoader.load_threaded_get(path)
+		if r != null:
+			return r
+	return ResourceLoader.load(path) if ResourceLoader.exists(path) else null
+
+
 func _load_mesh(path: String) -> Mesh:
-	var res: Resource = null
-	if ResourceLoader.exists(path):
-		res = ResourceLoader.load(path)
+	var res: Resource = _fetch(path)
 	if res is Mesh:
 		return res
 	var root := _open_scene(path, res)
@@ -156,7 +186,7 @@ func _load_pack_mesh(path: String, node_name: String) -> Mesh:
 	if path != _pack_path:
 		_close_pack()
 		_pack_path = path
-		var res: Resource = ResourceLoader.load(path) if ResourceLoader.exists(path) else null
+		var res: Resource = _fetch(path)
 		_pack_root = _open_scene(path, res)
 	if _pack_root == null:
 		return null
