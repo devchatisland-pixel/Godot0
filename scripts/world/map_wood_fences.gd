@@ -21,6 +21,10 @@ const FARM_PIECE := 1.0
 const HIGHWAY_PIECE := 1.5
 ## Gap left in the fence in front of a house (cells).
 const GATE := 1.2
+## The candy shops: id, absolute scale of the ones of the city, and the room left round a shop.
+const SHOP_ID := "shop-candy-b"
+const SHOP_SCALE := 0.68
+const SPOT_PAD := 0.45
 ## The highway fences stand this far outside the edge of the road, and keep this far from a
 ## crossing highway.
 const HIGHWAY_MARGIN := 0.1
@@ -41,6 +45,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 				_lot(data, wood, r, int(data.b_facing[b]) if kind == Kind.HOUSE else -1)
 		elif kind == Kind.FIELD:
 			_field(data, farm, r)
+	_candy_shops(data, wood)
 	if data.central_park.size.x > 0:
 		_lot(data, wood, data.central_park, -1)
 	if data.continent != null:
@@ -52,10 +57,10 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 
 ## The four sides of `r`; `front` (0 N, 1 E, 2 S, 3 W, or -1) leaves a gate in the middle of that side.
 func _lot(data: CityData, batch: _Batch, r: Rect2i, front: int) -> void:
-	var x0 := float(r.position.x)
-	var y0 := float(r.position.y)
-	var x1 := float(r.end.x)
-	var y1 := float(r.end.y)
+	_ring(data, batch, float(r.position.x), float(r.position.y), float(r.end.x), float(r.end.y), front)
+
+
+func _ring(data: CityData, batch: _Batch, x0: float, y0: float, x1: float, y1: float, front: int, on_grid: bool = true) -> void:
 	var sides := [
 		[Vector2(x0, y0), Vector2(x1, y0)],  # north
 		[Vector2(x1, y0), Vector2(x1, y1)],  # east
@@ -66,7 +71,48 @@ func _lot(data: CityData, batch: _Batch, r: Rect2i, front: int) -> void:
 		var a: Vector2 = sides[s][0]
 		var b: Vector2 = sides[s][1]
 		var gate := GATE if s == front else 0.0
-		batch.line(a, b, gate, func(mid: Vector2) -> bool: return _dry(data, mid))
+		if on_grid:
+			batch.line(a, b, gate, func(mid: Vector2) -> bool: return _dry(data, mid))
+		else:
+			batch.line(a, b, gate, Callable())
+
+
+## A well-kept spot round every candy shop (shop-candy-b): the shops of the city and of the
+## quarter (buildings with the model "shop:shop-candy-b"), those of the development island and
+## those of the fog island. The fence is a ring a little bigger than the shop, with a gate on its front.
+func _candy_shops(data: CityData, batch: _Batch) -> void:
+	for b in data.building_count():
+		if data.b_kind[b] == Kind.EMPTY or data.b_model.get(b, "") != "shop:" + SHOP_ID:
+			continue
+		var r := data.building_rect(b)
+		# b_facing is turned half way round: the front of the model is -Z (CityShops).
+		_spot(data, batch, Vector2(r.get_center()), (int(data.b_facing[b]) + 2) % 4, SHOP_SCALE)
+	var catalog := MapShops.catalog()
+	for p in ShopSites.plan(data, catalog):
+		if String(p["id"]).begins_with(SHOP_ID):
+			_spot(data, batch, p["at"], 2, float(p["scale"]))
+	if data.fog != null:
+		for p in FogBaseSites.plan(data.fog):
+			if String(p.get("shop", "")) == SHOP_ID:
+				var dir: Vector2 = p["dir"]
+				var look := (0 if dir.y < -0.5 else 2) if absf(dir.y) > absf(dir.x) else (1 if dir.x > 0.0 else 3)
+				_spot(data, batch, data.fog.origin + (p["at"] as Vector2), look, float(p["scale"]), false)
+
+
+## Ring round a shop standing at `at`, its front towards `look` (0 N, 1 E, 2 S, 3 W), `scale` cells per metre.
+func _spot(data: CityData, batch: _Batch, at: Vector2, look: int, scale: float, on_grid: bool = true) -> void:
+	var entry := MapShops.entry(SHOP_ID)
+	if entry.is_empty():
+		return
+	var w := float(entry["width"]) * scale
+	var d := float(entry["depth"]) * scale
+	if look == 1 or look == 3:
+		var t := w
+		w = d
+		d = t
+	var hx := w * 0.5 + SPOT_PAD
+	var hy := d * 0.5 + SPOT_PAD
+	_ring(data, batch, at.x - hx, at.y - hy, at.x + hx, at.y + hy, look, on_grid)
 
 
 ## Only the sides of the field whose neighbour cells are road.
