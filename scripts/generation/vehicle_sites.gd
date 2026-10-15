@@ -961,27 +961,7 @@ func _prison_helicopters() -> void:
 	if air.x >= 0:
 		out.append({"id": id, "at": air, "yaw": atan2(-1.0, 0.0), "why": "over the sea, off the prison island",
 				"lift": HELI_LIFT})
-	# On the ground beside the lighthouse of the prison island.
-	var light := _nearest_kind(Kind.LIGHTHOUSE, PRISON_LIGHTHOUSE)
-	if light < 0:
-		push_warning("[Vehicles] no lighthouse on the prison island")
-		return
-	var why := "next to the lighthouse of the prison island"
-	var first := out.size()
-	if not _beside("prison_van", _d.building_rect(light), why, 97, 0.6, 4.0):
-		return
-	# Parked in a row with two more, all three facing the jail (its yard lies a little south of the cellhouse).
-	var anchor: Vector2 = out[first]["at"]
-	var jail := Vector2(_d.building_rect(b).get_center()) + Vector2(0, JAIL_SOUTH)
-	var head := (jail - anchor).normalized()
-	out[first]["yaw"] = atan2(-head.x, -head.y)
-	var side := Vector2(-head.y, head.x)
-	for k in [1.0, -1.0]:
-		var p: Vector2 = anchor + side * k * ROW_GAP
-		if _d.is_land(int(floor(p.x)), int(floor(p.y))):
-			_add("prison_van", p, head, why)
-		else:
-			push_warning("[Vehicles] no land for a prison van of the row at %s" % p)
+	# The prison vans that stood beside the lighthouse are gone, on request.
 
 
 ## Middle of the water met going from `from` towards `to` (first sea after the land of
