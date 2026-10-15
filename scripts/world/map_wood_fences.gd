@@ -1,7 +1,7 @@
 class_name MapWoodFences
 extends Node3D
 ## The fences made of whole models (res://fences/models), one MultiMesh per model:
-##   - wooden_fence: round the house and garden lots and the central park, with a gap in front
+##   - the suburban kit fence (Kenney): round the house and garden lots and the central park, with a gap in front
 ##     of the door;
 ##   - fence_wood: the sides of the crop fields that face a road (the farm land);
 ##   - road_separation_fence: along both edges of the highways of the continent.
@@ -10,12 +10,13 @@ extends Node3D
 
 const Kind := CityTypes.Kind
 
-const WOODEN := "res://fences/models/wooden_fence.glb"
+const WOODEN := "res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/fence.glb"
 const FARM := "res://fences/models/fence_wood.glb"
 const HIGHWAY := "res://fences/models/road_separation_fence.glb"
 
-## Length of one piece (cells) of each model.
-const WOODEN_PIECE := 1.0
+## Length of one piece (cells) of each model, and the factor on the height of the wooden one.
+const WOODEN_PIECE := 0.8
+const WOODEN_HEIGHT := 0.7
 const FARM_PIECE := 1.0
 const HIGHWAY_PIECE := 1.5
 ## Gap left in the fence in front of a house (cells).
@@ -29,7 +30,7 @@ var _count := 0
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
-	var wood := _Batch.new(lib, "fence:wooden", WOODEN, WOODEN_PIECE)
+	var wood := _Batch.new(lib, "fence:wooden", WOODEN, WOODEN_PIECE, WOODEN_HEIGHT)
 	var farm := _Batch.new(lib, "fence:farm", FARM, FARM_PIECE)
 	var road := _Batch.new(lib, "fence:highway", HIGHWAY, HIGHWAY_PIECE)
 	for b in data.building_count():
@@ -129,12 +130,14 @@ class _Batch:
 	var _mesh: Mesh
 	var _piece: float
 	var _scale := 1.0
+	var _height := 1.0
 	var _long_is_x := false
 	var _center := Vector3.ZERO
 	var _xforms: Array[Transform3D] = []
 
-	func _init(lib: ModelLibrary, name: String, path: String, piece: float) -> void:
+	func _init(lib: ModelLibrary, name: String, path: String, piece: float, height: float = 1.0) -> void:
 		_piece = piece
+		_height = height
 		var id := lib.load_named(name, path)
 		if id < 0:
 			return
@@ -161,7 +164,7 @@ class _Batch:
 		var dir := d / len
 		var yaw := atan2(-dir.y, dir.x) if _long_is_x else atan2(dir.x, dir.y)
 		var s := _scale * step / _piece
-		var basis := Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3(s, _scale, s))
+		var basis := Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3(s, _scale * _height, s))
 		for k in n:
 			var mid := a + dir * (step * (float(k) + 0.5))
 			if gate > 0.0 and mid.distance_to((a + b) * 0.5) < gate * 0.5 + step * 0.5:
