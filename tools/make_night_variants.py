@@ -903,8 +903,12 @@ def stadium():
     n = tri.nrm.mean(1)
     n /= np.linalg.norm(n, axis=1, keepdims=True) + 1e-9
     edge = np.maximum(np.abs(c[:, 0]) / half[0], np.abs(c[:, 2]) / half[2])
+    # How much a face looks out of the stadium (its normal along its direction from the centre):
+    # the outer walls of the rounded corners lie inside the outer tenth of the box but look out.
+    away = np.hypot(c[:, 0] / half[0], c[:, 2] / half[2]) + 1e-9
+    outward = (n[:, 0] * c[:, 0] / half[0] + n[:, 2] * c[:, 2] / half[2]) / away
     outside = ((edge >= 0.9) | (n[:, 1] < -0.5) | ((edge >= 0.75) & (tri.pos[..., 1].max(1) < 0.2))
-               | ((edge >= STADIUM_RIM) & (n[:, 1] > 0.5)))
+               | ((edge >= STADIUM_RIM) & (n[:, 1] > 0.5)) | ((edge >= 0.75) & (outward > 0.5)))
     bowl = ~outside
     pitch = bowl & (edge < 0.35) & (n[:, 1] > 0.5)
     base = np.where(pitch, STADIUM_PITCH, np.where(bowl, STADIUM_STANDS, STADIUM_OUTSIDE)) / OWN_NIGHT
