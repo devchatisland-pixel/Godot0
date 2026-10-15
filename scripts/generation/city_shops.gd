@@ -1,6 +1,6 @@
 class_name CityShops
 extends RefCounted
-## The candy shop (shop-candy-b of res://shops), the same model as the fog island's shops,
+## The orange shop (shop-general-orange-b-unlit of res://shops, at its normal size),
 ## standing in the streets of Chat City: 40 in the commercial, suburban and apartment zones, 80
 ## in the quarter zone (a few in the poor one), none in the others. A shop takes a vacant lot
 ## or replaces a house, shop or block of the zone; they are spread evenly, never in clusters.
@@ -9,9 +9,9 @@ extends RefCounted
 const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 
-const SHOP_ID := "shop-candy-b"
-## Absolute scale of the shop (cells per metre of its model): the same as on the fog island.
-const SHOP_SCALE := 0.68
+const SHOP_ID := "shop-general-orange-b-unlit"
+## Absolute scale of the shop (cells per metre of its model): its normal size.
+const SHOP_SCALE := 0.34
 ## Zone -> number of shops.
 const QUOTA := {
 	Zone.COMMERCIAL: 40, Zone.SUBURBAN: 40, Zone.APARTMENT: 40, Zone.QUARTER: 80, Zone.POOR: 5,

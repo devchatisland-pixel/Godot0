@@ -38,7 +38,7 @@ const NORTH_STREET_X := 144.0
 const CURB := 0.4
 
 ## The only shop model, and how many.
-const SHOP_ID := "shop-candy-b"
+const SHOP_ID := "shop-general-orange-b-unlit"
 const SHOP_COUNT := 50
 ## More shops put in the free spaces left once every block is filled (parks, gaps).
 const EXTRA_SHOPS := 15
