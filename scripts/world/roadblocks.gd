@@ -138,7 +138,7 @@ func _urban_exit_block(lib: ModelLibrary, x: int, row: int) -> void:
 		# On the road, between the barriers and the bridge entrance, slanted across the south lane (it
 		# stood beside the road, hidden by the towers of the urban island).
 		_put(lib, car["id"], Vector3(float(x) + URBAN_CAR_AHEAD, 0.0, float(row) + 0.5 + 1.0),
-				PI + car["turn"] + URBAN_CAR_SLANT, CAR_LEN, "Police car (roadblock)")
+				car["turn"] + URBAN_CAR_SLANT, CAR_LEN, "Police car (roadblock)")
 
 
 ## Five tanks beyond the roadblock, their guns towards the bridge (east): three on the verges and

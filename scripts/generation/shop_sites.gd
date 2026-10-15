@@ -28,6 +28,8 @@ const ROW_SAMPLE := 2
 ## Catalog ids of the modular buildings (tools/build_modular_buildings.py): the south row.
 const MODULAR_PREFIX := "modular-"
 ## Shops taken off the island, on request (S-01, the brick shop with a balcony).
+## Suffix of the copies without lights (MapShops): they stand in the south row.
+const UNLIT_SUFFIX := "-unlit"
 const REMOVED := ["shop-general-brick"]
 
 
@@ -59,14 +61,19 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 	# Shipping containers (ids "container-NN") are left out: only the shops stand on the island.
 	var north := []
 	var south := []
+	var removed_base := func(id: String) -> bool:
+		return REMOVED.has(id.trim_suffix(UNLIT_SUFFIX))
 	for s in shops:
 		var id := String(s["id"])
-		if id.begins_with("container-") or REMOVED.has(id):
+		if id.begins_with("container-") or removed_base.call(id):
 			continue
 		# The modular buildings (S-16 .. S-21) are gone from the island, on request.
 		if id.begins_with(MODULAR_PREFIX):
 			continue
-		north.append(s)
+		if id.ends_with(UNLIT_SUFFIX):
+			south.append(s)
+		else:
+			north.append(s)
 	# North of the street the shops, their fronts south; south of it the modular buildings,
 	# their fronts north. Each row is centred on the dry land of a line ROW_SAMPLE cells off
 	# the street.
@@ -93,13 +100,13 @@ static func _row(data: CityData, order: Array, line: int, limit: int, front: flo
 		return String(a["id"]) < String(b["id"]))
 	var total := GAP * float(order.size() - 1)
 	for s in order:
-		total += float(s["width"]) * CELLS_PER_METRE * float(SCALE.get(s["id"], 1.0))
+		total += float(s["width"]) * CELLS_PER_METRE * float(SCALE.get(String(s["id"]).trim_suffix(UNLIT_SUFFIX), 1.0))
 	var avail := float(x1 - x0 + 1)
 	if total > avail:
 		push_warning("[Shops] the row (%.1f cells) is wider than the island (%.1f)" % [total, avail])
 	var x := float(x0) + avail * 0.5 - total * 0.5
 	for s in order:
-		var k := CELLS_PER_METRE * float(SCALE.get(s["id"], 1.0))
+		var k := CELLS_PER_METRE * float(SCALE.get(String(s["id"]).trim_suffix(UNLIT_SUFFIX), 1.0))
 		var w := float(s["width"]) * k
 		var dep := float(s["depth"]) * k
 		out.append({

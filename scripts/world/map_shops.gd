@@ -23,6 +23,16 @@ static func _ensure_catalog() -> void:
 			"id": s["id"], "file": s["file"], "node": s.get("node", ""), "name": s.get("name", s["id"]), "category": s.get("category", ""),
 			"width": float(size["width"]), "depth": float(size["depth"]), "height": float(size["height"]),
 		}
+		# Copy without lights ("<id>-unlit"): the plain model of a shop that has a night version.
+		var file := String(s["file"])
+		if file.ends_with("_night.glb"):
+			var plain := file.trim_suffix("_night.glb") + ".glb"
+			if ResourceLoader.exists(plain):
+				var u: Dictionary = _entries[s["id"]].duplicate()
+				u["id"] = String(s["id"]) + ShopSites.UNLIT_SUFFIX
+				u["file"] = plain
+				u["name"] = String(u["name"]) + " (no lights)"
+				_entries[u["id"]] = u
 
 
 ## Library id of the mesh of catalog shop `id` (loaded on first use), or -1.
