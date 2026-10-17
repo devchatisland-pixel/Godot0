@@ -183,6 +183,11 @@ static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_overri
 	# The New York brick buildings are not built at all (taken away by hand).
 	if not pick.is_empty() and lib.model_name(pick["id"]).begins_with(REMOVED_MODEL_PREFIX):
 		return {}
+	# Models taken off the map by hand (the development island keeps its shops).
+	if not pick.is_empty() and RemovedModels.has(lib.model_name(pick["id"])):
+		var at := data.building_rect(i).position
+		if data.zone[data.idx(at.x, at.y)] != CityTypes.Zone.DEV:
+			return {}
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
 	if facing == 0 and not pick.is_empty() and SOUTH_ONLY_MODELS.has(lib.model_name(pick["id"])):
 		return _pick_model_raw(data, lib, i, 2)

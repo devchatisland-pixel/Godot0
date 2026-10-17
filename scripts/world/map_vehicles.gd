@@ -73,6 +73,8 @@ static func helipad_xform(at: Vector3, width: float) -> Transform3D:
 func build(data: CityData, lib: ModelLibrary) -> void:
 	var placed := 0
 	for p in VehicleSites.plan(data, lengths_m()):
+		if RemovedModels.has("veh:" + String(p["id"])):
+			continue
 		var mid := mesh_id(lib, p["id"])
 		if mid < 0:
 			continue

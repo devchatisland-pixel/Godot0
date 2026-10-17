@@ -26,6 +26,12 @@ var cats := PackedInt32Array()
 ## loaded as named meshes "yardbox:NN" when the packs are done.
 const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "container-09", "container-10"]
 
+## Models never drawn on the map (UnusedModels, made by tools/unused_models.py) are not read at all:
+## their slot gets an empty mesh with the model's own bounding box, so every choice of model stays the same.
+var skip_unused := true
+## Library model -> "path|node" of the file it comes from (models of the catalog only).
+var sources := {}
+
 var _pending: Array[Dictionary] = []
 var _yard_loaded := false
 var _total := 0
@@ -65,7 +71,18 @@ func load_next(count: int) -> float:
 			break
 		var e: Dictionary = _pending.pop_front()
 		_request_ahead()
+		var label := _label(e)
 		var key := "%s|%s" % [e["path"], e.get("node", "")]
+		if skip_unused and UnusedModels.BOUNDS.has(key):
+			var b: Array = UnusedModels.BOUNDS[key]
+			var sid := add_mesh(ArrayMesh.new(), e["mask"], label)
+			bounds[sid] = AABB(Vector3(b[0], b[1], b[2]), Vector3(b[3], b[4], b[5]))
+			cats[sid] = e["cat"]
+			if not by_cat.has(e["cat"]):
+				by_cat[e["cat"]] = PackedInt32Array()
+			by_cat[e["cat"]].append(sid)
+			sources[sid] = key
+			continue
 		var mesh: Mesh = _made.get(key)
 		if mesh == null:
 			mesh = _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
@@ -73,7 +90,8 @@ func load_next(count: int) -> float:
 		if mesh == null:
 			push_warning("[Models] could not load %s %s" % [e["path"], e.get("node", "")])
 			continue
-		var id := add_mesh(mesh, e["mask"], _label(e))
+		var id := add_mesh(mesh, e["mask"], label)
+		sources[id] = key
 		var cat: int = e["cat"]
 		cats[id] = cat
 		if not by_cat.has(cat):
@@ -164,6 +182,8 @@ func _request_ahead() -> void:
 	var seen := {}
 	for e in _pending:
 		var path: String = e["path"]
+		if skip_unused and UnusedModels.BOUNDS.has("%s|%s" % [path, e.get("node", "")]):
+			continue
 		if seen.has(path):
 			continue
 		seen[path] = true
