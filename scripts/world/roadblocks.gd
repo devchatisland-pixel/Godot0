@@ -194,6 +194,8 @@ static func clearing(data: CityData) -> Rect2i:
 ## Puts model `id` on the ground at `at`, scaled so that its longest side is `length`.
 func _put(lib: ModelLibrary, id: int, at: Vector3, yaw: float, length: float, title: String = "Roadblock piece",
 		height: float = 1.0, kind: String = "ROADBLOCK", category: String = "Roadblock") -> void:
+	if RemovedModels.has(lib.model_name(id)):
+		return
 	var box := lib.bounds[id]
 	var longest := maxf(box.size.x, box.size.z)
 	if longest <= 0.0:

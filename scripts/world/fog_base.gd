@@ -55,6 +55,8 @@ var picks: Array[Dictionary] = []
 ## Draws mesh `id` at `xform` and makes it clickable.
 func _put(lib: ModelLibrary, batch: InstanceBatch, id: int, xform: Transform3D, title: String,
 		kind: String, note: String) -> void:
+	if RemovedModels.has(lib.model_name(id)):
+		return
 	batch.add(id, xform)
 	NavLights.add_to(batch, lib, id, xform)
 	var cat: int = lib.cats[id]

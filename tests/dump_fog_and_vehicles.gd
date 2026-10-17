@@ -11,6 +11,8 @@ var _counts := {}
 
 
 func _add(area: String, group: String, zone: String, kind: String, label: String, key: String, n: int = 1) -> void:
+	if RemovedModels.has(key):
+		return # taken off the map by hand (not drawn)
 	var k := "\t".join([area, group, zone, kind, label, key])
 	_counts[k] = _counts.get(k, 0) + n
 
