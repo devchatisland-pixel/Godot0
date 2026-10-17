@@ -76,7 +76,7 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 		return REMOVED.has(id.trim_suffix(UNLIT_SUFFIX))
 	for s in shops:
 		var id := String(s["id"])
-		if id.begins_with("container-") or removed_base.call(id):
+		if id.begins_with("container-") or removed_base.call(id) or RemovedModels.SHOPS_AS_BUSINESS.has(id):
 			continue
 		# The modular buildings (S-16 .. S-21) are gone from the island, on request.
 		if id.begins_with(MODULAR_PREFIX):
