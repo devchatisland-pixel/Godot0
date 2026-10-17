@@ -83,7 +83,8 @@
 		},
 		{
 			"cat": "HOTEL_SMALL",
-			"node": "hotel1"
+			"node": "hotel_small",
+			"file": "hotel_small_night.glb"
 		},
 		{
 			"cat": "CONTAINER",

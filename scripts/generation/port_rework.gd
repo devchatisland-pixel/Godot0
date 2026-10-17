@@ -15,8 +15,8 @@ const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 const Terrain := CityTypes.Terrain
 
-const HOTEL_MODELS := ["hotel_low.glb: hotel_orange", "hotel_small_night.glb: hotel_small",
-		"hotel_stars_night.glb: hotel_stars", "hotels.glb: hotel_tower"]
+const HOTEL_MODELS := ["hotel_small_night.glb: hotel_small", "hotel_small_night.glb: hotel_small",
+		"hotel_stars_night.glb: hotel_stars", "hotel_stars_night.glb: hotel_stars"]
 const HOTEL_SIZE := Vector2i(3, 3)
 const HOTEL_ZONES: Array[int] = [Zone.COMMERCIAL, Zone.DOWNTOWN, Zone.APARTMENT, Zone.ENTERTAINMENT]
 const HOTEL_APART := 30.0
@@ -25,41 +25,41 @@ const HOTEL_APART := 30.0
 ## the footprints of the models (tools/build_wave16_models.py) rounded up.
 const PORT_MODELS := [
 	["port_halls.glb: hall_building_10", Vector2i(4, 7)],
-	["port_halls.glb: hall_factory_1", Vector2i(4, 7)],
-	["port_halls.glb: hall_powerplant", Vector2i(4, 7)],
-	["port_halls.glb: hall_hangar", Vector2i(5, 5)],
-	["port_halls.glb: hall_factory_2", Vector2i(2, 7)],
+	["hall_factory_1.glb: hall_factory_1", Vector2i(4, 7)],
+	["shed_warehouse_3.glb: shed_warehouse_3", Vector2i(4, 7)],
+	["hall_factory_1.glb: hall_factory_1", Vector2i(5, 5)],
+	["hall_factory_1.glb: hall_factory_1", Vector2i(2, 7)],
 	["port_halls.glb: hall_building_1", Vector2i(3, 5)],
-	["port_halls.glb: hall_warehouse_5", Vector2i(3, 5)],
+	["shed_warehouse_3.glb: shed_warehouse_3", Vector2i(3, 5)],
 	["port_tanks.glb: factory_brick", Vector2i(4, 3)],
-	["port_halls.glb: hall_terminal", Vector2i(5, 2)],
-	["port_halls.glb: hall_warehouse_4", Vector2i(4, 2)],
+	["shed_warehouse_3.glb: shed_warehouse_3", Vector2i(5, 2)],
+	["hall_factory_1.glb: hall_factory_1", Vector2i(4, 2)],
 	["port_halls.glb: hall_warehouse_1", Vector2i(4, 2)],
-	["port_sheds.glb: shed_warehouse_3", Vector2i(3, 3)],
+	["shed_warehouse_3.glb: shed_warehouse_3", Vector2i(3, 3)],
 	["port_towers.glb: tower_tank_2", Vector2i(3, 3)],
-	["port_tanks.glb: tank_big", Vector2i(3, 3)],
+	["tank_big.glb: tank_big", Vector2i(3, 3)],
 	["port_sheds.glb: shed_generic_4", Vector2i(4, 2)],
-	["port_sheds.glb: shed_works_1", Vector2i(3, 2)],
+	["shed_trailer.glb: shed_trailer", Vector2i(3, 2)],
 	["port_sheds.glb: shed_works_2", Vector2i(3, 2)],
-	["port_tanks.glb: tank_spheres", Vector2i(3, 2)],
-	["port_sheds.glb: shed_loadbay", Vector2i(2, 3)],
-	["port_towers.glb: tower_crane", Vector2i(2, 3)],
-	["port_tanks.glb: tank_old", Vector2i(1, 3)],
+	["tank_spheres.glb: tank_spheres", Vector2i(3, 2)],
+	["shed_trailer.glb: shed_trailer", Vector2i(2, 3)],
+	["tower_crane.glb: tower_crane", Vector2i(2, 3)],
+	["tank_old.glb: tank_old", Vector2i(1, 3)],
 	["port_towers.glb: tower_tank_1", Vector2i(2, 2)],
-	["port_towers.glb: tower_water", Vector2i(2, 2)],
-	["port_sheds.glb: shed_generic_3", Vector2i(2, 2)],
+	["tower_water.glb: tower_water", Vector2i(2, 2)],
+	["shed_trailer.glb: shed_trailer", Vector2i(2, 2)],
 	["port_sheds.glb: shed_duplex", Vector2i(3, 1)],
-	["port_tanks.glb: tank_rusty", Vector2i(3, 1)],
+	["tank_oil.glb: tank_oil", Vector2i(3, 1)],
 	["port_sheds.glb: shed_small_4", Vector2i(1, 2)],
-	["port_sheds.glb: shed_trailer", Vector2i(2, 1)],
+	["shed_trailer.glb: shed_trailer", Vector2i(2, 1)],
 	["port_sheds.glb: shed_station", Vector2i(2, 1)],
 	["port_tanks.glb: tank_long", Vector2i(2, 1)],
-	["port_tanks.glb: tank_oil", Vector2i(2, 1)],
+	["tank_oil.glb: tank_oil", Vector2i(2, 1)],
 	["port_towers.glb: tower_tank_3", Vector2i(1, 1)],
 	["port_towers.glb: tower_tank_4", Vector2i(1, 1)],
 	["port_towers.glb: tower_tank_5", Vector2i(1, 1)],
-	["port_towers.glb: tower_silo", Vector2i(1, 1)],
-	["port_towers.glb: tower_radio", Vector2i(1, 1)],
+	["tank_big.glb: tank_big", Vector2i(1, 1)],
+	["tower_radio.glb: tower_radio", Vector2i(1, 1)],
 	["port_towers.glb: tower_hut", Vector2i(1, 1)],
 ]
 ## The industrial blob grown by this much is the port area.
@@ -79,25 +79,25 @@ const OIL_RIG_OFFSHORE := 13
 ## Hand changes to the lots of the port, once every model has its lot (`_hand_edits`). A
 ## model stands once in the port, so its name says which building is meant.
 const PORT_DELETED := ["port_towers.glb: tower_tank_3", "port_tanks.glb: factory_brick",
-		"port_halls.glb: hall_hangar", "port_towers.glb: tower_tank_1", "port_halls.glb: hall_warehouse_4",
+		"hall_factory_1.glb: hall_factory_1", "port_towers.glb: tower_tank_1", "hall_factory_1.glb: hall_factory_1",
 		"port_sheds.glb: shed_works_2", "port_towers.glb: tower_tank_2", "port_towers.glb: tower_tank_4",
 		"port_sheds.glb: shed_station"]
 ## [model, lot, facing]: the lot a model moves to (the building on it before goes).
 const PORT_MOVED := [
 	# The power plant takes the place of warehouse 1, hall 10 the place of the power plant.
-	["port_halls.glb: hall_powerplant", Rect2i(114, 234, 4, 7), 2],
+	["shed_warehouse_3.glb: shed_warehouse_3", Rect2i(114, 234, 4, 7), 2],
 	["port_halls.glb: hall_building_10", Rect2i(125, 257, 4, 7), 2],
 	# Three water tanks in a line going north, turned east, beside the water tower.
 	["port_towers.glb: tower_tank_5", Rect2i(110, 239, 1, 1), 1],
 	# The rusty tank joins the old ones as the third of their row, now in the walled empty square
 	# north of the old row (x 114-117, y 254-255): two rows of old tanks lying east-west, the
 	# rusty tank at their east end.
-	["port_tanks.glb: tank_rusty", Rect2i(117, 254, 1, 2), 1],
-	["port_tanks.glb: tank_old", Rect2i(114, 255, 3, 1), 1],
+	["tank_oil.glb: tank_oil", Rect2i(117, 254, 1, 2), 1],
+	["tank_old.glb: tank_old", Rect2i(114, 255, 3, 1), 1],
 	# The tower crane takes the place of the small shed 4.
-	["port_towers.glb: tower_crane", Rect2i(116, 262, 2, 2), 1],
+	["tower_crane.glb: tower_crane", Rect2i(116, 262, 2, 2), 1],
 	# The big tank takes the place of shed 4; four more stand beside it (TANK_FARM).
-	["port_tanks.glb: tank_big", Rect2i(107, 244, 3, 3), 2],
+	["tank_big.glb: tank_big", Rect2i(107, 244, 3, 3), 2],
 ]
 ## The buildings the moved ones replace.
 const PORT_REPLACED := ["port_halls.glb: hall_warehouse_1", "port_sheds.glb: shed_generic_4",
@@ -105,7 +105,7 @@ const PORT_REPLACED := ["port_halls.glb: hall_warehouse_1", "port_sheds.glb: she
 ## [model, lot, facing]: more of a model of the port.
 const PORT_ADDED := [
 	# The old tanks (three silos each) doubled into a rectangle (the walled square, see PORT_MOVED).
-	["port_tanks.glb: tank_old", Rect2i(114, 254, 3, 1), 1],
+	["tank_old.glb: tank_old", Rect2i(114, 254, 3, 1), 1],
 	# Three long tanks side by side, three duplex sheds one behind the other.
 	["port_tanks.glb: tank_long", Rect2i(137, 264, 1, 2), 1],
 	["port_tanks.glb: tank_long", Rect2i(138, 264, 1, 2), 1],
@@ -114,16 +114,16 @@ const PORT_ADDED := [
 	["port_towers.glb: tower_tank_5", Rect2i(110, 238, 1, 1), 1],
 	["port_towers.glb: tower_tank_5", Rect2i(110, 237, 1, 1), 1],
 	# A second water tower where the big tower tank stood in the south-east.
-	["port_towers.glb: tower_water", Rect2i(141, 257, 2, 2), 2],
+	["tower_water.glb: tower_water", Rect2i(141, 257, 2, 2), 2],
 	# TANK_FARM: a column of three big tanks and one of two beside it.
-	["port_tanks.glb: tank_big", Rect2i(107, 241, 3, 3), 2],
-	["port_tanks.glb: tank_big", Rect2i(107, 238, 3, 3), 2],
-	["port_tanks.glb: tank_big", Rect2i(104, 241, 3, 3), 2],
-	["port_tanks.glb: tank_big", Rect2i(104, 238, 3, 3), 2],
+	["tank_big.glb: tank_big", Rect2i(107, 241, 3, 3), 2],
+	["tank_big.glb: tank_big", Rect2i(107, 238, 3, 3), 2],
+	["tank_big.glb: tank_big", Rect2i(104, 241, 3, 3), 2],
+	["tank_big.glb: tank_big", Rect2i(104, 238, 3, 3), 2],
 ]
 ## The radio tower of the port becomes the radio tower of the city (the TELECOM_TOWER at
 ## RADIO_TOWER_AT), drawn RADIO_TOWER_SCALE times its own size.
-const RADIO_TOWER := "port_towers.glb: tower_radio"
+const RADIO_TOWER := "tower_radio.glb: tower_radio"
 const RADIO_TOWER_AT := Vector2i(104, 184)
 const RADIO_TOWER_SCALE := 1.4
 ## The construction crane of the quay (top-left cell of its lot) moves beside the loading bay shed.

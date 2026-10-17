@@ -11,31 +11,38 @@
 		},
 		{
 			"cat": "IND_HALL",
-			"node": "hall_factory_1"
+			"node": "hall_factory_1",
+			"file": "hall_factory_1.glb"
 		},
 		{
 			"cat": "IND_HALL",
-			"node": "hall_factory_2"
+			"node": "hall_factory_1",
+			"file": "hall_factory_1.glb"
 		},
 		{
 			"cat": "IND_HALL",
-			"node": "hall_hangar"
+			"node": "hall_factory_1",
+			"file": "hall_factory_1.glb"
 		},
 		{
 			"cat": "IND_HALL",
-			"node": "hall_warehouse_5"
+			"node": "shed_warehouse_3",
+			"file": "shed_warehouse_3.glb"
 		},
 		{
 			"cat": "IND_HALL",
-			"node": "hall_powerplant"
+			"node": "shed_warehouse_3",
+			"file": "shed_warehouse_3.glb"
 		},
 		{
 			"cat": "IND_HALL",
-			"node": "hall_terminal"
+			"node": "shed_warehouse_3",
+			"file": "shed_warehouse_3.glb"
 		},
 		{
 			"cat": "IND_HALL",
-			"node": "hall_warehouse_4"
+			"node": "hall_factory_1",
+			"file": "hall_factory_1.glb"
 		},
 		{
 			"cat": "IND_HALL",

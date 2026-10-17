@@ -3,7 +3,8 @@
 	"models": [
 		{
 			"cat": "FOG_MOD_HOME",
-			"node": "home-bungalow"
+			"node": "home-bungalow",
+			"file": "home-bungalow.glb"
 		},
 		{
 			"cat": "FOG_MOD_HOME",

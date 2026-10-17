@@ -7,7 +7,8 @@
 		},
 		{
 			"cat": "NEON_LIGHTHOUSE",
-			"node": "lighthouse_club_neon"
+			"node": "lighthouse_club_neon",
+			"file": "lighthouse_club_neon.glb"
 		}
 	]
 }

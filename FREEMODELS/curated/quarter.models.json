@@ -83,7 +83,8 @@
 		},
 		{
 			"cat": "QUARTER_TALL",
-			"node": "quarter_22_b"
+			"node": "quarter_25_b",
+			"file": "quarter_25_b.glb"
 		},
 		{
 			"cat": "QUARTER_LOW",
@@ -95,7 +96,8 @@
 		},
 		{
 			"cat": "QUARTER_TALL",
-			"node": "quarter_25_b"
+			"node": "quarter_25_b",
+			"file": "quarter_25_b.glb"
 		},
 		{
 			"cat": "QUARTER_TALL",
@@ -127,7 +129,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_35_b"
+			"node": "quarter_40_b",
+			"file": "quarter_40_b.glb"
 		},
 		{
 			"cat": "QUARTER_MID",
@@ -147,7 +150,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_40_b"
+			"node": "quarter_40_b",
+			"file": "quarter_40_b.glb"
 		},
 		{
 			"cat": "QUARTER_LOW",
@@ -163,7 +167,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_46_b"
+			"node": "quarter_48_b",
+			"file": "quarter_48_b.glb"
 		},
 		{
 			"cat": "QUARTER_LOW",
@@ -171,7 +176,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_48_b"
+			"node": "quarter_48_b",
+			"file": "quarter_48_b.glb"
 		},
 		{
 			"cat": "QUARTER_MID",
@@ -203,7 +209,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_56_b"
+			"node": "quarter_25_b",
+			"file": "quarter_25_b.glb"
 		},
 		{
 			"cat": "QUARTER_MID",
@@ -215,7 +222,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_59_b"
+			"node": "quarter_98_b",
+			"file": "quarter_98_b.glb"
 		},
 		{
 			"cat": "QUARTER_LOW",
@@ -223,7 +231,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_61_b"
+			"node": "quarter_95_b",
+			"file": "quarter_95_b.glb"
 		},
 		{
 			"cat": "QUARTER_LOW",
@@ -271,7 +280,8 @@
 		},
 		{
 			"cat": "QUARTER_TALL",
-			"node": "quarter_78_b"
+			"node": "quarter_25_b",
+			"file": "quarter_25_b.glb"
 		},
 		{
 			"cat": "QUARTER_TALL",
@@ -327,7 +337,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_95_b"
+			"node": "quarter_95_b",
+			"file": "quarter_95_b.glb"
 		},
 		{
 			"cat": "QUARTER_LOW",
@@ -339,7 +350,8 @@
 		},
 		{
 			"cat": "QUARTER_MID",
-			"node": "quarter_98_b"
+			"node": "quarter_98_b",
+			"file": "quarter_98_b.glb"
 		},
 		{
 			"cat": "QUARTER_MID",

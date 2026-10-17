@@ -7,7 +7,8 @@
 		},
 		{
 			"cat": "TOWER_PHOTO",
-			"node": "towers_a_17_b"
+			"node": "towers_a_17_b",
+			"file": "towers_a_17_b.glb"
 		},
 		{
 			"cat": "TOWER_PHOTO",
@@ -15,7 +16,8 @@
 		},
 		{
 			"cat": "TOWER_PHOTO",
-			"node": "towers_a_33_b"
+			"node": "towers_a_33_b",
+			"file": "towers_a_33_b.glb"
 		},
 		{
 			"cat": "TOWER_PHOTO",
@@ -23,7 +25,8 @@
 		},
 		{
 			"cat": "TOWER_PHOTO",
-			"node": "towers_a_51_b"
+			"node": "towers_a_51_b",
+			"file": "towers_a_51_b.glb"
 		},
 		{
 			"cat": "TOWER_PHOTO",

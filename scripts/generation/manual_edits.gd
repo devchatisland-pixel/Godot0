@@ -143,7 +143,7 @@ const PAVED_DEPTH := 4
 const HIGHWAY_STUB := Rect2i(252, 188, 3, 2)
 ## Cleared lots that get a farm building back: top-left cell, model (as the library names it).
 const FARM_BUILDINGS_AT := [
-	[Vector2i(265, 283), "outpost.glb: water_tank"],
+	[Vector2i(265, 283), "water_tank.glb: water_tank"],
 ]
 ## The oil pump whose lot starts at OIL_FIELD and two more stand apart in the middle of the
 ## desert: top-left cells of their lots, the last one is the reference that does not move.
@@ -258,7 +258,7 @@ const FINAL2_TOWER_MODELS := ["building-skyscraper-a.glb", "building-skyscraper-
 const FINAL2_RESIZED := [["BURGER_KING", Vector2i(198, 295), 1.12]]
 ## The oil tank (top-left cell of its lot on the final map, model) that gets a line of more tanks to the east.
 const TANK_LINE_FROM := Vector2i(131, 241)
-const TANK_LINE_MODEL := "port_tanks.glb: tank_oil"
+const TANK_LINE_MODEL := "tank_oil.glb: tank_oil"
 const TANK_LINE_COUNT := 4
 const EIFFEL_MOVE_APART := 8.0
 ## Its new lot (the model is 6 x 6 cells at its scale) and the small buildings that may make room for it.

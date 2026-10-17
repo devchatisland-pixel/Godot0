@@ -3,7 +3,8 @@
 	"models": [
 		{
 			"cat": "HOTEL_LOW",
-			"node": "hotel_tower"
+			"node": "hotel_stars",
+			"file": "hotel_stars_night.glb"
 		}
 	]
 }

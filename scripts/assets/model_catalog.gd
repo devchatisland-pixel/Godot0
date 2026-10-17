@@ -102,6 +102,15 @@ const ROAD_TILES := {
 
 const MODEL_EXTENSIONS := ["glb", "gltf"]
 
+## Single model files whose slot draws a curated model instead (path -> [file, node]); the slot
+## stays in the list even once the file is deleted, so the city keeps its layout.
+const FILE_SWAPS := {
+	"res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-f.glb":
+		["res://FREEMODELS/curated/bank_min.glb", "bank_minimalist"],
+	"res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-l.glb":
+		["res://FREEMODELS/curated/bank_min.glb", "bank_minimalist"],
+}
+
 ## Each entry: {path, cat, mask} and, for a building inside a pack, {node}.
 var entries: Array[Dictionary] = []
 
@@ -111,6 +120,9 @@ func scan(root: String) -> void:
 	var files: Array[String] = []
 	var manifests: Array[String] = []
 	_collect(root, files, manifests)
+	for path: String in FILE_SWAPS:
+		if path.begins_with(root) and not files.has(path):
+			files.append(path)
 	files.sort()
 	manifests.sort()
 	var packed := {}
@@ -122,11 +134,16 @@ func scan(root: String) -> void:
 		if packed.has(path):
 			continue
 		var info := classify(path)
-		if not info.is_empty():
-			entries.append(info)
+		if info.is_empty():
+			continue
+		if FILE_SWAPS.has(path):
+			info["path"] = FILE_SWAPS[path][0]
+			info["node"] = FILE_SWAPS[path][1]
+		entries.append(info)
 
 
-## Entries of a curated pack list: {"file": "x.glb", "models": [{"node", "cat"}]}.
+## Entries of a curated pack list: {"file": "x.glb", "models": [{"node", "cat"}]}; a model
+## with its own "file" is drawn from that file (taken out of the pack, or a replacement).
 func _read_manifest(path: String) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var data = JSON.parse_string(FileAccess.get_file_as_string(path))
@@ -136,7 +153,8 @@ func _read_manifest(path: String) -> Array[Dictionary]:
 	var glb: String = path.get_base_dir().path_join(data.get("file", ""))
 	for m in data.get("models", []):
 		if Cat.has(m.get("cat", "")):
-			out.append({"path": glb, "node": m["node"], "cat": Cat[m["cat"]], "mask": 0})
+			var file: String = path.get_base_dir().path_join(m["file"]) if m.has("file") else glb
+			out.append({"path": file, "node": m["node"], "cat": Cat[m["cat"]], "mask": 0})
 	return out
 
 
