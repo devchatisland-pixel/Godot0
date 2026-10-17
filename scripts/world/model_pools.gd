@@ -119,17 +119,6 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 		Kind.HOTEL:
 			# Every hotel lot draws the one low poly hotel (the mini hotel when it is missing).
 			return lib.ids(Cat.HOTEL_LOW) if lib.has_cat(Cat.HOTEL_LOW) else lib.ids(Cat.HOTEL_SMALL)
-		Kind.RESTAURANT:
-			# Drawn like the business pack shop (taken from the restaurant model on request).
-			return _biz_shop_or(lib, Cat.BIZ_RESTAURANT)
-		Kind.PIZZA_SHOP:
-			return lib.ids(Cat.BIZ_PIZZA)
-		Kind.BURGER_SHOP:
-			return lib.ids(Cat.BIZ_BURGER)
-		Kind.CAFE:
-			return _biz_shop_or(lib, Cat.BIZ_CAFE)
-		Kind.VEGAS_SIGN:
-			return lib.ids(Cat.VEGAS_SIGN)
 		Kind.BASKET_COURT:
 			return lib.ids(Cat.COURT)
 		Kind.FACTORY_BLDG:
@@ -301,12 +290,6 @@ static func _variant(lib: ModelLibrary, cat: int, seed: int) -> PackedInt32Array
 	return PackedInt32Array([ids[absi(seed) % ids.size()]])
 
 
-## The ids of the business pack shop (the shop model stands in for the restaurant and the cafe);
-## those of `fallback` when the shop is missing.
-static func _biz_shop_or(lib: ModelLibrary, fallback: int) -> PackedInt32Array:
-	return lib.ids(Cat.BIZ_SHOP) if lib.has_cat(Cat.BIZ_SHOP) else lib.ids(fallback)
-
-
 static func is_photo_tower(lib: ModelLibrary, id: int) -> bool:
 	return lib.ids(Cat.TOWER_PHOTO).has(id)
 
@@ -318,11 +301,3 @@ static func is_pack_model(lib: ModelLibrary, id: int, cat: int) -> bool:
 ## New York pack buildings are drawn taller than the Kenney kit around them.
 static func is_new_york(lib: ModelLibrary, id: int) -> bool:
 	return lib.ids(Cat.NY_STREET).has(id) or lib.ids(Cat.NY_MIDRISE).has(id)
-
-
-## Kenney's commercial building-n is drawn as the business pack shop instead (when the pack is there).
-static func shop_for_building_n(lib: ModelLibrary, id: int) -> int:
-	var shops := lib.ids(Cat.BIZ_SHOP)
-	if shops.is_empty() or not lib.ids(Cat.COMMERCIAL).has(id) or lib.model_name(id) != "building-n.glb":
-		return id
-	return shops[0]

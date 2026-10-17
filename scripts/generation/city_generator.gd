@@ -35,16 +35,9 @@ func generate() -> CityData:
 	var extension := ExtensionPlanner.new(_cfg, data, island, rng)
 	extension.build()
 
-	# The fog island is shaped only if shown, or if the continent needs it to land its bridges.
-	if _cfg.show_fog_island or _cfg.show_continent:
-		_report(0.97, "Hiding an island in the fog")
-		data.fog = FogIslandShaper.new(_cfg, data)
-		data.fog.shape(FogIslandShaper.SIZE / 2)
-	# A continent switched off on the start screen is never shaped (it was dropped unseen anyway).
-	if _cfg.show_continent:
-		_report(0.98, "Raising a continent")
-		data.continent = ContinentShaper.new(_cfg, data)
-		data.continent.shape()
+	_report(0.97, "Hiding an island in the fog")
+	data.fog = FogIslandShaper.new(_cfg, data)
+	data.fog.shape(FogIslandShaper.SIZE / 2)
 
 	var fill := UrbanFill.apply(data)
 	print("[City] %d towers added south of the airport" % fill)
@@ -77,22 +70,7 @@ func generate() -> CityData:
 	print("[City] retouch: ", MapRetouch.apply(data))
 	# One model of each for the hotels and the industrial port, the oil rig at sea.
 	print("[City] port rework: ", PortRework.apply(data))
-	# The little island of the lighthouse club, painted on open sea.
-	print("[City] lighthouse island: ", LighthouseIsland.apply(data))
-	# The museum (the Utrecht city hall) on a free square of grass of the commercial district.
-	MuseumSite.apply(data)
-	# The street and the little port of the development island (the shops and modular buildings
-	# stand along the street, see ShopSites).
-	print("[City] development island: ", DevIsland.apply(data))
-	# The candy shop in the free corners of the streets of the residential and commercial zones.
-	print("[City] candy shops: ", CityShops.apply(data))
 	AmenitiesPlanner.apply(data)
-	ManualEdits.final_tweaks(data)
-	# Requests by hand: deleted and redrawn buildings, no boats, the suburbs and the red district filled.
-	print("[City] requests: ", MapRequests.apply(data))
-	# The last review: every ordinary building faces a road and touches it.
-	print("[City] face the roads: ", FaceRoads.apply(data))
-	print("[City] orange shops and suburban houses redrawn: ", MapRequests.after_roads(data))
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	var services: Dictionary = core["services"].duplicate()

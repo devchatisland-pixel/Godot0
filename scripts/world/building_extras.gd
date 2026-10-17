@@ -37,24 +37,8 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	if data.b_sign[i] != 0:
 		_place_sign(data, lib, i, pid, xform, batch, data.b_sign[i])
 	for more: Array in data.b_more_signs.get(i, []):
-		_place_sign(data, lib, i, pid, xform, batch, more[0], more[1],
-				more[2] if more.size() > 2 else 0, more[3] if more.size() > 3 else 1,
-				more[4] if more.size() > 4 else 0.0)
-	if lib.cats[pid] == Cat.LIGHTHOUSE_CLUB:
-		_lighthouse_neon(lib, xform, batch)
-	if kind == Kind.CASINO and lib.model_name(pid) == ManualEdits.EIFFEL_MODEL:
-		# A little red light on the tip of the Eiffel tower, like the radio tower has.
-		var tip := Vector3(box.get_center().x, box.end.y, box.get_center().z)
-		var ball := box.size.y * BEACON_SIZE
-		batch.add(lib.named_id("beacon_red"), xform * Transform3D(Basis.from_scale(Vector3.ONE * ball), tip + Vector3(0, ball * 0.5, 0)))
+		_place_sign(data, lib, i, pid, xform, batch, more[0], more[1])
 	match kind:
-		Kind.TELECOM_TOWER, Kind.BT_TOWER:
-			if lib.model_name(pid) == PortRework.RADIO_TOWER:
-				# A big light on the tip: red on the radio tower, green on the one that replaced the BT tower.
-				var top := Vector3(box.get_center().x, box.end.y, box.get_center().z)
-				var size := box.size.y * BEACON_SIZE
-				var light := lib.named_id("beacon_red" if kind == Kind.TELECOM_TOWER else "beacon_green")
-				batch.add(light, xform * Transform3D(Basis.from_scale(Vector3.ONE * size), top + Vector3(0, size * 0.5, 0)))
 		Kind.CHURCH:
 			if lib.model_name(pid) == CROSS_LIGHT_MODEL:
 				# A tiny red light glowing on the tip of the cross.
@@ -65,32 +49,14 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 			if not jets.is_empty():
 				for spot in MilitaryMeshes.JET_SPOTS:
 					var turn := Basis(Vector3.UP, spot[1]).scaled(Vector3.ONE * JET_SCALE)
-					var jet := xform * Transform3D(turn, spot[0])
-					batch.add(jets[0], jet)
-					NavLights.add_to(batch, lib, jets[0], jet)
-		Kind.BOAT:
-			# Red light on the left side, green on the right (NavLights).
-			NavLights.add_to(batch, lib, pid, xform)
-			if lib.cats[pid] == Cat.OIL_RIG:
-				for l in NavLights.for_rig(lib, pid, xform):
-					batch.add(l[0], l[1])
+					batch.add(jets[0], xform * Transform3D(turn, spot[0]))
 		Kind.AIRPORT:
 			batch.add(lib.named_id("runway_ext"), xform)
 		Kind.STADIUM:
-			# Floodlights of the concert camp at the corners of the plot, aimed at the pitch
-			# (the stadium itself only lights its inside at night: stadium_night.glb).
-			var h := box.size.y * xform.basis.get_scale().y * STADIUM_FLOOD_HEIGHT
-			var floods := lib.ids(Cat.FLOODLIGHT)
-			if floods.is_empty():
-				batch.add(lib.named_id("stadium_lights"), Transform3D(Basis.from_scale(Vector3(r.size.x, h, r.size.y)), lot_center))
-			else:
-				var s := h / lib.bounds[floods[0]].size.y
-				for x in [-STADIUM_FLOOD_CORNER, STADIUM_FLOOD_CORNER]:
-					for z in [-STADIUM_FLOOD_CORNER, STADIUM_FLOOD_CORNER]:
-						var p := lot_center + Vector3(x * r.size.x, 0, z * r.size.y)
-						batch.add(floods[0], _standing(lib, floods[0], p, _side_to((lot_center - p).normalized()), s))
-		Kind.BOAT:
-			_nav_lights(lib, lib.cats[pid], box, xform, batch)
+			# Floodlight masts at the corners of the plot (seen at night).
+			var lights := lib.named_id("stadium_lights")
+			var h := box.size.y * xform.basis.get_scale().y * 1.6
+			batch.add(lights, Transform3D(Basis.from_scale(Vector3(r.size.x, h, r.size.y)), lot_center))
 		Kind.MCDONALDS:
 			# Golden arches over the front, lit at night.
 			var w := box.size.x * 0.5
@@ -127,55 +93,14 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 					batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 3) * PI * 0.5), p))
 
 
-## Stadium floodlights: as tall as this many times the stadium, at this share of the plot from
-## its centre (the corners).
-const STADIUM_FLOOD_HEIGHT := 1.6
-const STADIUM_FLOOD_CORNER := 0.47
-## Navigation lights of the boats: where the red (port) light is in the box of the model (share
-## of its size); the green (starboard) one is its mirror across the middle of the boat. Port is
-## +X on the boats whose bow is +Z, -X on the fishing boat (wheelhouse forward, gantry aft) and
-## the submarine (sail forward), whose bows are -Z. Measured on the models:
-## the front corners of the cabin (simple boat), the gunwales near the bow (wooden boat), the
-## sides of the wheelhouse (fishing boat), the bridge wings (cargo ship), the sides of the sail
-## (submarine).
-const NAV_LIGHTS := {
-	Cat.BOAT_WOODEN: Vector3(0.834, 0.971, 0.829),
-	Cat.BOAT_FISHING: Vector3(0.281, 0.911, 0.45),
-	Cat.BOAT_CARGO: Vector3(0.825, 0.814, 0.289),
-	Cat.BOAT_SUB: Vector3(0.423, 0.862, 0.437),
-}
-## Size of a navigation light, as a share of the width of the boat.
-const NAV_LIGHT_SIZE := 0.035
-
-
-static func _nav_lights(lib: ModelLibrary, cat: int, box: AABB, xform: Transform3D, batch: InstanceBatch) -> void:
-	if not NAV_LIGHTS.has(cat):
-		return
-	var at: Vector3 = NAV_LIGHTS[cat]
-	var size := Basis.from_scale(Vector3.ONE * box.size.x * NAV_LIGHT_SIZE)
-	var port := box.position + box.size * at
-	var starboard := box.position + box.size * Vector3(1.0 - at.x, at.y, at.z)
-	batch.add(lib.named_id("nav_light_red"), xform * Transform3D(size, port))
-	batch.add(lib.named_id("nav_light_green"), xform * Transform3D(size, starboard))
-
-
 ## Props on industrial yards (gardens and plazas stay bare: there are no trees).
 static func place_filler(data: CityData, lib: ModelLibrary, i: int, kind: int, batch: InstanceBatch) -> void:
 	if kind == Kind.INDUSTRIAL_YARD:
 		_place_yard(lib, data.building_rect(i), data.b_seed[i], batch)
 
 
-## Every container of the yards is drawn the same size (the five models are not): 6.1 x 2.44 x 2.59 m, 15 % smaller than modelled (1.04 cells long).
-const YARD_BOX_SIZE := Vector3(0.415, 0.44, 1.04)
-
-
-## Scale that turns container mesh `id` into a YARD_BOX_SIZE container (x = width, y = height, z = length),
-## its long side along the length.
-static func _box_scale(lib: ModelLibrary, id: int) -> Basis:
-	var s := lib.bounds[id].size
-	if s.x > s.z:
-		return Basis.from_scale(Vector3(YARD_BOX_SIZE.z / s.x, YARD_BOX_SIZE.y / maxf(s.y, 0.01), YARD_BOX_SIZE.x / maxf(s.z, 0.01)))
-	return Basis.from_scale(Vector3(YARD_BOX_SIZE.x / maxf(s.x, 0.01), YARD_BOX_SIZE.y / maxf(s.y, 0.01), YARD_BOX_SIZE.z / maxf(s.z, 0.01)))
+## Scale of the shipping containers of the yards (cells per metre): 6.1 m long = 1.2 cells.
+const YARD_BOX_SCALE := 0.2
 
 
 ## The shipping containers of the Low-poly Container pack used on the map (named meshes).
@@ -199,11 +124,11 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 			if not boxes.is_empty():
 				for i in 3:
 					var p := c + turn * Vector3(0.0, 0.0, (i - 1) * 0.55)
-					var low := boxes[((seed >> 3) + i) % boxes.size()]
-					batch.add(low, Transform3D(turn * _box_scale(lib, low), p))
+					var s := Basis.from_scale(Vector3.ONE * YARD_BOX_SCALE)
+					batch.add(boxes[((seed >> 3) + i) % boxes.size()], Transform3D(turn * s, p))
 					if i == 1:
-						var top := boxes[(seed >> 5) % boxes.size()]
-						batch.add(top, Transform3D(turn * _box_scale(lib, top), p + Vector3(0, YARD_BOX_SIZE.y, 0)))
+						batch.add(boxes[(seed >> 5) % boxes.size()],
+								Transform3D(turn * s, p + Vector3(0, 2.65 * YARD_BOX_SCALE, 0)))
 				return
 			var old := lib.ids(Cat.CONTAINER)
 			if not old.is_empty():
@@ -229,8 +154,7 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 		var prop := props[seed % props.size()]
 		var boxes := _yard_boxes(lib)
 		if not boxes.is_empty() and lib.model_name(prop).contains("shipping-container"):
-			var one := boxes[seed % boxes.size()]
-			batch.add(one, Transform3D(turn * _box_scale(lib, one), c))
+			batch.add(boxes[seed % boxes.size()], Transform3D(turn * Basis.from_scale(Vector3.ONE * YARD_BOX_SCALE), c))
 			return
 		batch.add(prop, Transform3D(Basis(Vector3.UP, (seed & 1) * PI * 0.5), c))
 
@@ -239,61 +163,36 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 ## edge (on the highest point under the sign), "wall" hangs on its south wall at `height` (share of the building
 ## height). `scale` shrinks the model; `halo` is the size of the glow copy drawn behind it.
 ## "face" hangs flat on the wall the sign was set up for (CityData.b_sign_facing: east or south,
-## the two walls the camera sees), in the middle of it, `fill` of the wall wide, at `height`;
-## `shift` moves it along the wall (share of the wall), `inset` back from the front of the box
-## (share of the depth of the building).
+## the two walls the camera sees), in the middle of it, `fill` of the wall wide, at `height`.
 ## Church model whose cross carries a red light: where the tip of the cross is in the box of
 ## the model (share of its size), and the size of the light.
 const CROSS_LIGHT_MODEL := "free_mini.glb: m12"
 const CROSS_TIP := Vector3(0.48, 1.0, 0.83)
 const CROSS_LIGHT_SIZE := 0.035
-## The light on top of the radio tower model (a tiny ball): its size, a share of the height of the model.
-const BEACON_SIZE := 0.015
-## "blade" (Taiwan signboards) sticks out of the east wall from its brackets (the -X end of the
-## model), `out` cells long, its face to the south; "corner" (the LED band) wraps the south-east
-## corner, along `fill` of the east wall. A roof sign with `deep` stands wholly on the roof
-## (a board on legs), its front at the edge, instead of centred on the edge.
 const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},
 	ModelCatalog.Cat.NEON_PACMAN: {"mount": "roof", "scale": 0.58, "halo": 1.15, "yaw": PI * 0.5},
-	ModelCatalog.Cat.NEON_WOMAN: {"mount": "face", "fill": 1.0, "height": 0.5, "max_height": 1.1, "halo": 1.12},
+	ModelCatalog.Cat.NEON_WOMAN: {"mount": "roof", "scale": 1.0, "halo": 1.12},
 	ModelCatalog.Cat.SIGN_WINDOWS: {"mount": "face", "fill": 0.86, "height": 0.6, "halo": 1.0},
 	ModelCatalog.Cat.NEON_JOYSTICK: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 	ModelCatalog.Cat.NEON_MARTINI: {"mount": "face", "fill": 0.9, "height": 0.58, "halo": 1.08},
-	ModelCatalog.Cat.NEON_BAR: {"mount": "face", "fill": 0.55, "height": 0.6, "max_height": 0.3, "halo": 1.08},
-	ModelCatalog.Cat.NEON_BULL: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08, "scale": 0.55},
+	ModelCatalog.Cat.NEON_BAR: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
+	ModelCatalog.Cat.NEON_BULL: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 	ModelCatalog.Cat.NEON_FUN: {"mount": "face", "fill": 0.9, "height": 0.6, "halo": 1.08},
 	ModelCatalog.Cat.NEON_PALM: {"mount": "face", "fill": 0.85, "height": 0.58, "halo": 1.08},
 	ModelCatalog.Cat.NEON_CLUB: {"mount": "roof", "scale": 1.0, "halo": 1.1},
-	ModelCatalog.Cat.NEON_GIRL: {"mount": "roof", "scale": 1.0, "halo": 1.1, "fill": 0.9, "height": 0.55},
+	ModelCatalog.Cat.NEON_GIRL: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.NEON_LOVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
-	ModelCatalog.Cat.NEON_XXX: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
-	ModelCatalog.Cat.NEON_PLAYBOY: {"mount": "face", "fill": 0.9, "height": 0.55, "halo": 1.08},
-	# One word over the two casino buildings standing side by side: on the west one, as wide as
-	# 1.8 walls, its middle half a wall further east, on the wall behind the steps.
-	ModelCatalog.Cat.NEON_CASINO: {"mount": "face", "fill": 1.8, "shift": 0.5, "inset": 0.066, "height": 0.8,
-		"max_height": 0.38, "halo": 1.08},
-	ModelCatalog.Cat.TW_BANASONIC: {"mount": "face", "fill": 0.9, "height": 0.72},
-	ModelCatalog.Cat.TW_MCDONALDS: {"mount": "blade", "out": 2.0, "height": 0.45},
-	ModelCatalog.Cat.TW_COLA_JP: {"mount": "blade", "out": 1.4, "height": 0.42},
-	ModelCatalog.Cat.TW_COLA_BILLBOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
-	ModelCatalog.Cat.TW_LED_BOARD: {"mount": "roof", "scale": 1.0, "yaw": PI * 0.5, "deep": true},
-	ModelCatalog.Cat.TW_LED_BAND: {"mount": "corner", "fill": 0.95, "height": 0.35},
 }
-## A wall sign is at most this share of the building's height (its spec may say "max_height").
+## A wall sign is at most this share of the building's height.
 const FACE_MAX_HEIGHT := 0.5
-const SHARED_MAX_HEIGHT := 0.8
 
 
 ## Sign `cat` on building `i`. `mount` puts it somewhere else than its entry of SIGNS says (a
-## wall sign moved to the roof: it then looks the way the signs of the building look). A "face"
-## sign that shares its wall with others takes slot `slot` of `slots` equal parts of the wall;
-## `wall_inset` (share of the building's depth) moves it back from the front of the box onto the
-## wall, when something juts out in front of it (steps).
+## wall sign moved to the roof: it then looks the way the signs of the building look).
 static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xform: Transform3D,
-		batch: InstanceBatch, cat: int, mount: String = "", slot: int = 0, slots: int = 1,
-		wall_inset: float = 0.0) -> void:
+		batch: InstanceBatch, cat: int, mount: String = "") -> void:
 	var ids := lib.ids(cat)
 	if ids.is_empty() or not SIGNS.has(cat):
 		return
@@ -303,9 +202,6 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		spec["mount"] = mount
 		if mount == "roof" and int(data.b_sign_facing[i]) == 1:
 			spec["yaw"] = PI * 0.5
-	if data.b_sign_fit.has(i):
-		spec = spec.duplicate()
-		spec.merge(data.b_sign_fit[i], true)
 	var s: float = spec.get("scale", 1.0)
 	var yaw: float = spec.get("yaw", 0.0)
 	# The sign stays where it was put when the building is turned afterwards.
@@ -323,38 +219,16 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		at.z = body.end.z + 0.02
 	elif spec["mount"] == "face":
 		var east := int(data.b_sign_facing[i]) == 1
-		var wall := (body.size.z if east else body.size.x) / float(slots)
-		if slots > 1:
-			var along := wall * (float(slot) + 0.5)
-			if east:
-				at.z = body.position.z + along
-			else:
-				at.x = body.position.x + along
-		if spec.has("shift"):
-			if east:
-				at.z += wall * float(spec["shift"])
-			else:
-				at.x += wall * float(spec["shift"])
-		wall_inset += float(spec.get("inset", 0.0))
-		# Signs side by side on a low wall may be taller (SHARED_MAX_HEIGHT of the building).
-		var tall: float = SHARED_MAX_HEIGHT if slots > 1 else float(spec.get("max_height", FACE_MAX_HEIGHT))
-		s = minf(wall * float(spec.get("fill", 0.9)) / model.size.x, body.size.y * tall / model.size.y)
+		var wall := body.size.z if east else body.size.x
+		s = minf(wall * float(spec["fill"]) / model.size.x, body.size.y * FACE_MAX_HEIGHT / model.size.y)
 		# Its back against the wall, its face (+Z of the model) outwards.
 		local_center = Vector3(model.get_center().x, model.get_center().y, model.position.z)
-		at.y = body.position.y + body.size.y * float(spec.get("height", 0.55))
+		at.y = body.position.y + body.size.y * float(spec["height"])
 		if east:
 			yaw = PI * 0.5
-			at.x = body.end.x + 0.02 - body.size.x * wall_inset
+			at.x = body.end.x + 0.02
 		else:
-			at.z = body.end.z + 0.02 - body.size.z * wall_inset
-	elif spec["mount"] == "blade":
-		s = minf(float(spec["out"]) / model.size.x, body.size.y * FACE_MAX_HEIGHT / model.size.y)
-		local_center = Vector3(model.position.x, model.get_center().y, model.get_center().z)
-		at = Vector3(body.end.x, body.position.y + body.size.y * float(spec["height"]), body.get_center().z)
-	elif spec["mount"] == "corner":
-		s = body.size.z * float(spec["fill"]) / model.size.z
-		local_center = Vector3(model.end.x, model.get_center().y, model.end.z)
-		at = Vector3(body.end.x + 0.02, body.position.y + body.size.y * float(spec["height"]), body.end.z + 0.02)
+			at.z = body.end.z + 0.02
 	else:
 		# A parapet sign: on the flat roof of the model (not on the box of the whole model, which
 		# also holds annexes and masts), flush with the roof edge the sign faces (south, or east
@@ -364,13 +238,12 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		var east := absf(sin(yaw)) > 0.5
 		var edge_len := rr.size.y if east else rr.size.x
 		s = minf(s, edge_len * 0.92 / model.size.x)
-		var inset := ROOF_EDGE_INSET + (model.size.z * s * 0.5 if spec.get("deep", false) else 0.0)
 		if east:
-			at.x = rr.end.x - inset
+			at.x = rr.end.x - ROOF_EDGE_INSET
 			at.z = rr.get_center().y
 		else:
 			at.x = rr.get_center().x
-			at.z = rr.end.y - inset
+			at.z = rr.end.y - ROOF_EDGE_INSET
 		at.y = roof["y"]
 	var turn := Basis(Vector3.UP, yaw)
 	batch.add(ids[0], Transform3D(turn * Basis.from_scale(Vector3(s, s, s)), at - turn * (local_center * s)))
@@ -380,25 +253,6 @@ static func _place_sign(data: CityData, lib: ModelLibrary, i: int, pid: int, xfo
 		var back := Vector3(0, 0, -0.03)
 		batch.add(halo, Transform3D(turn * Basis.from_scale(Vector3(h, h, s)),
 				at + back - turn * (local_center * Vector3(h, h, s))))
-
-
-## The glowing part of the "Light House Club" sign of the lighthouse club: built in the frame
-## of the building (tools/build_wave16_models.py), so it takes the same transform; its halo is
-## a bigger copy round the middle of the sign.
-const LIGHTHOUSE_HALO := 1.08
-
-
-static func _lighthouse_neon(lib: ModelLibrary, xform: Transform3D, batch: InstanceBatch) -> void:
-	var ids := lib.ids(Cat.NEON_LIGHTHOUSE)
-	if ids.is_empty():
-		return
-	batch.add(ids[0], xform)
-	var halo := lib.named_id("neon_halo_%d" % Cat.NEON_LIGHTHOUSE)
-	if halo >= 0:
-		var c := lib.bounds[ids[0]].get_center()
-		var grow := Transform3D(Basis.from_scale(Vector3(LIGHTHOUSE_HALO, LIGHTHOUSE_HALO, 1.0)),
-				c - c * Vector3(LIGHTHOUSE_HALO, LIGHTHOUSE_HALO, 1.0) - Vector3(0, 0, 0.03))
-		batch.add(halo, xform * grow)
 
 
 ## The flat roof of a model placed with `xform`: {"y": height, "rect": Rect2 in x, z}. The roof
@@ -424,20 +278,6 @@ static func _roof(lib: ModelLibrary, id: int, xform: Transform3D) -> Dictionary:
 		if counts[key] > counts.get(best_key, 0):
 			best_key = key
 	var level := float(best_key) / 50.0
-	var rect := _level_rect(pts, level)
-	if rect.size == Vector2.ZERO:
-		var b := xform * lib.bounds[id]
-		return {"y": b.end.y, "rect": Rect2(b.position.x, b.position.z, b.size.x, b.size.z)}
-	# A lid over the whole of that level (a tower whose top band has fewer corners than a ledge
-	# below it) is the real roof: a sign on the ledge would be buried in the top band.
-	var lid := _level_rect(pts, top)
-	if top > level + 0.05 and lid.get_area() >= rect.get_area() * 0.9:
-		return {"y": top, "rect": lid}
-	return {"y": level, "rect": rect}
-
-
-## Box (x, z) of the points at height `level`; zero size when there are none.
-static func _level_rect(pts: PackedVector3Array, level: float) -> Rect2:
 	var lo := Vector2(INF, INF)
 	var hi := Vector2(-INF, -INF)
 	for p in pts:
@@ -445,8 +285,9 @@ static func _level_rect(pts: PackedVector3Array, level: float) -> Rect2:
 			lo = Vector2(minf(lo.x, p.x), minf(lo.y, p.z))
 			hi = Vector2(maxf(hi.x, p.x), maxf(hi.y, p.z))
 	if lo.x == INF:
-		return Rect2()
-	return Rect2(lo, hi - lo)
+		var b := xform * lib.bounds[id]
+		return {"y": b.end.y, "rect": Rect2(b.position.x, b.position.z, b.size.x, b.size.z)}
+	return {"y": level, "rect": Rect2(lo, hi - lo)}
 
 
 # --- Concert camp (ConcertSite) ---------------------------------------------------------------

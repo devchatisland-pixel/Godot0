@@ -62,11 +62,12 @@ func _run() -> void:
 	_drive_in_cars()
 	_prison_helicopters()
 	_plant_road()
+	if REGULAR_CARS:
+		_cinema_parking()
 	# Last, so that nothing placed before moves: the newer vehicles and the hand changes.
 	_school_bus()
 	_bridge_humvee()
 	_hand_changes()
-	_clear_cinema_zone()
 
 
 ## Marks the lots of all buildings but `skip` as taken.
@@ -343,7 +344,7 @@ func _farm_extras() -> void:
 		var pa := _d.building_rect(a).position
 		var pb := _d.building_rect(b).position
 		return CityTypes.hash2(pa.x, pa.y, 53) < CityTypes.hash2(pb.x, pb.y, 53))
-	var ids := ["p54_21_harvester_olive", "p54_26_pickup_40s_red", "p54_41_loader_claw_yellow",
+	var ids := ["p54_21_harvester_olive", "p54_26_pickup_40s_red", "p54_42_forwarder_green",
 			"p54_43_tractor_vintage_trailer"]
 	var k := 0
 	for b in fields:
@@ -371,7 +372,7 @@ func _crane_tanker() -> void:
 	var crane := _nearest_kind(Kind.CRANE, QUARTER_CRANE)
 	if crane < 0:
 		return
-	var id := "p54_20_semi_cabover_yellow"
+	var id := "p54_10_tanker_water"
 	var why := "next to the construction crane"
 	var r := _d.building_rect(crane)
 	var best := Vector2i(-1, -1)
@@ -391,17 +392,9 @@ func _crane_tanker() -> void:
 		push_warning("[Vehicles] no room next to the construction crane")
 
 
-## The tank the fuel tanker of the port parks beside, and the shed the water tanker parks in front of.
-const PORT_LONG_TANK := "port_tanks.glb: tank_long"
-const PORT_LOADBAY := "shed_trailer.glb: shed_trailer"
-
-
 ## A fuel tanker next to the oil barrels of the port: the barrel yard (INDUSTRIAL_YARD whose
 ## seed draws barrels, see BuildingExtras) nearest to the quay of the cargo ship.
 func _port_fuel_tanker() -> void:
-	# First choice, by hand: beside the first long tank of the port.
-	if _beside_model("p54_18_tanker_fuel", PORT_LONG_TANK, "next to the long tank of the port"):
-		return
 	# The silos MapAdditions put beside the container yards come first.
 	var silos := Rect2i()
 	for b in _d.building_count():
@@ -457,31 +450,16 @@ func industrial_zones() -> Array[Dictionary]:
 	return comps
 
 
-## The port shed the mobile crane truck parks beside (PortRework gives it its lot).
-const CRANE_TRUCK_SHED := "shed_trailer.glb: shed_trailer"
-
-
-## A mobile crane truck in the biggest industrial zone (parked beside CRANE_TRUCK_SHED when
-## it stands) and a grapple loader in the second.
+## A mobile crane truck in the biggest industrial zone and a grapple loader in the second.
 func _industrial_zones() -> void:
 	var zones := industrial_zones()
-	var ids := ["p54_35_crane_truck_mobile", "p54_41_loader_claw_yellow"]
+	var ids := ["p54_35_crane_truck_mobile", "p54_38_loader_grapple_yellow"]
 	for k in mini(ids.size(), zones.size()):
 		var z: Dictionary = zones[k]
-		if k == 0 and _beside_model(ids[k], CRANE_TRUCK_SHED, "parked beside a port shed"):
-			continue
 		if not _in_zone(ids[k], z["center"], "industrial zone %d" % (k + 1)):
 			push_warning("[Vehicles] no room in industrial zone %d" % (k + 1))
 	if zones.size() < ids.size():
 		push_warning("[Vehicles] only %d industrial zone(s)" % zones.size())
-
-
-## Beside the building drawn with `model`; false when there is none or no room.
-func _beside_model(id: String, model: String, why: String) -> bool:
-	for b in _d.building_count():
-		if _d.b_kind[b] != Kind.EMPTY and _d.b_model.get(b, "") == model:
-			return _beside(id, _d.building_rect(b), why, 41, 0.4, 3.0)
-	return false
 
 
 ## Free spot closest to `center` on industrial ground.
@@ -513,11 +491,6 @@ func _in_zone(id: String, center: Vector2, why: String) -> bool:
 
 ## A water tanker next to a stack of cargo containers (the yards of the port).
 func _container_tanker() -> void:
-	# First choice, by hand: parked in front of the loading bay shed of the port.
-	for b in _d.building_count():
-		if _d.b_kind[b] != Kind.EMPTY and _d.b_model.get(b, "") == PORT_LOADBAY:
-			_in_front("p54_20_semi_cabover_yellow", b, "in front of the loading bay of the port")
-			return
 	var zones := industrial_zones()
 	var anchor := Vector2(_d.size, _d.size) * 0.5
 	if not zones.is_empty():
@@ -529,7 +502,7 @@ func _container_tanker() -> void:
 	yards.sort_custom(func(a: Rect2i, b: Rect2i) -> bool:
 		return Vector2(a.get_center()).distance_to(anchor) < Vector2(b.get_center()).distance_to(anchor))
 	for r in yards:
-		if _beside("p54_20_semi_cabover_yellow", r, "next to the container yard", 17, 0.6, 2.0):
+		if _beside("p54_10_tanker_water", r, "next to the container yard", 17, 0.6, 2.0):
 			return
 
 
@@ -722,13 +695,8 @@ func _bridge_humvee() -> void:
 ## starts at that cell, "heading" turns its nose that way.
 const HAND_CHANGES := [
 	{"id": "p54_21_harvester_olive", "near": Vector2(280.9, 249.0), "field": Vector2i(267, 266)},
-	{"id": "p54_41_loader_claw_yellow", "near": Vector2(263.5, 241.0), "heading": Vector2(1, 0)},
+	{"id": "p54_42_forwarder_green", "near": Vector2(263.5, 241.0), "heading": Vector2(1, 0)},
 	{"id": "p54_43_tractor_vintage_trailer", "near": Vector2(277.0, 234.5), "heading": Vector2(0, 1)},
-	# The red pickup of the field at (257, 282) faces south.
-	{"id": "p54_26_pickup_40s_red", "near": Vector2(257.5, 282.5), "heading": Vector2(0, 1)},
-	# One step south, away from the door of the main hospital / the main school.
-	{"id": "p54_11_ambulance", "near": Vector2(244.5, 204.35), "shift": Vector2(0, 1)},
-	{"id": "school_bus", "near": Vector2(237.5, 201.35), "shift": Vector2(0, 1)},
 ]
 const HAND_REACH := 4.0
 
@@ -753,28 +721,9 @@ func _hand_changes() -> void:
 			var r := _d.building_rect(f)
 			out[v]["at"] = Vector2(r.position) + Vector2(r.size) * 0.5
 			out[v]["why"] = "in a wheat field"
-		if c.has("shift"):
-			out[v]["at"] = (out[v]["at"] as Vector2) + (c["shift"] as Vector2)
 		if c.has("heading"):
 			var h: Vector2 = c["heading"]
 			out[v]["yaw"] = atan2(-h.x, -h.y)
-
-
-## No vehicle stands on the ground of the main cinema (its lot and CINEMA_ZONE_REACH cells round it).
-const CINEMA_ZONE_REACH := 6
-
-
-func _clear_cinema_zone() -> void:
-	var b := _biggest(Kind.CINEMA_MAIN)
-	if b < 0:
-		return
-	var zone := _d.building_rect(b).grow(CINEMA_ZONE_REACH)
-	var kept: Array[Dictionary] = []
-	for v in out:
-		var at: Vector2 = v["at"]
-		if not zone.has_point(Vector2i(int(floor(at.x)), int(floor(at.y)))):
-			kept.append(v)
-	out = kept
 
 
 ## The drive-in cinema: real cars (the lightest of the catalog) in two rows on its lot, their
@@ -938,15 +887,11 @@ func _plant_road() -> void:
 
 
 ## Prison island: a military helicopter hovering over the sea between the main island and
-## the prison island, and a prison van beside the lighthouse of the island. The
+## the prison island, and an armoured car (Rosomak) beside the lighthouse of the island. The
 ## helicopter that stood there is now on the helipad of the fog island (FogBaseSites).
 const HELI_LIFT := 3.0
 ## The lighthouse of the prison island (top-left cell of its lot).
 const PRISON_LIGHTHOUSE := Vector2i(29, 46)
-## The three prison vans beside it stand in a row, this many cells apart, facing the jail whose yard
-## lies this many cells south of the middle of the cellhouse.
-const ROW_GAP := 1.1
-const JAIL_SOUTH := 5.0
 
 
 func _prison_helicopters() -> void:
@@ -961,7 +906,12 @@ func _prison_helicopters() -> void:
 	if air.x >= 0:
 		out.append({"id": id, "at": air, "yaw": atan2(-1.0, 0.0), "why": "over the sea, off the prison island",
 				"lift": HELI_LIFT})
-	# The prison vans that stood beside the lighthouse are gone, on request.
+	# On the ground beside the lighthouse of the prison island.
+	var light := _nearest_kind(Kind.LIGHTHOUSE, PRISON_LIGHTHOUSE)
+	if light < 0:
+		push_warning("[Vehicles] no lighthouse on the prison island")
+		return
+	_beside("rosomak_apc", _d.building_rect(light), "next to the lighthouse of the prison island", 97, 0.6, 4.0)
 
 
 ## Middle of the water met going from `from` towards `to` (first sea after the land of

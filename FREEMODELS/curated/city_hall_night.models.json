@@ -1,9 +1,0 @@
-{
-	"file": "city_hall_night.glb",
-	"models": [
-		{
-			"cat": "CITY_HALL_MAIN",
-			"node": "city_hall"
-		}
-	]
-}

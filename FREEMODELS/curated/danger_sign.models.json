@@ -1,9 +1,0 @@
-{
-	"file": "danger_sign.glb",
-	"models": [
-		{
-			"cat": "DANGER_SIGN",
-			"node": "danger"
-		}
-	]
-}

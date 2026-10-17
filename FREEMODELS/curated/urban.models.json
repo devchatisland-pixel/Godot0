@@ -3,8 +3,7 @@
 	"models": [
 		{
 			"cat": "URBAN",
-			"node": "tower0",
-			"file": "tower0.glb"
+			"node": "tower0"
 		},
 		{
 			"cat": "URBAN",
@@ -24,13 +23,11 @@
 		},
 		{
 			"cat": "URBAN",
-			"node": "tower0",
-			"file": "tower0.glb"
+			"node": "tower5"
 		},
 		{
 			"cat": "URBAN",
-			"node": "tower0",
-			"file": "tower0.glb"
+			"node": "tower6"
 		}
 	]
 }

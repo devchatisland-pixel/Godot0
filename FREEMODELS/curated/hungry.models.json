@@ -3,8 +3,7 @@
 	"models": [
 		{
 			"cat": "BURGER_KING",
-			"node": "hotel_stars",
-			"file": "hotel_stars_night.glb"
+			"node": "burger_king"
 		}
 	]
 }

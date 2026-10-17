@@ -4,8 +4,7 @@ extends Node3D
 ##   - round the prison, on dry ground only (a side that would run over the beach or the sea
 ##     moves in until it does not), with floodlights at its corners and bleachers in the yard
 ##     in front of the gate;
-##   - round the secret base, at a little distance from its runway, with the "Danger" plate
-##     of the chainlink fence pack hung on it beside the gate, facing out.
+##   - round the secret base, at a little distance from its runway.
 ## Static props like the vehicles: one MeshInstance3D each, all of them clickable.
 
 const Kind := CityTypes.Kind
@@ -36,19 +35,15 @@ const BLEACHER_INSET := 0.6
 const BASE_MARGIN := 0.9
 const BASE_HEIGHT := 0.45
 const BASE_GATE := 1.6
-## The "Danger" plate on the fence of the secret base: its width, the height of its middle and
-## how far from the middle of the gate it hangs (cells).
-const DANGER_WIDTH := 0.8
-const DANGER_HEIGHT := 0.26
-const DANGER_FROM_GATE := 1.5
 
 var _count := 0
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
 	for b in data.building_count():
-		# The prison is walled by the jail (PrisonCompound), no wire fence round it.
-		if data.b_kind[b] == Kind.AIRBASE:
+		if data.b_kind[b] == Kind.PRISON:
+			_prison(data, lib, b)
+		elif data.b_kind[b] == Kind.AIRBASE:
 			_base(data, lib, b)
 	print("[Fences] %d fence pieces, lights and stands placed" % _count)
 
@@ -94,19 +89,6 @@ func _base(data: CityData, lib: ModelLibrary, b: int) -> void:
 	var side := int(data.b_facing[b]) % 4
 	_add(fence_mesh(ring, BASE_HEIGHT, side, BASE_GATE), Transform3D.IDENTITY, "Secret base fence", "FENCE",
 			"wire fence", "round the secret base")
-	var signs := lib.ids(Cat.DANGER_SIGN)
-	if signs.is_empty():
-		return
-	# On the outer face of the gate side, beside the gate, its face (+Z of the model) outwards.
-	var out := CityTypes.FACING_OFFSETS[side]
-	var along := Vector2(-out.y, out.x)
-	var mid := ring.get_center() + Vector2(out) * Vector2(ring.size.x, ring.size.y) * 0.5
-	var p := mid + along * DANGER_FROM_GATE + Vector2(out) * (POST * 0.5 + 0.01)
-	var sign_box := lib.bounds[signs[0]]
-	var s := DANGER_WIDTH / sign_box.size.x
-	var basis := Basis(Vector3.UP, CityTypes.facing_yaw(side)) * Basis.from_scale(Vector3.ONE * s)
-	var xform := Transform3D(basis, Vector3(p.x, DANGER_HEIGHT, p.y) - basis * sign_box.get_center())
-	_add(lib.meshes[signs[0]], xform, "Danger sign", "PROP", lib.model_name(signs[0]), "on the fence of the secret base")
 
 
 func _add(mesh: Mesh, xform: Transform3D, title: String, kind: String, model: String, note: String) -> void:

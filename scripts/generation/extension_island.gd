@@ -87,28 +87,13 @@ func _build_extended_elevation() -> void:
 				height[i] = minf(height[i], -0.3 + edge * 0.03)
 
 
-## The development island: an ellipse with a natural coast, bays and capes cut by two layers
-## of noise (as on the urban lobes), so it is not a perfect oval. Its middle (t < DEV_CORE) is
-## never cut, so the island stays in one piece and the street and the two rows of buildings
-## (DevIsland, ShopSites) have room. Wide sandy beaches all round (DEV_LIFT, no rocks). The
-## land stays inside 1.15 of the ellipse (is_dev_island).
-const DEV_COAST := Vector2(0.45, 0.18)
-const DEV_FREQ := Vector2(2.2, 5.5)
-const DEV_CORE := 0.55
-## The ground is flattened by this much: the same coast, but beaches (and shallows) about three
-## times as wide as on the other islands.
-const DEV_LIFT := 0.3
-
-
+## A lobe of land: a rounded ellipse with a slightly ragged coast.
 func _raise_lobe(coast: FastNoiseLite, at: Vector2, r: Vector2) -> void:
 	var size := _data.size
 	for y in range(maxi(int(at.y - r.y * 1.3), 0), mini(int(at.y + r.y * 1.3), size)):
-		for x in range(maxi(int(at.x - r.x * 1.3), 0), mini(int(at.x + r.x * 1.3), size)):
+		for x in range(maxi(int(at.x - r.x * 1.4), 0), mini(int(at.x + r.x * 1.4), size)):
 			var t := _ellipse_t(Vector2(x, y), at, r, 0.0)
-			var n := minf(coast.get_noise_2d(x * DEV_FREQ.x + 97.0, y * DEV_FREQ.x) * DEV_COAST.x 					+ coast.get_noise_2d(x * DEV_FREQ.y, y * DEV_FREQ.y + 53.0) * DEV_COAST.y, ROUGH_CAPE)
-			if t < DEV_CORE:
-				n = maxf(n, 0.0)
-			_raise(x, y, (1.0 - t * t + n) * DEV_LIFT)
+			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x * 1.4, y * 1.4) * 0.12)
 
 
 ## A lobe with a natural coast, like the prison island: bays and capes cut by two layers of
@@ -179,8 +164,6 @@ func _mark_rocky_shores() -> void:
 			var i := y * _data.size + x
 			if _data.terrain[i] != CityTypes.Terrain.BEACH or core_land_at(x, y):
 				continue
-			if is_dev_island(x, y):
-				continue # sandy beaches all round the development island
 			if noise.get_noise_2d(x, y) > 0.15 or is_prison_island(x, y):
 				_data.rocky[i] = 1
 

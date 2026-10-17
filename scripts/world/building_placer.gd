@@ -38,8 +38,7 @@ const FAR_COLORS := {
 	Kind.WATCHTOWER: Color("8a6a45"), Kind.BEACH_HUT: Color("c9954a"), Kind.PIER: Color("8a6a45"), Kind.BOAT: Color("7a6a5a"),
 	Kind.FIRE_TRUCK: Color("c0392b"), Kind.BALLOON: Color("e2573b"), Kind.BILLBOARD: Color("d8d3c4"), Kind.UFO: Color("b9bcc6"), Kind.TANK: Color("5f6a4a"),
 	Kind.BUS_STOP: Color("3f8f5a"), Kind.SKYLINE_BLDG: Color("4a5068"),
-	Kind.BASKET_COURT: Color("7d7078"), Kind.RESTAURANT: Color("d98a5a"), Kind.PIZZA_SHOP: Color("e8cfc8"),
-	Kind.BURGER_SHOP: Color("e0553a"), Kind.CAFE: Color("e8b0a0"), Kind.VEGAS_SIGN: Color("c0392b"),
+	Kind.BASKET_COURT: Color("7d7078"),
 }
 
 ## Procedural meshes per kind (several names = variants picked by seed).
@@ -61,7 +60,6 @@ const NAMED := {
 	Kind.COOLING_TOWER: ["box"], Kind.COOLING_HALL: ["box"], Kind.BT_TOWER: ["bt_tower"], Kind.WATCHTOWER: ["box"], Kind.BEACH_HUT: ["box"], Kind.PIER: ["box"], Kind.BOAT: ["box"],
 	Kind.FIRE_TRUCK: ["box"], Kind.BALLOON: ["box"], Kind.BILLBOARD: ["box"],
 	Kind.UFO: ["box"], Kind.TANK: ["box"], Kind.BUS_STOP: ["box"], Kind.SKYLINE_BLDG: ["box"], Kind.BASKET_COURT: ["box"],
-	Kind.RESTAURANT: ["box"], Kind.PIZZA_SHOP: ["box"], Kind.BURGER_SHOP: ["box"], Kind.CAFE: ["box"], Kind.VEGAS_SIGN: ["box"],
 	Kind.FOUNTAIN: ["fountain"], Kind.BANK: ["bank"], Kind.CHURCH: ["church"],
 	Kind.CASINO: ["casino"], Kind.NIGHTCLUB: ["club_a", "club_b", "club_c"],
 	Kind.FERRIS_WHEEL: ["ferris_wheel"], Kind.DRIVE_IN: ["drive_in"],
@@ -82,14 +80,7 @@ const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.
 ## Things that float: height above the ground (in cells).
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
-const MODEL_BOOST := {"free_mini.glb: m7": 1.15}
-## Models drawn this much smaller than they would fit their lot.
-const MODEL_SHRINK := {"museum_hall.glb: museum_hall": 0.75}
-## The business pack shop is drawn like an office (0.8 to 1.15 of its size) whatever the kind of
-## the building, on the east side (a restaurant of that model was drawn much bigger).
-const BIZ_SHOP_MODEL := "business.glb: shop"
-## The row of skyscraper towers of the Las Vegas casino (ManualEdits) is stretched this much in height.
-const CASINO_TOWER_STRETCH := 2.3
+const MODEL_BOOST := {}
 ## Schools are drawn this much bigger (all round); tanks this much smaller.
 const SCHOOL_SCALE := 1.1
 const TANK_SHRINK := 0.9
@@ -167,41 +158,16 @@ static func pick_for(data: CityData, lib: ModelLibrary, i: int, facing: int = -1
 
 
 # --- Model choice ------------------------------------------------------------------------
-## The cartoon houses "house1" and "house2" never face north: they are turned to face south.
-## Buildings drawn with a model whose name starts like this are left out of the city.
-const REMOVED_MODEL_PREFIX := "ny_buildings.glb: ny_brick_"
-## Drawn by several slots of the quarter list: in the red district the building takes another quarter model.
-const OVERUSED_QUARTER := "quarter_25_b.glb: quarter_25_b"
-const SOUTH_ONLY_MODELS := ["carto.glb: house1", "carto.glb: house2"]
+## The cartoon house "house1" never faces north: it is turned to face south.
+const SOUTH_ONLY_MODEL := "carto.glb: house1"
 
 
 static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
-	# The jail is the whole walled prison of PrisonCompound: the cellhouse lot has no model of its own.
-	if data.b_kind[i] == Kind.PRISON:
-		return {}
 	var pick := _pick_model_raw(data, lib, i, facing_override)
-	# The New York brick buildings are not built at all (taken away by hand).
-	if not pick.is_empty() and lib.model_name(pick["id"]).begins_with(REMOVED_MODEL_PREFIX):
-		return {}
-	# Models taken off the map by hand (the development island keeps its shops).
-	if not pick.is_empty() and RemovedModels.has(lib.model_name(pick["id"])):
-		var at := data.building_rect(i).position
-		if data.zone[data.idx(at.x, at.y)] != CityTypes.Zone.DEV:
-			return {}
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
-	if facing == 0 and not pick.is_empty() and SOUTH_ONLY_MODELS.has(lib.model_name(pick["id"])):
+	if facing == 0 and not pick.is_empty() and lib.model_name(pick["id"]) == SOUTH_ONLY_MODEL:
 		return _pick_model_raw(data, lib, i, 2)
-	# The shop that stands for Kenney's building-n faces south or east: north turns to south, west to east.
-	if (facing == 0 or facing == 3) and not pick.is_empty() and lib.ids(Cat.BIZ_SHOP).has(pick["id"]):
-		return _pick_model_raw(data, lib, i, 2 if facing == 0 else 1)
 	return pick
-
-
-## Name of the procedural model a Las Vegas club is drawn with (the same choice as `_pick_model_raw`).
-static func club_model_name(data: CityData, i: int) -> String:
-	var r := data.building_rect(i)
-	var names: Array = VEGAS_BY_SIZE[clampi(mini(r.size.x, r.size.y), 1, 3)]
-	return names[(data.b_seed[i] >> 3) % names.size()]
 
 
 static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
@@ -210,14 +176,8 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
 	var seed: int = data.b_seed[i]
 	var density: float = data.b_height[i]
-	var candidates := RemovedModels.swap_ids(lib, ModelPools.candidates(data, lib, i, kind))
-	var wanted: String = RemovedModels.replacement(data.b_model.get(i, ""))
-	if wanted.begins_with("shop:") and lib.named_id(wanted) < 0:
-		# A shop of the catalog (res://shops) standing in the city: loaded the first time it is needed.
-		var sid := MapShops.mesh_id(lib, wanted.substr(5))
-		if sid >= 0:
-			NightWindows.light_own(lib.meshes[sid])
-	var forced: int = lib.names.find(wanted) if data.b_model.has(i) else -1
+	var candidates := ModelPools.candidates(data, lib, i, kind)
+	var forced: int = lib.names.find(data.b_model.get(i, "")) if data.b_model.has(i) else -1
 	if forced >= 0:
 		candidates = PackedInt32Array([forced])
 	if kind == Kind.FIELD and candidates.is_empty():
@@ -250,14 +210,6 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	if kind == Kind.FIELD:
 		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r, _laid_across(data, i, facing))}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
-	if lib.model_name(id) == OVERUSED_QUARTER and data.zone[data.idx(r.position.x, r.position.y)] == CityTypes.Zone.QUARTER:
-		var others := PackedInt32Array()
-		for c in candidates:
-			if lib.model_name(c) != OVERUSED_QUARTER:
-				others.append(c)
-		if not others.is_empty():
-			id = _choose_fitting(lib, others, r, facing, seed >> 5)
-	id = ModelPools.shop_for_building_n(lib, id)
 	var swapped := false
 	if kind == Kind.FUTURE_BLDG:
 		var model := lib.model_name(id)
@@ -315,20 +267,14 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 			stretch = 1.6
 		_:
 			scale = minf(room, MAX_FILL if CityTypes.is_service(kind) else 1.0)
-	if lib.model_name(id) == BIZ_SHOP_MODEL and facing == 1 and kind != Kind.OFFICE:
-		scale = clampf(room, 0.8, 1.15)
-	if kind == Kind.CASINO and data.b_model.get(i, "") == ManualEdits.CASINO_MODEL:
-		stretch = CASINO_TOWER_STRETCH
 	if ModelPools.is_new_york(lib, id):
 		# The New York street buildings stand taller than the Kenney kit.
 		stretch = 1.5
-	stretch *= data.b_stretch[i]
 	var boost: float = MODEL_BOOST.get(lib.model_name(id), 1.0)
 	if boost != 1.0:
 		scale = maxf(scale, 1.0) * boost # not limited by the lot: the house may overhang
-	scale *= MODEL_SHRINK.get(lib.model_name(id), 1.0)
 	scale = _sized(scale, data.b_scale[i])
-	var push := 1.0 # up to the road: the front of every building touches it (FaceRoads)
+	var push := 0.25 if kind == Kind.HOUSE else 0.85
 	if CityTypes.is_service(kind):
 		push = 0.0
 	var placed := _fit(lib, id, r, facing, scale, stretch, push, false)

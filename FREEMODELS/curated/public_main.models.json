@@ -2,14 +2,20 @@
 	"file": "public_main.glb",
 	"models": [
 		{
+			"cat": "CITY_HALL_MAIN",
+			"node": "city_hall"
+		},
+		{
+			"cat": "HOSPITAL_MAIN",
+			"node": "hospital"
+		},
+		{
 			"cat": "SCHOOL_MAIN",
-			"node": "school",
-			"file": "school.glb"
+			"node": "school"
 		},
 		{
 			"cat": "GAS_STATION",
-			"node": "gas_station",
-			"file": "gas_station.glb"
+			"node": "gas_station"
 		}
 	]
 }

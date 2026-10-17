@@ -4,7 +4,7 @@
  "shops": [
   {
    "id": "shop-candy-a",
-   "file": "res://shops/models/shop-candy-a_night.glb",
+   "file": "res://shops/models/shop-candy-a.glb",
    "category": "Candy",
    "name": "Candy Shop (canopy)",
    "credit": {
@@ -24,7 +24,7 @@
   },
   {
    "id": "shop-candy-b",
-   "file": "res://shops/models/shop-candy-b_night.glb",
+   "file": "res://shops/models/shop-candy-b.glb",
    "category": "Candy",
    "name": "Low Poly Candy Shop",
    "credit": {
@@ -44,7 +44,7 @@
   },
   {
    "id": "shop-coffee-a",
-   "file": "res://shops/models/shop-coffee-a_night.glb",
+   "file": "res://shops/models/shop-coffee-a.glb",
    "category": "Coffee",
    "name": "Coffee Shop (stall)",
    "credit": {
@@ -64,7 +64,7 @@
   },
   {
    "id": "shop-flower-a",
-   "file": "res://shops/models/shop-flower-a_night.glb",
+   "file": "res://shops/models/shop-flower-a.glb",
    "category": "Flower",
    "name": "Flower Shop (game asset)",
    "credit": {
@@ -84,7 +84,7 @@
   },
   {
    "id": "shop-general-orange-a",
-   "file": "res://shops/models/shop-general-orange-a_night.glb",
+   "file": "res://shops/models/shop-general-orange-a.glb",
    "category": "General",
    "name": "Low Poly Shop (orange awning)",
    "credit": {
@@ -104,7 +104,7 @@
   },
   {
    "id": "shop-general-orange-b",
-   "file": "res://shops/models/shop-general-orange-b_night.glb",
+   "file": "res://shops/models/shop-general-orange-b.glb",
    "category": "General",
    "name": "2nd Low Poly Shop (orange awning)",
    "credit": {
@@ -123,8 +123,28 @@
    "_x": 59.355
   },
   {
+   "id": "shop-general-generic",
+   "file": "res://shops/models/shop-general-generic.glb",
+   "category": "General",
+   "name": "Low Poly Generic Shop",
+   "credit": {
+    "title": "Low poly generic shop",
+    "author": "assetfactory",
+    "url": "https://sketchfab.com/3d-models/low-poly-generic-shop-58797c167b834d7ab982afa82f693415",
+    "license": "SKETCHFAB Standard"
+   },
+   "size_m": {
+    "width": 3.69,
+    "depth": 2.48,
+    "height": 2.64
+   },
+   "triangles": 5026,
+   "notes": "Single textured mesh 'ShopBuilding' + a Collider mesh (hide/remove Collider). License is Sketchfab Standard, not CC-BY.",
+   "_x": 50.565
+  },
+  {
    "id": "shop-general-brick",
-   "file": "res://shops/models/shop-general-brick_night.glb",
+   "file": "res://shops/models/shop-general-brick.glb",
    "category": "General",
    "name": "Low Poly Shop (brick, balcony)",
    "credit": {
@@ -144,7 +164,7 @@
   },
   {
    "id": "shop-general-mini",
-   "file": "res://shops/models/shop-general-mini_night.glb",
+   "file": "res://shops/models/shop-general-mini.glb",
    "category": "General",
    "name": "Low-Poly Shop (mini)",
    "credit": {
@@ -183,8 +203,28 @@
    "_x": 43.57
   },
   {
+   "id": "shop-steel-glass",
+   "file": "res://shops/models/shop-steel-glass.glb",
+   "category": "General",
+   "name": "Shop (steel & glass)",
+   "credit": {
+    "title": "Shop",
+    "author": "bystryakov.yuriy",
+    "url": "https://sketchfab.com/3d-models/shop-23e3cdb766bd40ac9c63fddfd2d39856",
+    "license": "CC-BY-4.0"
+   },
+   "size_m": {
+    "width": 4.9,
+    "depth": 3.91,
+    "height": 3.42
+   },
+   "triangles": 448,
+   "notes": "Grey flat roof, glass front, red louvres/shutters. Pivot is centred vertically (y -1.6..1.8): needs lifting to sit on ground.",
+   "_x": 80.42
+  },
+  {
    "id": "shop-coffee-b",
-   "file": "res://shops/models/shop-coffee-b_night.glb",
+   "file": "res://shops/models/shop-coffee-b.glb",
    "category": "Coffee",
    "name": "Shop - Free model (coffee shop)",
    "credit": {
@@ -204,7 +244,7 @@
   },
   {
    "id": "shop-building-multi",
-   "file": "res://shops/models/shop-building-multi_night.glb",
+   "file": "res://shops/models/shop-building-multi.glb",
    "category": "Building",
    "name": "Building (multi-part cubes)",
    "credit": {
@@ -537,146 +577,13 @@
     "license": "CC-BY-4.0"
    },
    "notes": "Blue 3-storey townhouse with pink awnings and window boxes.",
-   "file": "res://shops/models/shop-townhouse-blue_night.glb",
+   "file": "res://shops/models/shop-townhouse-blue.glb",
    "triangles": 4664,
    "size_m": {
     "width": 9.84,
     "depth": 7.71,
     "height": 9.0
    }
-  },
-  {
-   "id": "shop-business",
-   "category": "Business",
-   "name": "Low Poly Business Buildings (shop)",
-   "credit": {
-    "title": "Low Poly Business Buildings Pack",
-    "author": "unknown",
-    "url": "",
-    "license": "see the pack"
-   },
-   "notes": "ShopBuilding of the business pack: pink shop with a striped awning.",
-   "file": "res://shops/models/shop-business_night.glb",
-   "triangles": 4684,
-   "size_m": {
-    "width": 6.0,
-    "depth": 4.04,
-    "height": 4.3
-   }
-  },
-  {
-   "id": "modular-house-small",
-   "file": "res://shops/models/modular-city.glb",
-   "node": "modular-house-small",
-   "category": "Modular",
-   "name": "Little house",
-   "credit": {
-    "title": "City Game ready free",
-    "author": "CG Lads",
-    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 6.3,
-    "depth": 3.3,
-    "height": 6.56
-   },
-   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
-  },
-  {
-   "id": "modular-house-medium",
-   "file": "res://shops/models/modular-city.glb",
-   "node": "modular-house-medium",
-   "category": "Modular",
-   "name": "Middle house",
-   "credit": {
-    "title": "City Game ready free",
-    "author": "CG Lads",
-    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 6.3,
-    "depth": 3.3,
-    "height": 9.82
-   },
-   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
-  },
-  {
-   "id": "modular-house-big",
-   "file": "res://shops/models/modular-city.glb",
-   "node": "modular-house-big",
-   "category": "Modular",
-   "name": "Big house",
-   "credit": {
-    "title": "City Game ready free",
-    "author": "CG Lads",
-    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 12.6,
-    "depth": 3.3,
-    "height": 12.82
-   },
-   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
-  },
-  {
-   "id": "modular-tower-small",
-   "file": "res://shops/models/modular-city.glb",
-   "node": "modular-tower-small",
-   "category": "Modular",
-   "name": "Little skyscraper",
-   "credit": {
-    "title": "City Game ready free",
-    "author": "CG Lads",
-    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 12.6,
-    "depth": 3.3,
-    "height": 21.82
-   },
-   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
-  },
-  {
-   "id": "modular-tower-medium",
-   "file": "res://shops/models/modular-city.glb",
-   "node": "modular-tower-medium",
-   "category": "Modular",
-   "name": "Medium skyscraper",
-   "credit": {
-    "title": "City Game ready free",
-    "author": "CG Lads",
-    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 12.6,
-    "depth": 6.6,
-    "height": 36.0
-   },
-   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
-  },
-  {
-   "id": "modular-tower-big",
-   "file": "res://shops/models/modular-city.glb",
-   "node": "modular-tower-big",
-   "category": "Modular",
-   "name": "Big skyscraper",
-   "credit": {
-    "title": "City Game ready free",
-    "author": "CG Lads",
-    "url": "https://sketchfab.com/3d-models/city-game-ready-free-9095f8bcff1e4c9088ea98a306d5887d",
-    "license": "CC-BY-4.0"
-   },
-   "size_m": {
-    "width": 18.9,
-    "depth": 6.6,
-    "height": 51.0
-   },
-   "notes": "Stacked from the modular pack by tools/build_modular_buildings.py."
   }
  ]
 }

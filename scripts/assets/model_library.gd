@@ -2,8 +2,7 @@ class_name ModelLibrary
 extends RefCounted
 ## Owns every mesh used by the city. Each mesh gets an integer id; chunks only
 ## store ids + transforms, so a model is in memory once however often it is used.
-## Model files are read and parsed by ResourceLoader's worker threads (all CPU cores),
-## then turned into merged meshes step by step on the main thread (keeps the loading screen alive);
+## Models are loaded step by step on the main thread (keeps the loading screen alive);
 ## after loading the library is read-only and safe to query from worker threads.
 
 const Cat := ModelCatalog.Cat
@@ -26,27 +25,12 @@ var cats := PackedInt32Array()
 ## loaded as named meshes "yardbox:NN" when the packs are done.
 const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "container-09", "container-10"]
 
-## Models never drawn on the map (UnusedModels, made by tools/unused_models.py) are not read at all:
-## their slot gets an empty mesh with the model's own bounding box, so every choice of model stays the same.
-var skip_unused := true
-## Library model -> "path|node" of the file it comes from (models of the catalog only).
-var sources := {}
-
 var _pending: Array[Dictionary] = []
 var _yard_loaded := false
 var _total := 0
-## How many model files are read ahead in the background (0 = none, read on the
-## main thread; -1 = all at once). A small window leaves CPU to the city generator.
-const DEFAULT_LOOKAHEAD := 4
-var lookahead := DEFAULT_LOOKAHEAD
-# Paths handed to ResourceLoader.load_threaded_request (path -> true).
-var _requested := {}
-var _fetched := {}
 # Curated pack currently open (packs hold many buildings, opened once each).
 var _pack_path := ""
 var _pack_root: Node
-# Meshes already made ("path|node" -> Mesh): a model drawn by several slots is in memory once.
-var _made := {}
 
 
 func begin(cfg: CityConfig) -> void:
@@ -56,9 +40,6 @@ func begin(cfg: CityConfig) -> void:
 	# Group buildings of the same pack so every pack file is opened only once.
 	_pending.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["path"] < b["path"])
 	_total = maxi(1, _pending.size())
-	# Start reading every model file in the background right away; load_next only
-	# picks up files that are ready, so disk and parsing never stall a frame.
-	_request_ahead()
 	print("[Models] %d model files selected in %s" % [_pending.size(), cfg.models_root])
 
 
@@ -67,31 +48,12 @@ func load_next(count: int) -> float:
 	for i in count:
 		if _pending.is_empty():
 			break
-		if not _ready(_pending[0]["path"]):
-			break
 		var e: Dictionary = _pending.pop_front()
-		_request_ahead()
-		var label := _label(e)
-		var key := "%s|%s" % [e["path"], e.get("node", "")]
-		if skip_unused and UnusedModels.BOUNDS.has(key):
-			var b: Array = UnusedModels.BOUNDS[key]
-			var sid := add_mesh(ArrayMesh.new(), e["mask"], label)
-			bounds[sid] = AABB(Vector3(b[0], b[1], b[2]), Vector3(b[3], b[4], b[5]))
-			cats[sid] = e["cat"]
-			if not by_cat.has(e["cat"]):
-				by_cat[e["cat"]] = PackedInt32Array()
-			by_cat[e["cat"]].append(sid)
-			sources[sid] = key
-			continue
-		var mesh: Mesh = _made.get(key)
-		if mesh == null:
-			mesh = _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
-			_made[key] = mesh
+		var mesh := _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
 		if mesh == null:
 			push_warning("[Models] could not load %s %s" % [e["path"], e.get("node", "")])
 			continue
-		var id := add_mesh(mesh, e["mask"], label)
-		sources[id] = key
+		var id := add_mesh(mesh, e["mask"], _label(e))
 		var cat: int = e["cat"]
 		cats[id] = cat
 		if not by_cat.has(cat):
@@ -145,10 +107,10 @@ func named_id(name: String) -> int:
 
 ## Loads one model file (imported or raw) as a mesh named `name`; returns its id or -1.
 ## Used for the single vehicles that are not part of a category.
-func load_named(name: String, path: String, node_name: String = "") -> int:
+func load_named(name: String, path: String) -> int:
 	if named.has(name):
 		return named[name]
-	var mesh := _load_pack_mesh(path, node_name) if node_name != "" else _load_mesh(path)
+	var mesh := _load_mesh(path)
 	if mesh == null:
 		push_warning("[Models] could not load " + path)
 		return -1
@@ -175,49 +137,10 @@ func _limit_variants(entries: Array[Dictionary], limit: int) -> Array[Dictionary
 	return out
 
 
-## Keeps `lookahead` distinct upcoming files requested.
-func _request_ahead() -> void:
-	if lookahead == 0:
-		return
-	var seen := {}
-	for e in _pending:
-		var path: String = e["path"]
-		if skip_unused and UnusedModels.BOUNDS.has("%s|%s" % [path, e.get("node", "")]):
-			continue
-		if seen.has(path):
-			continue
-		seen[path] = true
-		if lookahead > 0 and seen.size() > lookahead:
-			break
-		_request(path)
-
-
-func _request(path: String) -> void:
-	if _requested.has(path) or _fetched.has(path) or not ResourceLoader.exists(path):
-		return
-	if ResourceLoader.load_threaded_request(path) == OK:
-		_requested[path] = true
-
-
-## True when `path` can be fetched without waiting (or was never requested).
-func _ready(path: String) -> bool:
-	if not _requested.has(path):
-		return true
-	return ResourceLoader.load_threaded_get_status(path) != ResourceLoader.THREAD_LOAD_IN_PROGRESS
-
-
-func _fetch(path: String) -> Resource:
-	if _requested.has(path):
-		_requested.erase(path)
-		_fetched[path] = true
-		var r := ResourceLoader.load_threaded_get(path)
-		if r != null:
-			return r
-	return ResourceLoader.load(path) if ResourceLoader.exists(path) else null
-
-
 func _load_mesh(path: String) -> Mesh:
-	var res: Resource = _fetch(path)
+	var res: Resource = null
+	if ResourceLoader.exists(path):
+		res = ResourceLoader.load(path)
 	if res is Mesh:
 		return res
 	var root := _open_scene(path, res)
@@ -233,7 +156,7 @@ func _load_pack_mesh(path: String, node_name: String) -> Mesh:
 	if path != _pack_path:
 		_close_pack()
 		_pack_path = path
-		var res: Resource = _fetch(path)
+		var res: Resource = ResourceLoader.load(path) if ResourceLoader.exists(path) else null
 		_pack_root = _open_scene(path, res)
 	if _pack_root == null:
 		return null

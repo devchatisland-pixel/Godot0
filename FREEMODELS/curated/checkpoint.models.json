@@ -1,9 +1,0 @@
-{
-	"file": "checkpoint.glb",
-	"models": [
-		{
-			"cat": "CHECKPOINT",
-			"node": "checkpoint_post"
-		}
-	]
-}
