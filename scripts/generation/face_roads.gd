@@ -6,12 +6,15 @@ extends RefCounted
 ##     preferred, then east (the camera sees those faces), then west, then north;
 ##   - a building that has no road beside it but one a few cells away on some side faces that road and its
 ##     lot moves up to it, when the cells in between are free;
+##   - a building that cannot touch any road is deleted (its lot stays empty);
 ##   - buildings with a model chosen by hand, a sign, or that are not in KINDS are left as they are.
 ## Run at the very end of the generation (before the chunk index), so that nothing turns them again.
 
 const Kind := CityTypes.Kind
 
 const KINDS: Array[int] = [Kind.HOUSE, Kind.SHOP, Kind.APARTMENT, Kind.OFFICE, Kind.QUARTER_BLDG, Kind.POOR_BLDG]
+## Kinds deleted when they do not touch the road they face, even when made by hand.
+const DROP_KINDS: Array[int] = [Kind.SHOP, Kind.POOR_BLDG]
 ## Preference of a facing (0 N, 1 E, 2 S, 3 W): south first, then east.
 const PREF: Array[int] = [1, 3, 4, 2]
 ## How far a road may be (cells) for the building to move up to it.
@@ -19,11 +22,13 @@ const REACH := 3
 const SHOP_PREFIX := "shop:"
 
 
-## Returns {"turned": n, "moved": n, "checked": n}.
+## A building that still cannot touch a road (none within REACH, or the way is blocked) is deleted.
+## Returns {"turned": n, "moved": n, "removed": n, "checked": n}.
 static func apply(data: CityData) -> Dictionary:
 	var turned := 0
 	var moved := 0
 	var checked := 0
+	var removed := 0
 	# Cells under a lot (data.occupied is only made at the end of the generation).
 	var own := PackedByteArray()
 	own.resize(data.size * data.size)
@@ -38,10 +43,12 @@ static func apply(data: CityData) -> Dictionary:
 	for b in data.building_count():
 		if not KINDS.has(int(data.b_kind[b])):
 			continue
-		if data.b_sign[b] != 0 or data.b_more_signs.has(b):
-			continue
 		var model := String(data.b_model.get(b, ""))
-		if data.b_model.has(b) and not model.begins_with(SHOP_PREFIX):
+		if data.b_sign[b] != 0 or data.b_more_signs.has(b) or (data.b_model.has(b) and not model.begins_with(SHOP_PREFIX)):
+			# Left as they are (hand-made), but a shop or poor building that does not touch the road it faces goes.
+			if DROP_KINDS.has(int(data.b_kind[b])) and _gap(data, own, data.building_rect(b), int(data.b_facing[b])) != 0:
+				data.b_kind[b] = Kind.EMPTY
+				removed += 1
 			continue
 		checked += 1
 		# The shops of the catalog are modelled the other way round: b_facing is the opposite of their front.
@@ -53,13 +60,19 @@ static func apply(data: CityData) -> Dictionary:
 			gaps.append(_gap(data, own, r, f))
 		var want := _choose(gaps, current)
 		if want < 0:
+			data.b_kind[b] = Kind.EMPTY
+			removed += 1
 			continue
 		if want != current:
 			data.b_facing[b] = (want + flip) % 4
 			turned += 1
-		if gaps[want] > 0 and _move_up(data, own, b, r, want, gaps[want]):
-			moved += 1
-	return {"checked": checked, "turned": turned, "moved": moved}
+		if gaps[want] > 0:
+			if _move_up(data, own, b, r, want, gaps[want]):
+				moved += 1
+			else:
+				data.b_kind[b] = Kind.EMPTY
+				removed += 1
+	return {"checked": checked, "turned": turned, "moved": moved, "removed": removed}
 
 
 ## The facing to use, or -1 when no road is within REACH on any side.

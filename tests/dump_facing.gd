@@ -21,6 +21,8 @@ func _init() -> void:
 		var best := 99
 		for s in 4:
 			best = mini(best, _gap(data, r, s))
+		if gap != 0 and (kind == Kind.SHOP or kind == Kind.POOR_BLDG):
+			print("[Facing] no road: %s at %s, gap %d, model '%s', sign %d, b%d" % [Kind.find_key(kind), r.position, gap, data.b_model.get(b, ""), data.b_sign[b], b])
 		var key := String(Kind.find_key(kind))
 		if not stats.has(key):
 			stats[key] = {"n": 0, "face_touch": 0, "face_gap": 0, "face_none": 0, "other_touch": 0, "isolated": 0}
