@@ -21,5 +21,7 @@ func _init() -> void:
 			continue
 		var k := key + (" gone" if data.b_kind[b] == CityTypes.Kind.EMPTY else " kept")
 		counts[k] = counts.get(k, 0) + 1
+	for b in [1054, 1061]:
+		print("REQ B-%05d %s facing %d scale %.3f model %s" % [b, CityTypes.Kind.keys()[data.b_kind[b]], data.b_facing[b], data.b_scale[b], data.b_model.get(b, "")])
 	print("REQ ", counts, " buildings ", first)
 	quit()

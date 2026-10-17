@@ -6,7 +6,8 @@ extends RefCounted
 ##   - every boat and submarine at sea taken away (the oil rig stays);
 ##   - the free ground of the suburban zone filled with houses, that of the red district (Zone.QUARTER)
 ##     with quarter buildings (FaceRoads then turns them and moves them up to a road, or drops them);
-##   - after FaceRoads (`after_roads`): the orange shops (shop-general-orange-b-unlit) drawn as Kenney
+##   - after FaceRoads (`after_roads`): the shops of TO_BUSINESS_SHOP drawn with the business pack shop,
+##     COPIES (a building made a copy of another one, both facing east), the orange shops (shop-general-orange-b-unlit) drawn as Kenney
 ##     houses (ORANGE_B_TO), and every house of the suburban zone without a model of its own is drawn
 ##     with one of the Kenney building-type houses, all of them in turn.
 ## New buildings go at the end of the list, so no number of an older building changes.
@@ -18,6 +19,13 @@ const Zone := CityTypes.Zone
 const DELETED := [[474, "CAFE"], [440, "RESTAURANT"]]
 ## [building number, model it had, model it gets].
 const MODEL_SWAPS := [[591, "shop:shop-general-orange-a-unlit", "business.glb: shop"]]
+## Shops of the catalog drawn with the business pack shop instead (after FaceRoads).
+const TO_BUSINESS_SHOP := ["shop:shop-general-mini-unlit", "shop:shop-flower-a-unlit", "shop:shop-general-orange-a-unlit"]
+const BUSINESS_SHOP := "business.glb: shop"
+## [building number, its Kind name, building number of the copy]: the building becomes a copy of the other
+## one (kind, model, size factors), facing COPY_FACING, and so does the original.
+const COPIES := [[1054, "BURGER_KING", 1061]]
+const COPY_FACING := 1
 const ORANGE_B := "shop:shop-general-orange-b-unlit"
 const ORANGE_B_TO := ["building-type-b.glb", "building-type-k.glb", "building-type-a.glb"]
 ## The Kenney houses of the suburban fill (building-type-f and -l are drawn as -n and -s, ModelCatalog).
@@ -66,8 +74,13 @@ static func apply(data: CityData) -> Dictionary:
 ## the suburban zone drawn with the building-type models. Returns {"orange_shops": n, "houses": n}.
 static func after_roads(data: CityData) -> Dictionary:
 	var shops := 0
+	var business := 0
 	for b in data.building_count():
-		if data.b_kind[b] != Kind.EMPTY and data.b_model.get(b, "") == ORANGE_B:
+		if data.b_kind[b] != Kind.EMPTY and TO_BUSINESS_SHOP.has(data.b_model.get(b, "")):
+			_set_model(data, b, BUSINESS_SHOP)
+			_unflip(data, b)
+			business += 1
+		elif data.b_kind[b] != Kind.EMPTY and data.b_model.get(b, "") == ORANGE_B:
 			_set_model(data, b, ORANGE_B_TO[shops % ORANGE_B_TO.size()])
 			_unflip(data, b)
 			shops += 1
@@ -79,7 +92,26 @@ static func after_roads(data: CityData) -> Dictionary:
 		if data.zone[data.idx(p.x, p.y)] == Zone.SUBURBAN:
 			data.b_model[b] = HOUSE_MODELS[n % HOUSE_MODELS.size()]
 			n += 1
-	return {"orange_shops": shops, "houses": n}
+	var copies := 0
+	for c in COPIES:
+		var b: int = c[0]
+		var src: int = c[2]
+		if b >= data.building_count() or data.b_kind[b] != Kind[c[1]]:
+			push_warning("[Requests] B-%05d is not a %s" % [b, c[1]])
+			continue
+		data.b_kind[b] = data.b_kind[src]
+		data.b_model[b] = data.b_model.get(src, "")
+		# Same size as the original although the lot is bigger (models fill their lot).
+		var rb := data.building_rect(b).size
+		var rs := data.building_rect(src).size
+		var f := 1.0 if data.b_scale[src] < 0.0 else float(mini(rs.x, rs.y)) / float(mini(rb.x, rb.y))
+		data.b_scale[b] = data.b_scale[src] * f
+		data.b_stretch[b] = data.b_stretch[src]
+		data.b_height[b] = data.b_height[src]
+		data.b_facing[b] = COPY_FACING
+		data.b_facing[src] = COPY_FACING
+		copies += 1
+	return {"orange_shops": shops, "business_shops": business, "houses": n, "copies": copies}
 
 
 ## A shop of the catalog is modelled the other way round (b_facing is the opposite of its front):

@@ -3,7 +3,8 @@
 	"models": [
 		{
 			"cat": "SHOP2",
-			"node": "shop_coffee"
+			"node": "shop",
+			"file": "business.glb"
 		},
 		{
 			"cat": "SHOP2",

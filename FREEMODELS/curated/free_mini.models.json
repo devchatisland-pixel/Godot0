@@ -31,7 +31,8 @@
 		},
 		{
 			"cat": "SHOP2",
-			"node": "m10"
+			"node": "shop",
+			"file": "business.glb"
 		},
 		{
 			"cat": "CHURCH_PACK",
