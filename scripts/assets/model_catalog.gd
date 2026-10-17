@@ -56,36 +56,6 @@ enum Cat {
 	# Eighteenth wave (tools/build_wave16_models.py, PortRework): the industrial buildings set (halls,
 	# sheds, towers and tanks), the oil and storage tanks with the brick factory, the offshore oil rig
 	IND_HALL, IND_SHED, IND_TOWER, PORT_TANK, OIL_RIG,
-	# Nineteenth wave (tools/build_wave16_models.py): Taiwan style signboards of the urban island
-	# (blade signs on the east walls, boards on the roofs, an LED band round a corner)
-	TW_BANASONIC, TW_MCDONALDS, TW_COLA_JP, TW_COLA_BILLBOARD, TW_LED_BOARD, TW_LED_BAND,
-	# Nineteenth wave: the checkpoint of the Golden Gate (fog island), the "Danger" plate of the
-	# secret base, the lighthouse club of the little island and the glowing part of its sign
-	CHECKPOINT, DANGER_SIGN, LIGHTHOUSE_CLUB, NEON_LIGHTHOUSE,
-	# Twentieth wave: the low poly business buildings (central city shops and eateries)
-	BIZ_RESTAURANT, BIZ_SHOP, BIZ_PIZZA, BIZ_BURGER, BIZ_CAFE,
-	# Twenty-first wave: the Utrecht city hall (the museum)
-	MUSEUM_HALL,
-	# Twenty-second wave: the towns of the fog island (FogBaseSites)
-	FOG_OFFICE, FOG_HOUSE, FOG_NIGHT_TOWER, FOG_OFFICE_TOWER, FOG_FLOOR, FOG_MOD_HOUSE, FOG_MOD_TOWER,
-	# Twenty-third wave: the supermarket of Las Vegas, its XXX and Playboy neon signs, the seven
-	# modular houses of the fog island
-	SUPERMARKET, NEON_XXX, NEON_PLAYBOY, FOG_MOD_HOME,
-	# Twenty-fourth wave: the casino building of Las Vegas and its neon word CA$INO
-	VEGAS_CASINO, NEON_CASINO,
-	# Twenty-fifth wave: the "Welcome to Las Vegas" sign (trimmed from the Vegas pod)
-	VEGAS_SIGN,
-	# Twenty-sixth wave: the country market store of the fog island (farms)
-	FOG_MARKET,
-	# Twenty-seventh wave: the old warehouses of the food depot of the fog island
-	FOG_WAREHOUSE,
-	# Twenty-eighth wave: the buildings of the continent (continent_city.glb, ContinentShaper):
-	# two categories because the library keeps at most 24 models per category
-	CONTINENT, CONTINENT2,
-	# Twenty-ninth wave: the Eiffel tower alone (tools/make_eiffel_tower.py)
-	EIFFEL_TOWER,
-	# Thirtieth wave: the realistic satellite dish of the radio tower of the city
-	SAT_DISH_REAL,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
@@ -102,15 +72,6 @@ const ROAD_TILES := {
 
 const MODEL_EXTENSIONS := ["glb", "gltf"]
 
-## Single model files whose slot draws another model instead (path -> [file, node or ""]); the slot
-## stays in the list even once the file is deleted, so the city keeps its layout.
-const FILE_SWAPS := {
-	"res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-f.glb":
-		["res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-n.glb", ""],
-	"res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-l.glb":
-		["res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-s.glb", ""],
-}
-
 ## Each entry: {path, cat, mask} and, for a building inside a pack, {node}.
 var entries: Array[Dictionary] = []
 
@@ -120,9 +81,6 @@ func scan(root: String) -> void:
 	var files: Array[String] = []
 	var manifests: Array[String] = []
 	_collect(root, files, manifests)
-	for path: String in FILE_SWAPS:
-		if path.begins_with(root) and not files.has(path):
-			files.append(path)
 	files.sort()
 	manifests.sort()
 	var packed := {}
@@ -134,17 +92,11 @@ func scan(root: String) -> void:
 		if packed.has(path):
 			continue
 		var info := classify(path)
-		if info.is_empty():
-			continue
-		if FILE_SWAPS.has(path):
-			info["path"] = FILE_SWAPS[path][0]
-			if FILE_SWAPS[path][1] != "":
-				info["node"] = FILE_SWAPS[path][1]
-		entries.append(info)
+		if not info.is_empty():
+			entries.append(info)
 
 
-## Entries of a curated pack list: {"file": "x.glb", "models": [{"node", "cat"}]}; a model
-## with its own "file" is drawn from that file (taken out of the pack, or a replacement).
+## Entries of a curated pack list: {"file": "x.glb", "models": [{"node", "cat"}]}.
 func _read_manifest(path: String) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var data = JSON.parse_string(FileAccess.get_file_as_string(path))
@@ -154,8 +106,7 @@ func _read_manifest(path: String) -> Array[Dictionary]:
 	var glb: String = path.get_base_dir().path_join(data.get("file", ""))
 	for m in data.get("models", []):
 		if Cat.has(m.get("cat", "")):
-			var file: String = path.get_base_dir().path_join(m["file"]) if m.has("file") else glb
-			out.append({"path": file, "node": m["node"], "cat": Cat[m["cat"]], "mask": 0})
+			out.append({"path": glb, "node": m["node"], "cat": Cat[m["cat"]], "mask": 0})
 	return out
 
 

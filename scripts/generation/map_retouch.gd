@@ -14,60 +14,34 @@ extends RefCounted
 const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 
-## Top-left cell of the lot of the tower, sign (a ModelCatalog.Cat; BuildingExtras.SIGNS). Only
-## towers with no tower in front of their east wall carry a wall sign; the Taiwan signboards
-## (TW_*) hang out of the wall from their brackets, the LED band wraps a free south-east corner.
+## Top-left cell of the lot of the tower, sign (a ModelCatalog.Cat; BuildingExtras.SIGNS).
 const TOWER_SIGNS := [
 	[Vector2i(71, 143), "SIGN_WINDOWS"],
 	[Vector2i(63, 133), "NEON_JOYSTICK"],
 	[Vector2i(67, 170), "NEON_FUN"],
 	[Vector2i(67, 175), "NEON_PALM"],
-	[Vector2i(63, 160), "TW_LED_BAND"],
-	[Vector2i(71, 151), "TW_BANASONIC"],
-	[Vector2i(67, 187), "TW_MCDONALDS"],
+	[Vector2i(67, 195), "NEON_BAR"],
+	[Vector2i(71, 204), "NEON_BULL"],
 ]
-## Signs on the roof of a tower (above its wall sign, or alone on a tower that has a lower one in
-## front of its east wall, so the sign shows over it): top-left cell, sign. They look east like the
-## wall signs.
+## A second sign on the roof of a tower, above the one on its wall: top-left cell, sign.
 const TOWER_ROOF_SIGNS := [
 	[Vector2i(67, 170), "NEON_MARTINI"],
-	[Vector2i(71, 204), "NEON_BULL"],
-	[Vector2i(67, 147), "TW_COLA_BILLBOARD"],
-	# The board of the tower at (63, 186) stood unseen: it sits above the LED band of this one.
-	[Vector2i(63, 160), "TW_LED_BOARD"],
 ]
 ## Roof signs of three Las Vegas clubs (top-left cell of the lot, sign), looking south.
 const CLUB_SIGNS := [
 	[Vector2i(122, 182), "NEON_CLUB"],
+	[Vector2i(134, 178), "NEON_GIRL"],
 	[Vector2i(144, 202), "NEON_LOVE"],
 ]
-## Signs flat on the east wall of a club (top-left cell of the lot, signs side by side from
-## north to south).
-const CLUB_WALL_SIGNS := [
-	[Vector2i(134, 178), ["NEON_CLUB", "NEON_XXX", "NEON_WOMAN", "NEON_PLAYBOY"]],
-]
-## The steps of the supermarket jut out this share of its depth in front of its wall.
-const CLUB_SIGN_INSET := 0.09
-## Clubs drawn with another model (top-left cell of the lot, model): B-00023 is the supermarket
-## without its texts (tools/clean_supermarket.py), its signs on the wall.
-const CLUB_MODELS := [
-	[Vector2i(134, 178), "supermarket.glb: supermarket"],
-]
-## The neon woman of the tower of Las Vegas (MapAdditions) moves to the east wall of this tower of the
-## urban island (top-left cell of its lot), as wide as the wall (it took the place of the bar sign).
-const WOMAN_TOWER := Vector2i(67, 195)
 ## The wall the signs hang on: east, towards the road and the camera (the towers stand wall
 ## to wall from north to south).
 const SIGN_WALL := 1
 ## Kind, top-left cell of the lot, new facing.
-const TURNED := []
+const TURNED := [
+	["SKYSCRAPER", Vector2i(123, 174), 1],
+]
 ## Kinds whose buildings all face the same way.
 const KIND_FACING := {"MCDONALDS": 1}
-## Red district (Zone.QUARTER): every building that faced east faces west. Not buildings, so left
-## alone: ground lots, props, boats, piers (the cars are no buildings at all).
-const RED_DISTRICT_KEEP: Array[int] = [Kind.EMPTY, Kind.BALLOON, Kind.BILLBOARD, Kind.BOAT, Kind.PIER,
-		Kind.FIELD, Kind.GARDEN, Kind.PLAZA, Kind.FOUNTAIN, Kind.CRANE, Kind.FIRE_TRUCK, Kind.UFO,
-		Kind.TANK, Kind.STALL, Kind.BASKET_COURT]
 const BASE_SCALE := 1.5
 
 const CITY_ZONES: Array[int] = [Zone.DOWNTOWN, Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN,
@@ -132,12 +106,9 @@ func _signs() -> int:
 		n += 1
 	for s in TOWER_ROOF_SIGNS:
 		var b := _at(Kind.SKYLINE_BLDG, s[0])
-		if b < 0:
-			push_warning("[Retouch] no tower at %s for its roof sign" % s[0])
-			continue
-		_d.b_sign_facing[b] = SIGN_WALL
-		_d.b_more_signs[b] = [[ModelCatalog.Cat[s[1]], "roof"]]
-		n += 1
+		if b >= 0:
+			_d.b_more_signs[b] = [[ModelCatalog.Cat[s[1]], "roof"]]
+			n += 1
 	for s in CLUB_SIGNS:
 		var b := _at(Kind.NIGHTCLUB, s[0])
 		if b < 0:
@@ -146,44 +117,7 @@ func _signs() -> int:
 		_d.b_sign[b] = ModelCatalog.Cat[s[1]]
 		_d.b_sign_facing[b] = 2
 		n += 1
-	for s in CLUB_WALL_SIGNS:
-		var b := _at(Kind.NIGHTCLUB, s[0])
-		if b < 0:
-			push_warning("[Retouch] no club at %s for its wall sign" % s[0])
-			continue
-		_d.b_sign_facing[b] = SIGN_WALL
-		var signs: Array = s[1]
-		var more := []
-		for k in signs.size():
-			more.append([ModelCatalog.Cat[signs[k]], "face", k, signs.size(), CLUB_SIGN_INSET])
-		_d.b_more_signs[b] = more
-		n += 1
-	for c in CLUB_MODELS:
-		var b := _at(Kind.NIGHTCLUB, c[0])
-		if b < 0:
-			push_warning("[Retouch] no club at %s for its model" % c[0])
-			continue
-		_d.b_model[b] = c[1]
-	return n + _move_woman()
-
-
-## The neon woman leaves the tower of Las Vegas for the east wall of WOMAN_TOWER.
-func _move_woman() -> int:
-	var to := _at(Kind.SKYLINE_BLDG, WOMAN_TOWER)
-	if to < 0:
-		push_warning("[Retouch] no tower at %s for the neon woman" % WOMAN_TOWER)
-		return 0
-	var old := -1
-	for b in _d.building_count():
-		if _d.b_sign[b] == ModelCatalog.Cat.NEON_WOMAN:
-			old = b
-	if old < 0:
-		push_warning("[Retouch] no neon woman to move")
-		return 0
-	_d.b_sign[old] = 0
-	_d.b_sign[to] = ModelCatalog.Cat.NEON_WOMAN
-	_d.b_sign_facing[to] = SIGN_WALL
-	return 1
+	return n
 
 
 func _turned() -> int:
@@ -199,12 +133,6 @@ func _turned() -> int:
 		var kind: String = Kind.keys()[_d.b_kind[b]]
 		if KIND_FACING.has(kind) and _d.b_facing[b] != KIND_FACING[kind]:
 			_d.b_facing[b] = KIND_FACING[kind]
-			n += 1
-	for b in _d.building_count():
-		var p := _d.building_rect(b).position
-		if _d.b_facing[b] == 1 and not RED_DISTRICT_KEEP.has(_d.b_kind[b]) \
-				and _d.zone[_d.idx(p.x, p.y)] == Zone.QUARTER:
-			_d.b_facing[b] = 3
 			n += 1
 	return n
 

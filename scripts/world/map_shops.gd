@@ -20,19 +20,9 @@ static func _ensure_catalog() -> void:
 	for s in data.get("shops", []):
 		var size: Dictionary = s["size_m"]
 		_entries[s["id"]] = {
-			"id": s["id"], "file": s["file"], "node": s.get("node", ""), "name": s.get("name", s["id"]), "category": s.get("category", ""),
+			"id": s["id"], "file": s["file"], "name": s.get("name", s["id"]), "category": s.get("category", ""),
 			"width": float(size["width"]), "depth": float(size["depth"]), "height": float(size["height"]),
 		}
-		# Copy without lights ("<id>-unlit"): the plain model of a shop that has a night version.
-		var file := String(s["file"])
-		if file.ends_with("_night.glb"):
-			var plain := file.trim_suffix("_night.glb") + ".glb"
-			if ResourceLoader.exists(plain):
-				var u: Dictionary = _entries[s["id"]].duplicate()
-				u["id"] = String(s["id"]) + ShopSites.UNLIT_SUFFIX
-				u["file"] = plain
-				u["name"] = String(u["name"]) + " (no lights)"
-				_entries[u["id"]] = u
 
 
 ## Library id of the mesh of catalog shop `id` (loaded on first use), or -1.
@@ -41,13 +31,7 @@ static func mesh_id(lib: ModelLibrary, id: String) -> int:
 	if not _entries.has(id):
 		push_warning("[Shops] unknown shop " + id)
 		return -1
-	return lib.load_named("shop:" + id, _entries[id]["file"], _entries[id]["node"])
-
-
-## The catalog entry of shop `id` ({} when unknown).
-static func entry(id: String) -> Dictionary:
-	_ensure_catalog()
-	return _entries.get(id, {})
+	return lib.load_named("shop:" + id, _entries[id]["file"])
 
 
 ## The catalog as the list ShopSites.plan() takes.
@@ -62,14 +46,11 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		var mid := mesh_id(lib, p["id"])
 		if mid < 0:
 			continue
-		# Shops with a night map (tools/make_night_variants.py): their lit word shows at night.
-		NightWindows.light_own(lib.meshes[mid])
 		var at: Vector2 = p["at"]
 		var s: float = p.get("scale", ShopSites.CELLS_PER_METRE)
 		var mi := MeshInstance3D.new()
 		mi.mesh = lib.meshes[mid]
-		var st: float = p.get("stretch", 1.0)
-		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3(s, s * st, s)),
+		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * s),
 				Vector3(at.x, 0.0, at.y))
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
@@ -86,7 +67,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		label.pixel_size = 0.012
 		label.font_size = 40
 		label.outline_size = 12
-		label.position = Vector3(at.x, p["height"] * s * st + 0.6, at.y)
+		label.position = Vector3(at.x, p["height"] * s + 0.6, at.y)
 		label.name = "Label_" + String(p["id"])
 		add_child(label)
 		placed += 1

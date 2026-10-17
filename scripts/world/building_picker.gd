@@ -82,7 +82,7 @@ func add_props(root: Node) -> int:
 		var mi: MeshInstance3D = c
 		var m: Dictionary = mi.get_meta("pick")
 		var info := BuildingInfo.for_prop(_data, m["uid"], m["number"], m["title"], m["kind"],
-				m["model"], m["category"], mi, m["note"], m.get("front", Vector3(0, 0, -1)))
+				m["model"], m["category"], mi, m["note"])
 		_props.append({"box": mi.transform * mi.mesh.get_aabb(), "mesh": mi.mesh,
 				"xform": mi.transform, "info": info})
 		n += 1
@@ -96,7 +96,7 @@ func add_prop(mesh: Mesh, xform: Transform3D, m: Dictionary) -> void:
 	mi.mesh = mesh
 	mi.transform = xform
 	var info := BuildingInfo.for_prop(_data, m["uid"], m["number"], m["title"], m["kind"],
-			m["model"], m["category"], mi, m["note"], m.get("front", Vector3(0, 0, -1)))
+			m["model"], m["category"], mi, m["note"])
 	mi.free()
 	_props.append({"box": xform * mesh.get_aabb(), "mesh": mesh, "xform": xform, "info": info})
 

@@ -35,8 +35,7 @@ static func apply(data: CityData) -> Dictionary:
 	var grave := p._graveyard()
 	return {"cinema": cinema, "graveyard": grave, "plant": p._plant(), "truck": p._fire_truck(), "billboards": p._billboards(), "balloon": p._balloon(),
 			"containers": p._containers(), "post": p._post_offices(),
-			"ufo": p._ufo_and_tanks(), "islet": p._islet(), "vegas": p._vegas(),
-			"sign": p._vegas_sign()}
+			"ufo": p._ufo_and_tanks(), "islet": p._islet(), "vegas": p._vegas()}
 
 
 func _mark(r: Rect2i) -> void:
@@ -271,17 +270,6 @@ func _ufo_and_tanks() -> int:
 			_add(r, Kind.TANK, spec[2], 1)
 			placed += 1
 	return placed
-
-
-# --- The "Welcome to Las Vegas" sign: on the east edge of the desert, facing the road to town ----------
-func _vegas_sign() -> int:
-	var d := MapLayout.blob("desert")
-	var at := Vector2i(int(d["at"].x + d["r"].x) + 1, int(d["at"].y))
-	var r := _near(at, Vector2i(1, 3), -1, 20)
-	if r.size.x <= 0:
-		return 0
-	_add(r, Kind.VEGAS_SIGN, 1, 1)
-	return 1
 
 
 # --- The BT tower islet: a crane and many containers -----------------------------------------------------

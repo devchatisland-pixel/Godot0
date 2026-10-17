@@ -1,9 +1,0 @@
-{
-	"file": "fog_warehouse.glb",
-	"models": [
-		{
-			"cat": "FOG_WAREHOUSE",
-			"node": "fog_warehouse"
-		}
-	]
-}

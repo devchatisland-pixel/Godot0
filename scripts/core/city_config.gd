@@ -25,10 +25,6 @@ var chunk_size: int = 32
 ## Folder scanned recursively for .glb / .gltf models.
 var models_root: String = "res://FREEMODELS"
 
-## Parts of the map chosen on the start screen (MapMenu).
-var show_continent := true
-var show_fog_island := true
-
 # --- Island shape -------------------------------------------------------------
 var island_radius := Vector2(0.8, 0.7) # fraction of half map size (x, y)
 var coast_noise := 0.45         # how ragged the coastline is
@@ -58,7 +54,7 @@ var camera_yaw_deg := 45.0
 # --- Rendering ------------------------------------------------------------------
 var shadows := false
 ## Length of a full day and night cycle, in seconds.
-var day_cycle_seconds := 60.0
+var day_cycle_seconds := 240.0
 var is_mobile := false
 ## False on single-threaded web builds: work then runs on the main thread.
 var use_threads := true

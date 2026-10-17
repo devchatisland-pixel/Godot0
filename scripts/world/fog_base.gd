@@ -11,8 +11,7 @@ const TEXTURE := preload("res://textures/highway.jpg")
 const SEGMENT := 12.0
 const LIFT := 0.04
 ## Extra turn of the models whose front is not +Z.
-## The modular houses (tools/build_modular_buildings.py) have their fronts towards -Z.
-const FRONT := {Cat.JET_F111: PI, Cat.FOG_MOD_HOUSE: PI, Cat.FOG_MOD_HOME: PI}
+const FRONT := {Cat.JET_F111: PI}
 
 ## The F-111 formation: cell of the leader (north of the main island, over the sea), where
 ## it flies to, height, distance between the jets and their size.
@@ -40,12 +39,6 @@ const TITLES := {
 	Cat.TANK_T55: ["T-55 tank", "VEHICLE"], Cat.APC_BMP1: ["BMP-1 infantry fighting vehicle", "VEHICLE"],
 	Cat.APC_BRDM: ["BRDM armoured car", "VEHICLE"], Cat.APC_EE11: ["EE-11 anti-aircraft vehicle", "VEHICLE"],
 	Cat.NUCLEAR2: ["Nuclear power plant", "MILITARY"], Cat.CARRIER: ["Aircraft carrier", "SHIP"],
-	Cat.ROADBLOCK_A: ["Roadblock barrier", "ROADBLOCK"], Cat.CONE: ["Traffic cone", "ROADBLOCK"],
-	Cat.FOG_OFFICE: ["Office building", "OFFICE"], Cat.FOG_HOUSE: ["House", "HOUSE"],
-	Cat.FOG_NIGHT_TOWER: ["Night tower", "SKYSCRAPER"], Cat.FOG_OFFICE_TOWER: ["Office tower", "SKYSCRAPER"],
-	Cat.FOG_FLOOR: ["Block of flats", "APARTMENT"], Cat.FOG_MOD_HOUSE: ["Town house", "HOUSE"],
-	Cat.FOG_MOD_TOWER: ["Tower", "SKYSCRAPER"], Cat.FOG_MOD_HOME: ["Town house", "HOUSE"],
-	Cat.FOG_MARKET: ["Country market store", "SHOP"], Cat.FOG_WAREHOUSE: ["Food warehouse", "BUILDING"],
 }
 
 ## Clickable things: {"mesh": Mesh, "xform": Transform3D, "pick": Dictionary} (see BuildingPicker).
@@ -55,10 +48,7 @@ var picks: Array[Dictionary] = []
 ## Draws mesh `id` at `xform` and makes it clickable.
 func _put(lib: ModelLibrary, batch: InstanceBatch, id: int, xform: Transform3D, title: String,
 		kind: String, note: String) -> void:
-	if RemovedModels.has(lib.model_name(id)):
-		return
 	batch.add(id, xform)
-	NavLights.add_to(batch, lib, id, xform)
 	var cat: int = lib.cats[id]
 	picks.append({"mesh": lib.meshes[id], "xform": xform, "pick": {
 		"uid": "M-%03d" % picks.size(), "number": picks.size(), "title": title, "kind": kind,
@@ -70,102 +60,42 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 	var batch := InstanceBatch.new()
 	var placed := 0
 	if data.fog != null:
-		placed = _base(data, lib, batch)
+		placed = _base(data.fog, lib, batch)
 		_carriers(data.fog, lib, batch)
 		_roads(data.fog)
-		_fences(data.fog)
 	_formation(lib, batch)
 	batch.build_nodes(self, lib, null)
 	print("[FogBase] %d models on the fog island" % placed)
 
 
-func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
-	var fog := data.fog
+func _base(fog: FogIslandShaper, lib: ModelLibrary, batch: InstanceBatch) -> int:
 	var n := 0
-	for p in FogBaseSites.plan(fog):
+	for p in FogBaseSites.plan():
 		var at: Vector2 = p["at"]
-		if not _on_land(fog, at, float(p.get("fit", 0.0)) * 0.5):
+		var cell := Vector2i(at.floor())
+		if fog.elevation[cell.y * FogIslandShaper.SIZE + cell.x] <= 128:
 			push_warning("[FogBase] %s is in the sea" % at)
 			continue
 		var id := -1
-		var scale: float = p.get("scale", 1.0)
+		var scale: float = p["scale"]
 		var turn := 0.0
-		var stretch := 1.0
 		var label := ["Military model", "MILITARY"]
-		var note := "military base of the fog island"
-		if p.get("landing_zone", false):
-			var zone := _landing_zone(data, lib, fog.origin + at)
-			if not zone.is_empty():
-				_put(lib, batch, zone["id"], zone["xform"], "Landing zone", "MILITARY", note)
-				n += 1
-			continue
 		if p.has("veh"):
 			id = MapVehicles.mesh_id(lib, p["veh"])
 			scale *= VehicleSites.CELLS_PER_METRE
 			turn = PI # the vehicles of the catalog face -Z
 			label = [MapVehicles.entry(p["veh"]).get("name", p["veh"]), "VEHICLE"]
-			note = "on the fog island"
-		elif p.has("shop"):
-			if RemovedModels.SHOPS_AS_BUSINESS.has(String(p["shop"])):
-				# Drawn as the business pack shop (Kenney size, its front is +Z).
-				id = lib.names.find(RemovedModels.BUSINESS_SHOP)
-				scale = 1.0
-				turn = 0.0
-				label = ["Shop", "SHOP"]
-			else:
-				id = MapShops.mesh_id(lib, p["shop"])
-				if id >= 0:
-					NightWindows.light_own(lib.meshes[id])
-				scale = float(p["scale"])
-				stretch = ShopSites.stretch_of(String(p["shop"]))
-				turn = PI # the shop models face -Z
-				var entry: Dictionary = MapShops.entry(p["shop"])
-				label = [entry.get("name", p["shop"]), "SHOP"]
-			note = "shops of the city of the fog island"
-		elif p.has("named"):
-			id = lib.named_id(p["named"])
-			label = ["Crop field", "FIELD"]
-			note = "farmland of the fog island"
-			if String(p["named"]).begins_with("yardbox:"):
-				label = ["Shipping container", "PROP"]
-				note = "industrial zone of the fog island"
 		else:
 			var ids := lib.ids(p["cat"])
-			id = ids[int(p.get("v", 0)) % ids.size()] if not ids.is_empty() else -1
+			id = ids[0] if not ids.is_empty() else -1
 			turn = FRONT.get(p["cat"], 0.0)
-			label = TITLES.get(p["cat"], [lib.model_name(id), "BUILDING"])
-			if label[1] != "MILITARY" and label[1] != "VEHICLE" and label[1] != "ROADBLOCK":
-				note = "town of the fog island"
+			label = TITLES.get(p["cat"], label)
 		if id < 0:
 			continue
-		var box := lib.bounds[id]
-		if p.has("fit"):
-			scale = float(p["fit"]) / maxf(maxf(box.size.x, box.size.z), 0.01)
 		var dir: Vector2 = p["dir"]
 		var lift := MapVehicles.HELIPAD_LIFT if p.get("veh", "") == FogBaseSites.HELICOPTER else 0.0
-		var ground := Vector3(fog.origin.x + at.x, lift, fog.origin.y + at.y)
-		var yaw := atan2(dir.x, dir.y) + turn
-		var xform: Transform3D
-		if p.has("size"):
-			# A flat model (a crop field) stretched over its lot.
-			var size: Vector2 = p["size"]
-			var basis := Basis.from_scale(Vector3(size.x / maxf(box.size.x, 0.01), 1.0, size.y / maxf(box.size.z, 0.01)))
-			xform = Transform3D(basis, ground - basis * Vector3(box.get_center().x, box.position.y, box.get_center().z))
-		elif p.get("origin", false):
-			# A model built round its own origin (the checkpoint: the middle of its road) stands
-			# with that origin on `at`, not the middle of its box.
-			xform = Transform3D(Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3.ONE * scale), ground)
-		else:
-			xform = _standing(lib, id, ground, yaw, scale)
-		if stretch != 1.0:
-			xform.basis = xform.basis * Basis.from_scale(Vector3(1.0, stretch, 1.0))
-		# Storeys piled up (the block storey of the fog_city pack).
-		for k in int(p.get("stack", 1)):
-			var up := Transform3D(Basis(), Vector3(0, box.size.y * scale * k, 0)) * xform
-			_put(lib, batch, id, up, label[0], label[1], note)
-		if p.has("veh"):
-			for l in NavLights.for_vehicle(lib, p["veh"], id, xform):
-				batch.add(l[0], l[1])
+		_put(lib, batch, id, _standing(lib, id, Vector3(fog.origin.x + at.x, lift, fog.origin.y + at.y),
+				atan2(dir.x, dir.y) + turn, scale), label[0], label[1], "military base of the fog island")
 		n += 1
 	var pad := MapVehicles.helipad_id(lib)
 	if pad >= 0:
@@ -199,20 +129,19 @@ static func _standing(lib: ModelLibrary, id: int, at: Vector3, yaw: float, scale
 
 func _roads(fog: FogIslandShaper) -> void:
 	var panels: Array[Transform3D] = []
-	for r in FogBaseSites.roads(fog):
+	for r in FogBaseSites.ROADS:
 		var a: Vector2 = r[0]
 		var b: Vector2 = r[1]
+		var along_x := absf(b.x - a.x) >= absf(b.y - a.y)
 		var length := a.distance_to(b)
-		if length < 0.05:
-			continue
 		var count := maxi(1, ceili(length / SEGMENT))
 		var step := length / float(count)
 		var dir := (b - a).normalized()
-		# A little longer than its step, so a bend leaves no gap between two panels.
-		var basis := Basis(Vector3.UP, atan2(-dir.y, dir.x)) * Basis.from_scale(
-				Vector3(step + (0.25 if count > 1 or length < 6.0 else 0.0), 1.0, float(r[2])))
 		for k in count:
 			var c := fog.origin + a + dir * (step * (float(k) + 0.5))
+			var basis := Basis.from_scale(Vector3(step, 1.0, float(r[2])))
+			if not along_x:
+				basis = Basis(Vector3.UP, PI * 0.5) * basis
 			panels.append(Transform3D(basis, Vector3(c.x, LIFT, c.y)))
 	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = TEXTURE
@@ -245,46 +174,3 @@ func _formation(lib: ModelLibrary, batch: InstanceBatch) -> void:
 		var c: Vector2 = FORMATION_AT + (o as Vector2) * FORMATION_GAP
 		_put(lib, batch, jets[0], _standing(lib, jets[0], Vector3(c.x, FORMATION_LIFT, c.y), yaw, FORMATION_SCALE),
 				"F-111 Aardvark", "AIRCRAFT", "flying in formation over the north sea")
-
-
-## True when the cell of `at` and the corners `half` cells round it are land of the island.
-static func _on_land(fog: FogIslandShaper, at: Vector2, half: float) -> bool:
-	for o in [Vector2.ZERO, Vector2(-half, -half), Vector2(half, -half), Vector2(-half, half), Vector2(half, half)]:
-		var c := Vector2i((at + (o as Vector2)).floor())
-		if c.x < 0 or c.y < 0 or c.x >= FogIslandShaper.SIZE or c.y >= FogIslandShaper.SIZE:
-			return false
-		if fog.elevation[c.y * FogIslandShaper.SIZE + c.x] <= 128:
-			return false
-	return true
-
-
-## The landing zone of the army base: the model of the secret base of the main island (Kind.AIRBASE),
-## drawn exactly as big as there, its middle on `at` (world x, z). {} when there is no secret base.
-static func _landing_zone(data: CityData, lib: ModelLibrary, at: Vector2) -> Dictionary:
-	for b in data.building_count():
-		if data.b_kind[b] != CityTypes.Kind.AIRBASE:
-			continue
-		var pick := BuildingPlacer.pick_for(data, lib, b)
-		if pick.is_empty():
-			return {}
-		var xform: Transform3D = pick["xform"]
-		var box: AABB = xform * lib.bounds[pick["id"]]
-		var shift := Vector3(at.x - box.get_center().x, 0.0, at.y - box.get_center().z)
-		return {"id": pick["id"], "xform": Transform3D(xform.basis, xform.origin + shift)}
-	return {}
-
-
-## The wire fences of FogBaseSites.FENCES (round the army base and the nuclear plant).
-func _fences(fog: FogIslandShaper) -> void:
-	for f in FogBaseSites.FENCES:
-		var r: Rect2 = f[0]
-		var mesh := MapFences.fence_mesh(Rect2(r.position + fog.origin, r.size), float(f[2]), int(f[1]), MapFences.BASE_GATE)
-		var mi := MeshInstance3D.new()
-		mi.mesh = mesh
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.name = "Fence_%d" % get_child_count()
-		add_child(mi)
-		picks.append({"mesh": mesh, "xform": Transform3D.IDENTITY, "pick": {
-			"uid": "M-%03d" % picks.size(), "number": picks.size(), "title": "Wire fence", "kind": "FENCE",
-			"model": "wire fence", "category": "Prop", "note": "fog island",
-		}})

@@ -73,8 +73,6 @@ static func helipad_xform(at: Vector3, width: float) -> Transform3D:
 func build(data: CityData, lib: ModelLibrary) -> void:
 	var placed := 0
 	for p in VehicleSites.plan(data, lengths_m()):
-		if RemovedModels.has("veh:" + String(p["id"])):
-			continue
 		var mid := mesh_id(lib, p["id"])
 		if mid < 0:
 			continue
@@ -89,13 +87,6 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
 		add_child(mi)
-		# Aircraft: red light on the left wingtip, green on the right (NavLights).
-		for l in NavLights.for_vehicle(lib, String(p["id"]), mid, mi.transform):
-			var light := MeshInstance3D.new()
-			light.mesh = lib.meshes[l[0]]
-			light.transform = l[1]
-			light.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			add_child(light)
 		if pad_id >= 0:
 			# The helipad the vehicle stands on.
 			var pad := MeshInstance3D.new()
@@ -142,7 +133,6 @@ func _build_props(data: CityData, lib: ModelLibrary) -> void:
 		mi.set_meta("pick", {
 			"uid": "P-%03d" % n, "number": n, "title": p["title"], "kind": "PROP",
 			"model": String(p["file"]).get_file(), "category": "Prop", "note": "",
-			"front": p.get("front", Vector3(0, 0, -1)),
 		})
 		n += 1
 	print("[Props] %d props placed" % n)

@@ -55,12 +55,6 @@
    "author": "Kapi777",
    "url": "https://sketchfab.com/Kapi777",
    "license": "CC-BY-NC-4.0"
-  },
-  "prison_van": {
-   "title": "Driver San Francisco - Unlicensed Prison Van",
-   "author": "unknown (Sketchfab download; author and licence not recorded)",
-   "url": "https://sketchfab.com/search?q=driver+san+francisco+prison+van",
-   "license": "unknown"
   }
  },
  "vehicles": [
@@ -1747,23 +1741,6 @@
     "width": 2.73,
     "height": 2.51,
     "length": 4.9
-   }
-  },
-  {
-   "id": "prison_van",
-   "name": "Prison van (Driver San Francisco)",
-   "category": "Municipal Emergency",
-   "model": "Prison van",
-   "sub_model": "white",
-   "pack": "prison_van",
-   "source": "Driver San Francisco unlicensed prison van",
-   "file": "res://vehicles/models/municipal_emergency/prison_van.glb",
-   "thumbnail": "res://vehicles/thumbs/prison_van.png",
-   "triangles": 15188,
-   "size_m": {
-    "width": 2.54,
-    "height": 2.74,
-    "length": 6.11
    }
   }
  ]

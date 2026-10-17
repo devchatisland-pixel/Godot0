@@ -27,14 +27,11 @@ const BLOBS := {
 	# The tiny islet of the BT tower, in the sea north of the urban island.
 	"tower_islet": {"at": Vector2(24, 64), "r": Vector2(10, 6.5)},
 	# The development island, alone in the empty south-west corner of the sea, far from the
-	# fog island: a street with the shops (see shops/CATALOG.md) on one side and the modular
-	# buildings on the other, a little port at its east end. No trees, a natural coast with
-	# sandy beaches (ExtensionIsland._raise_lobe, DevIsland).
-	"dev_island": {"at": Vector2(41, 233), "r": Vector2(44, 18), "fixed": true},
+	# fog island: one of each shop in a row (see shops/CATALOG.md). Flat, no trees.
+	"dev_island": {"at": Vector2(42, 228), "r": Vector2(36, 12), "fixed": true},
 	# The prison island: centre, radii (long and short side) and turn in radians.
 	# Far out in the north-west, well away from the coast of the main island.
-	# Bigger than it was (15 x 10): the jail of PrisonCompound is a walled post 1.5 to 1.9 times its size.
-	"prison": {"at": Vector2(34, 38), "r": Vector2(20.0, 13.5), "turn": 0.45},
+	"prison": {"at": Vector2(34, 38), "r": Vector2(15.0, 10.0), "turn": 0.45},
 	# Round districts of the main island.
 	"desert": {"at": Vector2(78, 128), "r": Vector2(22, 36)},
 	"industrial": {"at": Vector2(84, 182), "r": Vector2(22, 19)},

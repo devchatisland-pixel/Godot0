@@ -1,9 +1,0 @@
-{
-	"file": "vegas_sign.glb",
-	"models": [
-		{
-			"cat": "VEGAS_SIGN",
-			"node": "VegasSign"
-		}
-	]
-}

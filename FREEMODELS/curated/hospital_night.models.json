@@ -1,9 +1,0 @@
-{
-	"file": "hospital_night.glb",
-	"models": [
-		{
-			"cat": "HOSPITAL_MAIN",
-			"node": "hospital"
-		}
-	]
-}

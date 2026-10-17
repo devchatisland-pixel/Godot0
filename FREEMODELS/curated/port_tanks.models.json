@@ -3,13 +3,11 @@
 	"models": [
 		{
 			"cat": "PORT_TANK",
-			"node": "tank_big",
-			"file": "tank_big.glb"
+			"node": "tank_big"
 		},
 		{
 			"cat": "PORT_TANK",
-			"node": "tank_spheres",
-			"file": "tank_spheres.glb"
+			"node": "tank_spheres"
 		},
 		{
 			"cat": "PORT_TANK",
@@ -17,18 +15,15 @@
 		},
 		{
 			"cat": "PORT_TANK",
-			"node": "tank_oil",
-			"file": "tank_oil.glb"
+			"node": "tank_oil"
 		},
 		{
 			"cat": "PORT_TANK",
-			"node": "tank_oil",
-			"file": "tank_oil.glb"
+			"node": "tank_rusty"
 		},
 		{
 			"cat": "PORT_TANK",
-			"node": "tank_old",
-			"file": "tank_old.glb"
+			"node": "tank_old"
 		},
 		{
 			"cat": "PORT_TANK",

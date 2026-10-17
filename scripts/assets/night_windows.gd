@@ -23,19 +23,12 @@ const PACK_GLOW := {
 	ModelCat.SCHOOL_MAIN: 0.45, ModelCat.PHARMACY: 0.55, ModelCat.GAS_STATION: 0.7,
 	ModelCat.UN_TOWER: 0.55, ModelCat.CRANE: 0.35, ModelCat.BRIDGE: 0.6,
 	ModelCat.BANK_PACK: 0.6, ModelCat.BANK_MIN: 0.6, ModelCat.HOUSE2: 0.35, ModelCat.TOWN2: 0.4,
-	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6, ModelCat.MUSEUM_HALL: 0.6,
-	ModelCat.FOG_OFFICE: 0.55, ModelCat.FOG_HOUSE: 0.35, ModelCat.FOG_OFFICE_TOWER: 0.5, ModelCat.FOG_FLOOR: 0.45,
-	ModelCat.FOG_MOD_HOUSE: 0.4, ModelCat.FOG_MOD_TOWER: 0.5, ModelCat.FOG_MOD_HOME: 0.4,
-	ModelCat.SUPERMARKET: 0.3, ModelCat.VEGAS_CASINO: 0.3,
+	ModelCat.SHOP2: 0.5, ModelCat.HOTEL_SMALL: 0.55, ModelCat.HOTEL_PACK: 0.6, ModelCat.HOTEL_LOW: 0.55, ModelCat.MUSEUM_PACK: 0.6,
 	ModelCat.CHURCH_PACK: 0.4, ModelCat.GAS_PACK: 0.8, ModelCat.WAREHOUSE: 0.3, ModelCat.FACTORY: 0.45,
 	ModelCat.RUIN: 0.3, ModelCat.URBAN: 0.6, ModelCat.MCDONALDS: 0.7, ModelCat.BURGER_KING: 0.6,
-	ModelCat.BIZ_RESTAURANT: 0.6, ModelCat.BIZ_PIZZA: 0.6, ModelCat.BIZ_BURGER: 0.6, ModelCat.BIZ_CAFE: 0.6,
-	# The business pack shop (business.glb: shop) has no lights of its own: left dark at night.
 	ModelCat.METAL_BRIDGE: 0.4, ModelCat.MANSION: 0.4, ModelCat.PRISON_BLOCK: 0.4, ModelCat.POOR_SLAB: 0.3,
 	ModelCat.POOR_BLOCK: 0.3, ModelCat.RUSSIAN: 0.3, ModelCat.STALL: 0.7, ModelCat.POLICE_CAR: 0.3,
 	ModelCat.COOLING: 0.3, ModelCat.COOLING_HALL: 0.3, ModelCat.WATCHTOWER: 0.2,
-	ModelCat.LIGHTHOUSE_CLUB: 0.45, ModelCat.CHECKPOINT: 0.25,
-	ModelCat.CONTINENT: 0.5, ModelCat.CONTINENT2: 0.5,
 	# The floodlights (concert camp, prison) shine by themselves at night: no light is added.
 	ModelCat.FLOODLIGHT: 1.3,
 }
@@ -43,19 +36,9 @@ const PACK_GLOW := {
 const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NEON_WOMAN,
 		ModelCat.NEON_JOYSTICK, ModelCat.NEON_MARTINI, ModelCat.NEON_BAR,
 		ModelCat.NEON_BULL, ModelCat.NEON_FUN, ModelCat.NEON_PALM,
-		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE, ModelCat.NEON_LIGHTHOUSE,
-		ModelCat.NEON_XXX, ModelCat.NEON_PLAYBOY, ModelCat.NEON_CASINO]
-## The neon signs set up on top of the buildings of Las Vegas glow pink only (white-hot they were
-## washed out): their light is the sign's picture times NEON_PINK, a little less strong.
-const PINK_NEONS := [ModelCat.NEON_CASINO, ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE]
-const NEON_PINK := Color(1.0, 0.1, 0.55)
-const PINK_NIGHT := 2.4
+		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE]
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
-## The Taiwan signboards are light boxes: only their "board" surface lights up, not the steel.
-const LOGO_PACKS := [ModelCat.SIGN_WINDOWS, ModelCat.TW_BANASONIC, ModelCat.TW_MCDONALDS,
-		ModelCat.TW_COLA_JP, ModelCat.TW_COLA_BILLBOARD, ModelCat.TW_LED_BOARD, ModelCat.TW_LED_BAND]
-## Surfaces of a lit logo whose material starts with this stay unlit (frames, brackets).
-const LOGO_DARK := "metal"
+const LOGO_PACKS := [ModelCat.SIGN_WINDOWS]
 const LOGO_DAY := 0.15
 const LOGO_NIGHT := 0.9
 const NEON_DAY := 0.35
@@ -63,13 +46,12 @@ const NEON_NIGHT := 5.0
 ## Brightness of the halo (a bigger copy added behind the sign) at night.
 const HALO_NIGHT := 3.0
 ## Night packs keep the lights painted in their emission map (a lit facade where they have none).
-const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER, ModelCat.FOG_NIGHT_TOWER]
+const NIGHT_PACKS := [ModelCat.URBAN2, ModelCat.NIGHT_TOWER]
 ## Billboard panels at night: soft warm white, at this brightness.
 const BILLBOARD_LIGHT := Color(1.0, 0.96, 0.88)
 const BILLBOARD_GLOW := 1.0
 ## Night duplicates (tools/make_night_variants.py: the pharmacy cross, the police lights, the
-## lit words CINEMA, HOTEL, POLICE and CITY HALL, the police roof sign, the hotel stars, the
-## blue cross of the hospital, the stadium lit inside only) bring
+## lit words CINEMA, HOTEL and POLICE, the hotel stars) bring
 ## their own night map, which holds a third of the final light: off by day, x3 at night.
 ## A higher value makes the light the lamps throw around them stronger; the lamps themselves
 ## keep their colour.
@@ -91,21 +73,13 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE, ModelCat.NIGHT_SKYLINE]:
 		for id in lib.ids(cat):
 			_light_skyline(lib.meshes[id], done)
-	var pink_done := {}
 	for cat in NEON_PACKS:
 		for id in lib.ids(cat):
-			if PINK_NEONS.has(cat):
-				_light_pink(lib.meshes[id], pink_done)
-				lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id], NEON_PINK))
-			else:
-				_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
-				lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
-	# The Banasonic sign hangs flat on a wall: only its board, no pole or brackets.
-	for id in lib.ids(ModelCat.TW_BANASONIC):
-		_strip_surfaces(lib, id, LOGO_DARK)
+			_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
+			lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
 	for cat in LOGO_PACKS:
 		for id in lib.ids(cat):
-			_light_facade(lib.meshes[id], LOGO_NIGHT, done, LOGO_DAY, false, LOGO_DARK)
+			_light_facade(lib.meshes[id], LOGO_NIGHT, done, LOGO_DAY)
 	for cat in NIGHT_PACKS:
 		for id in lib.ids(cat):
 			var mesh := lib.meshes[id]
@@ -119,21 +93,6 @@ static func apply(lib: ModelLibrary) -> void:
 				_light_facade(mesh, 0.45, done)
 	for id in lib.ids(ModelCat.BILLBOARD):
 		light_billboard(lib.meshes[id])
-
-
-## Library model `id` without its surfaces whose material starts with `prefix` (its bounds follow).
-static func _strip_surfaces(lib: ModelLibrary, id: int, prefix: String) -> void:
-	var src := lib.meshes[id]
-	var out := ArrayMesh.new()
-	for s in src.get_surface_count():
-		var mat := src.surface_get_material(s)
-		if mat != null and mat.resource_name.begins_with(prefix):
-			continue
-		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, src.surface_get_arrays(s))
-		out.surface_set_material(out.get_surface_count() - 1, mat)
-	if out.get_surface_count() > 0:
-		lib.meshes[id] = out
-		lib.bounds[id] = out.get_aabb()
 
 
 ## Billboards: only the flat poster panel lights up at night, lit by its own picture (a blank
@@ -196,10 +155,10 @@ static func _is_panel(mesh: Mesh, s: int) -> bool:
 ## Copy of every material of `mesh` whose texture also lights it at night.
 ## `keep_emission` keeps the emission colour the material already has (neon signs).
 static func _light_facade(mesh: Mesh, energy: float, done: Dictionary, day: float = 0.0,
-		keep_emission: bool = false, dark: String = "") -> void:
+		keep_emission: bool = false) -> void:
 	for s in mesh.get_surface_count():
 		var mat := mesh.surface_get_material(s) as BaseMaterial3D
-		if mat == null or (dark != "" and mat.resource_name.begins_with(dark)):
+		if mat == null:
 			continue
 		if not done.has(mat):
 			var m := mat.duplicate() as BaseMaterial3D
@@ -216,28 +175,9 @@ static func _light_facade(mesh: Mesh, energy: float, done: Dictionary, day: floa
 		mesh.surface_set_material(s, done[mat])
 
 
-## A neon sign that lights in NEON_PINK only: its picture (the shape of the tubes) times pink.
-static func _light_pink(mesh: Mesh, done: Dictionary) -> void:
-	for s in mesh.get_surface_count():
-		var mat := mesh.surface_get_material(s) as BaseMaterial3D
-		if mat == null:
-			continue
-		if not done.has(mat):
-			var m := mat.duplicate() as BaseMaterial3D
-			m.emission_enabled = true
-			m.emission = NEON_PINK
-			if mat.albedo_texture != null:
-				m.emission_texture = mat.albedo_texture
-				m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
-			SignAtlas.register_night(m, NEON_DAY, PINK_NIGHT)
-			done[mat] = m
-			done[m] = m
-		mesh.surface_set_material(s, done[mat])
-
-
 ## A copy of a neon sign that only adds light (additive, invisible by day): drawn a bit
-## bigger behind the sign it thickens the glow. `tint` (when given) replaces the colour of its light.
-static func _halo(mesh: Mesh, tint: Color = Color(0, 0, 0, 0)) -> ArrayMesh:
+## bigger behind the sign it thickens the glow.
+static func _halo(mesh: Mesh) -> ArrayMesh:
 	var out := ArrayMesh.new()
 	for s in mesh.get_surface_count():
 		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh.surface_get_arrays(s))
@@ -254,10 +194,6 @@ static func _halo(mesh: Mesh, tint: Color = Color(0, 0, 0, 0)) -> ArrayMesh:
 			m.emission_texture = src.emission_texture
 		elif src != null:
 			m.emission = src.emission if src.emission_enabled else src.albedo_color
-		if tint.a > 0.0:
-			m.emission = tint
-			if m.emission_texture != null:
-				m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
 		SignAtlas.register_night(m, 0.0, HALO_NIGHT)
 		out.surface_set_material(s, m)
 	return out
