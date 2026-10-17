@@ -88,8 +88,11 @@ func generate() -> CityData:
 	print("[City] candy shops: ", CityShops.apply(data))
 	AmenitiesPlanner.apply(data)
 	ManualEdits.final_tweaks(data)
+	# Requests by hand: deleted and redrawn buildings, no boats, the suburbs and the red district filled.
+	print("[City] requests: ", MapRequests.apply(data))
 	# The last review: every ordinary building faces a road and touches it.
 	print("[City] face the roads: ", FaceRoads.apply(data))
+	print("[City] orange shops and suburban houses redrawn: ", MapRequests.after_roads(data))
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	var services: Dictionary = core["services"].duplicate()

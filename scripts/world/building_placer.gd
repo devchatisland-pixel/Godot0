@@ -170,6 +170,8 @@ static func pick_for(data: CityData, lib: ModelLibrary, i: int, facing: int = -1
 ## The cartoon houses "house1" and "house2" never face north: they are turned to face south.
 ## Buildings drawn with a model whose name starts like this are left out of the city.
 const REMOVED_MODEL_PREFIX := "ny_buildings.glb: ny_brick_"
+## Drawn by several slots of the quarter list: in the red district the building takes another quarter model.
+const OVERUSED_QUARTER := "quarter_25_b.glb: quarter_25_b"
 const SOUTH_ONLY_MODELS := ["carto.glb: house1", "carto.glb: house2"]
 
 
@@ -243,6 +245,13 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	if kind == Kind.FIELD:
 		return {"id": candidates[0], "xform": _fit_field(lib, candidates[0], r, _laid_across(data, i, facing))}
 	var id := _choose_fitting(lib, candidates, r, facing, seed)
+	if lib.model_name(id) == OVERUSED_QUARTER and data.zone[data.idx(r.position.x, r.position.y)] == CityTypes.Zone.QUARTER:
+		var others := PackedInt32Array()
+		for c in candidates:
+			if lib.model_name(c) != OVERUSED_QUARTER:
+				others.append(c)
+		if not others.is_empty():
+			id = _choose_fitting(lib, others, r, facing, seed >> 5)
 	id = ModelPools.shop_for_building_n(lib, id)
 	var swapped := false
 	if kind == Kind.FUTURE_BLDG:
