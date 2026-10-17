@@ -33,25 +33,13 @@ const CROSSING_CLEAR := 3.0
 var _count := 0
 
 
+## The wooden fences (house and garden lots, the park, the shops, the crop fields) are no longer
+## built: only the highway fences of the continent remain.
 func build(data: CityData, lib: ModelLibrary) -> void:
-	var wood := _Batch.new(lib, "fence:wooden", WOODEN, WOODEN_PIECE, WOODEN_HEIGHT)
-	var farm := _Batch.new(lib, "fence:farm", FARM, FARM_PIECE)
 	var road := _Batch.new(lib, "fence:highway", HIGHWAY, HIGHWAY_PIECE)
-	for b in data.building_count():
-		var kind: int = data.b_kind[b]
-		var r := data.building_rect(b)
-		if kind == Kind.HOUSE or kind == Kind.GARDEN:
-			if r.size.x >= 2 and r.size.y >= 2:
-				_lot(data, wood, r, int(data.b_facing[b]) if kind == Kind.HOUSE else -1)
-		elif kind == Kind.FIELD:
-			_field(data, farm, r)
-	_candy_shops(data, wood)
-	if data.central_park.size.x > 0:
-		_lot(data, wood, data.central_park, -1)
 	if data.continent != null:
 		_highways(data.continent, road)
-	for batch in [wood, farm, road]:
-		_count += batch.flush(self)
+	_count += road.flush(self)
 	print("[WoodFences] %d fence pieces placed" % _count)
 
 
