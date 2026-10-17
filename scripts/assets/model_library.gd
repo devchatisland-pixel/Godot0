@@ -24,7 +24,8 @@ var cats := PackedInt32Array()
 
 ## The shipping containers of the yards (shops/models, from the "Low-poly Container" pack),
 ## loaded as named meshes "yardbox:NN" when the packs are done.
-const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "container-09", "container-10"]
+## (02, 09 and 10 are retired: ModelRetirement.)
+const YARD_CONTAINERS := ["container-01", "container-04"]
 
 var _pending: Array[Dictionary] = []
 var _yard_loaded := false
@@ -39,12 +40,17 @@ var _fetched := {}
 # Curated pack currently open (packs hold many buildings, opened once each).
 var _pack_path := ""
 var _pack_root: Node
+## Slots of by_cat that show another model (ModelRetirement.REPLACED), filled in when the
+## packs are done: {"cat", "at" (index in by_cat[cat]), "target" (label)}.
+var _aliases: Array[Dictionary] = []
+## Label of a retired model -> the label it is drawn as (for models asked for by name).
+var _alias_of := {}
 
 
 func begin(cfg: CityConfig) -> void:
 	var catalog := ModelCatalog.new()
 	catalog.scan(cfg.models_root)
-	_pending = _limit_variants(catalog.entries, cfg.max_variants)
+	_pending = _retire(_limit_variants(catalog.entries, cfg.max_variants), catalog.entries)
 	# Group buildings of the same pack so every pack file is opened only once.
 	_pending.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["path"] < b["path"])
 	_total = maxi(1, _pending.size())
@@ -63,6 +69,15 @@ func load_next(count: int) -> float:
 			break
 		var e: Dictionary = _pending.pop_front()
 		_request_ahead()
+		if e.has("alias"):
+			# A retired model: its slot will show the model `alias`; nothing is read for it.
+			var acat: int = e["cat"]
+			if not by_cat.has(acat):
+				by_cat[acat] = PackedInt32Array()
+			_aliases.append({"cat": acat, "at": by_cat[acat].size(), "target": e["alias"]})
+			_alias_of[_label(e)] = e["alias"]
+			by_cat[acat].append(-1)
+			continue
 		var mesh := _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
 		if mesh == null:
 			push_warning("[Models] could not load %s %s" % [e["path"], e.get("node", "")])
@@ -75,6 +90,7 @@ func load_next(count: int) -> float:
 		by_cat[cat].append(id)
 	if _pending.is_empty():
 		_close_pack()
+		_resolve_aliases()
 		if not _yard_loaded:
 			_yard_loaded = true
 			for c: String in YARD_CONTAINERS:
@@ -151,12 +167,69 @@ func _limit_variants(entries: Array[Dictionary], limit: int) -> Array[Dictionary
 	return out
 
 
+## Takes the deleted models off the list and marks the replaced ones (ModelRetirement); makes
+## sure every model they are replaced by is in the list (the variant limit may have cut it).
+func _retire(list: Array[Dictionary], all: Array[Dictionary]) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var have := {}
+	for e in list:
+		have[_label(e)] = true
+	for e in list:
+		var label := _label(e)
+		if ModelRetirement.is_deleted(label):
+			continue
+		var target := ModelRetirement.replacement(label)
+		if target != "":
+			var a := e.duplicate()
+			a["alias"] = target
+			out.append(a)
+			if not have.has(target):
+				for c in all:
+					if _label(c) == target:
+						out.append(c)
+						have[target] = true
+						break
+		else:
+			out.append(e)
+	return out
+
+
+## Puts the real model ids into the slots of the replaced ones. A slot whose target is missing is dropped.
+func _resolve_aliases() -> void:
+	var gone := {}
+	for a in _aliases:
+		var id := names.find(a["target"])
+		var arr: PackedInt32Array = by_cat[a["cat"]]
+		if id >= 0:
+			arr[a["at"]] = id
+		else:
+			gone[a["cat"]] = true
+		by_cat[a["cat"]] = arr
+	for c in gone:
+		var kept := PackedInt32Array()
+		for id in by_cat[c]:
+			if id >= 0:
+				kept.append(id)
+		by_cat[c] = kept
+	_aliases.clear()
+
+
+## Id of the model labelled `label`, following ModelRetirement (-1 when it is not loaded).
+func name_id(label: String) -> int:
+	var id := names.find(label)
+	if id < 0 and _alias_of.has(label):
+		id = names.find(_alias_of[label])
+	return id
+
+
 ## Keeps `lookahead` distinct upcoming files requested.
 func _request_ahead() -> void:
 	if lookahead == 0:
 		return
 	var seen := {}
 	for e in _pending:
+		if e.has("alias"):
+			continue
 		var path: String = e["path"]
 		if seen.has(path):
 			continue

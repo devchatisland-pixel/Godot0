@@ -38,6 +38,9 @@ static func entry(id: String) -> Dictionary:
 ## lights glow at night: tools/make_night_variants.py); it is drawn in place of the model.
 static func mesh_id(lib: ModelLibrary, id: String) -> int:
 	_ensure_catalog()
+	id = ModelRetirement.vehicle(id) # retired vehicles are not drawn, or drawn as another one
+	if id == "":
+		return -1
 	if not _entries.has(id):
 		push_warning("[Vehicles] unknown vehicle " + id)
 		return -1

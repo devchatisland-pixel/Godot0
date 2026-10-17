@@ -208,9 +208,11 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 		var sid := MapShops.mesh_id(lib, wanted.substr(5))
 		if sid >= 0:
 			NightWindows.light_own(lib.meshes[sid])
-	var forced: int = lib.names.find(wanted) if data.b_model.has(i) else -1
+	var forced: int = lib.name_id(wanted) if data.b_model.has(i) else -1
 	if forced >= 0:
 		candidates = PackedInt32Array([forced])
+	if candidates.is_empty() and ModelRetirement.NO_MODEL_KINDS.has(kind):
+		return {} # its only models are retired (ModelRetirement): the lot stays bare
 	if kind == Kind.FIELD and candidates.is_empty():
 		var fid := lib.named_id(NAMED[kind][absi(seed >> 2) % 4])
 		return {"id": fid, "xform": _fit_field(lib, fid, r, _laid_across(data, i, facing))}
@@ -246,7 +248,7 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	if kind == Kind.FUTURE_BLDG:
 		var model := lib.model_name(id)
 		for bad in BAD_FUTURE_TOWERS:
-			var good := lib.names.find(FUTURE_REPLACEMENT)
+			var good := lib.name_id(FUTURE_REPLACEMENT)
 			if model.ends_with(bad) and good >= 0:
 				id = good
 				swapped = true

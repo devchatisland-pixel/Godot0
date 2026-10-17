@@ -10,6 +10,8 @@ const Terrain := CityTypes.Terrain
 
 const MODEL := "museum_hall.glb: museum_hall"
 ## Top-left cell of the lot of the shop (B-00645 of the map this was set up on) the museum stands near.
+## The museum is drawn this much smaller than the lot allows.
+const MODEL_SIZE := 0.7
 const SHOP_AT := Vector2i(215, 203)
 ## Lots tried, biggest first (cells, x by y: the museum looks east, so its front is as deep as x).
 const SIZES: Array[Vector2i] = [Vector2i(6, 7), Vector2i(6, 6), Vector2i(5, 6), Vector2i(5, 5), Vector2i(4, 5)]
@@ -49,6 +51,7 @@ static func apply(data: CityData) -> Rect2i:
 static func _build(data: CityData, lot: Rect2i) -> void:
 	var b := data.add_building(lot, Kind.MUSEUM, EAST, 0, 0.5)
 	data.b_model[b] = MODEL
+	data.b_scale[b] = MODEL_SIZE
 	for y in range(lot.position.y, lot.end.y):
 		for x in range(lot.position.x, lot.end.x):
 			data.forest[data.idx(x, y)] = 0
