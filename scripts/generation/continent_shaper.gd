@@ -18,16 +18,17 @@ extends RefCounted
 const Cat := ModelCatalog.Cat
 
 ## World cell of the top-left corner of the continent's own grid, and its size in cells.
-const ORIGIN := Vector2(392.0, -90.0)
-const SIZE := Vector2i(350, 450)
+const ORIGIN := Vector2(440.0, 20.0)
+const SIZE := Vector2i(300, 310)
 ## Texels per cell of the colour texture (streets are one cell wide: two texels).
 const RES := 2
 
 ## Land: [centre, radii] of the lobes, in world cells.
+## Together they are about as big as the main island of the chat city (radii 113 x 133 cells):
+## an L round the north-east corner of the fog island.
 const LOBES := [
-	[Vector2(520.0, 38.0), Vector2(122.0, 70.0)],   # north of the fog island
-	[Vector2(645.0, 78.0), Vector2(58.0, 38.0)],    # the link between the two
-	[Vector2(632.0, 215.0), Vector2(92.0, 128.0)],  # east of the fog island
+	[Vector2(535.0, 85.0), Vector2(80.0, 50.0)],    # north of the fog island
+	[Vector2(625.0, 200.0), Vector2(98.0, 112.0)],  # east of the fog island
 ]
 ## e (1 - r^2 of the lobe + noise) above which a cell is land, and above which it is firm
 ## enough to build on (the beach is a few cells wide).
@@ -47,22 +48,11 @@ const FOG_AVENUE_END := Vector2(478.0, 191.5)
 ## wherever it would leave the land.
 const HIGHWAY_WIDTH := 3.0
 const HIGHWAYS := [
-	# From the north bridge round the north lobe, down the link and the east lobe to the south.
-	[Vector2(472, 100), Vector2(484, 78), Vector2(510, 58), Vector2(552, 46), Vector2(598, 44),
-		Vector2(634, 62), Vector2(652, 96), Vector2(655, 135), Vector2(644, 178), Vector2(636, 222),
-		Vector2(650, 268), Vector2(662, 312)],
-	# From the east bridge through the east lobe, up to the link.
-	[Vector2(540, 191.5), Vector2(580, 188), Vector2(616, 168), Vector2(646, 138), Vector2(682, 150),
-		Vector2(704, 196), Vector2(698, 250), Vector2(676, 300)],
-	# The upper road of the north lobe, west to east.
-	[Vector2(422, 34), Vector2(462, 24), Vector2(508, 8), Vector2(556, -4), Vector2(606, -2),
-		Vector2(640, 24), Vector2(668, 62)],
-	# Cross road of the east lobe.
-	[Vector2(566, 246), Vector2(612, 258), Vector2(660, 244), Vector2(702, 226)],
-	# A link between the north bridge highway and the upper road.
-	[Vector2(510, 58), Vector2(500, 36), Vector2(508, 8)],
-	# Southern bypass of the east lobe.
-	[Vector2(590, 300), Vector2(630, 318), Vector2(668, 316)],
+	# From the north bridge along the north lobe, then down the east lobe to the south.
+	[Vector2(472, 112), Vector2(500, 94), Vector2(540, 84), Vector2(580, 94), Vector2(612, 122),
+		Vector2(628, 160), Vector2(632, 210), Vector2(626, 262)],
+	# From the east bridge straight across to the first highway.
+	[Vector2(530, 191.5), Vector2(575, 192), Vector2(630, 196)],
 ]
 ## Metres... cells kept free of buildings on each side of a highway centre line.
 const HIGHWAY_CLEAR := 2.6
@@ -86,8 +76,8 @@ const MODELS := {
 
 ## Districts: how many, and the spacing (cells) of the streets of their grid.
 const DISTRICT_COUNT := 16
-const STREET_MIN := 9.0
-const STREET_MAX := 13.0
+const STREET_MIN := 16.0
+const STREET_MAX := 22.0
 ## Gap kept between two buildings (cells).
 const GAP := 0.25
 ## Candidate lattice step of the three packing passes (big, middle, small models).
@@ -98,7 +88,9 @@ const SMALL_AREA := 2.6
 ## The pack's buildings are drawn this much smaller than modelled, to sit well beside the fog
 ## island and the city.
 const BUILDING_SCALE := 0.8
-const MAX_BUILDINGS := 6500
+const MAX_BUILDINGS := 1800
+## Share of the candidate spots that get a building: the town is loose, like the main island.
+const DENSITY := 0.3
 ## Strength of the warp of the street grids (cells).
 const WARP := 3.5
 
@@ -484,6 +476,8 @@ func _place_buildings() -> void:
 func _try_place(p: Vector2, pool: Array, pass_i: int) -> void:
 	var h0 := int((p.y - ORIGIN.y) * 2.0) * _w + int((p.x - ORIGIN.x) * 2.0)
 	if _occ[h0] != 0 or _road[h0] != 0:
+		return
+	if _rng.randf() > DENSITY:
 		return
 	var k := _district_idx(p.x, p.y)
 	# Dense districts take the tall models, the others stay low.

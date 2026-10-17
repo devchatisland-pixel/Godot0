@@ -19,8 +19,14 @@ const SCALE := {
 	"shop-general-brick": 2.0, "shop-flower-a": 1.15, "shop-general-orange-a": 1.15,
 	"shop-business": 1.3, "shop-steel-glass": 1.6,
 }
-## Empty cells between two neighbours in the row.
-const GAP := 1.5
+## Every shop of the island is drawn so that its longer footprint side is FOOTPRINT cells.
+## Every emplacement is a SLOT x SLOT square, so it takes the largest shop of the catalog
+## (a shop chosen by a player later); a smaller shop stands in the middle of its slot, its
+## front on the street side of the slot.
+const FOOTPRINT := 2.2
+const SLOT := 2.8
+## Empty cells between two neighbours in the row (the slots already hold the margins).
+const GAP := 0.0
 ## Empty cells between the street and the fronts of a row.
 const FRONT_GAP := 0.4
 ## Rows of cells between the street and the line a row is measured on.
@@ -78,8 +84,9 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 	# their fronts north. Each row is centred on the dry land of a line ROW_SAMPLE cells off
 	# the street.
 	_row(data, north, street - ROW_SAMPLE, data.size, float(street) - FRONT_GAP, PI, -1.0, out)
+	# All the shops face south: the south row has its back to the street.
 	_row(data, south, street + DevIsland.STREET_LANES + ROW_SAMPLE, port_x - 1,
-			float(street + DevIsland.STREET_LANES) + FRONT_GAP, 0.0, 1.0, out)
+			float(street + DevIsland.STREET_LANES) + FRONT_GAP, PI, 1.0, out)
 	return out
 
 
@@ -98,19 +105,25 @@ static func _row(data: CityData, order: Array, line: int, limit: int, front: flo
 		if not is_equal_approx(a["height"], b["height"]):
 			return a["height"] < b["height"]
 		return String(a["id"]) < String(b["id"]))
-	var total := GAP * float(order.size() - 1)
-	for s in order:
-		total += float(s["width"]) * CELLS_PER_METRE * float(SCALE.get(String(s["id"]).trim_suffix(UNLIT_SUFFIX), 1.0))
+	var total := GAP * float(order.size() - 1) + SLOT * float(order.size())
 	var avail := float(x1 - x0 + 1)
 	if total > avail:
 		push_warning("[Shops] the row (%.1f cells) is wider than the island (%.1f)" % [total, avail])
 	var x := float(x0) + avail * 0.5 - total * 0.5
 	for s in order:
-		var k := CELLS_PER_METRE * float(SCALE.get(String(s["id"]).trim_suffix(UNLIT_SUFFIX), 1.0))
+		var k := island_scale(s)
 		var w := float(s["width"]) * k
 		var dep := float(s["depth"]) * k
+		# Centred in the slot along the street; the back on the street side for the south row
+		# (the front side for the north row, as before): the slot depth is SLOT either way.
+		var z := front + back * dep * 0.5
 		out.append({
-			"id": s["id"], "at": Vector2(x + w * 0.5, front + back * dep * 0.5),
+			"id": s["id"], "at": Vector2(x + SLOT * 0.5, z),
 			"yaw": yaw, "height": float(s["height"]), "scale": k,
 		})
-		x += w + GAP
+		x += SLOT + GAP
+
+
+## Cells per metre of shop `s` ({"width", "depth"} in metres) on the development island.
+static func island_scale(s: Dictionary) -> float:
+	return FOOTPRINT / maxf(float(s["width"]), float(s["depth"]))
