@@ -8,5 +8,6 @@ if (-not (Test-Path "$repo\.godot\imported")) {
     & $GodotExe --headless --path $repo --import 2>&1 | Select-Object -Last 3
 }
 Write-Host "=== $Script ===" -ForegroundColor Cyan
-& $GodotExe --headless --path $repo --script $Script 2>&1 | Select-Object -Last 60
+& $GodotExe --headless --path $repo --script $Script
 Write-Host 'TEST DONE' -ForegroundColor Green
+

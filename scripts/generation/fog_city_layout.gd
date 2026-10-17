@@ -417,7 +417,7 @@ func _put_shop(p: Vector2, face: Vector2) -> void:
 	var half := _shop_size * 0.5
 	if not _land_box(p, half) or keep_out(p, maxf(half.x, half.y) + 0.3) or _near_extra(p, half.x + 0.5):
 		return
-	_items.append({"shop": CityShops.shop_id_at(int(p.x * 4.0), int(p.y * 4.0)), "at": p, "dir": face, "scale": _shop_scale(), "city": true})
+	_items.append({"shop": CityShops.shop_id_at(int(p.x * 4.0), int(p.y * 4.0)), "at": p, "dir": face, "scale": ShopSites.scale_of(CityShops.shop_id_at(int(p.x * 4.0), int(p.y * 4.0))), "city": true})
 	_rects.append(Rect2(p - half, half * 2.0))
 	_shops_left -= 1
 	_block_shops += 1
@@ -461,7 +461,7 @@ func _extra_shops() -> void:
 						break
 				if free and _land_box(p, half) and not keep_out(p, maxf(half.x, half.y) + 0.3) 						and not _near_extra(p, half.x + 0.5):
 					var face := _south_or_east(Vector2(0, 1) if p.y < r.get_center().y else Vector2(0, -1))
-					_items.append({"shop": CityShops.shop_id_at(int(p.x * 4.0), int(p.y * 4.0)), "at": p, "dir": face, "scale": _shop_scale(), "city": true})
+					_items.append({"shop": CityShops.shop_id_at(int(p.x * 4.0), int(p.y * 4.0)), "at": p, "dir": face, "scale": ShopSites.scale_of(CityShops.shop_id_at(int(p.x * 4.0), int(p.y * 4.0))), "city": true})
 					_rects.append(Rect2(p - half, _shop_size))
 					_stats["shops"] += 1
 					left -= 1
@@ -512,7 +512,7 @@ func _convert_to_shops() -> void:
 			for t in touched:
 				gone[t] = true
 			made.append({"shop": CityShops.shop_id_at(int(at.x * 4.0), int(at.y * 4.0)), "at": at, "dir": Vector2(1, 0) if east else Vector2(0, 1),
-					"scale": _shop_scale(), "city": true})
+					"scale": ShopSites.scale_of(CityShops.shop_id_at(int(at.x * 4.0), int(at.y * 4.0))), "city": true})
 			_stats["shops"] += 1
 			count += 1
 		pick = _farthest(cand, mind, gone, at)
@@ -558,7 +558,7 @@ func _south_or_east(face: Vector2) -> Vector2:
 
 
 func _shop_scale() -> float:
-	return ShopSites.CELLS_PER_METRE * float(ShopSites.SCALE.get(SHOP_ID, 1.0))
+	return ShopSites.scale_of(SHOP_ID)
 
 
 # --- Cars ----------------------------------------------------------------------------------------------------------

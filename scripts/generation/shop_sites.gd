@@ -23,8 +23,12 @@ const SCALE := {
 ## Every emplacement is a SLOT x SLOT square, so it takes the largest shop of the catalog
 ## (a shop chosen by a player later); a smaller shop stands in the middle of its slot, its
 ## front on the street side of the slot.
-const FOOTPRINT := 2.2
-const SLOT := 2.8
+const FOOTPRINT := 1.2
+const SLOT := 1.7
+## Shops are tall and narrow, like the Kenney shop building-c: the height of a shop is at least
+## TALL_RATIO times its footprint; a lower model is stretched upwards (at most MAX_STRETCH).
+const TALL_RATIO := 1.35
+const MAX_STRETCH := 2.6
 ## Empty cells between two neighbours in the row (the slots already hold the margins).
 const GAP := 0.0
 ## Empty cells between the street and the fronts of a row.
@@ -112,6 +116,7 @@ static func _row(data: CityData, order: Array, line: int, limit: int, front: flo
 	var x := float(x0) + avail * 0.5 - total * 0.5
 	for s in order:
 		var k := island_scale(s)
+		var st := stretch_for(float(s["width"]), float(s["depth"]), float(s["height"]))
 		var w := float(s["width"]) * k
 		var dep := float(s["depth"]) * k
 		# Centred in the slot along the street; the back on the street side for the south row
@@ -119,7 +124,7 @@ static func _row(data: CityData, order: Array, line: int, limit: int, front: flo
 		var z := front + back * dep * 0.5
 		out.append({
 			"id": s["id"], "at": Vector2(x + SLOT * 0.5, z),
-			"yaw": yaw, "height": float(s["height"]), "scale": k,
+			"yaw": yaw, "height": float(s["height"]), "scale": k, "stretch": st,
 		})
 		x += SLOT + GAP
 
@@ -127,3 +132,25 @@ static func _row(data: CityData, order: Array, line: int, limit: int, front: flo
 ## Cells per metre of shop `s` ({"width", "depth"} in metres) on the development island.
 static func island_scale(s: Dictionary) -> float:
 	return FOOTPRINT / maxf(float(s["width"]), float(s["depth"]))
+
+
+## Extra height factor that makes a shop of w x d x h metres tall (see TALL_RATIO).
+static func stretch_for(w: float, d: float, h: float) -> float:
+	var k := FOOTPRINT / maxf(w, d)
+	return clampf(FOOTPRINT * TALL_RATIO / maxf(h * k, 0.01), 1.0, MAX_STRETCH)
+
+
+## Cells per metre / height factor of catalog shop `id` wherever it stands (the city, the fog
+## island, the development island): one rule for every shop of the map.
+static func scale_of(id: String) -> float:
+	var e := MapShops.entry(id)
+	if e.is_empty():
+		return CELLS_PER_METRE
+	return FOOTPRINT / maxf(float(e["width"]), float(e["depth"]))
+
+
+static func stretch_of(id: String) -> float:
+	var e := MapShops.entry(id)
+	if e.is_empty():
+		return 1.0
+	return stretch_for(float(e["width"]), float(e["depth"]), float(e["height"]))

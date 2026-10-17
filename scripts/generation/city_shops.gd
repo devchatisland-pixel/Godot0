@@ -16,7 +16,6 @@ const OTHER_SHARE := 60
 ## Every shop id of the city, the main one first.
 const ALL_IDS := ["shop-general-orange-b-unlit", "shop-general-mini-unlit", "shop-flower-a-unlit", "shop-general-orange-a-unlit"]
 ## Absolute scale of the shop (cells per metre of its model): its normal size.
-const SHOP_SCALE := 0.34
 ## Zone -> number of shops.
 const QUOTA := {
 	Zone.COMMERCIAL: 40, Zone.SUBURBAN: 40, Zone.APARTMENT: 40, Zone.QUARTER: 80, Zone.POOR: 5,
@@ -92,7 +91,8 @@ static func apply(data: CityData) -> Dictionary:
 			data.b_facing[b] = (face + 2) % 4
 			var at := data.building_rect(b).position
 			data.b_model[b] = "shop:" + shop_id_at(at.x, at.y)
-			data.b_scale[b] = -SHOP_SCALE
+			data.b_scale[b] = -ShopSites.scale_of(String(data.b_model[b]).trim_prefix("shop:"))
+			data.b_stretch[b] = ShopSites.stretch_of(String(data.b_model[b]).trim_prefix("shop:"))
 			count += 1
 			# Next: the free lot farthest from the shops of this zone (vacant lots get a bonus).
 			var c := centre[pick]
@@ -165,7 +165,8 @@ static func _on_free_ground(data: CityData, zone: int, want: int) -> int:
 		var b := data.add_building(rect, Kind.SHOP, (face + 2) % 4,
 				CityTypes.hash2(rect.position.x, rect.position.y, 5252), 0.3)
 		data.b_model[b] = "shop:" + shop_id_at(rect.position.x, rect.position.y)
-		data.b_scale[b] = -SHOP_SCALE
+		data.b_scale[b] = -ShopSites.scale_of(String(data.b_model[b]).trim_prefix("shop:"))
+		data.b_stretch[b] = ShopSites.stretch_of(String(data.b_model[b]).trim_prefix("shop:"))
 		for y in range(rect.position.y, rect.end.y):
 			for x in range(rect.position.x, rect.end.x):
 				used[y * n + x] = 1

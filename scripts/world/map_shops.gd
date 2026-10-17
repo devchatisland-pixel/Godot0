@@ -68,7 +68,8 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		var s: float = p.get("scale", ShopSites.CELLS_PER_METRE)
 		var mi := MeshInstance3D.new()
 		mi.mesh = lib.meshes[mid]
-		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3.ONE * s),
+		var st: float = p.get("stretch", 1.0)
+		mi.transform = Transform3D(Basis(Vector3.UP, p["yaw"]) * Basis.from_scale(Vector3(s, s * st, s)),
 				Vector3(at.x, 0.0, at.y))
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.name = String(p["id"])
@@ -85,7 +86,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 		label.pixel_size = 0.012
 		label.font_size = 40
 		label.outline_size = 12
-		label.position = Vector3(at.x, p["height"] * s + 0.6, at.y)
+		label.position = Vector3(at.x, p["height"] * s * st + 0.6, at.y)
 		label.name = "Label_" + String(p["id"])
 		add_child(label)
 		placed += 1
