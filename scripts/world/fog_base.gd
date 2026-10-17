@@ -88,6 +88,7 @@ func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
 		var id := -1
 		var scale: float = p.get("scale", 1.0)
 		var turn := 0.0
+		var stretch := 1.0
 		var label := ["Military model", "MILITARY"]
 		var note := "military base of the fog island"
 		if p.get("landing_zone", false):
@@ -107,6 +108,7 @@ func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
 			if id >= 0:
 				NightWindows.light_own(lib.meshes[id])
 			scale = float(p["scale"])
+			stretch = ShopSites.stretch_of(String(p["shop"]))
 			turn = PI # the shop models face -Z
 			var entry: Dictionary = MapShops.entry(p["shop"])
 			label = [entry.get("name", p["shop"]), "SHOP"]
@@ -146,6 +148,8 @@ func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
 			xform = Transform3D(Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3.ONE * scale), ground)
 		else:
 			xform = _standing(lib, id, ground, yaw, scale)
+		if stretch != 1.0:
+			xform.basis = xform.basis * Basis.from_scale(Vector3(1.0, stretch, 1.0))
 		# Storeys piled up (the block storey of the fog_city pack).
 		for k in int(p.get("stack", 1)):
 			var up := Transform3D(Basis(), Vector3(0, box.size.y * scale * k, 0)) * xform

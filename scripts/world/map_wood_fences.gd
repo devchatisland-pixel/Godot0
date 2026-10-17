@@ -24,7 +24,6 @@ const GATE := 1.2
 ## The candy shops: id, absolute scale of the ones of the city, and the room left round a shop.
 const SHOP_ID := "shop-general-orange-b-unlit"
 const DEV_SHOP_ID := "shop-candy-b"
-const SHOP_SCALE := 0.34
 const SPOT_PAD := 0.45
 ## The highway fences stand this far outside the edge of the road, and keep this far from a
 ## crossing highway.
@@ -89,7 +88,7 @@ func _candy_shops(data: CityData, batch: _Batch) -> void:
 			continue
 		var r := data.building_rect(b)
 		# b_facing is turned half way round: the front of the model is -Z (CityShops).
-		_spot(data, batch, Vector2(r.get_center()), (int(data.b_facing[b]) + 2) % 4, SHOP_SCALE, true, model.trim_prefix("shop:"))
+		_spot(data, batch, Vector2(r.get_center()), (int(data.b_facing[b]) + 2) % 4, ShopSites.scale_of(model.trim_prefix("shop:")), true, model.trim_prefix("shop:"))
 	var catalog := MapShops.catalog()
 	for p in ShopSites.plan(data, catalog):
 		if String(p["id"]).begins_with(DEV_SHOP_ID):
