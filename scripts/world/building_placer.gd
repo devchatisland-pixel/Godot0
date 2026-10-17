@@ -311,7 +311,7 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	if boost != 1.0:
 		scale = maxf(scale, 1.0) * boost # not limited by the lot: the house may overhang
 	scale = _sized(scale, data.b_scale[i])
-	var push := 0.25 if kind == Kind.HOUSE else 0.85
+	var push := 1.0 # up to the road: the front of every building touches it (FaceRoads)
 	if CityTypes.is_service(kind):
 		push = 0.0
 	var placed := _fit(lib, id, r, facing, scale, stretch, push, false)
