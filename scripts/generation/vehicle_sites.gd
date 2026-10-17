@@ -343,7 +343,7 @@ func _farm_extras() -> void:
 		var pa := _d.building_rect(a).position
 		var pb := _d.building_rect(b).position
 		return CityTypes.hash2(pa.x, pa.y, 53) < CityTypes.hash2(pb.x, pb.y, 53))
-	var ids := ["p54_21_harvester_olive", "p54_26_pickup_40s_red", "p54_42_forwarder_green",
+	var ids := ["p54_21_harvester_olive", "p54_26_pickup_40s_red", "p54_41_loader_claw_yellow",
 			"p54_43_tractor_vintage_trailer"]
 	var k := 0
 	for b in fields:
@@ -371,7 +371,7 @@ func _crane_tanker() -> void:
 	var crane := _nearest_kind(Kind.CRANE, QUARTER_CRANE)
 	if crane < 0:
 		return
-	var id := "p54_10_tanker_water"
+	var id := "p54_20_semi_cabover_yellow"
 	var why := "next to the construction crane"
 	var r := _d.building_rect(crane)
 	var best := Vector2i(-1, -1)
@@ -393,7 +393,7 @@ func _crane_tanker() -> void:
 
 ## The tank the fuel tanker of the port parks beside, and the shed the water tanker parks in front of.
 const PORT_LONG_TANK := "port_tanks.glb: tank_long"
-const PORT_LOADBAY := "port_sheds.glb: shed_loadbay"
+const PORT_LOADBAY := "shed_trailer.glb: shed_trailer"
 
 
 ## A fuel tanker next to the oil barrels of the port: the barrel yard (INDUSTRIAL_YARD whose
@@ -458,14 +458,14 @@ func industrial_zones() -> Array[Dictionary]:
 
 
 ## The port shed the mobile crane truck parks beside (PortRework gives it its lot).
-const CRANE_TRUCK_SHED := "port_sheds.glb: shed_generic_3"
+const CRANE_TRUCK_SHED := "shed_trailer.glb: shed_trailer"
 
 
 ## A mobile crane truck in the biggest industrial zone (parked beside CRANE_TRUCK_SHED when
 ## it stands) and a grapple loader in the second.
 func _industrial_zones() -> void:
 	var zones := industrial_zones()
-	var ids := ["p54_35_crane_truck_mobile", "p54_38_loader_grapple_yellow"]
+	var ids := ["p54_35_crane_truck_mobile", "p54_41_loader_claw_yellow"]
 	for k in mini(ids.size(), zones.size()):
 		var z: Dictionary = zones[k]
 		if k == 0 and _beside_model(ids[k], CRANE_TRUCK_SHED, "parked beside a port shed"):
@@ -516,7 +516,7 @@ func _container_tanker() -> void:
 	# First choice, by hand: parked in front of the loading bay shed of the port.
 	for b in _d.building_count():
 		if _d.b_kind[b] != Kind.EMPTY and _d.b_model.get(b, "") == PORT_LOADBAY:
-			_in_front("p54_10_tanker_water", b, "in front of the loading bay of the port")
+			_in_front("p54_20_semi_cabover_yellow", b, "in front of the loading bay of the port")
 			return
 	var zones := industrial_zones()
 	var anchor := Vector2(_d.size, _d.size) * 0.5
@@ -529,7 +529,7 @@ func _container_tanker() -> void:
 	yards.sort_custom(func(a: Rect2i, b: Rect2i) -> bool:
 		return Vector2(a.get_center()).distance_to(anchor) < Vector2(b.get_center()).distance_to(anchor))
 	for r in yards:
-		if _beside("p54_10_tanker_water", r, "next to the container yard", 17, 0.6, 2.0):
+		if _beside("p54_20_semi_cabover_yellow", r, "next to the container yard", 17, 0.6, 2.0):
 			return
 
 
@@ -722,7 +722,7 @@ func _bridge_humvee() -> void:
 ## starts at that cell, "heading" turns its nose that way.
 const HAND_CHANGES := [
 	{"id": "p54_21_harvester_olive", "near": Vector2(280.9, 249.0), "field": Vector2i(267, 266)},
-	{"id": "p54_42_forwarder_green", "near": Vector2(263.5, 241.0), "heading": Vector2(1, 0)},
+	{"id": "p54_41_loader_claw_yellow", "near": Vector2(263.5, 241.0), "heading": Vector2(1, 0)},
 	{"id": "p54_43_tractor_vintage_trailer", "near": Vector2(277.0, 234.5), "heading": Vector2(0, 1)},
 	# The red pickup of the field at (257, 282) faces south.
 	{"id": "p54_26_pickup_40s_red", "near": Vector2(257.5, 282.5), "heading": Vector2(0, 1)},

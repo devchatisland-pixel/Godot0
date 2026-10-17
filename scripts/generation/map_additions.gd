@@ -26,9 +26,9 @@ const NEON_TOWER_NEAR := Vector2i(134, 176)
 
 ## Models of the ghetto: library name, footprint (x, z) in cells, smallest and largest scale.
 const GHETTO := [
-	["urban.glb: tower0", Vector2(1.75, 1.8), 0.7, 1.15],
-	["urban.glb: tower5", Vector2(3.6, 1.45), 0.7, 1.15],
-	["urban.glb: tower6", Vector2(1.68, 3.4), 0.7, 1.15],
+	["tower0.glb: tower0", Vector2(1.75, 1.8), 0.7, 1.15],
+	["tower0.glb: tower0", Vector2(3.6, 1.45), 0.7, 1.15],
+	["tower0.glb: tower0", Vector2(1.68, 3.4), 0.7, 1.15],
 	["ny_street.glb: ny_street_01_b", Vector2(1.6, 1.18), 1.0, 1.7],
 	["ny_street.glb: ny_street_02_b", Vector2(1.6, 0.92), 1.0, 1.7],
 	["ny_street.glb: ny_street_03_b", Vector2(1.6, 1.1), 1.0, 1.7],
@@ -36,7 +36,7 @@ const GHETTO := [
 	["ny_street.glb: ny_street_05_b", Vector2(1.6, 1.14), 1.0, 1.7],
 	["ny_street.glb: ny_street_06_b", Vector2(1.6, 1.31), 1.0, 1.7],
 	["ny_street.glb: ny_street_07_b", Vector2(1.6, 1.03), 1.0, 1.7],
-	["ny_street.glb: ny_street_08_b", Vector2(1.6, 1.04), 1.0, 1.7],
+	["ny_street_08_b.glb: ny_street_08_b", Vector2(1.6, 1.04), 1.0, 1.7],
 	["ny_street.glb: ny_street_09_b", Vector2(1.6, 1.44), 1.0, 1.7],
 	["ny_street.glb: ny_street_10_b", Vector2(1.6, 0.89), 1.0, 1.7],
 ]

@@ -152,13 +152,13 @@ const VEHICLES := [
 	["p54_11_ambulance", Vector2(112, 95.8), Vector2(-1, 0)],
 	["p54_43_tractor_vintage_trailer", Vector2(110, 51.0), Vector2(1, 0)],
 	["p54_21_harvester_olive", Vector2(124, 59.2), Vector2(-1, 0)],
-	["p54_42_forwarder_green", Vector2(132, 52.4), Vector2(0, 1)],
+	["p54_41_loader_claw_yellow", Vector2(132, 52.4), Vector2(0, 1)],
 	[HUMVEE, Vector2(145.0, 111.2), Vector2(1, 0)],   # at the gate of the plant
 	[HUMVEE, Vector2(36, 96.7), Vector2(1, 0)],       # on the avenue, past the blockade
 ]
 const INDUSTRY_VEHICLES := [
-	["p54_14_semi_longnose_red", Vector2(88.6, 104), Vector2(0, -1)],
-	["p54_14_semi_longnose_red", Vector2(87.4, 121), Vector2(0, 1)],
+	["p54_20_semi_cabover_yellow", Vector2(88.6, 104), Vector2(0, -1)],
+	["p54_20_semi_cabover_yellow", Vector2(87.4, 121), Vector2(0, 1)],
 	["p54_20_semi_cabover_yellow", Vector2(88.6, 118.4), Vector2(0, -1)],
 	["p54_07_box_truck_delivery_yellow", Vector2(87.4, 125.2), Vector2(0, 1)],
 	["p54_15_dump_truck_yellow", Vector2(80, 115.6), Vector2(1, 0)],

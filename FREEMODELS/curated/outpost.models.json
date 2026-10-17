@@ -3,7 +3,8 @@
 	"models": [
 		{
 			"cat": "OUTPOST",
-			"node": "barn_a"
+			"node": "barn_a",
+			"file": "barn_a.glb"
 		},
 		{
 			"cat": "OUTPOST",
@@ -15,11 +16,13 @@
 		},
 		{
 			"cat": "OUTPOST",
-			"node": "ranch_b"
+			"node": "ranch_b",
+			"file": "ranch_b.glb"
 		},
 		{
 			"cat": "OUTPOST",
-			"node": "ranch_c"
+			"node": "ranch_c",
+			"file": "ranch_c.glb"
 		},
 		{
 			"cat": "OUTPOST",
@@ -27,7 +30,8 @@
 		},
 		{
 			"cat": "OUTPOST",
-			"node": "barrack_b"
+			"node": "ranch_c",
+			"file": "ranch_c.glb"
 		},
 		{
 			"cat": "OUTPOST",
@@ -39,11 +43,13 @@
 		},
 		{
 			"cat": "OUTPOST",
-			"node": "trailer_b"
+			"node": "trailer_b",
+			"file": "trailer_b.glb"
 		},
 		{
 			"cat": "OUTPOST",
-			"node": "water_tank"
+			"node": "water_tank",
+			"file": "water_tank.glb"
 		},
 		{
 			"cat": "OUTPOST",

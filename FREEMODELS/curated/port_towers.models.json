@@ -3,15 +3,18 @@
 	"models": [
 		{
 			"cat": "IND_TOWER",
-			"node": "tower_crane"
+			"node": "tower_crane",
+			"file": "tower_crane.glb"
 		},
 		{
 			"cat": "IND_TOWER",
-			"node": "tower_radio"
+			"node": "tower_radio",
+			"file": "tower_radio.glb"
 		},
 		{
 			"cat": "IND_TOWER",
-			"node": "tower_water"
+			"node": "tower_water",
+			"file": "tower_water.glb"
 		},
 		{
 			"cat": "IND_TOWER",
@@ -31,7 +34,8 @@
 		},
 		{
 			"cat": "IND_TOWER",
-			"node": "tower_silo"
+			"node": "tank_big",
+			"file": "tank_big.glb"
 		},
 		{
 			"cat": "IND_TOWER",

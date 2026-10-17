@@ -3,7 +3,8 @@
 	"models": [
 		{
 			"cat": "CONCERT_STAGE",
-			"node": "concert_stage"
+			"node": "concert_stage",
+			"file": "concert_stage.glb"
 		},
 		{
 			"cat": "FLOODLIGHT",

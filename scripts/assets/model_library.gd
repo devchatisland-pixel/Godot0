@@ -39,6 +39,8 @@ var _fetched := {}
 # Curated pack currently open (packs hold many buildings, opened once each).
 var _pack_path := ""
 var _pack_root: Node
+# Meshes already made ("path|node" -> Mesh): a model drawn by several slots is in memory once.
+var _made := {}
 
 
 func begin(cfg: CityConfig) -> void:
@@ -63,7 +65,11 @@ func load_next(count: int) -> float:
 			break
 		var e: Dictionary = _pending.pop_front()
 		_request_ahead()
-		var mesh := _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
+		var key := "%s|%s" % [e["path"], e.get("node", "")]
+		var mesh: Mesh = _made.get(key)
+		if mesh == null:
+			mesh = _load_pack_mesh(e["path"], e["node"]) if e.has("node") else _load_mesh(e["path"])
+			_made[key] = mesh
 		if mesh == null:
 			push_warning("[Models] could not load %s %s" % [e["path"], e.get("node", "")])
 			continue

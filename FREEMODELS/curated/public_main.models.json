@@ -3,11 +3,13 @@
 	"models": [
 		{
 			"cat": "SCHOOL_MAIN",
-			"node": "school"
+			"node": "school",
+			"file": "school.glb"
 		},
 		{
 			"cat": "GAS_STATION",
-			"node": "gas_station"
+			"node": "gas_station",
+			"file": "gas_station.glb"
 		}
 	]
 }

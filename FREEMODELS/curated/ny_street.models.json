@@ -31,7 +31,8 @@
 		},
 		{
 			"cat": "NY_STREET",
-			"node": "ny_street_08_b"
+			"node": "ny_street_08_b",
+			"file": "ny_street_08_b.glb"
 		},
 		{
 			"cat": "NY_STREET",

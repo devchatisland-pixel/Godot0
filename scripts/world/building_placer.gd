@@ -83,6 +83,8 @@ const KIND_SCALE := {Kind.TELECOM_TOWER: 2.0, Kind.MOUNTAIN: 1.5, Kind.GRAVE: 1.
 const KIND_LIFT := {Kind.BALLOON: 8.0}
 ## Models drawn bigger than modelled (by model name), as far as the lot allows.
 const MODEL_BOOST := {"free_mini.glb: m7": 1.15}
+## Models drawn this much smaller than they would fit their lot.
+const MODEL_SHRINK := {"museum_hall.glb: museum_hall": 0.75}
 ## The business pack shop is drawn like an office (0.8 to 1.15 of its size) whatever the kind of
 ## the building, on the east side (a restaurant of that model was drawn much bigger).
 const BIZ_SHOP_MODEL := "business.glb: shop"
@@ -310,6 +312,7 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	var boost: float = MODEL_BOOST.get(lib.model_name(id), 1.0)
 	if boost != 1.0:
 		scale = maxf(scale, 1.0) * boost # not limited by the lot: the house may overhang
+	scale *= MODEL_SHRINK.get(lib.model_name(id), 1.0)
 	scale = _sized(scale, data.b_scale[i])
 	var push := 1.0 # up to the road: the front of every building touches it (FaceRoads)
 	if CityTypes.is_service(kind):
