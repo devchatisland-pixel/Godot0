@@ -102,13 +102,13 @@ const ROAD_TILES := {
 
 const MODEL_EXTENSIONS := ["glb", "gltf"]
 
-## Single model files whose slot draws a curated model instead (path -> [file, node]); the slot
+## Single model files whose slot draws another model instead (path -> [file, node or ""]); the slot
 ## stays in the list even once the file is deleted, so the city keeps its layout.
 const FILE_SWAPS := {
 	"res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-f.glb":
-		["res://FREEMODELS/curated/bank_min.glb", "bank_minimalist"],
+		["res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-n.glb", ""],
 	"res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-l.glb":
-		["res://FREEMODELS/curated/bank_min.glb", "bank_minimalist"],
+		["res://FREEMODELS/kenney_city-kit-suburban_20/Models/GLB format/building-type-s.glb", ""],
 }
 
 ## Each entry: {path, cat, mask} and, for a building inside a pack, {node}.
@@ -138,7 +138,8 @@ func scan(root: String) -> void:
 			continue
 		if FILE_SWAPS.has(path):
 			info["path"] = FILE_SWAPS[path][0]
-			info["node"] = FILE_SWAPS[path][1]
+			if FILE_SWAPS[path][1] != "":
+				info["node"] = FILE_SWAPS[path][1]
 		entries.append(info)
 
 
