@@ -20,7 +20,8 @@ const DELETED := [[474, "CAFE"], [440, "RESTAURANT"]]
 ## [building number, model it had, model it gets].
 const MODEL_SWAPS := [[591, "shop:shop-general-orange-a-unlit", "business.glb: shop"]]
 ## Shops of the catalog drawn with the business pack shop instead (after FaceRoads).
-const TO_BUSINESS_SHOP := ["shop:shop-general-mini-unlit", "shop:shop-flower-a-unlit", "shop:shop-general-orange-a-unlit"]
+const TO_BUSINESS_SHOP := ["shop:shop-general-mini-unlit", "shop:shop-flower-a-unlit", "shop:shop-general-orange-a-unlit",
+	"shop:shop-general-orange-b-unlit"]
 const BUSINESS_SHOP := "business.glb: shop"
 ## [building number, its Kind name, building number of the copy]: the building becomes a copy of the other
 ## one (kind, model, size factors), facing COPY_FACING, and so does the original.

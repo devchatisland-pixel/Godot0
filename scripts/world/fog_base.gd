@@ -106,14 +106,21 @@ func _base(data: CityData, lib: ModelLibrary, batch: InstanceBatch) -> int:
 			label = [MapVehicles.entry(p["veh"]).get("name", p["veh"]), "VEHICLE"]
 			note = "on the fog island"
 		elif p.has("shop"):
-			id = MapShops.mesh_id(lib, p["shop"])
-			if id >= 0:
-				NightWindows.light_own(lib.meshes[id])
-			scale = float(p["scale"])
-			stretch = ShopSites.stretch_of(String(p["shop"]))
-			turn = PI # the shop models face -Z
-			var entry: Dictionary = MapShops.entry(p["shop"])
-			label = [entry.get("name", p["shop"]), "SHOP"]
+			if RemovedModels.SHOPS_AS_BUSINESS.has(String(p["shop"])):
+				# Drawn as the business pack shop (Kenney size, its front is +Z).
+				id = lib.names.find(RemovedModels.BUSINESS_SHOP)
+				scale = 1.0
+				turn = 0.0
+				label = ["Shop", "SHOP"]
+			else:
+				id = MapShops.mesh_id(lib, p["shop"])
+				if id >= 0:
+					NightWindows.light_own(lib.meshes[id])
+				scale = float(p["scale"])
+				stretch = ShopSites.stretch_of(String(p["shop"]))
+				turn = PI # the shop models face -Z
+				var entry: Dictionary = MapShops.entry(p["shop"])
+				label = [entry.get("name", p["shop"]), "SHOP"]
 			note = "shops of the city of the fog island"
 		elif p.has("named"):
 			id = lib.named_id(p["named"])

@@ -210,8 +210,8 @@ static func _pick_model_raw(data: CityData, lib: ModelLibrary, i: int, facing_ov
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
 	var seed: int = data.b_seed[i]
 	var density: float = data.b_height[i]
-	var candidates := ModelPools.candidates(data, lib, i, kind)
-	var wanted: String = data.b_model.get(i, "")
+	var candidates := RemovedModels.swap_ids(lib, ModelPools.candidates(data, lib, i, kind))
+	var wanted: String = RemovedModels.replacement(data.b_model.get(i, ""))
 	if wanted.begins_with("shop:") and lib.named_id(wanted) < 0:
 		# A shop of the catalog (res://shops) standing in the city: loaded the first time it is needed.
 		var sid := MapShops.mesh_id(lib, wanted.substr(5))
