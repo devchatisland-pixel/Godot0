@@ -1,9 +1,9 @@
 # Runs one headless test script with the local Godot: & .\tools\run_test.ps1 res://tests/test_shops.gd
-param([Parameter(Mandatory)] [string] $Script, [switch] $Import)
+param([Parameter(Mandatory)] [string] $Script)
 $repo = Split-Path $PSScriptRoot -Parent
 . "F:\Godot0-city\tools\setup-local-godot.ps1"
 Set-Location $repo
-if ($Import -or -not (Test-Path "$repo\.godot\imported")) {
+if (-not (Test-Path "$repo\.godot\imported")) {
     Write-Host '=== importing assets ===' -ForegroundColor Cyan
     & $GodotExe --headless --path $repo --import 2>&1 | Select-Object -Last 3
 }
