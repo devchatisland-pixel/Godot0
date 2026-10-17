@@ -138,6 +138,8 @@ REPLACE = [
     (("port_halls.glb", "hall_warehouse_4"), ("port_halls.glb", "hall_factory_1")),
     (("port_tanks.glb", "tank_rusty"), ("port_tanks.glb", "tank_oil")),
     (("port_towers.glb", "tower_silo"), ("port_tanks.glb", "tank_big")),
+    (("street.glb", "shop_coffee"), ("business.glb", "shop")),
+    (("free_mini.glb", "m10"), ("business.glb", "shop")),
 ]
 
 # Pack -> models taken out into their own file. lighthouse_club.glb keeps the club itself
