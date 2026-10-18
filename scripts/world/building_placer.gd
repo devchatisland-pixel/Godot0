@@ -131,8 +131,8 @@ static func place(data: CityData, lib: ModelLibrary, i: int, batch: InstanceBatc
 			BuildingExtras.place_filler(data, lib, i, kind, batch)
 		return
 	var pick := _pick_model(data, lib, i)
-	if pick.is_empty():
-		return
+	if pick.is_empty() or lib.is_removed(pick["id"]):
+		return # no model, or taken off the map (ModelEdits)
 	var xform: Transform3D = pick["xform"]
 	if far:
 		var box := xform * lib.bounds[pick["id"]]

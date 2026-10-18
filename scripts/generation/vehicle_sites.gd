@@ -38,7 +38,11 @@ static func plan(data: CityData, lengths_m: Dictionary = {}) -> Array[Dictionary
 	for id in lengths_m:
 		s.lengths[id] = float(lengths_m[id]) * CELLS_PER_METRE
 	s._run()
-	return s.out
+	var kept: Array[Dictionary] = []
+	for v in s.out:
+		if not ModelEdits.vehicle_removed(str(v.get("id", ""))):
+			kept.append(v)
+	return kept
 
 
 func _run() -> void:

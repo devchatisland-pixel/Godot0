@@ -148,6 +148,8 @@ static func _add(out: Array[Dictionary], cat: int, at: Vector2, dir: Vector2, sc
 
 ## A vehicle of the catalog (res://vehicles).
 static func _veh(out: Array[Dictionary], id: String, at: Vector2, dir: Vector2) -> void:
+	if ModelEdits.vehicle_removed(id):
+		return
 	out.append({"veh": id, "at": at, "dir": dir, "scale": VehicleSites.size_factor(id)})
 
 

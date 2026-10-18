@@ -20,12 +20,16 @@ var named := {}
 ## and its category (-1 for procedural models).
 var names := PackedStringArray()
 var cats := PackedInt32Array()
+## Ids of the models taken off the map (ModelEdits.REMOVED): never drawn, mesh data freed.
+var removed := {}
 
 ## The shipping containers of the yards (shops/models, from the "Low-poly Container" pack),
 ## loaded as named meshes "yardbox:NN" when the packs are done.
 const YARD_CONTAINERS := ["container-01", "container-02", "container-04", "container-09", "container-10"]
 
 var _pending: Array[Dictionary] = []
+## Ids of the models drawn as another one (ModelEdits.replaced), swapped once everything is loaded.
+var _swaps: Array[int] = []
 var _yard_loaded := false
 var _total := 0
 # Curated pack currently open (packs hold many buildings, opened once each).
@@ -56,16 +60,41 @@ func load_next(count: int) -> float:
 		var id := add_mesh(mesh, e["mask"], _label(e))
 		var cat: int = e["cat"]
 		cats[id] = cat
+		if ModelEdits.REMOVED.has(names[id]):
+			removed[id] = true
+			var husk := ArrayMesh.new() # no data, same size: the lot choice does not change
+			husk.custom_aabb = mesh.get_aabb()
+			meshes[id] = husk
+		elif ModelEdits.replaced().has(names[id]):
+			_swaps.append(id)
 		if not by_cat.has(cat):
 			by_cat[cat] = PackedInt32Array()
 		by_cat[cat].append(id)
 	if _pending.is_empty():
 		_close_pack()
+		_apply_swaps()
 		if not _yard_loaded:
 			_yard_loaded = true
 			for c: String in YARD_CONTAINERS:
 				load_named("yardbox:" + c.trim_prefix("container-"), "res://shops/models/%s.glb" % c)
 	return 1.0 - float(_pending.size()) / float(_total)
+
+
+## A replaced model keeps its label and category but takes the mesh (and size) of its replacement.
+func _apply_swaps() -> void:
+	var map := ModelEdits.replaced()
+	for id in _swaps:
+		var target := names.find(map[names[id]])
+		if target < 0 or removed.has(target):
+			push_warning("[Models] no replacement %s for %s" % [map[names[id]], names[id]])
+			continue
+		meshes[id] = meshes[target]
+		bounds[id] = bounds[target]
+	_swaps.clear()
+
+
+func is_removed(id: int) -> bool:
+	return removed.has(id)
 
 
 func add_mesh(mesh: Mesh, mask: int = 0, label: String = "") -> int:
