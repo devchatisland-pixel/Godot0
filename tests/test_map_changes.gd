@@ -51,7 +51,6 @@ func _init() -> void:
 		street = street and data.road[data.idx(x, y)] == CityTypes.ROAD_STREET
 	_check(street, "a street runs from the highway to the stadium")
 	_check((data.road[data.idx(x, MapChanges.STADIUM_ROAD_FROM_Y - 1)] & 3) == CityTypes.ROAD_AVENUE, "the street starts on the highway")
-	_check(_count_in(data, Kind.BALLOON, r) >= 1, "the balloon floats over the new stadium")
 
 	# The main hospital stands in the old stadium block, the old place of the hospital is built on.
 	var hosp := -1
@@ -105,6 +104,20 @@ func _init() -> void:
 	for m in [MapChanges.EIFFEL_MODEL, MapChanges.QUARTER_MODEL, MapChanges.FACTORY_MODEL, MapChanges.BIG_TANK_MODEL,
 			MapChanges.CRANE_MODEL, "port_tanks.glb: tank_oil", MapChanges.RADIO_TOWER, MapChanges.NY_TIMES]:
 		_check(lib.names.find(m) >= 0, "library has " + m)
+
+	# Third wave.
+	for d in MapChanges.FOURTH_DELETED:
+		_check(_at(data, Kind[d[0]], d[1]) < 0, "deleted: %s at %s" % [d[0], d[1]])
+	var hall := _at(data, Kind.CITY_HALL, MapChanges.CITY_HALL_LOT.position)
+	_check(hall >= 0 and data.is_road(MapChanges.CITY_HALL_LOT.end.x, MapChanges.CITY_HALL_LOT.position.y), "city hall touches the avenue")
+	var house := _at(data, Kind.HOUSE, MapChanges.NO_NEON_HOUSE)
+	_check(house >= 0 and data.b_sign[house] == 0, "no neon on the house at 190,148")
+	var left := 0
+	for b in data.building_count():
+		if MapChanges.VEHICLE_KINDS.has(data.b_kind[b]):
+			left += 1
+	_check(left == 0 and plan.is_empty(), "no vehicle, balloon, fire truck or tank left (%d lots, %d planned)" % [left, plan.size()])
+	_check(lib.names.find(MapChanges.SHOP_MODEL) >= 0, "library has " + MapChanges.SHOP_MODEL)
 
 	print("TEST %s" % ("FAILED" if _fails > 0 else "PASSED"))
 	quit(1 if _fails > 0 else 0)

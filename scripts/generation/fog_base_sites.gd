@@ -142,7 +142,13 @@ static func plan() -> Array[Dictionary]:
 	return out
 
 
+## Categories of army vehicles and jets (taken off the map with the other vehicles).
+const VEHICLE_CATS: Array[int] = [Cat.APC_BMP1, Cat.APC_BRDM, Cat.APC_EE11, Cat.JET_F14, Cat.TANK_T55, Cat.SAM_NASAMS]
+
+
 static func _add(out: Array[Dictionary], cat: int, at: Vector2, dir: Vector2, scale: float = 1.0) -> void:
+	if ModelEdits.NO_VEHICLES and VEHICLE_CATS.has(cat):
+		return
 	out.append({"cat": cat, "at": at, "dir": dir, "scale": scale})
 
 

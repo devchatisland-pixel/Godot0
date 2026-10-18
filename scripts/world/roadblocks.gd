@@ -20,17 +20,21 @@ const WEST_BARRIER_HEIGHT := 0.5
 
 
 func build(data: CityData, lib: ModelLibrary) -> void:
+	# No police car and no tank stands at the roadblocks (ModelEdits.NO_VEHICLES).
+	var vehicles := not ModelEdits.NO_VEHICLES
 	if data.bridge.x >= 0:
 		var x := data.bridge.x - EAST_BACK
 		_block(lib, Cat.ROADBLOCK_A, x, data.bridge.y, true, true)
-		_roadblock_cars(lib, x, data.bridge.y)
-		# One more cruiser parked beside the road, before the barriers.
-		_police_car(lib, x, data.bridge.y, 2.7)
-		_tanks_facing_bridge(lib, x, data.bridge.y)
+		if vehicles:
+			_roadblock_cars(lib, x, data.bridge.y)
+			# One more cruiser parked beside the road, before the barriers.
+			_police_car(lib, x, data.bridge.y, 2.7)
+			_tanks_facing_bridge(lib, x, data.bridge.y)
 	if data.west_bridge.x >= 0:
 		var x := data.west_bridge.x + WEST_BACK
 		_block(lib, Cat.ROADBLOCK_B, x, data.west_bridge.z, false)
-		_police_car(lib, x, data.west_bridge.z, 2.7)
+		if vehicles:
+			_police_car(lib, x, data.west_bridge.z, 2.7)
 
 
 ## A line of barriers across the three lanes of the row `row` at column `x`.

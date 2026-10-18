@@ -55,8 +55,14 @@ static func replaced() -> Dictionary:
 	return out
 
 
+## Every vehicle is taken off the map: the catalog vehicles, the cars and tanks of the roadblocks, the
+## army vehicles, jets and carriers of the fog island and the airbase (MapChanges clears the balloons,
+## the fire truck and the tank lots).
+const NO_VEHICLES := true
+
+
 static func vehicle_removed(id: String) -> bool:
-	return REMOVED_VEHICLES.has(id)
+	return NO_VEHICLES or REMOVED_VEHICLES.has(id)
 
 
 ## Vehicles taken off the map where they stand: catalog id and the cell they were planned at

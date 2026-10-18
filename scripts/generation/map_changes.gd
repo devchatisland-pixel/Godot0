@@ -73,6 +73,7 @@ static func apply(data: CityData) -> Dictionary:
 	report["jail"] = _clear_jail_ground(data)
 	report["second"] = _second_wave(data)
 	report["third"] = _third_wave(data)
+	report["fourth"] = _fourth_wave(data)
 	return report
 
 
@@ -619,3 +620,48 @@ static func _move_billboard(data: CityData) -> int:
 		for x in range(dest.position.x, dest.end.x):
 			data.zone[data.idx(x, y)] = Zone.SUBURBAN
 	return 1
+
+
+# --- Fourth wave: deletions, models, city hall, no vehicles ------------------------------------------
+
+const FOURTH_DELETED := [
+	["BILLBOARD", Vector2i(239, 222)],          # B-01712
+	["FIRE_STATION", Vector2i(220, 222)],       # B-00828
+	["INDUSTRIAL", Vector2i(206, 231)],         # B-01793 (hall_warehouse_5)
+]
+## Drawn as the shop B-00474 (building-h): the apartment B-00047 and the offices B-00519 and B-00528.
+const SHOP_MODEL := "building-h.glb"
+const SHOP_LIKE := [["APARTMENT", Vector2i(138, 228)], ["OFFICE", Vector2i(199, 196)], ["OFFICE", Vector2i(198, 215)]]
+## The neon on the house B-00341 is taken away.
+const NO_NEON_HOUSE := Vector2i(190, 148)
+## The city hall B-00799 moves east to touch the avenue in front of it (no parking lot between).
+const CITY_HALL_AT := Vector2i(167, 182)
+const CITY_HALL_LOT := Rect2i(171, 182, 3, 5)
+## Kinds that are vehicles or float: no balloon, no fire truck, no tank is left.
+const VEHICLE_KINDS: Array[int] = [Kind.BALLOON, Kind.FIRE_TRUCK, Kind.TANK]
+
+
+static func _fourth_wave(data: CityData) -> Dictionary:
+	var n := {}
+	for d in FOURTH_DELETED:
+		var b := _find(data, d[0], d[1])
+		if b >= 0:
+			_clear(data, b)
+	for t in SHOP_LIKE:
+		var b := _find(data, t[0], t[1])
+		if b >= 0:
+			data.b_model[b] = SHOP_MODEL
+	var house := _find(data, "HOUSE", NO_NEON_HOUSE)
+	if house >= 0:
+		data.b_sign[house] = 0
+		data.b_more_signs.erase(house)
+	var hall := _find(data, "CITY_HALL", CITY_HALL_AT)
+	if hall >= 0:
+		_relocate(data, hall, CITY_HALL_LOT, 1)
+	var gone := 0
+	for b in data.building_count():
+		if VEHICLE_KINDS.has(data.b_kind[b]):
+			_clear(data, b)
+			gone += 1
+	n["vehicle_lots"] = gone
+	return n
