@@ -24,12 +24,6 @@ Step 'Importing assets (only new or changed ones)'
 & $GodotExe --headless --path $repo --import
 if ($LASTEXITCODE -ne 0) { Fail 'godot --import failed' }
 
-Step 'Generating the city once (baked into the build, players skip generation)'
-# An old file is never shipped: without a fresh one the game generates at start as before.
-Remove-Item -Force -ErrorAction SilentlyContinue "$repo\baked\city.bin"
-& $GodotExe --headless --path $repo --script res://tools/bake_city.gd
-if ($LASTEXITCODE -ne 0) { Write-Host 'Bake failed: the build will generate the city at start' -ForegroundColor Yellow }
-
 Step 'Exporting web build'
 $next = "$repo\build\web-next"
 New-Item -ItemType Directory -Force $next | Out-Null
