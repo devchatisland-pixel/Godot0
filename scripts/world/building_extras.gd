@@ -39,6 +39,13 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 	for more: Array in data.b_more_signs.get(i, []):
 		_place_sign(data, lib, i, pid, xform, batch, more[0], more[1])
 	match kind:
+		Kind.TELECOM_TOWER, Kind.BT_TOWER:
+			if lib.model_name(pid) == MapChanges.RADIO_TOWER:
+				# A big light on the tip: red on the radio tower, green on the one that replaced the BT tower.
+				var top := Vector3(box.get_center().x, box.end.y, box.get_center().z)
+				var size := box.size.y * BEACON_SIZE
+				var light := lib.named_id("cross_light" if kind == Kind.TELECOM_TOWER else "beacon_green")
+				batch.add(light, xform * Transform3D(Basis.from_scale(Vector3.ONE * size), top + Vector3(0, size * 0.5, 0)))
 		Kind.CHURCH:
 			if lib.model_name(pid) == CROSS_LIGHT_MODEL:
 				# A tiny red light glowing on the tip of the cross.
@@ -169,6 +176,8 @@ static func _place_yard(lib: ModelLibrary, r: Rect2i, seed: int, batch: Instance
 const CROSS_LIGHT_MODEL := "free_mini.glb: m12"
 const CROSS_TIP := Vector3(0.48, 1.0, 0.83)
 const CROSS_LIGHT_SIZE := 0.035
+## The light on top of the radio tower model: its size, a share of the height of the model.
+const BEACON_SIZE := 0.07
 const ROOF_EDGE_INSET := 0.1
 const SIGNS := {
 	ModelCatalog.Cat.NEON_CONTROLLER: {"mount": "wall", "scale": 0.2, "height": 0.45, "halo": 1.25},

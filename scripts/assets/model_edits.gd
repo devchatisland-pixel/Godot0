@@ -50,11 +50,28 @@ static func replaced() -> Dictionary:
 	}
 	for i in HOUSE_SWAPPED.size():
 		out[HOUSE_SWAPPED[i]] = HOUSE_SWAP[i % HOUSE_SWAP.size()]
+	# The brick apartment is drawn as the cartoon house.
+	out["ny_buildings.glb: ny_brick_4"] = "carto.glb: house2"
 	return out
 
 
 static func vehicle_removed(id: String) -> bool:
 	return REMOVED_VEHICLES.has(id)
+
+
+## Vehicles taken off the map where they stand: catalog id and the cell they were planned at
+## (the wheel loader of the old BT tower island, the Rosomak beside the lighthouse of the prison island).
+const REMOVED_VEHICLES_AT := [
+	["p54_38_loader_grapple_yellow", Vector2(33.5, 88.5)],
+	["rosomak_apc", Vector2(29.5, 48.5)],
+]
+
+
+static func vehicle_removed_at(id: String, at: Vector2) -> bool:
+	for v in REMOVED_VEHICLES_AT:
+		if v[0] == id and (v[1] as Vector2).distance_to(at) < 2.0:
+			return true
+	return false
 
 
 ## Every boat (all kinds) is taken off the map: its lot is cleared.

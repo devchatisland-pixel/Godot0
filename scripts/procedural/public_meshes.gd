@@ -26,6 +26,7 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("golden_arches", golden_arches())
 	lib.add_named("grave", grave())
 	lib.add_named("cross_light", cross_light())
+	lib.add_named("beacon_green", cross_light(Color("2aff7a")))
 
 
 # --- Art museum (7x5): wide temple front, two wings, glass pyramid --------------------
@@ -197,10 +198,10 @@ static func golden_arches() -> ArrayMesh:
 
 
 # --- Cross light (unit cube): the tiny red light on top of a church cross, glowing -----------------
-static func cross_light() -> ArrayMesh:
+static func cross_light(color: Color = Color("ff2a3a")) -> ArrayMesh:
 	var k := MeshKit.new()
 	k.neon(true)
-	k.box(Vector3(-0.5, -0.5, -0.5), Vector3.ONE, Color("ff2a3a"))
+	k.box(Vector3(-0.5, -0.5, -0.5), Vector3.ONE, color)
 	k.neon(false)
 	return k.commit()
 

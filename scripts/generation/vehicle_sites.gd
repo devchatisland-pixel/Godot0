@@ -40,7 +40,8 @@ static func plan(data: CityData, lengths_m: Dictionary = {}) -> Array[Dictionary
 	s._run()
 	var kept: Array[Dictionary] = []
 	for v in s.out:
-		if not ModelEdits.vehicle_removed(str(v.get("id", ""))):
+		var id := str(v.get("id", ""))
+		if not ModelEdits.vehicle_removed(id) and not ModelEdits.vehicle_removed_at(id, v.get("at", Vector2.INF)):
 			kept.append(v)
 	return kept
 
