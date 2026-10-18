@@ -35,8 +35,8 @@ const ZONE_COLORS := {
 const PATH := Color("e6d9b0")
 const BOARDWALK := Color("a8794a")
 const DRY_GRASS := Color("c7bb78")
-## Mud of the concert camp and the earth footpath that leads to it.
-const MUD := Color("6b4f33")
+## Sand of the concert camp (as the beach) and the earth footpath that leads to it.
+const MUD := Color("ead9a4")
 const TRAIL := Color("a08060")
 
 ## Sea colour, also used as background so the ocean looks endless.

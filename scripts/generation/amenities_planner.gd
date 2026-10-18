@@ -20,7 +20,7 @@ const PLAY := 5          # a cell of the playground (no trees)
 const PLAY_CENTER := 6   # the top-left cell of the middle 2x2 of the playground (draws it)
 const BOARD := 7
 const BOARD_LAMP := 8
-const MUD := 11         # trodden ground of the concert camp (ConcertSite)
+const MUD := 11         # sand of the concert camp (ConcertSite)
 const TRAIL := 12       # the footpath from the concert camp to the nearest street
 
 ## Half-width of the area searched for the park round its lake.
