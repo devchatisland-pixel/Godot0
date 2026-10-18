@@ -1,0 +1,9 @@
+{
+	"file": "eiffel_tower.glb",
+	"models": [
+		{
+			"cat": "EIFFEL_TOWER",
+			"node": "eiffel_tower"
+		}
+	]
+}
