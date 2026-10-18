@@ -6,8 +6,8 @@ extends RefCounted
 ##   - every street of the island is taken away;
 ##   - one road crosses the island from the landing of the metal bridge, and three roads run
 ##     north-south, ROAD_STEP columns apart, as far as the land goes: they all meet the first;
-##   - the land between and beside the roads is cut in strips STRIP cells deep, and each strip
-##     is filled from north to south with towers standing wall to wall: the lot of a tower is
+##   - the land between and beside the roads is cut in strips STRIP cells deep (ten of them), every
+##     second strip is left empty, and each other strip is filled from north to south with towers standing wall to wall: the lot of a tower is
 ##     as deep as the strip and as long as the model asks, and BuildingPlacer stretches the
 ##     model over the whole lot, so the only gaps are the roads.
 ## Which tower stands where comes from the hash of the cell: the same island on every device.
@@ -31,6 +31,9 @@ const ROAD_STEP := 2 * STRIP + 1
 ## Rows of towers on the outer side of the first and the last road.
 const OUTER_STRIPS := 3
 const SALT := 7301
+## West column of the strip that stays full (the tower of cell 67,195); the strips of the island
+## alternate full and empty from it.
+const KEEP_STRIP_X := 67
 
 var _d: CityData
 ## 1 on the dry land of the island.
@@ -82,9 +85,16 @@ func _run() -> Dictionary:
 			strips.append(c + 1 + STRIP)
 	for k in range(1, OUTER_STRIPS):
 		strips.append(columns[2] + 1 + k * STRIP)
+	# One strip full, the next one empty, and so on: the strip that starts at KEEP_STRIP_X
+	# (its tower at 67,195) stays, so every second strip from it is full.
+	var keep := strips.find(KEEP_STRIP_X)
+	if keep < 0:
+		push_warning("[UrbanSkyline] no strip starts at column %d: %s" % [KEEP_STRIP_X, strips])
+		keep = 0
 	var towers := 0
-	for x in strips:
-		towers += _fill_strip(x, lo.y, hi.y)
+	for k in strips.size():
+		if posmod(k - keep, 2) == 0:
+			towers += _fill_strip(strips[k], lo.y, hi.y)
 	return {"roads": roads, "towers": towers}
 
 
