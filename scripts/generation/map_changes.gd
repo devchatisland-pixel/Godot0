@@ -74,6 +74,7 @@ static func apply(data: CityData) -> Dictionary:
 	report["second"] = _second_wave(data)
 	report["third"] = _third_wave(data)
 	report["fourth"] = _fourth_wave(data)
+	report["thinned"] = _thin_hot(data)
 	return report
 
 
@@ -664,4 +665,27 @@ static func _fourth_wave(data: CityData) -> Dictionary:
 			_clear(data, b)
 			gone += 1
 	n["vehicle_lots"] = gone
+	return n
+
+
+# --- Hot spots: fewer small buildings south of the central park ----------------------------------------
+
+## The four heaviest chunks of the heatmap (32-cell chunks 5..6 x 6..7): one in THIN_SHARE of
+## their plain buildings is taken away (not those with a model or a sign given by hand).
+const HOT_AREA := Rect2i(160, 192, 64, 64)
+const THIN_KINDS: Array[int] = [Kind.HOUSE, Kind.SHOP, Kind.APARTMENT, Kind.QUARTER_BLDG, Kind.OFFICE]
+const THIN_SHARE := 3
+
+
+static func _thin_hot(data: CityData) -> int:
+	var n := 0
+	for b in data.building_count():
+		var r := data.building_rect(b)
+		if not THIN_KINDS.has(data.b_kind[b]) or not HOT_AREA.has_point(r.position):
+			continue
+		if data.b_model.has(b) or data.b_sign[b] != 0 or data.b_more_signs.has(b):
+			continue
+		if CityTypes.hash2(r.position.x, r.position.y, 77) % THIN_SHARE == 0:
+			_clear(data, b)
+			n += 1
 	return n
