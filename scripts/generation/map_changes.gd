@@ -72,6 +72,7 @@ static func apply(data: CityData) -> Dictionary:
 	report["school"] = _replace_by_neighbours(data, "SCHOOL", Vector2i(180, 156), REGULAR)
 	report["jail"] = _clear_jail_ground(data)
 	report["second"] = _second_wave(data)
+	report["third"] = _third_wave(data)
 	return report
 
 
@@ -514,3 +515,107 @@ static func _red_district(data: CityData) -> int:
 			data.b_model[b] = QUARTER_MODEL
 			n += 1
 	return n
+
+
+# --- Third wave: civic lots turned industrial, port clean-up, cemetery and billboard moved ------------------
+
+## Taken away, nothing put in their place: kind and top-left cell of the lot.
+const THIRD_DELETED := [
+	["INDUSTRIAL", Vector2i(133, 249)],       # B-01738 tower_tank_1
+	["INDUSTRIAL", Vector2i(138, 254)],       # B-01752 radio tower of the port
+	["INDUSTRIAL", Vector2i(104, 244)],       # B-01745 shed_station
+	["HOTEL", Vector2i(155, 201)],            # B-00801
+	["OFFICE", Vector2i(163, 202)],           # B-00218
+	["BILLBOARD", Vector2i(167, 200)],        # B-01714
+	["OFFICE", Vector2i(185, 203)],           # B-00414
+	["FIRE_STATION", Vector2i(198, 193)],     # B-00791 (its fire truck goes with it)
+	["OFFICE", Vector2i(185, 194)],           # B-00382
+	["OFFICE", Vector2i(190, 198)],           # B-00430
+]
+## Lots whose building is taken away and which become an industrial hall: kind and top-left cell of
+## the lot (B-00829 clinic, B-00825 police station, B-00055 skyscraper, B-00832 school), the hall
+## model, as B-01722 / B-01725 / B-01718 / B-01723 of the port.
+const HALLS := [
+	["HOSPITAL", Vector2i(186, 144), "port_halls.glb: hall_building_1"],
+	["POLICE", Vector2i(187, 137), "port_halls.glb: hall_terminal"],
+	["SKYSCRAPER", Vector2i(149, 150), "port_halls.glb: hall_factory_1"],
+	["SCHOOL", Vector2i(206, 231), "port_halls.glb: hall_warehouse_5"],
+]
+## The long tank B-01746 is replaced by three silos like B-01701 (2x2 each, in a row).
+const SILO_AT := Vector2i(136, 264)
+const SILO_MODEL_FROM := Vector2i(120, 249)
+const SILO_COUNT := 3
+## The cemetery B-00788 leaves the city for the forest south of it, beside the street at row 242;
+## its old lot is filled with the buildings round it.
+const CEMETERY_FROM := Vector2i(223, 224)
+const CEMETERY_TO := Vector2i(225, 243)
+## The billboard B-01712 moves to a free lot of the same (suburban) zone, looking at the east street.
+const BILLBOARD_FROM := Vector2i(234, 235)
+const BILLBOARD_TO := Vector2i(239, 222)
+
+
+static func _third_wave(data: CityData) -> Dictionary:
+	var n := {}
+	var halls := 0
+	for h in HALLS:
+		var b := _find(data, h[0], h[1])
+		if b < 0:
+			continue
+		var lot := data.building_rect(b)
+		_clear(data, b)
+		for y in range(lot.position.y, lot.end.y):
+			for x in range(lot.position.x, lot.end.x):
+				data.zone[data.idx(x, y)] = Zone.INDUSTRIAL
+				data.forest[data.idx(x, y)] = 0
+		_industrial(data, lot, h[2], _front(data, lot, data.b_facing[b]))
+		halls += 1
+	n["halls"] = halls
+	var deleted := 0
+	for d in THIRD_DELETED:
+		var b := _find(data, d[0], d[1])
+		if b >= 0:
+			_clear(data, b)
+			deleted += 1
+	n["deleted"] = deleted
+	n["silos"] = _silos(data)
+	n["cemetery"] = _move_cemetery(data)
+	n["billboard"] = _move_billboard(data)
+	return n
+
+
+static func _silos(data: CityData) -> int:
+	var tank := _find(data, "INDUSTRIAL", SILO_AT)
+	var model := _find(data, "INDUSTRIAL", SILO_MODEL_FROM)
+	if tank < 0 or model < 0:
+		return 0
+	_clear(data, tank)
+	for i in SILO_COUNT:
+		var b := _industrial(data, Rect2i(SILO_AT + Vector2i(2 * i, 0), Vector2i(2, 2)), data.b_model[model], 2)
+		data.b_scale[b] = data.b_scale[model]
+	return SILO_COUNT
+
+
+static func _move_cemetery(data: CityData) -> int:
+	var b := _find(data, "CEMETERY", CEMETERY_FROM)
+	if b < 0:
+		return 0
+	var dest := Rect2i(CEMETERY_TO, data.building_rect(b).size)
+	var old := _relocate(data, b, dest, 0)
+	for y in range(dest.position.y, dest.end.y):
+		for x in range(dest.position.x, dest.end.x):
+			data.zone[data.idx(x, y)] = Zone.NATURE
+	return _fill(data, old)
+
+
+static func _move_billboard(data: CityData) -> int:
+	var b := _find(data, "BILLBOARD", BILLBOARD_FROM)
+	if b < 0:
+		return 0
+	var dest := Rect2i(BILLBOARD_TO, data.building_rect(b).size)
+	data.set_building_rect(b, dest)
+	data.b_facing[b] = 1
+	data.b_sign_facing[b] = 1
+	for y in range(dest.position.y, dest.end.y):
+		for x in range(dest.position.x, dest.end.x):
+			data.zone[data.idx(x, y)] = Zone.SUBURBAN
+	return 1

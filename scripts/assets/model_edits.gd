@@ -64,6 +64,12 @@ static func vehicle_removed(id: String) -> bool:
 const REMOVED_VEHICLES_AT := [
 	["p54_38_loader_grapple_yellow", Vector2(33.5, 88.5)],
 	["rosomak_apc", Vector2(29.5, 48.5)],
+	# The ambulance of the deleted clinic, the mustard sedan of the red district (V-019), the fire
+	# truck of the deleted fire station.
+	["p54_11_ambulance", Vector2(187.5, 147.35)],
+	["m8_sedan_mustard", Vector2(165.5, 308.5)],
+	["p54_33_fire_truck", Vector2(199.5, 192.65)],
+	["p54_33_fire_truck", Vector2(156.0, 212.35)],   # the truck that would take its place at the next station
 ]
 
 
