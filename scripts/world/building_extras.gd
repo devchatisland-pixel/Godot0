@@ -53,7 +53,7 @@ static func place_extras(data: CityData, lib: ModelLibrary, i: int, kind: int,
 				batch.add(lib.named_id("cross_light"), xform * Transform3D(Basis.from_scale(Vector3.ONE * CROSS_LIGHT_SIZE), tip))
 		Kind.AIRBASE:
 			var jets := lib.ids(Cat.JET_F111)
-			if not jets.is_empty():
+			if not jets.is_empty() and not ModelEdits.NO_VEHICLES:
 				for spot in MilitaryMeshes.JET_SPOTS:
 					var turn := Basis(Vector3.UP, spot[1]).scaled(Vector3.ONE * JET_SCALE)
 					batch.add(jets[0], xform * Transform3D(turn, spot[0]))

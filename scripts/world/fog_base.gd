@@ -61,9 +61,11 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 	var placed := 0
 	if data.fog != null:
 		placed = _base(data.fog, lib, batch)
-		_carriers(data.fog, lib, batch)
+		if not ModelEdits.NO_VEHICLES:
+			_carriers(data.fog, lib, batch)
 		_roads(data.fog)
-	_formation(lib, batch)
+	if not ModelEdits.NO_VEHICLES:
+		_formation(lib, batch)
 	batch.build_nodes(self, lib, null)
 	print("[FogBase] %d models on the fog island" % placed)
 
