@@ -163,6 +163,9 @@ const SOUTH_ONLY_MODEL := "carto.glb: house1"
 
 
 static func _pick_model(data: CityData, lib: ModelLibrary, i: int, facing_override: int = -1) -> Dictionary:
+	# The jail is the whole walled prison of PrisonCompound: the cellhouse lot has no model of its own.
+	if data.b_kind[i] == Kind.PRISON:
+		return {}
 	var pick := _pick_model_raw(data, lib, i, facing_override)
 	var facing: int = data.b_facing[i] if facing_override < 0 else facing_override
 	if facing == 0 and not pick.is_empty() and lib.model_name(pick["id"]) == SOUTH_ONLY_MODEL:

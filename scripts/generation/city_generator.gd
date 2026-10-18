@@ -72,6 +72,8 @@ func generate() -> CityData:
 	print("[City] port rework: ", PortRework.apply(data))
 	print("[City] boats taken off the map: ", ModelEdits.clear_boats(data))
 	print("[City] stripe of column 153 emptied: ", ModelEdits.clear_column(data, 153, 171, 241))
+	# Hand changes: deletions, moves (stadium, hospital, police, UN, hotel), the radio towers, the jail.
+	print("[City] map changes: ", MapChanges.apply(data))
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")
