@@ -14,7 +14,9 @@ func _check(ok: bool, what: String) -> void:
 		_fails += 1
 
 
+## `cell` is a cell of the map before MapStretch (as the hand edits name them).
 func _at(data: CityData, kind: int, cell: Vector2i) -> int:
+	cell = MapStretch.cell(cell)
 	for b in data.building_count():
 		if data.b_kind[b] == kind and data.building_rect(b).position == cell:
 			return b
@@ -22,6 +24,7 @@ func _at(data: CityData, kind: int, cell: Vector2i) -> int:
 
 
 func _count_in(data: CityData, kind: int, area: Rect2i) -> int:
+	area.position = MapStretch.cell(area.position)
 	var n := 0
 	for b in data.building_count():
 		if data.b_kind[b] == kind and data.building_rect(b).intersects(area):
@@ -57,7 +60,7 @@ func _init() -> void:
 	for b in data.building_count():
 		if data.b_kind[b] == Kind.MAIN_HOSPITAL:
 			hosp = b
-	_check(hosp >= 0 and data.building_rect(hosp).position == Vector2i(155, 229), "main hospital in the old stadium block")
+	_check(hosp >= 0 and data.building_rect(hosp).position == MapStretch.cell(Vector2i(155, 229)), "main hospital in the old stadium block")
 	_check(_count_in(data, Kind.MAIN_HOSPITAL, Rect2i(167, 195, 4, 5)) == 0, "nothing of the hospital left at 167,195")
 	_check(_at(data, Kind.POLICE_HQ, Vector2i(233, 231)) >= 0, "police headquarters on the old gas station")
 	_check(_at(data, Kind.UN_HQ, Vector2i(164, 116)) >= 0, "United Nations at 164,116")
@@ -93,7 +96,8 @@ func _init() -> void:
 	_check(_at(data, Kind.INDUSTRIAL, MapChanges.CRANE_AT) < 0, "original crane deleted")
 	_check(_count_in(data, Kind.INDUSTRIAL, Rect2i(125, 257, 4, 7)) == 3, "three big tanks where the power plant was")
 	_check(_at(data, Kind.DRIVE_IN, MapChanges.DRIVE_IN_LOT.position) >= 0, "drive-in moved north of the quarter")
-	_check(data.road[data.idx(MapChanges.DRIVE_IN_ROAD_X, MapChanges.DRIVE_IN_ROAD_TO_Y - 1)] != 0, "street to the drive-in")
+	var street_cell := MapStretch.cell(Vector2i(MapChanges.DRIVE_IN_ROAD_X, MapChanges.DRIVE_IN_ROAD_TO_Y - 1))
+	_check(data.road[data.idx(street_cell.x, street_cell.y)] != 0, "street to the drive-in")
 	_check(_at(data, Kind.FERRIS_WHEEL, MapChanges.WHEEL_LOT.position) >= 0, "Ferris wheel moved")
 	var hotel := _at(data, Kind.HOTEL, MapChanges.HOTEL_EAST)
 	_check(hotel >= 0 and data.b_facing[hotel] == 1, "hotel looks east")
@@ -118,6 +122,16 @@ func _init() -> void:
 			left += 1
 	_check(left == 0 and plan.is_empty(), "no vehicle, balloon, fire truck or tank left (%d lots, %d planned)" % [left, plan.size()])
 	_check(lib.names.find(MapChanges.SHOP_MODEL) >= 0, "library has " + MapChanges.SHOP_MODEL)
+
+	# The stretch to the south: 12 rows slipped in, the red district and the coast moved down.
+	_check(MapStretch.cell(Vector2i(190, 300)) == Vector2i(190, 300 + MapStretch.INSERTS.size()), "red district 12 rows further south")
+	_check(data.is_land(190, 318 + MapStretch.INSERTS.size() - 2), "the south coast moved down")
+	var hot := 0
+	for b in data.building_count():
+		var p := data.building_rect(b).position
+		if MapChanges.THIN_KINDS.has(data.b_kind[b]) and Rect2i(160, 192, 64, 72).has_point(p):
+			hot += 1
+	print("     regular lots left in the hot chunks: ", hot)
 
 	print("TEST %s" % ("FAILED" if _fails > 0 else "PASSED"))
 	quit(1 if _fails > 0 else 0)
