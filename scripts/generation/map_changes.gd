@@ -71,6 +71,7 @@ static func apply(data: CityData) -> Dictionary:
 	report["church"] = _replace_by_neighbours(data, "CHURCH", Vector2i(243, 214), HOUSES)
 	report["school"] = _replace_by_neighbours(data, "SCHOOL", Vector2i(180, 156), REGULAR)
 	report["jail"] = _clear_jail_ground(data)
+	report["second"] = _second_wave(data)
 	return report
 
 
@@ -348,4 +349,168 @@ static func _clear_jail_ground(data: CityData) -> int:
 					and data.b_kind[o] != Kind.LIGHTHOUSE:
 				_clear(data, o)
 				n += 1
+	return n
+
+
+# --- Second wave: skyline, Eiffel tower, port, red district ------------------------------------------
+
+## Night skyline towers taken away (urban island, column 67).
+const SKYLINE_DELETED := [Vector2i(67, 187), Vector2i(67, 183), Vector2i(67, 179), Vector2i(67, 191)]
+## The Windows logo on the east wall of this tower (B-01660).
+const LOGO_TOWER := Vector2i(58, 137)
+## The roof neon of the tower B-01690 moves to the tower B-01640; the bar neon of B-01696 is a pacman.
+const ROOF_NEON_FROM := Vector2i(67, 170)
+const ROOF_NEON_TO := Vector2i(49, 166)
+const PACMAN_TOWER := Vector2i(67, 195)
+
+## The Eiffel tower stands on the office B-00015 (the model of the old map, drawn at an absolute
+## scale for a 4x6 lot); the ground under it is grass (a park).
+const EIFFEL_AT := Vector2i(132, 171)
+const EIFFEL_MODEL := "eiffel_tower.glb: eiffel_tower"
+const EIFFEL_SCALE := 0.26
+
+## Port: the crane B-01736 is copied onto the hall B-01717 and the shed B-01743, then taken away.
+const CRANE_AT := Vector2i(135, 239)
+const CRANE_MODEL := "port_towers.glb: tower_crane"
+const CRANE_SPOTS := [Rect2i(119, 257, 4, 7), Rect2i(116, 262, 2, 2)]
+const PORT_DELETED := [
+	["INDUSTRIAL", Vector2i(116, 262)], ["INDUSTRIAL", Vector2i(119, 257)],   # B-01743, B-01717 (crane)
+	["INDUSTRIAL", Vector2i(125, 257)],                                       # B-01719, three big tanks
+	["INDUSTRIAL", Vector2i(141, 257)], ["INDUSTRIAL", Vector2i(146, 254)], ["INDUSTRIAL", Vector2i(140, 242)],
+	["INDUSTRIAL", Vector2i(137, 250)], ["INDUSTRIAL", Vector2i(124, 238)],
+	["INDUSTRIAL", Vector2i(119, 242)], ["INDUSTRIAL", Vector2i(126, 242)],
+]
+const BIG_TANK_MODEL := "port_tanks.glb: tank_big"
+const BIG_TANK_LOTS := [Rect2i(125, 257, 4, 2), Rect2i(125, 259, 4, 2), Rect2i(125, 261, 4, 3)]
+## The oil tank B-01747 and two more stand in a row beside the spheres B-01734 (119,232).
+const OIL_TANK_AT := Vector2i(131, 241)
+const OIL_TANK_LOTS := [Rect2i(122, 232, 1, 2), Rect2i(123, 232, 1, 2), Rect2i(124, 232, 1, 2)]
+## The factory hall B-01721 is drawn as the factory hall B-01718.
+const FACTORY_MODEL := "port_halls.glb: hall_factory_1"
+const FACTORY_AT := Vector2i(120, 253)
+
+## Red district: the drive-in goes north of the quarter building B-00927 (free forest ground) with
+## a street down to the street at row 277; the wood ground beside B-00969 is cleared and the
+## Ferris wheel stands on it; the hotel B-01060 looks east; three quarter buildings share a model.
+const DRIVE_IN_AT := Vector2i(190, 305)
+const DRIVE_IN_LOT := Rect2i(178, 271, 5, 4)
+const DRIVE_IN_ROAD_X := 180
+const DRIVE_IN_ROAD_TO_Y := 277
+const WHEEL_AT := Vector2i(203, 309)
+const WHEEL_LOT := Rect2i(181, 310, 6, 6)
+const WOOD_CLEARED := Rect2i(168, 310, 23, 7)
+const HOTEL_EAST := Vector2i(175, 288)
+const QUARTER_MODEL := "quarter.glb: quarter_40_b"
+const QUARTER_SAME := [Vector2i(178, 301), Vector2i(210, 290), Vector2i(187, 305)]
+
+
+static func _second_wave(data: CityData) -> Dictionary:
+	var n := {}
+	for c in SKYLINE_DELETED:
+		var b := _find(data, "SKYLINE_BLDG", c)
+		if b >= 0:
+			_clear(data, b)
+	var logo := _find(data, "SKYLINE_BLDG", LOGO_TOWER)
+	if logo >= 0:
+		data.b_sign[logo] = ModelCatalog.Cat.SIGN_WINDOWS
+		data.b_sign_facing[logo] = 1
+	var from := _find(data, "SKYLINE_BLDG", ROOF_NEON_FROM)
+	var to := _find(data, "SKYLINE_BLDG", ROOF_NEON_TO)
+	if from >= 0 and to >= 0:
+		data.b_more_signs[to] = data.b_more_signs.get(from, [])
+		data.b_more_signs.erase(from)
+		if data.b_sign[to] == 0:
+			data.b_sign_facing[to] = 1
+	var pac := _find(data, "SKYLINE_BLDG", PACMAN_TOWER)
+	if pac >= 0:
+		data.b_sign[pac] = ModelCatalog.Cat.NEON_PACMAN
+	n["eiffel"] = _eiffel(data)
+	n["port"] = _port(data)
+	n["red_district"] = _red_district(data)
+	return n
+
+
+static func _eiffel(data: CityData) -> int:
+	var b := _find(data, "OFFICE", EIFFEL_AT)
+	if b < 0:
+		return 0
+	var lot := data.building_rect(b)
+	data.b_kind[b] = Kind.CASINO
+	data.b_model[b] = EIFFEL_MODEL
+	data.b_scale[b] = -EIFFEL_SCALE
+	data.b_facing[b] = 2
+	data.b_sign[b] = 0
+	for y in range(lot.position.y, lot.end.y):
+		for x in range(lot.position.x, lot.end.x):
+			data.zone[data.idx(x, y)] = Zone.PARK
+			data.forest[data.idx(x, y)] = 0
+	return 1
+
+
+## A new industrial lot drawn as `model`.
+static func _industrial(data: CityData, lot: Rect2i, model: String, facing: int) -> int:
+	var b := data.add_building(lot, Kind.INDUSTRIAL, facing, 1, 0.5)
+	data.b_model[b] = model
+	return b
+
+
+static func _port(data: CityData) -> int:
+	var crane := _find(data, "INDUSTRIAL", CRANE_AT)
+	var oil := _find(data, "INDUSTRIAL", OIL_TANK_AT)
+	var factory := _find(data, "INDUSTRIAL", FACTORY_AT)
+	for d in PORT_DELETED:
+		var b := _find(data, d[0], d[1])
+		if b >= 0:
+			_clear(data, b)
+	var n := 0
+	if crane >= 0:
+		for lot in CRANE_SPOTS:
+			_industrial(data, lot, CRANE_MODEL, 1)
+			n += 1
+		_clear(data, crane)
+	for lot in BIG_TANK_LOTS:
+		_industrial(data, lot, BIG_TANK_MODEL, 2)
+		n += 1
+	if oil >= 0:
+		for lot in OIL_TANK_LOTS:
+			_industrial(data, lot, "port_tanks.glb: tank_oil", 1)
+			n += 1
+		_clear(data, oil)
+	if factory >= 0:
+		data.b_model[factory] = FACTORY_MODEL
+		n += 1
+	return n
+
+
+static func _red_district(data: CityData) -> int:
+	var n := 0
+	var drive := _find(data, "DRIVE_IN", DRIVE_IN_AT)
+	if drive >= 0:
+		_clear_trees(data, DRIVE_IN_LOT.grow(1))
+		_relocate(data, drive, DRIVE_IN_LOT, 2)
+		data.b_facing[drive] = 2
+		for y in range(DRIVE_IN_LOT.end.y, DRIVE_IN_ROAD_TO_Y):
+			var i := data.idx(DRIVE_IN_ROAD_X, y)
+			data.road[i] = CityTypes.ROAD_STREET
+			data.forest[i] = 0
+			data.rocky[i] = 0
+		n += 1
+	var wheel := _find(data, "FERRIS_WHEEL", WHEEL_AT)
+	if wheel >= 0:
+		for y in range(WOOD_CLEARED.position.y, WOOD_CLEARED.end.y):
+			for x in range(WOOD_CLEARED.position.x, WOOD_CLEARED.end.x):
+				if data.is_land(x, y):
+					data.forest[data.idx(x, y)] = 0
+		_relocate(data, wheel, WHEEL_LOT, 0)
+		n += 1
+	var hotel := _find(data, "HOTEL", HOTEL_EAST)
+	if hotel >= 0:
+		data.b_facing[hotel] = 1
+		data.b_sign_facing[hotel] = 1
+		n += 1
+	for c in QUARTER_SAME:
+		var b := _find(data, "QUARTER_BLDG", c)
+		if b >= 0:
+			data.b_model[b] = QUARTER_MODEL
+			n += 1
 	return n
