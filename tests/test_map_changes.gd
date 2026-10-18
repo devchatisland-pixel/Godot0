@@ -78,5 +78,33 @@ func _init() -> void:
 		gone = gone and not ModelEdits.vehicle_removed_at(p["id"], p["at"])
 	_check(gone, "no vehicle left at a removed place")
 
+	# Second wave.
+	for c in MapChanges.SKYLINE_DELETED:
+		_check(_at(data, Kind.SKYLINE_BLDG, c) < 0, "skyline tower deleted at %s" % c)
+	var logo := _at(data, Kind.SKYLINE_BLDG, MapChanges.LOGO_TOWER)
+	_check(logo >= 0 and data.b_sign[logo] == ModelCatalog.Cat.SIGN_WINDOWS, "Windows logo on the tower at 58,137")
+	var from := _at(data, Kind.SKYLINE_BLDG, MapChanges.ROOF_NEON_FROM)
+	var to := _at(data, Kind.SKYLINE_BLDG, MapChanges.ROOF_NEON_TO)
+	_check(from >= 0 and to >= 0 and not data.b_more_signs.has(from) and data.b_more_signs.has(to), "roof neon moved")
+	var pac := _at(data, Kind.SKYLINE_BLDG, MapChanges.PACMAN_TOWER)
+	_check(pac >= 0 and data.b_sign[pac] == ModelCatalog.Cat.NEON_PACMAN, "pacman neon")
+	var eiffel := _at(data, Kind.CASINO, MapChanges.EIFFEL_AT)
+	_check(eiffel >= 0 and data.b_model.get(eiffel, "") == MapChanges.EIFFEL_MODEL, "Eiffel tower on the office lot")
+	_check(data.zone_at(MapChanges.EIFFEL_AT.x, MapChanges.EIFFEL_AT.y) == CityTypes.Zone.PARK, "grass under the Eiffel tower")
+	_check(_at(data, Kind.INDUSTRIAL, MapChanges.CRANE_AT) < 0, "original crane deleted")
+	_check(_count_in(data, Kind.INDUSTRIAL, Rect2i(125, 257, 4, 7)) == 3, "three big tanks where the power plant was")
+	_check(_at(data, Kind.DRIVE_IN, MapChanges.DRIVE_IN_LOT.position) >= 0, "drive-in moved north of the quarter")
+	_check(data.road[data.idx(MapChanges.DRIVE_IN_ROAD_X, MapChanges.DRIVE_IN_ROAD_TO_Y - 1)] != 0, "street to the drive-in")
+	_check(_at(data, Kind.FERRIS_WHEEL, MapChanges.WHEEL_LOT.position) >= 0, "Ferris wheel moved")
+	var hotel := _at(data, Kind.HOTEL, MapChanges.HOTEL_EAST)
+	_check(hotel >= 0 and data.b_facing[hotel] == 1, "hotel looks east")
+	var lib := ModelLibrary.new()
+	lib.begin(cfg)
+	while lib.load_next(40) < 1.0:
+		pass
+	for m in [MapChanges.EIFFEL_MODEL, MapChanges.QUARTER_MODEL, MapChanges.FACTORY_MODEL, MapChanges.BIG_TANK_MODEL,
+			MapChanges.CRANE_MODEL, "port_tanks.glb: tank_oil", MapChanges.RADIO_TOWER, MapChanges.NY_TIMES]:
+		_check(lib.names.find(m) >= 0, "library has " + m)
+
 	print("TEST %s" % ("FAILED" if _fails > 0 else "PASSED"))
 	quit(1 if _fails > 0 else 0)
