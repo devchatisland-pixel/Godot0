@@ -43,8 +43,7 @@ func build(data: CityData, lib: ModelLibrary) -> void:
 	for b in data.building_count():
 		if data.b_kind[b] == Kind.PRISON:
 			_prison(data, lib, b)
-		elif data.b_kind[b] == Kind.AIRBASE:
-			_base(data, lib, b)
+		# The wire fence of the airbase is no longer built (to see how the base does without it): _base.
 	print("[Fences] %d fence pieces, lights and stands placed" % _count)
 
 

@@ -97,10 +97,10 @@ static func airbase() -> ArrayMesh:
 
 
 ## Where the jets of the airbase stand in its own space: position and yaw (the F-111 model
-## has its nose towards -Z): three on the apron, one on the runway pointing along it.
+## has its nose towards -Z): one only, on the apron beside the hangar (the others were taken away to
+## make the airbase lighter).
 const JET_SPOTS := [
-	[Vector3(-1.2, 0.02, 1.3), 0.0], [Vector3(0.0, 0.02, 1.3), 0.0], [Vector3(1.2, 0.02, 1.3), 0.0],
-	[Vector3(-5.5, 0.025, -1.55), -PI * 0.5],
+	[Vector3(-1.2, 0.02, 1.3), 0.0],
 ]
 
 
