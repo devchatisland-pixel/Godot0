@@ -75,6 +75,7 @@ static func apply(data: CityData) -> Dictionary:
 	report["third"] = _third_wave(data)
 	report["fourth"] = _fourth_wave(data)
 	report["thinned"] = _thin_hot(data)
+	report["halved"] = _halve_chunk(data)
 	return report
 
 
@@ -688,4 +689,28 @@ static func _thin_hot(data: CityData) -> int:
 		if CityTypes.hash2(r.position.x, r.position.y, 77) % THIN_SHARE == 0:
 			_clear(data, b)
 			n += 1
+	return n
+
+
+## The heaviest chunk left (x 160-191, rows 192-223 after MapStretch; rows 192-221 before it, two rows
+## are slipped in there): half of its houses and shops are taken away.
+const HALVED_AREA := Rect2i(160, 192, 32, 30)
+const HALVED_KINDS: Array[int] = [Kind.HOUSE, Kind.SHOP]
+
+
+static func _halve_chunk(data: CityData) -> int:
+	var lots: Array[int] = []
+	for b in data.building_count():
+		var r := data.building_rect(b)
+		if HALVED_KINDS.has(data.b_kind[b]) and HALVED_AREA.has_point(r.position) and not data.b_model.has(b) 				and data.b_sign[b] == 0 and not data.b_more_signs.has(b):
+			lots.append(b)
+	# Every second one in the order of the hash of its cell, so that the gaps spread over the chunk.
+	lots.sort_custom(func(a: int, c: int) -> bool:
+		var pa := data.building_rect(a).position
+		var pc := data.building_rect(c).position
+		return CityTypes.hash2(pa.x, pa.y, 91) < CityTypes.hash2(pc.x, pc.y, 91))
+	var n := 0
+	for i in range(0, lots.size(), 2):
+		_clear(data, lots[i])
+		n += 1
 	return n
