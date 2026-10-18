@@ -386,7 +386,7 @@ static func place_concert(data: CityData, lib: ModelLibrary, i: int, batch: Inst
 			to.y = 0.0
 			batch.add(lights[0], _standing(lib, lights[0], p, _side_to(to.normalized())))
 
-	# Bleachers: a row at the back of the crowd and two on each side, all looking at the stage.
+	# Bleachers: a row at the back of the crowd and one on each side, all looking at the stage.
 	var stands := lib.ids(Cat.BLEACHER)
 	if not stands.is_empty():
 		var bl := lib.bounds[stands[0]].size.z + 0.15
@@ -396,9 +396,8 @@ static func place_concert(data: CityData, lib: ModelLibrary, i: int, batch: Inst
 			batch.add(stands[0], _standing(lib, stands[0], _camp_at(ax, u, d - 1.3),
 					_side_to(-front) + CONCERT_SEAT_TURN))
 		for side in [-1.0, 1.0]:
-			for k in 2:
-				var p := _camp_at(ax, side * (w * 0.5 - 1.1), d * 0.45 + k * bl)
-				batch.add(stands[0], _standing(lib, stands[0], p, _side_to(-right * side) + CONCERT_SEAT_TURN))
+			var p := _camp_at(ax, side * (w * 0.5 - 1.1), d * 0.45 + bl * 0.5)
+			batch.add(stands[0], _standing(lib, stands[0], p, _side_to(-right * side) + CONCERT_SEAT_TURN))
 
 
 ## Barriers end to end from `a` to `b` (the model is long along its local Z).

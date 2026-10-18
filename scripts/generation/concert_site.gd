@@ -1,7 +1,7 @@
 class_name ConcertSite
 extends RefCounted
-## The concert camp in the nature near the north-east beach: a fenced square of trodden
-## ground with the festival stage, floodlights and stands (drawn by BuildingExtras), and an
+## The concert camp in the nature near the north-east beach: a square of sand with
+## the festival stage, floodlights and stands (drawn by BuildingExtras), and an
 ## earth footpath to the nearest street: no road reaches it, people come on foot.
 ## Added at the end of the building list, so no number moves. Whatever stood on the square
 ## (trees, a beach hut, a billboard...) is taken away.
@@ -34,8 +34,6 @@ static func apply(data: CityData) -> int:
 			var i := data.idx(x, y)
 			data.deco[i] = AmenitiesPlanner.MUD
 			data.forest[i] = 0
-			if data.terrain[i] == Terrain.BEACH:
-				data.rocky[i] = 2 # the mud reaches the sea (no sand drawn over it)
 	var gate := gate_cell(r, facing)
 	var steps := _footpath(data, gate + CityTypes.FACING_OFFSETS[facing])
 	print("[Concert] camp at %s facing %s, footpath of %d cells" % [r, ["N", "E", "S", "W"][facing], steps])

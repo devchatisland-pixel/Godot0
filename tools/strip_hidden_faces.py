@@ -1,6 +1,8 @@
 """Removes the triangles of a model that the game can never show (lighter mesh, same look).
 
-    python tools/strip_hidden_faces.py <in.glb> <out.glb> <node> [<node> ...]
+    python tools/strip_hidden_faces.py <in.glb> <out.glb> <node> [<node> ...] [-<node> ...]
+
+A node written -NAME (a part inside a model, e.g. -Cube_240) is taken out of the file first.
 
 The city camera is fixed: orthographic, 30 degrees down, only pan and zoom. The sun is fixed
 too (52 degrees down). A building can face any way, so every yaw is tried. A triangle is kept
@@ -24,9 +26,11 @@ from trimesh.ray.ray_pyembree import RayMeshIntersector
 
 PITCHES = (20, 30, 40, 52, 60)
 YAW_STEP = 5
-# Sample spacing on a triangle (model units): ~1 pixel at the closest zoom.
+# Sample spacing on a triangle, share of the model's size: ~1 pixel at the closest zoom.
+SPACING_SHARE = 1 / 1600
 SPACING = 0.02
 MAX_SAMPLES = 4000
+EPS_SHARE = 3e-6
 EPS = 1e-4
 
 COMP = {5126: np.float32, 5125: np.uint32, 5123: np.uint16, 5121: np.uint8}
@@ -79,6 +83,8 @@ def samples(tri, n):
 
 def look(ray, pos, tris, which, steps, seen):
     """Marks as seen the triangles `which` with a sample point seen from a direction."""
+    if len(which) == 0:
+        return
     pts, owner = [], []
     for t in which:
         s = samples(pos[tris[t]], steps(pos[tris[t]]))
@@ -128,33 +134,77 @@ def clean(pos, tris):
     return keep & unique
 
 
-def main():
-    src, dst, names = sys.argv[1], sys.argv[2], sys.argv[3:]
-    j, b = read_glb(src)
-    meshes = set()
-    for name in names:
-        root = next(i for i, n in enumerate(j["nodes"]) if n.get("name") == name)
-        stack = [root]
-        while stack:
-            n = j["nodes"][stack.pop()]
-            if "mesh" in n:
-                meshes.add(n["mesh"])
-            stack += n.get("children", [])
+def local_matrix(n):
+    if "matrix" in n:
+        return np.array(n["matrix"], float).reshape(4, 4).T
+    x, y, z, w = n.get("rotation", (0, 0, 0, 1))
+    r = np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+                  [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+                  [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+    m = np.eye(4)
+    m[:3, :3] = r * np.array(n.get("scale", (1, 1, 1)))
+    m[:3, 3] = n.get("translation", (0, 0, 0))
+    return m
 
+
+def main():
+    src, dst = sys.argv[1], sys.argv[2]
+    names = [a for a in sys.argv[3:] if not a.startswith("-")]
+    j, b = read_glb(src)
+    index = {n.get("name"): i for i, n in enumerate(j["nodes"])}
+    for a in sys.argv[3:]:
+        if a.startswith("-"):
+            gone = index[a[1:]]
+            for n in j["nodes"]:
+                if gone in n.get("children", []):
+                    n["children"].remove(gone)
+            print(f"{a[1:]} taken out")
+    # Mesh -> its matrix in the model's frame (the model's own yaw and scale do not matter).
+    meshes = {}
+    for name in names:
+        stack = [(index[name], np.eye(4))]
+        while stack:
+            i, parent = stack.pop()
+            n = j["nodes"][i]
+            m = parent @ local_matrix(n) if i != index[name] else parent
+            if "mesh" in n:
+                meshes.setdefault(n["mesh"], (m, name))
+            stack += [(c, m) for c in n.get("children", [])]
+
+    size = {}
+    for mi, (mat, name) in meshes.items():
+        for prim in j["meshes"][mi]["primitives"]:
+            a = j["accessors"][prim["attributes"]["POSITION"]]
+            corners = np.array([[x, y, z] for x in (a["min"][0], a["max"][0])
+                    for y in (a["min"][1], a["max"][1]) for z in (a["min"][2], a["max"][2])])
+            w = corners @ mat[:3, :3].T + mat[:3, 3]
+            lo, hi = size.get(name, (w.min(0), w.max(0)))
+            size[name] = (np.minimum(lo, w.min(0)), np.maximum(hi, w.max(0)))
+    global SPACING, EPS
+    uses = {}
+    for mesh in j["meshes"]:
+        for prim in mesh["primitives"]:
+            for a in set(list(prim["attributes"].values()) + [prim["indices"]]):
+                uses[a] = uses.get(a, 0) + 1
     views = [view_bytes(j, b, i) for i in range(len(j["bufferViews"]))]
-    for mi in sorted(meshes):
+    for mi, (mat, name) in sorted(meshes.items()):
+        diag = np.linalg.norm(size[name][1] - size[name][0])
+        SPACING, EPS = diag * SPACING_SHARE, diag * EPS_SHARE
         for prim in j["meshes"][mi]["primitives"]:
             att = prim["attributes"]
+            if any(uses[a] > 1 for a in list(att.values()) + [prim["indices"]]):
+                continue # data shared with another part: left as it is
             pos = accessor(j, b, att["POSITION"]).astype(np.float64)
             tris = accessor(j, b, prim["indices"]).reshape(-1, 3).astype(np.int64)
             before = len(tris)
-            tris = tris[clean(pos, tris)]
+            world = pos @ mat[:3, :3].T + mat[:3, 3]
+            tris = tris[clean(world, tris)]
             cleaned = len(tris)
-            tris = tris[visible_triangles(pos, tris)]
+            tris = tris[visible_triangles(world, tris)]
             used = np.unique(tris)
             remap = np.full(len(pos), -1)
             remap[used] = np.arange(len(used))
-            for name, ai in att.items():
+            for ai in set(att.values()):
                 data = accessor(j, b, ai)[used]
                 a = j["accessors"][ai]
                 views[a["bufferView"]] = data.tobytes()
