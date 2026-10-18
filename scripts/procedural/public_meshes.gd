@@ -27,6 +27,8 @@ static func build_all(lib: ModelLibrary) -> void:
 	lib.add_named("grave", grave())
 	lib.add_named("cross_light", cross_light())
 	lib.add_named("beacon_green", cross_light(Color("2aff7a")))
+	lib.add_named("beacon_ball", beacon_ball())
+	lib.add_named("beacon_ball_green", beacon_ball(Color("2aff7a")))
 
 
 # --- Art museum (7x5): wide temple front, two wings, glass pyramid --------------------
@@ -202,6 +204,15 @@ static func cross_light(color: Color = Color("ff2a3a")) -> ArrayMesh:
 	var k := MeshKit.new()
 	k.neon(true)
 	k.box(Vector3(-0.5, -0.5, -0.5), Vector3.ONE, color)
+	k.neon(false)
+	return k.commit()
+
+
+# --- Beacon ball (unit diameter): the light on the tip of the radio towers, glowing --------------------
+static func beacon_ball(color: Color = Color("ff2a3a")) -> ArrayMesh:
+	var k := MeshKit.new()
+	k.neon(true)
+	k.ball(Vector3.ZERO, 0.5, color)
 	k.neon(false)
 	return k.commit()
 

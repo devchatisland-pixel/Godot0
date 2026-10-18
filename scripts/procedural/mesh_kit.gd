@@ -128,6 +128,31 @@ func block(center: Vector3, size: Vector3, color: Color, top: Color = Color(0, 0
 
 
 ## Vertical cylinder (or cone when r_top != r_bottom) with a flat cap.
+## A ball (flat facets) of `radius` round `center`.
+func ball(center: Vector3, radius: float, color: Color, rings: int = 6, segments: int = 10) -> void:
+	for r in rings:
+		var a0 := PI * float(r) / rings
+		var a1 := PI * float(r + 1) / rings
+		for s in segments:
+			var b0 := TAU * float(s) / segments
+			var b1 := TAU * float(s + 1) / segments
+			var p00 := _on_ball(a0, b0)
+			var p01 := _on_ball(a0, b1)
+			var p10 := _on_ball(a1, b0)
+			var p11 := _on_ball(a1, b1)
+			if r == 0:
+				_tri(center + p00 * radius, center + p10 * radius, center + p11 * radius, (p00 + p10 + p11).normalized(), color)
+			elif r == rings - 1:
+				_tri(center + p00 * radius, center + p10 * radius, center + p01 * radius, (p00 + p10 + p01).normalized(), color)
+			else:
+				_quad(center + p00 * radius, center + p10 * radius, center + p11 * radius, center + p01 * radius,
+						(p00 + p10 + p11 + p01).normalized(), color)
+
+
+static func _on_ball(polar: float, azimuth: float) -> Vector3:
+	return Vector3(sin(polar) * cos(azimuth), cos(polar), sin(polar) * sin(azimuth))
+
+
 func cylinder(base: Vector3, r_bottom: float, r_top: float, height: float,
 		segments: int, color: Color, cap: Color = Color(0, 0, 0, 0)) -> void:
 	var cap_c := cap if cap.a > 0.0 else color
