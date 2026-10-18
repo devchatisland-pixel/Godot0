@@ -71,6 +71,7 @@ func generate() -> CityData:
 	# One model of each for the hotels and the industrial port, the oil rig at sea.
 	print("[City] port rework: ", PortRework.apply(data))
 	print("[City] boats taken off the map: ", ModelEdits.clear_boats(data))
+	print("[City] stripe of column 153 emptied: ", ModelEdits.clear_column(data, 153, 171, 241))
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")
