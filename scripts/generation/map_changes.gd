@@ -76,6 +76,7 @@ static func apply(data: CityData) -> Dictionary:
 	report["fourth"] = _fourth_wave(data)
 	report["thinned"] = _thin_hot(data)
 	report["halved"] = _halve_chunk(data)
+	report["vegas"] = _clear_vegas(data)
 	return report
 
 
@@ -713,4 +714,17 @@ static func _halve_chunk(data: CityData) -> int:
 	for i in range(0, lots.size(), 2):
 		_clear(data, lots[i])
 		n += 1
+	return n
+
+
+## Las Vegas loses its hand-made models: every club (club towers and the other procedural clubs)
+## and every casino (the casino towers too) is taken away with its neons; only the Eiffel tower,
+## which stands on a casino lot, stays.
+static func _clear_vegas(data: CityData) -> int:
+	var n := 0
+	for b in data.building_count():
+		var k: int = data.b_kind[b]
+		if k == Kind.NIGHTCLUB or (k == Kind.CASINO and data.b_model.get(b, "") != EIFFEL_MODEL):
+			_clear(data, b)
+			n += 1
 	return n
