@@ -9,6 +9,7 @@ Needs:  numpy, scipy, Pillow, opencv (cv2), and the Windows fonts (Arial Black, 
                  the kicking legs of vegas_club (neon_vegas pack) beside one bold red word, drawn
                  solid: the club sign had a hollow red tube on a dark letter, so the word read doubled
   neon_heart     vegas_love without its words "love 24hrs": the heart alone
+                 (the legs and the heart in plain red: their pink texture glows white at night)
   neon_woman     the woman of the sign without her blue frame
   neon_palm      the palm tree without its sand and its waves
   neon_bar       the bar sign drawn again with smooth tubes and letters (the original was pixel art)
@@ -38,8 +39,10 @@ TRACE_EPS = 1.2
 ## Room between two letters of a word, a share of the font size.
 LETTER_GAP = 0.06
 
-RED = (1.0, 0.13, 0.16)
-RED_SIDE = (0.55, 0.04, 0.06)
+## Share of its colour a drawn neon gives as light.
+GLOW = 0.3
+RED = (1.0, 0.03, 0.05)
+RED_SIDE = (0.5, 0.01, 0.02)
 ## The words of the club sign: they stand where CLUB stood (left of the legs, x -1.5 .. 0.8, y 0
 ## .. 0.56 in the pack), right-aligned against the legs, as high as CLUB or narrower to fit.
 CLUB_WORDS = {"neon_club_bold": ("club_bold", "NEON_CLUB_BOLD", "CLUB"),
@@ -59,7 +62,10 @@ BAR_WIDTH = 3.0
 
 # --- Tracing and extruding ------------------------------------------------------------------------
 def _material(name, rgb):
-    return {"name": name, "key": ("neon_variant", name), "color": list(rgb) + [1.0], "emissive": list(rgb)}
+    """A neon colour; its light is GLOW of it (NightWindows keeps the light of a neon sign and
+    makes it five times stronger at night: at full colour it washes out to white)."""
+    return {"name": name, "key": ("neon_variant", name), "color": list(rgb) + [1.0],
+            "emissive": [c * GLOW for c in rgb]}
 
 
 def _area(ring):
@@ -311,8 +317,16 @@ def place(parts, width=None, height=None):
 
 
 # --- The variants ---------------------------------------------------------------------------------
+def deep_red(parts):
+    """The parts in plain red (their pink texture turns white when lit at night)."""
+    for p in parts:
+        p["mat"] = _material("neon_red", RED)
+    return parts
+
+
 def club_word(text):
-    legs = [keep_triangles(p, p["pos"][p["idx"]].mean(1)[:, 0] > CLUB_LEGS_X) for p in pack_parts("neon_vegas", "vegas_club")]
+    legs = deep_red([keep_triangles(p, p["pos"][p["idx"]].mean(1)[:, 0] > CLUB_LEGS_X)
+                     for p in pack_parts("neon_vegas", "vegas_club")])
     c = Canvas(CLUB_WORD_BOX[:2], CLUB_WORD_BOX[2:])
     c.word(text, BOLD_FONT, CLUB_WORD_BOX)
     word = extrude(c.rings(), *CLUB_DEPTH, _material("neon_red", RED), _material("neon_red_side", RED_SIDE))
@@ -339,6 +353,7 @@ def heart():
             if lo[1] < 0.3 and hi[0] - lo[0] > 0.5 and r > 200 and b < 120:
                 keep |= s
         out.append(keep_triangles(p, keep))
+    deep_red(out)
     return out, place(out)
 
 
