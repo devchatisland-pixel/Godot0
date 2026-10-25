@@ -66,8 +66,8 @@ static func apply(lib: ModelLibrary) -> void:
 			if not light_own(lib.meshes[id]):
 				_light_facade(lib.meshes[id], PACK_GLOW[cat], done)
 	# Not lit as a whole: only their night map (the blue beacons of the forest fire truck,
-	# the red word CINEMA).
-	for cat in [ModelCat.TRUCK_CCF, ModelCat.CINEMA2]:
+	# the red word CINEMA, the windows and the gold dollar sign of the dollar buildings).
+	for cat in [ModelCat.TRUCK_CCF, ModelCat.CINEMA2, ModelCat.VEGAS_DOLLAR]:
 		for id in lib.ids(cat):
 			light_own(lib.meshes[id])
 	for cat in [ModelCat.SKYLINE2, ModelCat.FUTURE, ModelCat.NIGHT_SKYLINE]:

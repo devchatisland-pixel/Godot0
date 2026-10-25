@@ -58,6 +58,8 @@ enum Cat {
 	IND_HALL, IND_SHED, IND_TOWER, PORT_TANK, OIL_RIG,
 	# Nineteenth wave: the Eiffel tower alone (tools/make_eiffel_tower.py)
 	EIFFEL_TOWER,
+	# Twentieth wave: the dollar buildings of Las Vegas, night models (tools/make_dollar_building.py)
+	VEGAS_DOLLAR,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
