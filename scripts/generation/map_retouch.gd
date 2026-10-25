@@ -33,6 +33,18 @@ const CLUB_SIGNS := [
 	[Vector2i(134, 178), "NEON_GIRL"],
 	[Vector2i(144, 202), "NEON_LOVE"],
 ]
+## Las Vegas lost its clubs (MapChanges): the club signs with a bold word and the heart stand on
+## the roofs of six of its Kenney offices instead, looking south (top-left cell of the lot once
+## the island is stretched, sign). Set by vegas_signs(), after MapStretch. Not on the dollar
+## towers: their floors are all alike, and BuildingExtras finds their roof on a middle floor.
+const VEGAS_ROOF_SIGNS := [
+	[Vector2i(137, 178), "NEON_CLUB_BOLD"],
+	[Vector2i(122, 203), "NEON_CLUB_XXX"],
+	[Vector2i(118, 208), "NEON_CLUB_OPEN"],
+	[Vector2i(147, 181), "NEON_CLUB_PRIVE"],
+	[Vector2i(143, 192), "NEON_CLUB_LIVE"],
+	[Vector2i(131, 202), "NEON_HEART"],
+]
 ## The wall the signs hang on: east, towards the road and the camera (the towers stand wall
 ## to wall from north to south).
 const SIGN_WALL := 1
@@ -69,6 +81,26 @@ static func apply(data: CityData) -> Dictionary:
 	out["courts"] = m._courts()
 	out["billboards"] = m._billboards()
 	return out
+
+
+## The roof signs of Las Vegas (VEGAS_ROOF_SIGNS); returns how many were set.
+static func vegas_signs(data: CityData) -> int:
+	var n := 0
+	for s in VEGAS_ROOF_SIGNS:
+		var b := -1
+		for i in data.building_count():
+			if data.b_kind[i] == Kind.OFFICE and data.building_rect(i).position == s[0]:
+				b = i
+				break
+		if b < 0:
+			push_warning("[Retouch] no Las Vegas office at %s for its sign" % s[0])
+			continue
+		data.b_sign[b] = ModelCatalog.Cat[s[1]]
+		# The sign is put on the building as it stands: a model smaller than its lot sits on
+		# the side it faces, and a sign set up for another facing would miss its roof.
+		data.b_sign_facing[b] = data.b_facing[b]
+		n += 1
+	return n
 
 
 func _mark() -> void:

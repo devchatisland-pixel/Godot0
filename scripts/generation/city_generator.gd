@@ -76,6 +76,7 @@ func generate() -> CityData:
 	print("[City] map changes: ", MapChanges.apply(data))
 	# Last: the main island grows to the south (rows slipped in, the coast moves down).
 	print("[City] stretch to the south: ", MapStretch.apply(data))
+	print("[City] Las Vegas roof signs: ", MapRetouch.vegas_signs(data))
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
 	_report(1.0, "City ready")
