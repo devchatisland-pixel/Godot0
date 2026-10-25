@@ -3,8 +3,8 @@ extends RefCounted
 ## Where the shops of the catalog (res://shops) stand: one of each, in a row on the
 ## development island (Zone.DEV), their fronts towards the south. Pure data in, a list of
 ## placements out, so it can be checked headless (tests/test_shops.gd).
-## Each placement: {"id": catalog id, "at": Vector2 (cells, x/z), "yaw": radians, "height": metres,
-## "scale": cells per metre of this shop}.
+## Each placement: {"id": catalog id, "at": Vector2 (cells, x/z), "night_at": Vector2 (its night
+## copy, in front of it), "yaw": radians, "height": metres, "scale": cells per metre of this shop}.
 ## The shop models face -Z; MapShops turns them with `yaw`.
 
 const Zone := CityTypes.Zone
@@ -21,6 +21,9 @@ const SCALE := {
 const GAP := 1.5
 ## Distance of the front line of the row south of the middle of the island (cells).
 const FRONT_OFFSET := 1.5
+## Empty cells between the front of a shop and the back of its night copy (`night_at`: the same
+## shop with its SHOP sign lit, shops/models/<id>_night.glb), which stands in front of it.
+const NIGHT_GAP := 1.0
 
 
 ## `shops`: [{"id", "width", "depth", "height"} in metres].
@@ -73,6 +76,7 @@ static func plan(data: CityData, shops: Array) -> Array[Dictionary]:
 		var dep := float(s["depth"]) * k
 		out.append({
 			"id": s["id"], "at": Vector2(x + w * 0.5, front - dep * 0.5),
+			"night_at": Vector2(x + w * 0.5, front + NIGHT_GAP + dep * 0.5),
 			"yaw": PI, "height": float(s["height"]), "scale": k,
 		})
 		x += w + GAP

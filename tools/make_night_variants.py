@@ -16,11 +16,10 @@ as it is (a backup); only the lists the game reads (.models.json) point to the d
                                              coral red, the colour of the letters
   FREEMODELS/curated/stadium_night.glb       the stadium; only the inside (pitch, stands) is lit, the
                                              outer walls stay dark (its floodlights: BuildingExtras)
-  shops/models/shop-business_night.glb       the shop of the business pack; the word SHOP glows red
-  shops/models/shop-general-brick_night.glb  the brick shop; the word SHOP glows warm white
-  shops/models/<shop>_night.glb              five more shops with the SHOP sign of the business shop on
-                                             their roof (python tools/make_night_variants.py signs2)
-  shops/models/shop-candy-a_night.glb        the candy stall; the word CANDY glows pink
+  shops/models/<shop>_night.glb              the 14 shops of the development island, each with its
+                                             SHOP sign glowing (the sign of shop-general-generic on the
+                                             roof, or its own word turned into SHOP); the game puts each
+                                             copy in front of its original (python tools/make_night_variants.py shops)
   vehicles/.../police_us_cruiser_night.glb   the red and the blue lens of the light bar glow
   vehicles/.../police_jp_black_night.glb     the red roof beacon glows
 
@@ -45,7 +44,7 @@ Usage:  python tools/make_night_variants.py          (everything)
         python tools/make_night_variants.py signs    (the cinema, the hotels, the police, the
                                                       hospital and the city hall only)
         python tools/make_night_variants.py gas      (the gas station of free_mini only)
-        python tools/make_night_variants.py shops    (the lit words of the shops only)
+        python tools/make_night_variants.py shops    (the night copies of the shops only)
         python tools/make_night_variants.py stadium  (the stadium only)
 Needs:  numpy, Pillow.
 """
@@ -643,43 +642,44 @@ def signs():
              FACADE / OWN_NIGHT, 'the words CITY HALL')
 
 
-# --- Shops of the development island: the lit word on the sign ---------------------------
-def shop_sign(name, pick, rgb, what, reach=0.1, strength=0.4):
-    """shops/models/<name>.glb as <name>_night.glb: the faces `pick(tri)` glow `rgb`; the shop
-    is dark otherwise (shops/catalog.json points to the night file, the model is kept)."""
-    g = GLB(os.path.join(SHOPS, name + '.glb'))
-    tri = Triangles(g)
-    mask = pick(tri)
-    print('  %s: %d triangles in %s' % (name, mask.sum(), what))
-    uv2, img = night_map(tri, [(mask, rgb)], reach=reach, strength=strength, base=0.0, plain=True)
-    write_night(g, tri, uv2, img, name + '_night')
-    g.save(os.path.join(SHOPS, name + '_night.glb'))
+# --- Shops of the development island: night copies with a lit SHOP sign ---------------
+# shops/models/<shop>_night.glb: the shop as it is, its SHOP sign glowing at night. The game
+# puts the copy in front of the original (ShopSites, MapShops); the original stays as it is.
+# The sign of shop-general-generic (an orange board with a red frame and the red word SHOP, on
+# two posts) is the one put on the roofs, its colours changed to suit each shop.
+GENERIC = 'shop-general-generic'
+## Colours of the generic sign as the file has them (linear): frame, board.
+GENERIC_FRAME = (1.0, 0.05, 0.01)
+GENERIC_BOARD = (0.9, 0.58, 0.21)
+## Width of the generic sign (frame), height of its word (metres).
+GENERIC_SIGN_W = 1.45
+GENERIC_WORD_H = 0.33
+SHOP_ORANGE = (1.0, 0.35, 0.0)
+SHOP_PINK = (1.0, 0.12, 0.55)
+SHOP_PURPLE = (0.55, 0.15, 1.0)
+SHOP_YELLOW = (1.0, 0.75, 0.15)
+NIGHT_WHITE = (1.0, 0.95, 0.85)
 
 
-def shop_business_letters(tri):
-    # The four orange letters of SHOP on the sign over the roof (z -1.46 to -1.39).
-    return islands_in(tri, (-0.9, 3.6, -1.47), (1.05, 4.2, -1.38), 4)
+def srgb(hexcode):
+    """A colour picked by eye (sRGB hex) as the linear colour of a material."""
+    return tuple(float(v) for v in to_linear(np.array([int(hexcode[i:i + 2], 16) / 255.0 for i in (0, 2, 4)])))
 
 
-def shop_brick_letters(tri):
-    # The four white letters of SHOP on the brown board (z -2.44 to -2.36).
-    return islands_in(tri, (0.2, 1.7, -2.46), (1.35, 2.1, -2.34), 4)
+def generic_letters(tri):
+    # The four red letters of SHOP in front of the board (z -0.90 to -0.86).
+    return islands_in(tri, (-0.6, 2.2, -0.92), (0.7, 2.6, -0.84), 4)
 
 
-def shop_candy_letters(tri):
-    # The five letters of CANDY on the pink board over the front (z -1.60 to -1.38).
-    return islands_in(tri, (-1.4, 2.7, -1.62), (1.25, 3.4, -1.36), 5)
+def generic_sign(tri):
+    # The whole sign: frame, board, letters and posts, over the front of the roof.
+    return island_where(tri, lambda lo, hi, n: lo[1] >= 1.95 and hi[2] < -0.6 and lo[0] > -0.7 and hi[0] < 0.85)
 
 
-def sign_islands(tri):
-    # The whole SHOP sign of the business shop: its board, letters and posts stand on the roof
-    # (above y 3.18, in front of z -1.1).
-    return island_where(tri, lambda lo, hi, n: lo[1] >= 3.18 and hi[2] < -1.1)
-
-
-def add_prim(g, name, pos, nrm, colour):
-    """A new flat-coloured mesh node under the root: `pos`, `nrm` (T, 3, 3) in the space of the
-    scene, `colour` linear."""
+def add_prim(g, name, pos, nrm, colour, uv=None, material=None):
+    """A new mesh node under the root: `pos`, `nrm` (T, 3, 3) in the space of the scene.
+    Flat `colour` (linear), or `material` (a glTF material, or the index of one of the file)
+    with the coordinates `uv`."""
     j = g.j
     root = j['nodes'][g.root()]
     M = node_matrix(root)
@@ -687,47 +687,42 @@ def add_prim(g, name, pos, nrm, colour):
     lp = pos.reshape(-1, 3) @ inv[:3, :3].T + inv[:3, 3]
     ln = nrm.reshape(-1, 3) @ M[:3, :3]
     ln /= np.linalg.norm(ln, axis=1, keepdims=True) + 1e-12
-    j['materials'].append({'name': name, 'doubleSided': True,
-                           'pbrMetallicRoughness': {'baseColorFactor': [float(c) for c in colour] + [1.0],
-                                                    'metallicFactor': 0.0, 'roughnessFactor': 0.9}})
+    if material is None:
+        material = flat_material(name, colour)
+    if not isinstance(material, int):
+        j['materials'].append(material)
+        material = len(j['materials']) - 1
     prim = {'attributes': {'POSITION': g.add_accessor(lp, 'VEC3', True), 'NORMAL': g.add_accessor(ln, 'VEC3')},
-            'indices': g.add_accessor(np.arange(len(lp)), 'SCALAR'), 'material': len(j['materials']) - 1}
+            'indices': g.add_accessor(np.arange(len(lp)), 'SCALAR'), 'material': material}
+    if uv is not None:
+        prim['attributes']['TEXCOORD_0'] = g.add_accessor(uv.reshape(-1, 2), 'VEC2')
     j['meshes'].append({'name': name, 'primitives': [prim]})
     j['nodes'].append({'name': name, 'mesh': len(j['meshes']) - 1})
     root.setdefault('children', []).append(len(j['nodes']) - 1)
 
 
-def add_sign(base, rgb, xc, roof_y, z_front, scale, strength=0.4):
-    """<base>_night.glb: the model `base` of shops/models with the SHOP sign of shop-business
-    (board, letters, posts) on its roof, its letters glowing `rgb` (and drawn in it by day).
-    `xc`, `roof_y`, `z_front`: middle, height and front edge of the roof; `scale`: size of the
-    sign next to the one of the business shop (6 m wide shop, sign 2.35 m)."""
-    b = GLB(os.path.join(SHOPS, 'shop-business.glb'))
-    tb = Triangles(b)
-    parts = sign_islands(tb)
-    letters = shop_business_letters(tb) & parts
-    col = tb.colours()
-    # The foot of the sign, in the middle of its front, goes to the front edge of the roof
-    # (the board a little behind the edge).
-    foot = np.array([0.12, 3.186, -1.46])
-    target = np.array([xc, roof_y, z_front + 0.2])
-    def place(sel):
-        return (tb.pos[sel] - foot) * scale + target
-    g = GLB(os.path.join(SHOPS, base + '.glb'))
-    groups = [(letters, np.array(rgb), 'sign_letters')]
-    rest = parts & ~letters
-    for k, c in enumerate(np.unique(np.round(col[rest], 2), axis=0)):
-        groups.append((rest & (np.abs(np.round(col, 2) - c).sum(1) < 1e-6), c, 'sign_%d' % k))
-    for sel, c, nm in groups:
-        add_prim(g, nm, place(sel), tb.nrm[sel], c)
-    tri = Triangles(g)
-    start, count = tri.prims[-len(groups)][1:]
-    lit = np.zeros(len(tri.pos), bool)
-    lit[start:start + count] = True
-    print('  %s: %d letter triangles on the sign' % (base, lit.sum()))
-    uv2, img = night_map(tri, [(lit, rgb)], reach=0.1 * scale, strength=strength, base=0.0, plain=True)
-    write_night(g, tri, uv2, img, base + '_night')
-    g.save(os.path.join(SHOPS, base + '_night.glb'))
+def flat_material(name, colour):
+    return {'name': name, 'doubleSided': True,
+            'pbrMetallicRoughness': {'baseColorFactor': [float(c) for c in colour] + [1.0],
+                                     'metallicFactor': 0.0, 'roughnessFactor': 0.9}}
+
+
+def glowing(g, material, glow, name):
+    """`material` (a glTF material, changed in place) with the emission map `glow` (an RGB
+    image as floats 0..1) on the texture coordinates of the model. Only the materials that
+    carry such a map light up in the game (NightWindows.light_own): the shop around the sign
+    stays dark, as it is."""
+    img = Image.fromarray((np.clip(glow, 0, 1) * 255).round().astype(np.uint8))
+    material['name'] = name
+    material['emissiveTexture'] = {'index': g.add_texture(img, name), 'texCoord': 0}
+    material['emissiveFactor'] = [1.0, 1.0, 1.0]
+    return material
+
+
+def plain_glow(rgb):
+    """A small emission map all of the colour of a lamp `rgb` (lamp_value: x OWN_NIGHT in the
+    game, where the main channel clips at full and the others come back as they are)."""
+    return np.zeros((4, 4, 3)) + lamp_value(rgb)
 
 
 def drop_triangles(tri, drop):
@@ -743,22 +738,119 @@ def drop_triangles(tri, drop):
     tri.prims = prims
 
 
-def swap_letters(base, rgb, old_letters, centres, scale, reach=0.2, strength=0.4):
+def split_glow(g, sel, glow_of, base):
+    """The faces `sel` of `g` leave their primitives for new ones of their own, with copies of
+    their materials that glow: `glow_of(material, image of its colour or None)` gives the
+    emission map (floats 0..1, on the texture coordinates of the model)."""
+    j = g.j
+    tri = Triangles(g)
+    sel = sel(tri) if callable(sel) else sel
+    pieces = []
+    for m in np.unique(tri.mat[sel]):
+        part = sel & (tri.mat == m)
+        mat = json.loads(json.dumps(j['materials'][int(m)]))
+        pbr = mat.get('pbrMetallicRoughness', {})
+        src = pbr.get('baseColorTexture', mat.get('emissiveTexture'))
+        img = None if src is None else np.asarray(g.image(j['textures'][src['index']]['source'])).astype(np.float64) / 255.0
+        pieces.append((tri.pos[part], tri.nrm[part], tri.uv[part], mat, img))
+    drop_triangles(tri, sel)
+    write_geometry(g, tri)
+    for k, (pos, nrm, uv, mat, img) in enumerate(pieces):
+        add_prim(g, 'sign_%d' % k, pos, nrm, None, uv=uv, material=glowing(g, mat, glow_of(mat, img), '%s_night_%d' % (base, k)))
+    return int(sel.sum())
+
+
+## Godot keeps at most 256 surfaces per mesh, and the game merges a shop into one mesh.
+MAX_SURFACES = 256
+
+
+def merge_by_material(g):
+    """One primitive per material instead of one per small mesh (the flower shop has 255 of
+    them, and its sign would not fit any more): the same faces, fewer surfaces."""
+    j = g.j
+    tri = Triangles(g)
+    root = j['nodes'][g.root()]
+    for nd in j['nodes']:
+        nd.pop('mesh', None)
+    root['children'] = []
+    j['meshes'] = []
+    for m in np.unique(tri.mat):
+        sel = tri.mat == m
+        add_prim(g, 'part_%d' % m, tri.pos[sel], tri.nrm[sel], None, uv=tri.uv[sel], material=int(m))
+
+
+def save_night(g, base):
+    """Saves shops/models/<base>_night.glb with its sign as the only light: the other materials
+    lose the light of their own some of them bring (lamps, glass, the old lit word)."""
+    for m in g.j['materials']:
+        if not m.get('name', '').startswith(base + '_night'):
+            m.pop('emissiveTexture', None)
+            m.pop('emissiveFactor', None)
+            m.get('extensions', {}).pop('KHR_materials_emissive_strength', None)
+    if sum(len(m['primitives']) for m in g.j['meshes']) > MAX_SURFACES:
+        merge_by_material(g)
+    g.save(os.path.join(SHOPS, base + '_night.glb'))
+
+
+def lit_letters(name, pick, rgb, what):
+    """<name>_night.glb: the faces `pick(tri)` (the letters of its own sign) glow `rgb`."""
+    g = GLB(os.path.join(SHOPS, name + '.glb'))
+    n = split_glow(g, pick, lambda mat, img: plain_glow(rgb), name)
+    print('  %s: %d triangles in %s' % (name, n, what))
+    save_night(g, name)
+
+
+def finish(g, base, groups, rgb):
+    """Adds the flat-coloured `groups` [(pos, nrm, colour, name)], the first one being the
+    word, drawn in `rgb` and glowing in it, and saves <base>_night.glb."""
+    for k, (pos, nrm, c, nm) in enumerate(groups):
+        if k == 0:
+            mat = glowing(g, flat_material(nm, c), plain_glow(rgb), base + '_night')
+            add_prim(g, nm, pos, nrm, None, uv=np.zeros(pos.shape[:2] + (2,)), material=mat)
+        else:
+            add_prim(g, nm, pos, nrm, c)
+    print('  %s: %d letter triangles' % (base, len(groups[0][0])))
+    save_night(g, base)
+
+
+def add_sign(base, rgb, frame, board, xc, roof_y, z_front, width):
+    """<base>_night.glb: the shop `base` with the SHOP sign of the generic shop on its roof,
+    `width` metres wide, the foot of its posts at (`xc`, `roof_y`) and its front a little
+    behind the front edge of the roof `z_front`. The word is drawn in `rgb` and glows in it;
+    the frame and the board take the colours `frame` and `board` (linear)."""
+    tb = Triangles(GLB(os.path.join(SHOPS, GENERIC + '.glb')))
+    parts = generic_sign(tb)
+    letters = generic_letters(tb) & parts
+    col = tb.colours()
+    scale = width / GENERIC_SIGN_W
+    foot = np.array([0.075, 1.98, -0.9])
+    target = np.array([xc, roof_y, z_front + 0.15])
+    def place(sel):
+        return (tb.pos[sel] - foot) * scale + target
+    groups = [(place(letters), tb.nrm[letters], np.array(rgb), 'sign_letters')]
+    rest = parts & ~letters
+    swap = {GENERIC_FRAME: frame, GENERIC_BOARD: board}
+    for k, c in enumerate(np.unique(np.round(col[rest], 2), axis=0)):
+        sel = rest & (np.abs(np.round(col, 2) - c).sum(1) < 1e-6)
+        new = next((v for old, v in swap.items() if np.abs(np.array(old) - c).max() < 0.03), c)
+        groups.append((place(sel), tb.nrm[sel], np.array(new), 'sign_%d' % k))
+    finish(GLB(os.path.join(SHOPS, base + '.glb')), base, groups, rgb)
+
+
+def swap_letters(base, rgb, old_letters, centres, height):
     """<base>_night.glb: the faces `old_letters(tri)` (a word of the front) come off, the four
-    letters SHOP of the business shop glow `rgb` instead. `centres`: one (x, y, z) for the whole
-    word (the middle of it, z of its front), or four, one per letter as seen from the front (S, H,
-    O, P: x going down); `scale`: size next to the letters of the business shop."""
-    b = GLB(os.path.join(SHOPS, 'shop-business.glb'))
-    tb = Triangles(b)
-    letters = shop_business_letters(tb)
+    letters SHOP of the generic shop, `height` metres high, glow `rgb` instead. `centres`: one
+    (x, y, z) for the whole word (its middle, z of its front), or four, one per letter as seen
+    from the front (S, H, O, P: x going down)."""
+    tb = Triangles(GLB(os.path.join(SHOPS, GENERIC + '.glb')))
+    letters = generic_letters(tb)
     isl = tb.islands()
-    g = GLB(os.path.join(SHOPS, base + '.glb'))
+    scale = height / GENERIC_WORD_H
     def box(sel):
         P = tb.pos[sel].reshape(-1, 3)
         return P.min(0), P.max(0)
-    pieces = []
     if len(centres) == 1:
-        pieces.append((letters, centres[0]))
+        pieces = [(letters, centres[0])]
     else:
         ids = sorted({int(k) for k in isl[letters]}, key=lambda k: -box(isl == k)[0][0])
         assert len(ids) == len(centres), 'found %d letters' % len(ids)
@@ -766,62 +858,116 @@ def swap_letters(base, rgb, old_letters, centres, scale, reach=0.2, strength=0.4
     pos, nrm = [], []
     for sel, c in pieces:
         lo, hi = box(sel)
-        mid = np.array([(lo[0] + hi[0]) / 2.0, (lo[1] + hi[1]) / 2.0, lo[2]]) if len(centres) > 1 else             np.array([(box(letters)[0][0] + box(letters)[1][0]) / 2.0, (box(letters)[0][1] + box(letters)[1][1]) / 2.0, lo[2]])
+        mid = np.array([(lo[0] + hi[0]) / 2.0, (lo[1] + hi[1]) / 2.0, lo[2]])
         pos.append((tb.pos[sel] - mid) * scale + np.array(c))
         nrm.append(tb.nrm[sel])
-    old0 = old_letters(Triangles(g))
-    add_prim(g, 'sign_letters', np.concatenate(pos), np.concatenate(nrm), np.array(rgb))
+    g = GLB(os.path.join(SHOPS, base + '.glb'))
     tri = Triangles(g)
-    old = np.zeros(len(tri.pos), bool)
-    old[:len(old0)] = old0
+    old = old_letters(tri)
     print('  %s: %d triangles of the old word removed' % (base, old.sum()))
     drop_triangles(tri, old)
-    start, count = tri.prims[-1][1:]
-    lit = np.zeros(len(tri.pos), bool)
-    lit[start:start + count] = True
-    uv2, img = night_map(tri, [(lit, rgb)], reach=reach, strength=strength, base=0.0, plain=True)
-    write_night(g, tri, uv2, img, base + '_night')
-    g.save(os.path.join(SHOPS, base + '_night.glb'))
+    write_geometry(g, tri)
+    finish(g, base, [(np.concatenate(pos), np.concatenate(nrm), np.array(rgb), 'sign_letters')], rgb)
 
 
-def coffee_a_old(tri):
+def painted_sign(base, pick, letter_px, rgb, recolour=None):
+    """<base>_night.glb for a shop whose word is painted in a texture: the faces `pick(tri)`
+    get a material of their own whose emission map holds `rgb` where `letter_px(image as
+    floats 0..1)` is true, black elsewhere. `recolour(image) -> image`: new base colours of
+    the sign (None: the texture as it is)."""
+    g = GLB(os.path.join(SHOPS, base + '.glb'))
+    def glow_of(mat, img):
+        mask = letter_px(img)
+        print('  %s: %d letter pixels' % (base, mask.sum()))
+        if recolour is not None:
+            day = Image.fromarray((np.clip(recolour(img), 0, 1) * 255).round().astype(np.uint8))
+            pbr = mat.setdefault('pbrMetallicRoughness', {})
+            pbr['baseColorTexture'] = {'index': g.add_texture(day, base + '_sign')}
+            pbr['baseColorFactor'] = [1.0, 1.0, 1.0, 1.0]
+        out = np.zeros_like(img)
+        out[mask] = lamp_value(rgb)
+        return out
+    n = split_glow(g, pick, glow_of, base)
+    print('  %s: %d triangles on the sign' % (base, n))
+    save_night(g, base)
+
+
+def brick_letters(tri):
+    # The four white letters of SHOP on the brown board (z -2.44 to -2.36).
+    return islands_in(tri, (0.2, 1.7, -2.46), (1.35, 2.1, -2.34), 4)
+
+
+def candy_a_letters(tri):
+    # The five letters of CANDY on the pink board over the front (z -1.60 to -1.38).
+    return islands_in(tri, (-1.4, 2.7, -1.62), (1.25, 3.4, -1.36), 5)
+
+
+def coffee_a_letters(tri):
     # The ten purple letters of COFFEE SHOP over the awning (y 4.82 to 5.54).
     return island_where(tri, lambda lo, hi, n: lo[1] >= 4.8 and hi[1] < 5.6 and hi[2] < -1.2)
 
 
-def coffee_b_old(tri):
+def coffee_b_letters(tri):
     # The six tan letters of COFFEE, each on its own dark tile (y 5.15 to 5.7, z -1.94 to -1.74).
     return islands_in(tri, (-2.1, 5.1, -2.0), (3.4, 5.75, -1.7), 6)
 
 
-def candy_b_old(tri):
-    return np.zeros(len(tri.pos), bool)  # the board is blank
+def no_letters(tri):
+    return np.zeros(len(tri.pos), bool)
 
 
-def candy_a_old(tri):
-    return shop_candy_letters(tri)
+def steel_board(tri):
+    # The red board over the glass front, the only faces of the material Bord.
+    names = [m.get('name') for m in tri.g.j['materials']]
+    return tri.mat == names.index('Bord')
 
 
-def sign_shops():
-    # (shop, colour of the letters, middle x, roof height, front of the roof, sign scale)
-    add_sign('shop-general-mini', SIGN_GREEN, 0.0, 1.76, -1.34, 0.85)
-    add_sign('shop-general-orange-b', SIGN_ORANGE, -0.27, 3.31, -1.61, 1.0)
-    add_sign('shop-general-orange-a', SIGN_BLUE_BRIGHT, 0.0, 3.3, -1.27, 1.1, strength=1.0)
-    add_sign('shop-building-multi', SIGN_MAUVE, 0.0, 6.37, -2.2, 1.4)
-    add_sign('shop-townhouse-blue', SIGN_MAUVE, -1.35, 8.3, -2.98, 1.4)
-    add_sign('shop-flower-a', SIGN_GREEN, 0.0, 2.40, -2.14, 1.1)
-    swap_letters('shop-coffee-a', SIGN_RED, coffee_a_old, [(-0.05, 5.4, -1.47)], 2.3)
+def steel_letters(img):
+    return img.min(2) > 0.7  # white letters on the red board
+
+
+def steel_recolour(img):
+    # Dark grey board (the grey steel of the shop), the letters red.
+    out = np.empty_like(img)
+    out[:] = np.array([0.16, 0.17, 0.19])
+    out[steel_letters(img)] = np.array([0.95, 0.15, 0.1])
+    return out
+
+
+def gabled_board(tri):
+    # The hanging board on the left of the door (x -0.62 to -0.59).
+    return island_where(tri, lambda lo, hi, n: lo[0] > -0.63 and hi[0] < -0.58 and lo[1] > 1.0 and hi[1] < 1.3)
+
+
+def gabled_letters(img):
+    # The yellow letters inside the brown board of the texture (its yellow frame left out).
+    h, w = img.shape[:2]
+    ys, xs = np.mgrid[0:h, 0:w]
+    inside = (xs > 0.016 * w) & (xs < 0.295 * w) & (ys > 0.852 * h) & (ys < 0.985 * h)
+    return inside & (img[..., 0] > 0.7) & (img[..., 1] > 0.5) & (img[..., 2] < 0.4)
+
+
+def night_shops():
+    # The SHOP sign of the generic shop on the roof:
+    # (shop, word, frame, board, middle x, roof height, front of the roof, sign width in metres)
+    add_sign('shop-general-mini', SIGN_BLUE, srgb('2060b0'), srgb('f2f2ee'), 0.0, 1.76, -1.34, 2.0)
+    add_sign('shop-flower-a', SIGN_GREEN, srgb('2f7d32'), srgb('f3e6c4'), 0.0, 2.40, -2.14, 2.6)
+    add_sign('shop-general-orange-b', SHOP_ORANGE, srgb('c8451c'), srgb('f2f2ee'), -0.27, 3.31, -1.61, 2.35)
+    add_sign('shop-general-orange-a', SIGN_BLUE_BRIGHT, srgb('2060b0'), srgb('f2f2ee'), 0.0, 3.3, -1.27, 2.6)
+    add_sign('shop-building-multi', SHOP_PINK, srgb('6d7686'), srgb('f4dede'), 0.0, 6.37, -2.2, 3.3)
+    add_sign('shop-townhouse-blue', SHOP_PURPLE, srgb('f2f2ee'), srgb('2b3f73'), -1.35, 8.3, -2.98, 3.3)
+    # Their own sign lit.
+    lit_letters(GENERIC, generic_letters, SIGN_RED, 'the word SHOP')
+    lit_letters('shop-general-brick', brick_letters, SIGN_RED, 'the word SHOP')
+    painted_sign('shop-steel-glass', steel_board, steel_letters, SIGN_RED, steel_recolour)
+    painted_sign('shop-townhouse-gabled', gabled_board, gabled_letters, SHOP_YELLOW)
+    # Another word turned into SHOP, or SHOP added on the front.
+    swap_letters('shop-candy-a', SHOP_PINK, candy_a_letters, [(-0.05, 3.03, -1.57)], 0.6)
+    swap_letters('shop-candy-b', SHOP_ORANGE, no_letters, [(0.2, 2.4, -1.73)], 0.75)
+    swap_letters('shop-coffee-a', SIGN_RED, coffee_a_letters, [(-0.05, 5.18, -1.47)], 0.85)
     # Coffee-b: one letter per tile, on the four middle tiles (x 2.07, 1.09, 0.11, -0.86).
-    swap_letters('shop-coffee-b', SIGN_RED, coffee_b_old, [(x, 5.42, -1.95) for x in (2.07, 1.09, 0.11, -0.86)], 1.0,
-                 reach=0.15)
-    swap_letters('shop-candy-a', SIGN_PINK, candy_a_old, [(-0.05, 3.03, -1.57)], 1.2, reach=0.15)
-    swap_letters('shop-candy-b', SIGN_PINK, candy_b_old, [(0.2, 2.4, -1.73)], 1.4, reach=0.15)
-
-
-def shops():
-    shop_sign('shop-candy-a', shop_candy_letters, CANDY_PINK, 'the word CANDY', reach=0.12, strength=0.4)
-    shop_sign('shop-business', shop_business_letters, SHOP_RED, 'the word SHOP')
-    shop_sign('shop-general-brick', shop_brick_letters, SHOP_WHITE, 'the word SHOP')
+    swap_letters('shop-coffee-b', NIGHT_WHITE, coffee_b_letters, [(x, 5.42, -1.95) for x in (2.07, 1.09, 0.11, -0.86)],
+                 0.45)
 
 
 # --- Gas station m11 of free_mini: stripes of low orange light ---------------------------
@@ -1006,21 +1152,18 @@ if __name__ == '__main__':
     if sys.argv[1:] == ['signs']:
         signs()
         sys.exit()
-    if sys.argv[1:] == ['signs2']:
-        sign_shops()
-        sys.exit()
     if sys.argv[1:] == ['gas']:
         gas_station()
         sys.exit()
     if sys.argv[1:] == ['shops']:
-        shops()
+        night_shops()
         sys.exit()
     if sys.argv[1:] == ['stadium']:
         stadium()
         sys.exit()
     pharmacy()
     signs()
-    shops()
+    night_shops()
     stadium()
     vehicle(VEH, 'police_us_cruiser', cruiser_bar)
     vehicle(VEH, 'police_jp_black', jp_beacon)

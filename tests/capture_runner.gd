@@ -189,15 +189,8 @@ func _place(data: CityData, at, base: Vector3) -> Vector3:
 			return Vector3(c.x, 0, c.y)
 		"bridge":
 			return Vector3(data.bridge.x + 4, 0, data.bridge.y)
-		"eiffel":
-			for b in data.building_count():
-				if data.b_model.get(b, "") == ManualEdits.EIFFEL_MODEL:
-					var c := data.building_rect(b).get_center()
-					return Vector3(c.x, 0, c.y)
-			return base
-		"blockade":
-			var b := FogBaseSites.BLOCKADE_AT
-			return Vector3(data.fog.origin.x + b.x + 3.0, 0, data.fog.origin.y + b.y)
+		"eiffel", "blockade":
+			return base # their places are not on the map since it went back to PR 64
 		"west_bridge":
 			return Vector3(data.west_bridge.x - 6, 0, data.west_bridge.z)
 		"urban":
