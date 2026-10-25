@@ -631,6 +631,15 @@ const FOURTH_DELETED := [
 	["BILLBOARD", Vector2i(239, 222)],          # B-01712
 	["FIRE_STATION", Vector2i(220, 222)],       # B-00828
 	["INDUSTRIAL", Vector2i(206, 231)],         # B-01793 (hall_warehouse_5)
+	["MCDONALDS", Vector2i(135, 191)],          # B-00805
+	["OFFICE", Vector2i(137, 178)],             # B-00024
+	["OFFICE", Vector2i(147, 181)],             # B-00073
+	["OFFICE", Vector2i(118, 208)],             # B-01420
+	["SKYSCRAPER", Vector2i(123, 174)],         # B-00008 (and its neon)
+	["CHURCH", Vector2i(194, 216)],             # B-00476
+	["POST_OFFICE", Vector2i(193, 306)],        # B-00959
+	["POST_OFFICE", Vector2i(186, 212)],        # B-00792
+	["SCHOOL", Vector2i(148, 224)],             # B-00834
 ]
 ## Drawn as the shop B-00474 (building-h): the apartment B-00047 and the offices B-00519 and B-00528.
 const SHOP_MODEL := "building-h.glb"
