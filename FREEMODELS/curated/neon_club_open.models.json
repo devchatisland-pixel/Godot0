@@ -1,0 +1,9 @@
+{
+	"file": "neon_club_open.glb",
+	"models": [
+		{
+			"cat": "NEON_CLUB_OPEN",
+			"node": "club_open"
+		}
+	]
+}

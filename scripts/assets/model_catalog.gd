@@ -60,6 +60,9 @@ enum Cat {
 	EIFFEL_TOWER,
 	# Twentieth wave: the dollar buildings of Las Vegas, night models (tools/make_dollar_building.py)
 	VEGAS_DOLLAR,
+	# Twenty-first wave: the club sign with a bold word (CLUB, XXX, OPEN, PRIVE, LIVE) and the
+	# heart of the love sign alone (tools/make_neon_variants.py)
+	NEON_CLUB_BOLD, NEON_CLUB_XXX, NEON_CLUB_OPEN, NEON_CLUB_PRIVE, NEON_CLUB_LIVE, NEON_HEART,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

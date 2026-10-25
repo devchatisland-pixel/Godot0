@@ -1,0 +1,9 @@
+{
+	"file": "neon_heart.glb",
+	"models": [
+		{
+			"cat": "NEON_HEART",
+			"node": "vegas_heart"
+		}
+	]
+}

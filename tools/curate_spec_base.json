@@ -73,8 +73,8 @@
       "out": "neon_woman",
       "keep_emission": true,
       "texture_max": 256,
-      "comment": "A flat neon sign standing upright. Lit strongly at night by NightWindows.",
-      "items": [{"id": "neon_woman", "nodes": ["Sketchfab_model"], "cat": "NEON_WOMAN", "height": 1.8}]
+      "comment": "A flat neon sign standing upright, the woman without her blue frame. Lit strongly at night by NightWindows.",
+      "items": [{"id": "neon_woman", "nodes": ["Woman_0"], "cat": "NEON_WOMAN", "height": 1.58}]
     }
   ]
 }
