@@ -1,0 +1,9 @@
+{
+	"file": "neon_club_prive.glb",
+	"models": [
+		{
+			"cat": "NEON_CLUB_PRIVE",
+			"node": "club_prive"
+		}
+	]
+}

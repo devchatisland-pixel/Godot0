@@ -481,15 +481,16 @@ PACKS = {
          "skip_materials": ["ConsoleLedGlass"], "width": 3.0}]},
     "neon_martini": {"src": "woman_in_martini_neon_sign.glb", "items": [
         {"id": "martini_woman", "cat": "NEON_MARTINI", "tilt": STAND_UP, "width": 3.0}]},
-    "neon_bar": {"src": "bar_sign_board.glb", "items": [
-        {"id": "bar_board", "cat": "NEON_BAR", "yaw": 180, "width": 3.0}]},
+    # neon_bar (the pixel art "bar_sign_board.glb") is drawn again by tools/make_neon_variants.py.
     # Seventeenth wave: more signs (the three of "neon" are cut out of one mesh), the bank.
     "neon_bull": {"src": "bull_neon_sign.glb", "items": [
         {"id": "bull", "cat": "NEON_BULL", "neon": True, "width": 3.0, "weld": 0.012}]},
     "neon_fun": {"src": "neon_fun.glb", "items": [
         {"id": "fun_arrow", "cat": "NEON_FUN", "neon": True, "skip_materials": ["Glass"], "width": 3.0}]},
     "neon_palm": {"src": "neon_palm_tree_sign.glb", "tex": 256, "items": [
-        {"id": "palm_tree", "cat": "NEON_PALM", "neon": True, "skip": ["Object_2"], "tilt": STAND_UP_Z, "yaw": 180, "height": 3.0}]},
+        # The tree alone: its sand (Sonata_3) and its waves (Sonata_28) are left out.
+        {"id": "palm_tree", "cat": "NEON_PALM", "neon": True, "skip": ["Object_2"],
+         "skip_materials": ["Sonata_3_", "Sonata_28_"], "tilt": STAND_UP_Z, "yaw": 180, "height": 3.0}]},
     "neon_vegas": {"src": "neon_pack3.glb", "tex": 512, "items": [
         {"id": "vegas_club", "cat": "NEON_CLUB", "neon": True, "region": [-9, -9, 9, 1.4], "width": 3.0, "weld": 0.012},
         {"id": "vegas_girl", "cat": "NEON_GIRL", "neon": True, "region": [-1.04, 1.4, 9, 9],

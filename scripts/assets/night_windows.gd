@@ -36,7 +36,9 @@ const PACK_GLOW := {
 const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NEON_WOMAN,
 		ModelCat.NEON_JOYSTICK, ModelCat.NEON_MARTINI, ModelCat.NEON_BAR,
 		ModelCat.NEON_BULL, ModelCat.NEON_FUN, ModelCat.NEON_PALM,
-		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE]
+		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE,
+		ModelCat.NEON_CLUB_BOLD, ModelCat.NEON_CLUB_XXX, ModelCat.NEON_CLUB_OPEN,
+		ModelCat.NEON_CLUB_PRIVE, ModelCat.NEON_CLUB_LIVE, ModelCat.NEON_HEART]
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
 const LOGO_PACKS := [ModelCat.SIGN_WINDOWS]
 const LOGO_DAY := 0.15

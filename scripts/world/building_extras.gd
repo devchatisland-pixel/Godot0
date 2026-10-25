@@ -193,6 +193,12 @@ const SIGNS := {
 	ModelCatalog.Cat.NEON_CLUB: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.NEON_GIRL: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 	ModelCatalog.Cat.NEON_LOVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_CLUB_BOLD: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_CLUB_XXX: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_CLUB_OPEN: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_CLUB_PRIVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_CLUB_LIVE: {"mount": "roof", "scale": 1.0, "halo": 1.1},
+	ModelCatalog.Cat.NEON_HEART: {"mount": "roof", "scale": 1.0, "halo": 1.1},
 }
 ## A wall sign is at most this share of the building's height.
 const FACE_MAX_HEIGHT := 0.5
