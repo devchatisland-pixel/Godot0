@@ -168,10 +168,15 @@ const VEGAS_KIT := ["building-b.glb", "building-d.glb", "building-f.glb", "build
 
 
 static func _vegas_kit(lib: ModelLibrary) -> PackedInt32Array:
+	# The dollar buildings (building-n with a gold dollar sign, and twice as high) stand for
+	# building-n when they are there.
+	var dollar := lib.ids(Cat.VEGAS_DOLLAR)
 	var out := PackedInt32Array()
 	for id in lib.ids(Cat.COMMERCIAL):
-		if VEGAS_KIT.has(lib.model_name(id)):
+		var model := lib.model_name(id)
+		if VEGAS_KIT.has(model) and not (model == "building-n.glb" and not dollar.is_empty()):
 			out.append(id)
+	out.append_array(dollar)
 	return out
 
 

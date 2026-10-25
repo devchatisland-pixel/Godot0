@@ -402,7 +402,9 @@ def morton(points):
 def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False):
     """Paints the night map of the triangles `tri` and returns (TEXCOORD_1 per corner (T, 3, 2),
     the map as an image).
-    `lamps`: [(triangles of the lamp (bool per triangle), colour)]; `reach`: distance at which
+    `lamps`: [(triangles of the lamp (bool per triangle), colour)], each with an optional third
+    item {'store': value stored for the lamp (instead of lamp_value), 'reach', 'strength': its
+    own}; `reach`: distance at which
     the light a lamp throws has fallen to a fifth; `strength`: that light right beside the lamp
     (1 = as bright as the lamp); `base`: share of its own colour every face glows with (one
     number, or one per triangle).
@@ -434,12 +436,17 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False)
     own = np.zeros((T, 3))
     is_lamp = np.zeros(T, bool)
     sources = []
-    for mask, rgb in lamps:
-        own[mask] = lamp_value(rgb)
+    for lamp in lamps:
+        mask, rgb = lamp[0], lamp[1]
+        opt = lamp[2] if len(lamp) > 2 else {}
+        own[mask] = opt.get('store', lamp_value(rgb))
         is_lamp |= mask
+        if not mask.any():
+            continue
         p = tri.pos[mask]
         pts = np.concatenate([p.reshape(-1, 3), p.mean(1), (p[:, [0, 1, 2]] + p[:, [1, 2, 0]]).reshape(-1, 3) / 2.0])
-        sources.append((np.unique(np.round(pts, 3), axis=0), np.array(rgb, dtype=np.float64)))
+        sources.append((np.unique(np.round(pts, 3), axis=0), np.array(rgb, dtype=np.float64),
+                        opt.get('reach', reach), opt.get('strength', strength)))
     img = np.zeros((size, size, 3))
     uv2 = np.zeros((T, 3, 2))
     centre = tri.pos.mean(1)
@@ -458,8 +465,8 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False)
             pos = w @ tri.pos[k]
             nrm = w @ tri.nrm[k]
             nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-9
-            for pts, rgb in sources:
-                if np.linalg.norm(pts - centre[k], axis=1).min() > reach * 4.0 + radius[k]:
+            for pts, rgb, lreach, lstrength in sources:
+                if np.linalg.norm(pts - centre[k], axis=1).min() > lreach * 4.0 + radius[k]:
                     continue
                 d = np.linalg.norm(pos[:, None, :] - pts[None, :, :], axis=2)
                 near = d.argmin(1)
@@ -467,8 +474,8 @@ def night_map(tri, lamps, reach, strength, base=0.0, size=MAP_SIZE, plain=False)
                 to = (pts[near] - pos) / (dist[:, None] + 1e-9)
                 facing = 0.35 + 0.65 * np.clip((nrm * to).sum(1), 0.0, 1.0)
                 # A face touching the lamp is lit whatever way it looks.
-                facing = np.where(dist < reach * 0.25, 1.0, facing)
-                fall = strength / (1.0 + 4.0 * (dist / reach) ** 2)
+                facing = np.where(dist < lreach * 0.25, 1.0, facing)
+                fall = lstrength / (1.0 + 4.0 * (dist / lreach) ** 2)
                 value = value + (fall * facing)[:, None] * rgb * (0.4 + 0.6 * colour[k]) / OWN_NIGHT
         block = img[cy:cy + cell, cx:cx + cell]
         block[sel] = value

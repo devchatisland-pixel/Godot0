@@ -1,0 +1,9 @@
+{
+	"file": "building_n_dollar_tall_light.glb",
+	"models": [
+		{
+			"cat": "VEGAS_DOLLAR",
+			"node": "building_n_dollar_tall"
+		}
+	]
+}
