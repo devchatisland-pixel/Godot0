@@ -33,18 +33,10 @@ const CLUB_SIGNS := [
 	[Vector2i(134, 178), "NEON_GIRL"],
 	[Vector2i(144, 202), "NEON_LOVE"],
 ]
-## Las Vegas lost its clubs (MapChanges): the club signs with a bold word and the heart stand on
-## the roofs of six of its Kenney offices instead, looking south (top-left cell of the lot once
-## the island is stretched, sign). Set by vegas_signs(), after MapStretch. Not on the dollar
-## towers: their floors are all alike, and BuildingExtras finds their roof on a middle floor.
-const VEGAS_ROOF_SIGNS := [
-	[Vector2i(137, 178), "NEON_CLUB_BOLD"],
-	[Vector2i(122, 203), "NEON_CLUB_XXX"],
-	[Vector2i(118, 208), "NEON_CLUB_OPEN"],
-	[Vector2i(147, 181), "NEON_CLUB_PRIVE"],
-	[Vector2i(143, 192), "NEON_CLUB_LIVE"],
-	[Vector2i(131, 202), "NEON_HEART"],
-]
+## Roof signs on offices of Las Vegas (top-left cell of the lot once the island is stretched,
+## sign), set by vegas_signs() after MapStretch. None any more: its offices are now casinos and
+## clubs with their own signs in bulbs (tools/make_vegas_buildings.py).
+const VEGAS_ROOF_SIGNS := []
 ## The wall the signs hang on: east, towards the road and the camera (the towers stand wall
 ## to wall from north to south).
 const SIGN_WALL := 1

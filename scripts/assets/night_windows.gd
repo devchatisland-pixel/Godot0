@@ -39,6 +39,11 @@ const NEON_PACKS := [ModelCat.NEON_CONTROLLER, ModelCat.NEON_PACMAN, ModelCat.NE
 		ModelCat.NEON_CLUB, ModelCat.NEON_GIRL, ModelCat.NEON_LOVE,
 		ModelCat.NEON_CLUB_BOLD, ModelCat.NEON_CLUB_XXX, ModelCat.NEON_CLUB_OPEN,
 		ModelCat.NEON_CLUB_PRIVE, ModelCat.NEON_CLUB_LIVE, ModelCat.NEON_HEART]
+## The casinos and clubs of Las Vegas: their bulbs, neons and lit windows (the materials with an
+## emissiveFactor) glow dimly by day, brightly at night; the walls are not lit.
+const VEGAS_PACKS := [ModelCat.VEGAS_CASINO, ModelCat.VEGAS_CLUB]
+const VEGAS_DAY := 0.3
+const VEGAS_NIGHT := 2.5
 ## A lit logo keeps its own colours at night (as bright as a neon, they would all turn white).
 const LOGO_PACKS := [ModelCat.SIGN_WINDOWS]
 const LOGO_DAY := 0.15
@@ -78,6 +83,9 @@ static func apply(lib: ModelLibrary) -> void:
 	for cat in NEON_PACKS:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], NEON_NIGHT, done, NEON_DAY, true)
+	for cat in VEGAS_PACKS:
+		for id in lib.ids(cat):
+			_light_glowing(lib.meshes[id], done)
 			lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
 	for cat in LOGO_PACKS:
 		for id in lib.ids(cat):
@@ -172,6 +180,20 @@ static func _light_facade(mesh: Mesh, energy: float, done: Dictionary, day: floa
 			elif not (keep_emission and mat.emission_enabled):
 				m.emission = mat.albedo_color
 			SignAtlas.register_night(m, day, energy)
+			done[mat] = m
+			done[m] = m
+		mesh.surface_set_material(s, done[mat])
+
+
+## Only the materials that glow by themselves (emissiveFactor): day and night brightness.
+static func _light_glowing(mesh: Mesh, done: Dictionary) -> void:
+	for s in mesh.get_surface_count():
+		var mat := mesh.surface_get_material(s) as BaseMaterial3D
+		if mat == null or not mat.emission_enabled:
+			continue
+		if not done.has(mat):
+			var m := mat.duplicate() as BaseMaterial3D
+			SignAtlas.register_night(m, VEGAS_DAY, VEGAS_NIGHT)
 			done[mat] = m
 			done[m] = m
 		mesh.surface_set_material(s, done[mat])
