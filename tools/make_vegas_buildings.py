@@ -1,8 +1,8 @@
 """The clubs and casinos of Las Vegas, built from boxes (own models, CC0):
 
   FREEMODELS/curated/vegas_buildings.glb   one pack, one node per building:
-      vegas_casino_a     wide casino, marquee canopy, CASINO in bulbs on the roof
-      vegas_casino_b     casino with a hotel tower above it, CASINO and ROYAL in bulbs
+      vegas_casino_a     wide casino, marquee canopy, CASINO in neon on the roof
+      vegas_casino_b     casino with a hotel tower above it, CASINO and ROYAL in neon
       vegas_casino_c     purple and gold casino, the four card suits, POKER on the roof
       vegas_club_a       black club, pink neon outline, CLUB
       vegas_club_b       club with a blade sign, DISCO
@@ -13,7 +13,9 @@
 Kenney scale and orientation, like the commercial kit next to them: a storey is about 0.4, a door
 0.27, the front faces -Z, every building stands on y = 0 centred on x / z. Plain colours only
 (baseColorFactor), the bulbs, neons and lit windows glow with their emissiveFactor, so Godot and
-Chat City (whose build script palettes the colours) both read them as they are.
+Chat City (whose build script palettes the colours) both read them as they are. The letters are
+smooth neon tubes and the bulbs flat round dots of light (owner, 2026-10-30: no little cubes, no
+dot-matrix letters).
 
 Usage:  python tools/make_vegas_buildings.py
 Needs:  numpy.
@@ -46,29 +48,147 @@ MATERIALS = {
     'green': ((0.2, 1.0, 0.35), (0.12, 0.95, 0.25), 0.0, 0.9),
 }
 
-## 5 x 7 dot letters (rows top to bottom), and 7 x 7 card suits.
-FONT = {
-    'A': ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
-    'B': ['11110', '10001', '10001', '11110', '10001', '10001', '11110'],
-    'C': ['01111', '10000', '10000', '10000', '10000', '10000', '01111'],
-    'D': ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
-    'E': ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
-    'G': ['01111', '10000', '10000', '10011', '10001', '10001', '01111'],
-    'I': ['11111', '00100', '00100', '00100', '00100', '00100', '11111'],
-    'K': ['10001', '10010', '10100', '11000', '10100', '10010', '10001'],
-    'L': ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
-    'N': ['10001', '11001', '10101', '10101', '10011', '10001', '10001'],
-    'O': ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
-    'P': ['11110', '10001', '10001', '11110', '10000', '10000', '10000'],
-    'R': ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
-    'S': ['01111', '10000', '10000', '01110', '00001', '00001', '11110'],
-    'U': ['10001', '10001', '10001', '10001', '10001', '10001', '01110'],
-    'Y': ['10001', '10001', '01010', '00100', '00100', '00100', '00100'],
-    'heart': ['0110110', '1111111', '1111111', '1111111', '0111110', '0011100', '0001000'],
-    'spade': ['0001000', '0011100', '0111110', '1111111', '1111111', '0101010', '0011100'],
-    'diamond': ['0001000', '0011100', '0111110', '1111111', '0111110', '0011100', '0001000'],
-    'club': ['0011100', '0011100', '1101011', '1111111', '1101011', '0001000', '0011100'],
+## Neon letters: centre lines of tubes, cap height 1, x to the right, y up. Each stroke is a list
+## of ('M', x, y) / ('L', x, y) / ('A', cx, cy, rx, ry, from_deg, to_deg); the arcs are sampled
+## smooth, the tubes get round ends (owner, 2026-10-30: no more dot-matrix / Minecraft letters).
+GLYPHS = {
+    'A': [[('M', 0, 0), ('L', 0.33, 1), ('L', 0.66, 0)], [('M', 0.13, 0.36), ('L', 0.53, 0.36)]],
+    'B': [[('M', 0, 0.52), ('L', 0.32, 0.52), ('A', 0.32, 0.26, 0.28, 0.26, 90, -90), ('L', 0, 0),
+           ('L', 0, 1), ('L', 0.28, 1), ('A', 0.28, 0.76, 0.24, 0.24, 90, -90), ('L', 0, 0.52)]],
+    'C': [[('A', 0.37, 0.5, 0.37, 0.5, 48, 312)]],
+    'D': [[('M', 0, 0), ('L', 0, 1), ('L', 0.24, 1), ('A', 0.24, 0.5, 0.38, 0.5, 90, -90), ('L', 0, 0)]],
+    'E': [[('M', 0.52, 1), ('L', 0, 1), ('L', 0, 0), ('L', 0.52, 0)], [('M', 0, 0.5), ('L', 0.42, 0.5)]],
+    'G': [[('A', 0.37, 0.5, 0.37, 0.5, 45, 350), ('L', 0.42, 0.435)]],
+    'I': [[('M', 0, 0), ('L', 0, 1)]],
+    'K': [[('M', 0, 0), ('L', 0, 1)], [('M', 0.54, 1), ('L', 0, 0.4)], [('M', 0.19, 0.61), ('L', 0.58, 0)]],
+    'L': [[('M', 0, 1), ('L', 0, 0), ('L', 0.5, 0)]],
+    'N': [[('M', 0, 0), ('L', 0, 1), ('L', 0.6, 0), ('L', 0.6, 1)]],
+    'O': [[('A', 0.4, 0.5, 0.4, 0.5, 90, 450)]],
+    'P': [[('M', 0, 0), ('L', 0, 1), ('L', 0.3, 1), ('A', 0.3, 0.74, 0.26, 0.26, 90, -90), ('L', 0, 0.48)]],
+    'R': [[('M', 0, 0), ('L', 0, 1), ('L', 0.3, 1), ('A', 0.3, 0.74, 0.26, 0.26, 90, -90), ('L', 0, 0.48)],
+          [('M', 0.28, 0.48), ('L', 0.58, 0)]],
+    'S': [[('A', 0.3, 0.75, 0.28, 0.25, 15, 270), ('A', 0.3, 0.25, 0.3, 0.25, 90, -165)]],
+    'U': [[('M', 0, 1), ('L', 0, 0.3), ('A', 0.3, 0.3, 0.3, 0.3, 180, 360), ('L', 0.6, 1)]],
+    'Y': [[('M', 0, 1), ('L', 0.3, 0.48), ('L', 0.6, 1)], [('M', 0.3, 0.48), ('L', 0.3, 0)]],
 }
+TUBE = 0.13          # tube width, in cap heights
+LETTER_GAP = 0.26    # space between letters, in cap heights
+
+
+def _arc(cx, cy, rx, ry, a0, a1):
+    n = max(3, int(np.ceil(abs(a1 - a0) / 10.0)))
+    t = np.radians(np.linspace(a0, a1, n + 1))
+    return np.stack([cx + rx * np.cos(t), cy + ry * np.sin(t)], 1)
+
+
+def glyph_strokes(ch):
+    """The polylines of a letter, its left edge at x = 0."""
+    out = []
+    for ops in GLYPHS[ch]:
+        pts = []
+        for op in ops:
+            if op[0] in 'ML':
+                pts.append(np.array(op[1:], float)[None])
+            else:
+                pts.append(_arc(*op[1:]))
+        pts = np.concatenate(pts)
+        keep = np.r_[True, np.linalg.norm(np.diff(pts, axis=0), axis=1) > 1e-6]
+        out.append(pts[keep])
+    lo = min(p[:, 0].min() for p in out)
+    return [p - [lo, 0] for p in out], max(p[:, 0].max() for p in out) - lo
+
+
+def _disc2d(c, r, seg=10):
+    t = np.linspace(0, 2 * np.pi, seg + 1)
+    ring = np.stack([c[0] + r * np.cos(t), c[1] + r * np.sin(t)], 1)
+    return [(c, ring[i], ring[i + 1]) for i in range(seg)]
+
+
+def tube_tris(pts, w):
+    """Flat triangles of a neon tube of width w along a polyline: mitred where it bends gently,
+    broken with a round joint where it turns sharp, round at both ends."""
+    h = w / 2.0
+    closed = len(pts) > 2 and np.linalg.norm(pts[0] - pts[-1]) < 1e-6
+    seg = np.diff(pts, axis=0)
+    d = seg / np.linalg.norm(seg, axis=1)[:, None]
+    nrm = np.stack([-d[:, 1], d[:, 0]], 1)
+    tris, rounds = [], []
+    if closed and np.dot(d[-1], d[0]) < 0.6:
+        closed = False
+    if not closed:
+        rounds += [pts[0], pts[-1]]
+    left, right = [], []
+    for i in range(len(pts)):
+        a = i - 1 if i > 0 else (len(seg) - 1 if closed else None)
+        b = i if i < len(seg) else (0 if closed else None)
+        if a is None or b is None:
+            n = nrm[a if b is None else b]
+            off = [n * h]
+        elif np.dot(d[a], d[b]) < 0.6:      # sharp: end the tube here, then start it again
+            off = [nrm[a] * h, nrm[b] * h]
+            rounds.append(pts[i])
+        else:
+            mid = nrm[a] + nrm[b]
+            mid /= np.linalg.norm(mid)
+            off = [mid * h / max(np.dot(mid, nrm[a]), 0.5)]
+        left.append([pts[i] + o for o in off])
+        right.append([pts[i] - o for o in off])
+    for i in range(len(seg)):
+        l0, r0 = left[i][-1], right[i][-1]
+        l1, r1 = left[i + 1][0], right[i + 1][0]
+        tris += [(r0, r1, l1), (r0, l1, l0)]
+    for c in rounds:
+        tris += _disc2d(c, h)
+    return tris
+
+
+def word_tris(word, cap):
+    """The flat triangles of `word` in neon tubes, cap height `cap`, centred on (0, 0)."""
+    tris, x = [], 0.0
+    for i, ch in enumerate(word):
+        strokes, width = glyph_strokes(ch)
+        for p in strokes:
+            tris += [tuple(v + [x, 0] for v in t) for t in tube_tris(p, TUBE)]
+        x += width + (LETTER_GAP if i < len(word) - 1 else 0)
+    a = np.array(tris, float).reshape(-1, 3, 2)
+    a -= [x / 2.0, 0.5]
+    return a * cap, (x + TUBE) * cap
+
+
+def word_width(word):
+    """Width of `word` for a cap height of 1, tube ends included."""
+    return sum(glyph_strokes(c)[1] for c in word) + LETTER_GAP * (len(word) - 1) + TUBE
+
+
+def suit_tris(suit):
+    """A card suit as smooth filled shapes, about 1 tall, centred on (0, 0)."""
+    def fan(c, ring):
+        return [(c, ring[i], ring[(i + 1) % len(ring)]) for i in range(len(ring))]
+    def heart(flip=1.0, dy=0.0, s=1.0):
+        t = np.linspace(0, 2 * np.pi, 48, endpoint=False)
+        x = 16 * np.sin(t) ** 3
+        y = 13 * np.cos(t) - 5 * np.cos(2 * t) - 2 * np.cos(3 * t) - np.cos(4 * t)
+        ring = np.stack([x, (y + 2.5) * flip], 1) / 29.0 * s + [0, dy]
+        return fan(np.array([0.0, dy]), ring)
+    if suit == 'heart':
+        return heart()
+    if suit == 'diamond':
+        t = np.linspace(0, 1, 7)
+        corners = [(0, 0.5), (0.36, 0), (0, -0.5), (-0.36, 0), (0, 0.5)]
+        ring = []
+        for (x0, y0), (x1, y1) in zip(corners, corners[1:]):
+            for u in t[:-1]:      # sides bowed slightly inward
+                bow = 0.035 * np.sin(np.pi * u)
+                ring.append((x0 + (x1 - x0) * u - np.sign(x0 + x1) * bow * 0.5, y0 + (y1 - y0) * u - np.sign(y0 + y1) * bow))
+        return fan(np.zeros(2), np.array(ring))
+    stem = [(np.array([0.0, -0.05]), np.array([0.2, -0.5]), np.array([-0.2, -0.5]))]
+    if suit == 'spade':
+        return heart(flip=-1.0, dy=0.12, s=0.92) + stem
+    # club: three round leaves and a stem
+    out = stem + _disc2d(np.array([0.0, 0.0]), 0.12, 12)
+    for c in ((0.0, 0.25), (-0.23, -0.06), (0.23, -0.06)):
+        out += _disc2d(np.array(c), 0.21, 18)
+    return out
 
 
 class Model:
@@ -102,49 +222,43 @@ class Model:
         """A flat panel on a -Z wall (seen from -Z)."""
         self.box(mat, (x0, y0, z), (x1, y1, z), 'z')
 
+    def flat(self, mat, tris2d, origin, u, v):
+        """Flat 2D triangles laid on a plane: (a, b) -> origin + a * u + b * v, facing u x v."""
+        t = np.asarray(tris2d, float).reshape(-1, 3, 2)
+        area = (t[:, 1, 0] - t[:, 0, 0]) * (t[:, 2, 1] - t[:, 0, 1]) - (t[:, 2, 0] - t[:, 0, 0]) * (t[:, 1, 1] - t[:, 0, 1])
+        t = t[np.abs(area) > 1e-12]
+        flip = area[np.abs(area) > 1e-12] < 0
+        t[flip] = t[flip][:, ::-1]           # every triangle counter-clockwise, seen from the front
+        o, u, v = (np.asarray(a, float) for a in (origin, u, v))
+        n = np.cross(u, v)
+        pos = o + t[..., :1] * u + t[..., 1:] * v
+        self.tris(mat, pos, np.broadcast_to(n, pos.shape))
+
+    def dot(self, mat, centre, u, v, r, seg=8):
+        """One light: a round glowing dot facing u x v, no box round it."""
+        self.flat(mat, _disc2d(np.zeros(2), r, seg), centre, u, v)
+
     def size(self):
         p = np.concatenate([np.concatenate(v[0]) for v in self.parts.values()]).reshape(-1, 3)
         return p.min(0), p.max(0)
 
 
-def dots(word, pitch, gap=1):
-    """Centres (u, v) of the bulbs of `word`: u to the right, v up, centred on (0, 0)."""
-    glyphs = [FONT[word]] if word in FONT else [FONT[c] for c in word]
-    out, u = [], 0
-    for rows in glyphs:
-        for r, row in enumerate(rows):
-            for c, on in enumerate(row):
-                if on == '1':
-                    out.append((u + c, len(rows) - 1 - r))
-        u += len(rows[0]) + gap
-    a = np.array(out, float)
-    width = u - gap - 1
-    a[:, 0] -= width / 2.0
-    a[:, 1] -= (len(glyphs[0]) - 1) / 2.0
-    return a * pitch
+## The planes a sign can be laid on: (u, v) for someone looking at that wall, u to their right.
+FRONT = ((-1, 0, 0), (0, 1, 0))       # a -Z wall
+SIDE = {-1: ((0, 0, 1), (0, 1, 0)),   # a wall facing -X
+        1: ((0, 0, -1), (0, 1, 0))}   # a wall facing +X
 
 
-def bulbs_front(m, mat, uv, cx, cy, z, size):
-    """Bulbs on a -Z wall at depth z (they stick out toward -Z); u runs to the viewer's right,
-    which is -X for someone looking at a -Z front."""
-    h = size / 2.0
-    for u, v in uv:
-        x, y = cx - u, cy + v
-        m.box(mat, (x - h, y - h, z - size), (x + h, y + h, z), 'xXyYz')
+def neon_word(m, mat, word, centre, plane, cap, max_width=None):
+    """`word` in smooth neon tubes, centred on `centre`, on `plane` (FRONT or SIDE[...])."""
+    if max_width is not None:
+        cap = min(cap, max_width / word_width(word))
+    tris, _ = word_tris(word, cap)
+    m.flat(mat, tris, centre, *plane)
 
 
-def bulbs_side(m, mat, uv, x, cy, cz, size, toward):
-    """Bulbs on a wall facing `toward` (-1: -X, +1: +X), centred on (cy, cz). Seen from -X the
-    viewer's right is +Z, seen from +X it is -Z."""
-    h = size / 2.0
-    for u, v in uv:
-        z, y = cz + u * -toward, cy + v
-        x0, x1 = (x - size, x) if toward < 0 else (x, x + size)
-        m.box(mat, (x0, y - h, z - h), (x1, y + h, z + h), 'xXyYzZ'.replace('X' if toward < 0 else 'x', ''))
-
-
-def border(m, mat, x0, x1, y0, y1, z, pitch, size):
-    """Chaser bulbs round a front sign."""
+def border(m, mat, x0, x1, y0, y1, z, pitch, r):
+    """Chaser lights round a front sign: round dots of radius r."""
     pts = []
     nx = max(2, int(round((x1 - x0) / pitch)))
     ny = max(2, int(round((y1 - y0) / pitch)))
@@ -154,14 +268,13 @@ def border(m, mat, x0, x1, y0, y1, z, pitch, size):
     for j in range(1, ny):
         y = y0 + (y1 - y0) * j / ny
         pts += [(x0, y), (x1, y)]
-    h = size / 2.0
     for x, y in pts:
-        m.box(mat, (x - h, y - h, z - size), (x + h, y + h, z), 'xXyYz')
+        m.dot(mat, (x, y, z), *FRONT, r)
 
 
 def front_sign(m, word, cx, y0, z, width, letter_mat, panel='sign', frame='gold', chaser='bulb', pad=0.06):
-    """A roof or wall sign: a dark panel with a gold frame, `word` in bulbs, chaser bulbs round
-    it. Its pitch fills `width`; returns the top of the sign."""
+    """A roof or wall sign: a dark panel with a gold frame, `word` in neon tubes, chaser lights
+    round it. Same panel as the dot-letter signs it replaces; returns the top of the sign."""
     n = len(word)
     cols = n * 6 - 1
     pitch = (width - 2 * pad) / cols
@@ -172,9 +285,11 @@ def front_sign(m, word, cx, y0, z, width, letter_mat, panel='sign', frame='gold'
     for a, b in (((x0 - t, y0 - t), (x1 + t, y0)), ((x0 - t, y1), (x1 + t, y1 + t)),
                  ((x0 - t, y0), (x0, y1)), ((x1, y0), (x1 + t, y1))):
         m.box(frame, (a[0], a[1], z - 0.01), (b[0], b[1], z + 0.05))
-    bulbs_front(m, letter_mat, dots(word, pitch), cx, (y0 + y1) / 2.0, z, pitch * 0.72)
+    inset = 2.2 * pitch if chaser else 1.2 * pitch
+    neon_word(m, letter_mat, word, (cx, (y0 + y1) / 2.0, z - 0.003), FRONT,
+              height - 2 * pad - (2.0 * pitch if chaser else 0.4 * pitch), max_width=width - 2 * pad - inset)
     if chaser:
-        border(m, chaser, x0 + pad * 0.4, x1 - pad * 0.4, y0 + pad * 0.4, y1 - pad * 0.4, z, pitch * 1.5, pitch * 0.45)
+        border(m, chaser, x0 + pad * 0.4, x1 - pad * 0.4, y0 + pad * 0.4, y1 - pad * 0.4, z - 0.004, pitch * 1.5, pitch * 0.26)
     return y1
 
 
@@ -197,19 +312,20 @@ def windows(m, rng, x0, x1, y0, y1, cols, rows, z=0.0, lit=0.6, gap=0.3, face='z
 
 
 def canopy(m, x0, x1, y, z_wall, depth, top='gold', strip='bulb'):
-    """A marquee canopy over a door, bulbs along its three outer edges."""
+    """A marquee canopy over a door, round lights along its three outer edges."""
     zf = z_wall - depth
     m.box(top, (x0, y, zf), (x1, y + 0.05, z_wall))
     s = 0.022
+    r = s * 0.5
     n = int((x1 - x0) / 0.05)
     for i in range(n + 1):
         x = x0 + (x1 - x0) * i / n
-        m.box(strip, (x - s / 2, y - s, zf - s), (x + s / 2, y, zf))
+        m.dot(strip, (x, y + 0.025, zf - 0.002), *FRONT, r)
     k = int(depth / 0.05)
     for j in range(k + 1):
         z = zf + depth * j / k
-        for x in (x0, x1):
-            m.box(strip, (x - s / 2, y - s, z - s / 2), (x + s / 2, y, z + s / 2))
+        for x, side in ((x0, -1), (x1, 1)):
+            m.dot(strip, (x + side * 0.002, y + 0.025, z), *SIDE[side], r)
 
 
 def door(m, cx, z, w=0.3, h=0.27, mat='window', frame='gold'):
@@ -287,11 +403,10 @@ def casino_c(rng):
     canopy(m, -0.55, 0.55, 0.34, z, 0.3)
     # The four suits across the first floor, in their colours, on black panels. u runs left to
     # right seen from the street, which is +X to -X.
-    pitch = 0.05
     for k, (suit, mat) in enumerate((('spade', 'cyan'), ('heart', 'neon_red'), ('club', 'green'), ('diamond', 'neon_red'))):
         x = 0.69 - k * 0.46
         m.box('black', (x - 0.19, 0.5, z - 0.008), (x + 0.19, 0.95, z), 'xXyYz')
-        bulbs_front(m, mat, dots(suit, pitch), x, 0.725, z - 0.008, pitch * 0.8)
+        m.flat(mat, np.asarray(suit_tris(suit)) * 0.32, (x, 0.725, z - 0.011), *FRONT)
     for x in np.linspace(-W / 2 + 0.04, W / 2 - 0.04, 5):
         m.box('gold', (x - 0.03, 0.4, z - 0.03), (x + 0.03, H, z))
     windows(m, rng, -W / 2 + 0.08, W / 2 - 0.08, 1.0, 1.17, 10, 1, z=z, lit=0.8)
@@ -337,8 +452,8 @@ def club_b(rng):
     for i, ch in enumerate('DISCO'):
         cy = by1 - 0.05 - 3 * pitch - i * 8 * pitch
         for toward in (-1, 1):
-            xx = bx - 0.02 if toward < 0 else bx + 0.02
-            bulbs_side(m, 'pink', dots(ch, pitch), xx, cy, (bz0 + bz1) / 2, pitch * 0.75, toward)
+            xx = bx + toward * 0.023
+            neon_word(m, 'pink', ch, (xx, cy, (bz0 + bz1) / 2), SIDE[toward], 6.2 * pitch)
     for toward in (-1, 1):
         xx = bx - 0.021 if toward < 0 else bx + 0.021
         x0, x1 = (xx - 0.012, xx) if toward < 0 else (xx, xx + 0.012)
