@@ -35,9 +35,9 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 	var roll := float((seed >> 12) & 1023) / 1024.0
 	var r := data.building_rect(i)
 	var zone: int = data.zone[data.idx(r.position.x, r.position.y)]
-	# The little Las Vegas: offices and shops come from a few Kenney commercial buildings.
+	# The little Las Vegas: offices and shops are its casinos and clubs.
 	if zone == Zone.ENTERTAINMENT and (kind == Kind.OFFICE or kind == Kind.SHOP):
-		var kit := _vegas_kit(lib)
+		var kit := _vegas_kit(lib, kind)
 		if not kit.is_empty():
 			return kit
 	match kind:
@@ -163,11 +163,23 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 	return PackedInt32Array()
 
 
-## Kenney commercial buildings used for the offices and shops of Las Vegas.
+## Offices of Las Vegas: its casinos, its taller clubs and the dollar buildings; shops: its
+## clubs and bars (tools/make_vegas_buildings.py). Without them, a few Kenney commercial
+## buildings as before.
 const VEGAS_KIT := ["building-b.glb", "building-d.glb", "building-f.glb", "building-h.glb", "building-k.glb", "building-n.glb"]
 
 
-static func _vegas_kit(lib: ModelLibrary) -> PackedInt32Array:
+static func _vegas_kit(lib: ModelLibrary, kind: int) -> PackedInt32Array:
+	var clubs := lib.ids(Cat.VEGAS_CLUB)
+	if not clubs.is_empty():
+		if kind == Kind.SHOP:
+			return clubs
+		var out := lib.ids(Cat.VEGAS_CASINO).duplicate()
+		for id in clubs:
+			if not lib.model_name(id).ends_with("_low"):
+				out.append(id)
+		out.append_array(lib.ids(Cat.VEGAS_DOLLAR))
+		return out
 	# The dollar buildings (building-n with a gold dollar sign, and twice as high) stand for
 	# building-n when they are there.
 	var dollar := lib.ids(Cat.VEGAS_DOLLAR)

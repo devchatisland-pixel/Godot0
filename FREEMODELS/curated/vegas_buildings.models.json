@@ -1,0 +1,37 @@
+{
+	"file": "vegas_buildings.glb",
+	"models": [
+		{
+			"cat": "VEGAS_CASINO",
+			"node": "vegas_casino_a"
+		},
+		{
+			"cat": "VEGAS_CASINO",
+			"node": "vegas_casino_b"
+		},
+		{
+			"cat": "VEGAS_CASINO",
+			"node": "vegas_casino_c"
+		},
+		{
+			"cat": "VEGAS_CLUB",
+			"node": "vegas_club_a"
+		},
+		{
+			"cat": "VEGAS_CLUB",
+			"node": "vegas_club_b"
+		},
+		{
+			"cat": "VEGAS_CLUB",
+			"node": "vegas_club_c"
+		},
+		{
+			"cat": "VEGAS_CLUB",
+			"node": "vegas_club_low"
+		},
+		{
+			"cat": "VEGAS_CLUB",
+			"node": "vegas_bar_low"
+		}
+	]
+}

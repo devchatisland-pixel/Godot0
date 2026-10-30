@@ -63,6 +63,9 @@ enum Cat {
 	# Twenty-first wave: the club sign with a bold word (CLUB, XXX, OPEN, PRIVE, LIVE) and the
 	# heart of the love sign alone (tools/make_neon_variants.py)
 	NEON_CLUB_BOLD, NEON_CLUB_XXX, NEON_CLUB_OPEN, NEON_CLUB_PRIVE, NEON_CLUB_LIVE, NEON_HEART,
+	# Twenty-second wave: the casinos and clubs of Las Vegas, their signs in bulbs
+	# (tools/make_vegas_buildings.py)
+	VEGAS_CASINO, VEGAS_CLUB,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
