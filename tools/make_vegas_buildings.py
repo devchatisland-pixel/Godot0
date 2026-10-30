@@ -9,6 +9,9 @@
       vegas_club_c       low red lounge, LOUNGE
       vegas_club_low     one storey, DANCE
       vegas_bar_low      one storey, BAR
+  FREEMODELS/curated/vegas_signs.glb       the same signs alone, one node each (vegas_sign_casino,
+      _royal, _poker, _club, _disco, _lounge, _dance, _bar), for Chat City's Las Vegas, which puts
+      them on Kenney's commercial buildings
 
 Kenney scale and orientation, like the commercial kit next to them: a storey is about 0.4, a door
 0.27, the front faces -Z, every building stands on y = 0 centred on x / z. Plain colours only
@@ -521,13 +524,86 @@ def bar_low(rng):
     return m
 
 
-def write_pack(models, path):
-    """One glTF binary: a root node `PACK` (GODOT_single_root) with one node and mesh per model,
+## The signs alone, for other buildings (Chat City's Las Vegas, owner 2026-10-30: Kenney's
+## commercial buildings with these signs on them). Each faces -Z with its back on z = 0, stands on
+## y = 0 and is centred on x = 0: a roof sign goes on a roof just behind the front wall, the blade
+## sign against a front wall.
+
+def sign_casino():
+    m = Model('vegas_sign_casino')
+    front_sign(m, 'CASINO', 0.0, 0.0, -0.05, 1.9, 'bulb')
+    return m
+
+
+def sign_royal():
+    m = Model('vegas_sign_royal')
+    top = front_sign(m, 'ROYAL', 0.0, 0.0, -0.05, 1.1, 'bulb')
+    neon_outline(m, 'violet', -0.57, 0.57, top + 0.01, top + 0.04, -0.05, t=0.015)
+    return m
+
+
+def sign_poker():
+    """POKER, the four suits in their colours on dark panels above it."""
+    m = Model('vegas_sign_poker')
+    top = front_sign(m, 'POKER', 0.0, 0.0, -0.05, 1.5, 'pink')
+    for k, (suit, mat) in enumerate((('spade', 'cyan'), ('heart', 'neon_red'), ('club', 'green'), ('diamond', 'neon_red'))):
+        x = 0.57 - k * 0.38       # left to right seen from the street: +X to -X
+        m.box('black', (x - 0.16, top + 0.03, -0.05), (x + 0.16, top + 0.37, 0.0))
+        m.flat(mat, np.asarray(suit_tris(suit)) * 0.26, (x, top + 0.2, -0.053), *FRONT)
+    return m
+
+
+def sign_club():
+    m = Model('vegas_sign_club')
+    front_sign(m, 'CLUB', 0.0, 0.0, -0.05, 0.8, 'pink', panel='black', frame='pink', chaser=None, pad=0.04)
+    return m
+
+
+def sign_disco():
+    """The blade sign out of a front wall: DISCO top to bottom on both faces, a cyan tube round it."""
+    m = Model('vegas_sign_disco')
+    pitch, depth = 0.04, 0.45
+    by1 = 0.1 + 38 * pitch
+    m.box('black', (-0.025, 0.0, -depth), (0.025, by1, 0.0))
+    for i, ch in enumerate('DISCO'):
+        cy = by1 - 0.05 - 3 * pitch - i * 8 * pitch
+        for toward in (-1, 1):
+            neon_word(m, 'pink', ch, (toward * 0.028, cy, -depth / 2), SIDE[toward], 6.2 * pitch)
+    for toward in (-1, 1):
+        x0, x1 = (-0.041, -0.026) if toward < 0 else (0.026, 0.041)
+        for a, b in (((0.0, -depth), (0.015, 0.0)), ((by1 - 0.015, -depth), (by1, 0.0)), ((0.0, -depth), (by1, -depth + 0.015))):
+            m.box('cyan', (x0, a[0], a[1]), (x1, b[0], b[1]))
+    return m
+
+
+def sign_lounge():
+    m = Model('vegas_sign_lounge')
+    front_sign(m, 'LOUNGE', 0.0, 0.0, -0.05, 1.4, 'cyan', frame='violet', chaser=None, pad=0.035)
+    return m
+
+
+def sign_dance():
+    m = Model('vegas_sign_dance')
+    front_sign(m, 'DANCE', 0.0, 0.0, -0.05, 0.75, 'pink', pad=0.035)
+    return m
+
+
+def sign_bar():
+    m = Model('vegas_sign_bar')
+    front_sign(m, 'BAR', 0.0, 0.0, -0.05, 0.6, 'neon_red', pad=0.035)
+    return m
+
+
+SIGNS = (sign_casino, sign_royal, sign_poker, sign_club, sign_disco, sign_lounge, sign_dance, sign_bar)
+
+
+def write_pack(models, path, pack=PACK):
+    """One glTF binary: a root node `pack` (GODOT_single_root) with one node and mesh per model,
     one primitive per material, the corners of each welded."""
     names = list(MATERIALS)
     j = {'asset': {'version': '2.0', 'generator': 'tools/make_vegas_buildings.py'},
          'extensionsUsed': ['GODOT_single_root'], 'scene': 0,
-         'scenes': [{'nodes': [0]}], 'nodes': [{'name': PACK, 'children': list(range(1, len(models) + 1))}],
+         'scenes': [{'nodes': [0]}], 'nodes': [{'name': pack, 'children': list(range(1, len(models) + 1))}],
          'meshes': [], 'materials': [], 'accessors': [], 'bufferViews': []}
     for n in names:
         rgb, em, metal, rough = MATERIALS[n]
@@ -591,5 +667,12 @@ if __name__ == '__main__':
         lo, hi = m.size()
         tris = sum(len(np.concatenate(p)) for p, _ in m.parts.values())
         print('%-16s size %.3f x %.3f x %.3f  min x %.3f z %.3f  %5d triangles' % (m.name, *(hi - lo), lo[0], lo[2], tris))
+    # The signs alone (no .models.json: not buildings of the game's own map).
+    signs = [f() for f in SIGNS]
+    write_pack(signs, os.path.join(CUR, 'vegas_signs.glb'), 'vegas_signs')
+    for m in signs:
+        lo, hi = m.size()
+        tris = sum(len(np.concatenate(p)) for p, _ in m.parts.values())
+        print('%-18s size %.3f x %.3f x %.3f  min x %.3f z %.3f  %5d triangles' % (m.name, *(hi - lo), lo[0], lo[2], tris))
 
 
