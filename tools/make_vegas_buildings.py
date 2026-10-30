@@ -27,19 +27,33 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CUR = os.path.join(ROOT, 'FREEMODELS', 'curated')
 PACK = 'vegas_buildings'
 
+def lin(hex_rgb):
+    """An sRGB '#rrggbb' as the linear colour glTF stores."""
+    c = np.array([int(hex_rgb[i:i + 2], 16) / 255.0 for i in (1, 3, 5)])
+    return tuple(float(v) for v in np.round(np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4), 4))
+
+
 ## name: (base colour (linear), emissive, metallic, roughness)
+## The walls, roofs and glass in the soft, light colours of the other districts' kits (Kenney's
+## commercial and suburban kits, the quarter's buildings): off-white, pastels, mid greys, light
+## blue panes (owner, 2026-10-30: the first colours were too cartoonish). Only the bulbs and
+## neons stay bright.
 MATERIALS = {
-    'cream': ((0.62, 0.5, 0.36), None, 0.0, 0.8),
-    'red': ((0.4, 0.035, 0.045), None, 0.0, 0.7),
-    'purple': ((0.16, 0.04, 0.28), None, 0.0, 0.7),
-    'black': ((0.025, 0.025, 0.03), None, 0.0, 0.6),
-    'navy': ((0.03, 0.05, 0.12), None, 0.0, 0.6),
-    'concrete': ((0.3, 0.3, 0.32), None, 0.0, 0.9),
-    'gold': ((1.0, 0.6, 0.12), (0.12, 0.07, 0.01), 0.6, 0.35),
-    'glass': ((0.02, 0.03, 0.05), None, 0.3, 0.1),
-    'sign': ((0.06, 0.005, 0.01), None, 0.0, 0.8),
-    'window': ((1.0, 0.8, 0.5), (0.5, 0.37, 0.2), 0.0, 0.9),
-    'window_cool': ((0.75, 0.88, 1.0), (0.3, 0.38, 0.5), 0.0, 0.9),
+    'cream': (lin('#ece4d4'), None, 0.0, 0.85),
+    'red': (lin('#c4463f'), None, 0.0, 0.8),
+    'rose': (lin('#e6c2bb'), None, 0.0, 0.85),
+    'coral': (lin('#dfa592'), None, 0.0, 0.85),
+    'purple': (lin('#bcaed3'), None, 0.0, 0.85),
+    'black': (lin('#2f3136'), None, 0.0, 0.7),
+    'slate': (lin('#6b707a'), None, 0.0, 0.8),
+    'steel': (lin('#8193a7'), None, 0.0, 0.8),
+    'tower': (lin('#d6dadf'), None, 0.0, 0.85),
+    'concrete': (lin('#8e9096'), None, 0.0, 0.9),
+    'gold': (lin('#cfae72'), None, 0.2, 0.55),
+    'glass': (lin('#8fb0c2'), None, 0.1, 0.3),
+    'sign': (lin('#34353a'), None, 0.0, 0.8),
+    'window': (lin('#f0dfb8'), (0.16, 0.12, 0.05), 0.0, 0.6),
+    'window_cool': (lin('#b6d0de'), (0.04, 0.06, 0.08), 0.0, 0.4),
     'bulb': ((1.0, 0.85, 0.45), (1.0, 0.78, 0.32), 0.0, 0.9),
     'pink': ((1.0, 0.12, 0.6), (1.0, 0.08, 0.5), 0.0, 0.9),
     'cyan': ((0.1, 0.9, 1.0), (0.05, 0.75, 1.0), 0.0, 0.9),
@@ -366,7 +380,7 @@ def casino_b(rng):
     W, D, P = 2.0, 1.6, 0.72
     z = -D / 2
     # The casino: two storeys, its name in bulbs above the canopy.
-    m.box('red', (-W / 2, 0, -D / 2), (W / 2, P, D / 2))
+    m.box('rose', (-W / 2, 0, -D / 2), (W / 2, P, D / 2))
     m.box('gold', (-W / 2 - 0.02, P, -D / 2 - 0.02), (W / 2 + 0.02, P + 0.04, D / 2 + 0.02))
     m.box('concrete', (-W / 2, P + 0.04, -D / 2), (W / 2, P + 0.041, D / 2), 'Y')
     m.box('glass', (-W / 2 + 0.1, 0.02, z - 0.005), (W / 2 - 0.1, 0.34, z), 'z')
@@ -377,7 +391,7 @@ def casino_b(rng):
     front_sign(m, 'CASINO', 0.0, 0.4, z - 0.035, 1.5, 'bulb', chaser=None, pad=0.03)
     # The hotel tower on the back of the casino, lit windows all round, a gold crown, ROYAL.
     tx, tz0, tz1, top = 0.7, -0.3, 0.6, 3.6
-    m.box('navy', (-tx, P, tz0), (tx, top, tz1))
+    m.box('tower', (-tx, P, tz0), (tx, top, tz1))
     windows(m, rng, -tx + 0.05, tx - 0.05, P + 0.08, top - 0.08, 8, 14, z=tz0, lit=0.62, gap=0.35)
     for side, x in (('x', -tx), ('X', tx)):
         windows(m, rng, tz0 + 0.05, tz1 - 0.05, P + 0.08, top - 0.08, 5, 14, lit=0.55, gap=0.35, face=side, other=x)
@@ -421,13 +435,13 @@ def club_a(rng):
     m = Model('vegas_club_a')
     W, D, H = 1.2, 1.0, 0.85
     z = -D / 2
-    m.box('black', (-W / 2, 0, -D / 2), (W / 2, H, D / 2))
+    m.box('slate', (-W / 2, 0, -D / 2), (W / 2, H, D / 2))
     m.box('concrete', (-W / 2 + 0.03, H, -D / 2 + 0.03), (W / 2 - 0.03, H + 0.001, D / 2 - 0.03), 'Y')
     neon_outline(m, 'pink', -W / 2, W / 2, 0.0, H, z)
     for x in (-W / 2, W / 2):    # the side walls: a tube along the top
         m.box('pink', (x - 0.009, H - 0.018, -D / 2), (x + 0.009, H, D / 2))
     door(m, 0.0, z - 0.005, w=0.26, mat='pink', frame='black')
-    canopy(m, -0.22, 0.22, 0.32, z, 0.22, top='black', strip='cyan')
+    canopy(m, -0.22, 0.22, 0.32, z, 0.22, top='slate', strip='cyan')
     front_sign(m, 'CLUB', 0.0, 0.42, z - 0.01, 0.9, 'pink', panel='black', frame='pink', chaser=None, pad=0.04)
     return m
 
@@ -436,12 +450,12 @@ def club_b(rng):
     m = Model('vegas_club_b')
     W, D, H = 1.0, 1.0, 1.2
     z = -D / 2
-    m.box('navy', (-W / 2, 0, -D / 2), (W / 2, H, D / 2))
+    m.box('steel', (-W / 2, 0, -D / 2), (W / 2, H, D / 2))
     m.box('concrete', (-W / 2, H, -D / 2), (W / 2, H + 0.001, D / 2), 'Y')
     for y in (0.4, 0.7, 1.0):    # cyan bands round the building
         m.box('cyan', (-W / 2 - 0.012, y, -D / 2 - 0.012), (W / 2 + 0.012, y + 0.025, D / 2 + 0.012))
     door(m, -0.15, z - 0.005, w=0.28, mat='violet', frame='gold')
-    canopy(m, -0.35, 0.05, 0.33, z, 0.22, top='navy', strip='cyan')
+    canopy(m, -0.35, 0.05, 0.33, z, 0.22, top='steel', strip='cyan')
     windows(m, rng, -W / 2 + 0.08, W / 2 - 0.08, 0.45, 0.68, 4, 1, z=z, lit=0.6)
     windows(m, rng, -W / 2 + 0.08, W / 2 - 0.08, 0.75, 0.98, 4, 1, z=z, lit=0.6)
     # The blade sign out of the front, at its +X corner: DISCO top to bottom on both faces,
@@ -466,7 +480,7 @@ def club_c(rng):
     m = Model('vegas_club_c')
     W, D, H = 1.4, 1.0, 0.72
     z = -D / 2
-    m.box('red', (-W / 2, 0, -D / 2), (W / 2, H, D / 2))
+    m.box('coral', (-W / 2, 0, -D / 2), (W / 2, H, D / 2))
     m.box('gold', (-W / 2 - 0.02, H, -D / 2 - 0.02), (W / 2 + 0.02, H + 0.04, D / 2 + 0.02))
     m.box('concrete', (-W / 2, H + 0.04, -D / 2), (W / 2, H + 0.041, D / 2), 'Y')
     m.box('glass', (-W / 2 + 0.08, 0.02, z - 0.005), (W / 2 - 0.08, 0.3, z), 'z')
@@ -496,7 +510,7 @@ def bar_low(rng):
     m = Model('vegas_bar_low')
     W, D, H = 0.9, 0.8, 0.42
     z = -D / 2
-    m.box('black', (-W / 2, 0, -D / 2), (W / 2, H, D / 2))
+    m.box('slate', (-W / 2, 0, -D / 2), (W / 2, H, D / 2))
     m.box('gold', (-W / 2 - 0.015, H, -D / 2 - 0.015), (W / 2 + 0.015, H + 0.03, D / 2 + 0.015))
     m.box('concrete', (-W / 2, H + 0.03, -D / 2), (W / 2, H + 0.031, D / 2), 'Y')
     m.box('glass', (-W / 2 + 0.06, 0.04, z - 0.005), (-0.2, 0.3, z), 'z')
