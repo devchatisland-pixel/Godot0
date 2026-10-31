@@ -863,3 +863,93 @@ static func _grass(data: CityData, r: Rect2i) -> void:
 			data.deco[i] = 0
 			data.edge[i] = 0
 
+
+# --- Seventh wave: pirate grave on a southern islet, port sheds taken away, container piles ----------------
+
+## The pirate grave B-01212 moves to the middle one of the palm islets of the south (MapLayout.PALM_ISLETS).
+const GRAVE_AT := Vector2i(353, 130)
+const GRAVE_ISLET := 1
+## Taken away: the shed B-01731 and the factory twin B-01801.
+const SEVENTH_DELETED := [
+	["INDUSTRIAL", Vector2i(107, 249)],         # B-01731 shed_generic_4
+	["INDUSTRIAL", Vector2i(122, 240)],         # B-01801 factory_brick (the twin of B-01724)
+]
+## Replaced by container piles (INDUSTRIAL_YARD lots): the hall B-01728, the factory hall B-01740 and the
+## works shed B-01733, and the empty ground round them.
+const PILE_REPLACED := [Vector2i(127, 251), Vector2i(132, 250), Vector2i(133, 259)]
+const PILE_AREAS := [Rect2i(121, 244, 25, 9), Rect2i(129, 254, 17, 8)]
+## Piles are 2x2 lots, one free cell between two of them.
+const PILE_SIZE := 2
+const PILE_STRIDE := 3
+
+
+static func seventh_wave(data: CityData) -> Dictionary:
+	var n := {}
+	n["grave"] = _move_grave(data)
+	for d in SEVENTH_DELETED:
+		var b := _find(data, d[0], d[1])
+		if b >= 0:
+			_clear(data, b)
+	for at in PILE_REPLACED:
+		var b := _find(data, "INDUSTRIAL", at)
+		if b >= 0:
+			_clear(data, b)
+	var piles := 0
+	for area: Rect2i in PILE_AREAS:
+		piles += _container_piles(data, area)
+	n["piles"] = piles
+	return n
+
+
+## Container piles on every free 2x2 spot of `area`, in rows and columns three cells apart.
+static func _container_piles(data: CityData, area: Rect2i) -> int:
+	var n := 0
+	for y in range(area.position.y, area.end.y - PILE_SIZE + 1, PILE_STRIDE):
+		for x in range(area.position.x, area.end.x - PILE_SIZE + 1, PILE_STRIDE):
+			var lot := Rect2i(x, y, PILE_SIZE, PILE_SIZE)
+			if not _lot_free(data, lot):
+				continue
+			var b := data.add_building(lot, Kind.INDUSTRIAL_YARD, 2, (CityTypes.hash2(x, y, 5) & 0xfffff) * 3, 0.3)
+			data.b_scale[b] = 1.0
+			n += 1
+	return n
+
+
+## True when every cell of `lot` is land, not a street and under no building.
+static func _lot_free(data: CityData, lot: Rect2i) -> bool:
+	for y in range(lot.position.y, lot.end.y):
+		for x in range(lot.position.x, lot.end.x):
+			if not data.in_bounds(x, y) or not data.is_land(x, y) or data.is_road(x, y):
+				return false
+	for b in data.building_count():
+		if data.b_kind[b] != Kind.EMPTY and data.building_rect(b).intersects(lot):
+			return false
+	return true
+
+
+## The grave goes to the land cell nearest to the middle of the islet, free of any building.
+static func _move_grave(data: CityData) -> int:
+	var grave := _find(data, "GRAVE", GRAVE_AT)
+	var islets := MapLayout.palm_islets()
+	if grave < 0 or islets.size() <= GRAVE_ISLET:
+		return 0
+	var at := Vector2i(islets[GRAVE_ISLET]["at"])
+	var best := Vector2i(-1, -1)
+	var best_d := INF
+	for y in range(at.y - 8, at.y + 9):
+		for x in range(at.x - 8, at.x + 9):
+			var cell := Vector2i(x, y)
+			if not _lot_free(data, Rect2i(cell, Vector2i.ONE)):
+				continue
+			var d := Vector2(cell).distance_to(Vector2(at))
+			if d < best_d:
+				best_d = d
+				best = cell
+	if best.x < 0:
+		push_warning("[MapChanges] no free land on the islet at %s" % at)
+		return 0
+	data.set_building_rect(grave, Rect2i(best, Vector2i.ONE))
+	data.zone[data.idx(best.x, best.y)] = Zone.ISLET
+	data.forest[data.idx(best.x, best.y)] = 0
+	return 1
+
