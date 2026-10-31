@@ -81,6 +81,7 @@ func generate() -> CityData:
 	print("[City] map changes 6: ", MapChanges.sixth_wave(data))
 	print("[City] map changes 7: ", MapChanges.seventh_wave(data))
 	print("[City] map changes 8: ", MapChanges.eighth_wave(data))
+	print("[City] map changes 9: ", MapChanges.ninth_wave(data))
 	print("[City] Las Vegas roof signs: ", MapRetouch.vegas_signs(data))
 	AmenitiesPlanner.apply(data)
 	# The empty plots of the suburbs, the red district and the south apartments, built on with
