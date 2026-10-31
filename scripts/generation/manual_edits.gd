@@ -174,6 +174,7 @@ static func apply(data: CityData) -> int:
 			data.b_kind[id] = CityTypes.Kind[e["replace"]]
 		if e.get("delete", false):
 			data.b_kind[id] = CityTypes.Kind.EMPTY
+			ZoneFill.keep_empty[id] = "ManualEdits.delete"
 		if e.get("park", false):
 			for y in range(lot.position.y, lot.end.y):
 				for x in range(lot.position.x, lot.end.x):

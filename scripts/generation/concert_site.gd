@@ -79,6 +79,7 @@ static func _clear(data: CityData, r: Rect2i) -> void:
 	for b in data.building_count():
 		if data.b_kind[b] != Kind.EMPTY and data.building_rect(b).intersects(r):
 			data.b_kind[b] = Kind.EMPTY
+			ZoneFill.keep_empty[b] = "ConcertSite"
 
 
 ## The stage turns its back to the sea and its front (and the gate) to the city.
