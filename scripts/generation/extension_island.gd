@@ -37,10 +37,6 @@ func is_tower_islet(x: int, y: int) -> bool:
 	return _ellipse_t(Vector2(x, y), MapLayout.blob("tower_islet")["at"], MapLayout.blob("tower_islet")["r"], 0.0) < 1.15
 
 
-func is_dev_island(x: int, y: int) -> bool:
-	return _ellipse_t(Vector2(x, y), MapLayout.blob("dev_island")["at"], MapLayout.blob("dev_island")["r"], 0.0) < 1.15
-
-
 func is_prison_island(x: int, y: int) -> bool:
 	return _ellipse_t(Vector2(x, y), MapLayout.blob("prison")["at"], MapLayout.blob("prison")["r"], MapLayout.blob("prison")["turn"]) < 1.12
 
@@ -75,7 +71,6 @@ func _build_extended_elevation() -> void:
 			_raise(x, y, 1.0 - t * t + coast.get_noise_2d(x, y) * _cfg.coast_noise * COAST_ROUGHNESS)
 	for lobe in [MapLayout.blob("urban"), MapLayout.blob("urban_north"), MapLayout.blob("tower_islet")]:
 		_rough_lobe(coast, lobe["at"], lobe["r"])
-	_raise_lobe(coast, MapLayout.blob("dev_island")["at"], MapLayout.blob("dev_island")["r"])
 	for it in MapLayout.palm_islets():
 		_islet(coast, it["at"], Vector2(it["r"], it["r"]), 0.0, 0.3, 0.05, 3.0)
 	_islet(coast, MapLayout.blob("prison")["at"], MapLayout.blob("prison")["r"], MapLayout.blob("prison")["turn"], 0.4, 0.15, 2.7)
@@ -180,9 +175,6 @@ func _build_forest() -> void:
 			var i := y * size + x
 			if core_land_at(x, y):
 				continue # keep the forest of the core
-			if is_dev_island(x, y):
-				_data.forest[i] = 0
-				continue
 			if _data.terrain[i] != CityTypes.Terrain.LAND:
 				_data.forest[i] = 0
 				continue
