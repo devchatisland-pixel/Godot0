@@ -663,6 +663,11 @@ def bank_school():
              'the word SCHOOL')
 
 
+def hospital():
+    lit_sign('public_main', 'hospital', 'HOSPITAL_MAIN', hospital_lights, HOSPITAL_BLUE, 0.35, 0.8,
+             FACADE / OWN_NIGHT, 'the blue cross and the word HOSPITAL')
+
+
 def signs():
     # The cinema had no lit facade: only its letters (and what they light) show at night.
     lit_sign('cinema2', 'cinema', 'CINEMA2', cinema_letters, CINEMA_RED, 0.2, 0.5, 0.0, 'the word CINEMA')
@@ -671,8 +676,7 @@ def signs():
     lit_sign('hotels', 'hotel_stars', 'HOTEL_LOW', hotel_stars_stars, STAR_YELLOW, 0.2, 0.5, FACADE / OWN_NIGHT,
              'the stars')
     police()
-    lit_sign('public_main', 'hospital', 'HOSPITAL_MAIN', hospital_lights, HOSPITAL_BLUE, 0.35, 0.8,
-             FACADE / OWN_NIGHT, 'the blue cross and the word HOSPITAL')
+    hospital()
     lit_sign('public_main', 'city_hall', 'CITY_HALL_MAIN', city_hall_letters, CITY_HALL_CORAL, 0.04, 0.3,
              FACADE / OWN_NIGHT, 'the words CITY HALL')
     bank_school()
@@ -1187,6 +1191,9 @@ if __name__ == '__main__':
     import sys
     if sys.argv[1:] == ['signs']:
         signs()
+        sys.exit()
+    if sys.argv[1:] == ['hospital']:
+        hospital()
         sys.exit()
     if sys.argv[1:] == ['bank_school']:
         bank_school()

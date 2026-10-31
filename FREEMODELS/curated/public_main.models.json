@@ -6,10 +6,6 @@
 			"node": "city_hall"
 		},
 		{
-			"cat": "HOSPITAL_MAIN",
-			"node": "hospital"
-		},
-		{
 			"cat": "GAS_STATION",
 			"node": "gas_station"
 		}
