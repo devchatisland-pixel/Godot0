@@ -997,3 +997,28 @@ static func eighth_wave(data: CityData) -> Dictionary:
 		_clear(data, shed)
 	return n
 
+
+# --- Ninth wave: too many container piles, three port buildings taken away -------------------------------
+
+## Taken away: nine container piles of the seventh wave (B-01821, B-01820, B-01831, B-01830, B-01842,
+## B-01843, B-01819, B-01811, B-01812), the brick factory B-01727, the tower tank B-01748 and the old
+## tank B-01737 (moved to column 115 by the fifth wave).
+const NINTH_DELETED := [
+	["INDUSTRIAL_YARD", Vector2i(143, 246)], ["INDUSTRIAL_YARD", Vector2i(141, 246)],
+	["INDUSTRIAL_YARD", Vector2i(143, 248)], ["INDUSTRIAL_YARD", Vector2i(141, 248)],
+	["INDUSTRIAL_YARD", Vector2i(142, 250)], ["INDUSTRIAL_YARD", Vector2i(144, 250)],
+	["INDUSTRIAL_YARD", Vector2i(138, 246)], ["INDUSTRIAL_YARD", Vector2i(136, 244)],
+	["INDUSTRIAL_YARD", Vector2i(138, 244)],
+	["INDUSTRIAL", Vector2i(115, 238)], ["INDUSTRIAL", Vector2i(113, 263)], ["INDUSTRIAL", Vector2i(115, 263)],
+]
+
+
+static func ninth_wave(data: CityData) -> Dictionary:
+	var n := 0
+	for d in NINTH_DELETED:
+		var b := _find(data, d[0], d[1])
+		if b >= 0:
+			_clear(data, b)
+			n += 1
+	return {"deleted": n}
+
