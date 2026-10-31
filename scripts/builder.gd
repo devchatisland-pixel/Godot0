@@ -14,6 +14,10 @@ var index:int = 0 # Index of structure being built
 
 var plane:Plane # Used for raycasting mouse
 
+var inspect_panel:PanelContainer # Shown when a placed structure is Shift+clicked
+var inspect_label:Label
+var inspected_model_name:String = ""
+
 func _ready():
 	
 	map = DataMap.new()
@@ -36,6 +40,7 @@ func _ready():
 	
 	update_structure()
 	update_cash()
+	create_inspect_panel()
 
 func _process(delta):
 	
@@ -57,7 +62,8 @@ func _process(delta):
 	var gridmap_position = Vector3(round(world_position.x), 0, round(world_position.z))
 	selector.position = lerp(selector.position, gridmap_position, min(delta * 40, 1.0))
 	
-	action_build(gridmap_position)
+	if not action_inspect(gridmap_position) and not is_mouse_over_inspect_panel():
+		action_build(gridmap_position)
 	action_demolish(gridmap_position)
 
 # Retrieve the mesh from a PackedScene, used for dynamically creating a MeshLibrary
@@ -86,6 +92,52 @@ func action_build(gridmap_position):
 			update_cash()
 			
 			Audio.play("sounds/placement-a.ogg, sounds/placement-b.ogg, sounds/placement-c.ogg, sounds/placement-d.ogg", -20)
+
+# Inspect a placed structure (Shift + build click), shows a panel with a 'Copy model' button
+
+func action_inspect(gridmap_position) -> bool:
+	if not (Input.is_action_just_pressed("build") and Input.is_key_pressed(KEY_SHIFT)):
+		return false
+	if is_mouse_over_inspect_panel():
+		return false
+	
+	var item = gridmap.get_cell_item(gridmap_position)
+	if item == -1 or item >= structures.size():
+		inspect_panel.visible = false
+		return true
+	
+	inspected_model_name = structures[item].model.resource_path.get_file().get_basename()
+	inspect_label.text = inspected_model_name
+	inspect_panel.visible = true
+	return true
+
+func create_inspect_panel():
+	var layer = CanvasLayer.new()
+	add_child(layer)
+	
+	inspect_panel = PanelContainer.new()
+	inspect_panel.visible = false
+	inspect_panel.position = Vector2(20, 90)
+	layer.add_child(inspect_panel)
+	
+	var box = HBoxContainer.new()
+	inspect_panel.add_child(box)
+	
+	inspect_label = Label.new()
+	box.add_child(inspect_label)
+	
+	var copy_button = Button.new()
+	copy_button.text = "Copy model"
+	copy_button.pressed.connect(copy_model_name)
+	box.add_child(copy_button)
+
+# Copies only the model name (e.g. 'building-small-a') of the inspected structure
+
+func copy_model_name():
+	DisplayServer.clipboard_set(inspected_model_name)
+
+func is_mouse_over_inspect_panel() -> bool:
+	return inspect_panel.visible and inspect_panel.get_global_rect().has_point(get_viewport().get_mouse_position())
 
 # Demolish (remove) a structure
 
