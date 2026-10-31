@@ -3,8 +3,10 @@ extends RefCounted
 ## Builds on the empty plots of three zones, with the models the user chose for each:
 ##   SUBURBAN   the Kenney suburban houses (building-type-*)
 ##   QUARTER    quarter buildings (the red district)
-##   APARTMENT  modular fog homes and offices, flats; only the south area, near Las Vegas and
-##              the shopping streets (the north one, uptown, is left as it is)
+##   APARTMENT  modular fog homes and offices, flats; the south area, near Las Vegas and the
+##              shopping streets (the north one, uptown, is houses: it becomes SUBURBAN first)
+##   COMMERCIAL Kenney commercial buildings (building-a... of the commercial kit) and two
+##              suburban houses
 ## First the lots too big for the house on them are cut: a lot of SPLIT_KINDS running SPLIT_FROM
 ## cells or more along its street is cut in two along it; one as deep, with a street behind it
 ## too, is cut back to back (the new half faces the street behind). The building keeps the
@@ -43,6 +45,13 @@ const QUARTER_MODELS := [
 	["quarter.glb: quarter_17_b", 2.51, 2.15], ["quarter.glb: quarter_05_b", 0.58, 1.19],
 	["quarter.glb: quarter_14_b", 1.01, 1.01],
 ]
+## Kenney commercial kit (the industrial kit has files of the same names; the library lists the
+## commercial ones first, so these names draw them).
+const COMMERCIAL_MODELS := [
+	["building-a.glb", 0.88, 0.94], ["building-b.glb", 0.97, 0.94], ["building-type-p.glb", 1.24, 0.99],
+	["building-e.glb", 1.64, 1.01], ["building-type-q.glb", 1.24, 0.89], ["building-j.glb", 2.08, 1.34],
+	["building-h.glb", 0.88, 1.01],
+]
 const APARTMENT_MODELS := [
 	["free_mini.glb: m1", 1.59, 1.59], ["fog_city.glb: fog_office", 2.48, 2.99],
 	["fog_city.glb: mod_house_big", 3.4, 0.89], ["fog_city.glb: mod_house_small", 2.4, 1.26],
@@ -56,16 +65,18 @@ const PLANS := {
 	Zone.SUBURBAN: [SUBURBAN_MODELS, Kind.HOUSE, [2]],
 	Zone.QUARTER: [QUARTER_MODELS, Kind.QUARTER_BLDG, [2]],
 	Zone.APARTMENT: [APARTMENT_MODELS, Kind.APARTMENT, [3, 2]],
+	Zone.COMMERCIAL: [COMMERCIAL_MODELS, Kind.SHOP, [2]],
 }
 ## Kinds whose lots are cut when they are too long, per zone.
 const SPLIT_KINDS := {
-	Zone.SUBURBAN: [Kind.HOUSE, Kind.SHOP],
+	Zone.SUBURBAN: [Kind.HOUSE, Kind.SHOP, Kind.APARTMENT],
 	Zone.QUARTER: [Kind.QUARTER_BLDG],
 	Zone.APARTMENT: [Kind.APARTMENT, Kind.HOUSE, Kind.SHOP],
+	Zone.COMMERCIAL: [Kind.SHOP, Kind.HOUSE, Kind.APARTMENT],
 }
 ## A lot this long along its street (cells) or longer is cut in two.
 const SPLIT_FROM := 4
-## The apartment area filled is the one south of this row (the north one is uptown).
+## The apartment zone north of this row (uptown) is houses like the suburbs: it becomes SUBURBAN.
 const APARTMENT_FROM_Y := 190
 ## A model fits a lot when it is drawn at least this share of its own size (the placer shrinks
 ## it to the lot, 0.94 of its sides).
@@ -77,6 +88,13 @@ static var keep_empty := {}
 
 ## Returns {"split": {zone: lots cut}, "filled": {zone: buildings added}}.
 static func apply(data: CityData) -> Dictionary:
+	var rezoned := 0
+	for y in mini(APARTMENT_FROM_Y, data.size):
+		for x in data.size:
+			var i := data.idx(x, y)
+			if data.zone[i] == Zone.APARTMENT:
+				data.zone[i] = Zone.SUBURBAN
+				rezoned += 1
 	var keep := keep_empty.duplicate()
 	keep.merge(ManualEdits.hand_deleted)
 	var edited := {}
@@ -95,7 +113,7 @@ static func apply(data: CityData) -> Dictionary:
 		var b: int = queue.pop_back()
 		var r := data.building_rect(b)
 		var z := data.zone_at(r.position.x, r.position.y)
-		if not SPLIT_KINDS.has(z) or (z == Zone.APARTMENT and r.position.y < APARTMENT_FROM_Y):
+		if not SPLIT_KINDS.has(z):
 			continue
 		if not (SPLIT_KINDS[z] as Array).has(int(data.b_kind[b])) or data.b_model.has(b) 				or data.b_sign[b] != 0 or data.b_more_signs.has(b) or edited.has(b):
 			continue
@@ -153,14 +171,12 @@ static func apply(data: CityData) -> Dictionary:
 		var free := PackedByteArray()
 		free.resize(data.size * data.size)
 		for y in data.size:
-			if z == Zone.APARTMENT and y < APARTMENT_FROM_Y:
-				continue
 			for x in data.size:
 				var i := data.idx(x, y)
 				if data.zone[i] == z and built[i] == 0 and data.road[i] == 0 and data.deco[i] == 0 						and data.terrain[i] == Terrain.LAND:
 					free[i] = 1
 		filled[Zone.keys()[z]] = _fill_zone(data, free, plan[0], plan[1], plan[2])
-	return {"split": split, "filled": filled}
+	return {"rezoned_to_suburban": rezoned, "split": split, "filled": filled}
 
 
 ## Cuts the free cells into square lots touching a street and builds on them.
