@@ -1,0 +1,25 @@
+{
+	"file": "fog_city.glb",
+	"models": [
+		{
+			"cat": "ZONE_APT",
+			"node": "fog_office"
+		},
+		{
+			"cat": "ZONE_APT",
+			"node": "mod_house_big"
+		},
+		{
+			"cat": "ZONE_APT",
+			"node": "mod_house_small"
+		},
+		{
+			"cat": "ZONE_APT",
+			"node": "mod_house_medium"
+		},
+		{
+			"cat": "ZONE_APT",
+			"node": "mod_tower_small"
+		}
+	]
+}

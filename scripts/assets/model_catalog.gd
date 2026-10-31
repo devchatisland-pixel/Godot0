@@ -66,6 +66,9 @@ enum Cat {
 	# Twenty-second wave: the casinos and clubs of Las Vegas, their signs in bulbs
 	# (tools/make_vegas_buildings.py)
 	VEGAS_CASINO, VEGAS_CLUB,
+	# Twenty-third wave (ZoneFill): models drawn only on the free plots ZoneFill fills, by name;
+	# no pool picks them (the modular fog homes and offices, three single quarter buildings)
+	ZONE_APT, ZONE_QUARTER,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
