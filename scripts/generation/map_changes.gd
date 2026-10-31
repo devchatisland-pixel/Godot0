@@ -953,3 +953,24 @@ static func _move_grave(data: CityData) -> int:
 	data.forest[data.idx(best.x, best.y)] = 0
 	return 1
 
+
+# --- Eighth wave: one port model replaced, one shed deleted ----------------------------------------------
+
+## Every lot drawn as the warehouse hall_warehouse_1 (B-01727) is drawn as the brick factory of B-01724.
+const WAREHOUSE_MODEL := "port_halls.glb: hall_warehouse_1"
+const BRICK_FACTORY_MODEL := "port_tanks.glb: factory_brick"
+## The shed B-01732 is taken away.
+const SHED_DELETED := Vector2i(114, 245)
+
+
+static func eighth_wave(data: CityData) -> Dictionary:
+	var n := {"models": 0}
+	for b in data.building_count():
+		if data.b_kind[b] != Kind.EMPTY and data.b_model.get(b, "") == WAREHOUSE_MODEL:
+			data.b_model[b] = BRICK_FACTORY_MODEL
+			n["models"] += 1
+	var shed := _find(data, "INDUSTRIAL", SHED_DELETED)
+	if shed >= 0:
+		_clear(data, shed)
+	return n
+

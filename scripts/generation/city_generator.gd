@@ -80,6 +80,7 @@ func generate() -> CityData:
 	print("[City] map changes 5: ", MapChanges.fifth_wave(data))
 	print("[City] map changes 6: ", MapChanges.sixth_wave(data))
 	print("[City] map changes 7: ", MapChanges.seventh_wave(data))
+	print("[City] map changes 8: ", MapChanges.eighth_wave(data))
 	print("[City] Las Vegas roof signs: ", MapRetouch.vegas_signs(data))
 	AmenitiesPlanner.apply(data)
 	data.build_chunk_index()
