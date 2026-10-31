@@ -17,7 +17,9 @@ var _title: Label
 var _subtitle: Label
 var _grid: GridContainer
 var _copy: Button
+var _copy_model: Button
 var _text := ""
+var _model := ""
 var _anchor := Vector2.ZERO
 var _shown := false
 var _tween: Tween
@@ -66,11 +68,21 @@ func _ready() -> void:
 	_grid.add_theme_constant_override("v_separation", 3)
 	box.add_child(_grid)
 
+	var buttons := HBoxContainer.new()
+	buttons.add_theme_constant_override("separation", 6)
+	box.add_child(buttons)
 	_copy = Button.new()
 	_copy.text = "Copy info"
 	_copy.focus_mode = Control.FOCUS_NONE
+	_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_copy.pressed.connect(_on_copy)
-	box.add_child(_copy)
+	buttons.add_child(_copy)
+	_copy_model = Button.new()
+	_copy_model.text = "Copy model"
+	_copy_model.focus_mode = Control.FOCUS_NONE
+	_copy_model.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_copy_model.pressed.connect(_on_copy_model)
+	buttons.add_child(_copy_model)
 
 
 func is_open() -> bool:
@@ -100,7 +112,9 @@ func show_info(info: Dictionary) -> void:
 	else:
 		_row("Seed", str(info["seed"]))
 	_text = BuildingInfo.to_text(info)
+	_model = String(info["model"])
 	_copy.text = "Copy info"
+	_copy_model.text = "Copy model"
 	_shown = true
 	_panel.visible = true
 	_panel.modulate.a = 0.0
@@ -167,6 +181,12 @@ func _row(key: String, value: String) -> void:
 func _on_copy() -> void:
 	DisplayServer.clipboard_set(_text)
 	_copy.text = "Copied!"
+
+
+## Copies only the model name, not the whole info text.
+func _on_copy_model() -> void:
+	DisplayServer.clipboard_set(_model)
+	_copy_model.text = "Copied!"
 
 
 func _style() -> StyleBoxFlat:
