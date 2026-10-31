@@ -775,14 +775,21 @@ const FACTORY_B_LOT := Rect2i(121, 257, 7, 5)
 ## The warehouse B-01723 becomes three oil tanks side by side.
 const WAREHOUSE_AT := Vector2i(136, 263)
 const WAREHOUSE_TANKS := [Rect2i(136, 264, 1, 3), Rect2i(137, 264, 1, 3), Rect2i(138, 264, 1, 3)]
-## Both cranes (B-01782, B-01783) have the same size, on the road, the first at the crossing of the two
-## port streets (column 118, row 262), the second further down column 118.
+## Both cranes (B-01782, B-01783) have the same size and straddle the port street of column 118 (the road
+## runs between their legs: the legs of a crane stand 2.2 cells apart, 0.7 cells east of the middle of its
+## lot, so a lot starting at column 116 puts them either side of the road cell), south of the crossing.
+## The tank B-01737 at column 116 moves one cell west to make room (TANK_OLD_*).
 const CRANES_AT := [Vector2i(119, 263), Vector2i(116, 268)]
-const CRANE_LOTS := [Rect2i(117, 259, 4, 7), Rect2i(117, 266, 4, 7)]
+const CRANE_LOTS := [Rect2i(116, 262, 4, 5), Rect2i(116, 267, 4, 5)]
+const TANK_OLD_AT := Vector2i(116, 263)
+const TANK_OLD_LOT := Rect2i(115, 263, 1, 3)
 
 
 static func fifth_wave(data: CityData) -> Dictionary:
 	var n := {}
+	var tank := _find(data, "INDUSTRIAL", TANK_OLD_AT)
+	if tank >= 0:
+		data.set_building_rect(tank, TANK_OLD_LOT)
 	# Cranes first: the new lots replace the two old ones.
 	for k in CRANES_AT.size():
 		var c := _find(data, "INDUSTRIAL", CRANES_AT[k])
@@ -878,9 +885,11 @@ const SEVENTH_DELETED := [
 ## works shed B-01733, and the empty ground round them.
 const PILE_REPLACED := [Vector2i(127, 251), Vector2i(132, 250), Vector2i(133, 259)]
 const PILE_AREAS := [Rect2i(121, 244, 25, 9), Rect2i(129, 254, 17, 8)]
-## Piles are 2x2 lots, one free cell between two of them.
+## Piles are 2x2 lots. Share of the places left empty, and chance of a free row between two rows.
 const PILE_SIZE := 2
-const PILE_STRIDE := 3
+const PILE_MISSING := 0.1
+const PILE_AISLE := 0.15
+const PILE_SEED := 7007
 
 
 static func seventh_wave(data: CityData) -> Dictionary:
@@ -895,23 +904,33 @@ static func seventh_wave(data: CityData) -> Dictionary:
 		if b >= 0:
 			_clear(data, b)
 	var piles := 0
+	var rng := RandomNumberGenerator.new()
+	rng.seed = PILE_SEED
 	for area: Rect2i in PILE_AREAS:
-		piles += _container_piles(data, area)
+		piles += _container_piles(data, area, rng)
 	n["piles"] = piles
 	return n
 
 
-## Container piles on every free 2x2 spot of `area`, in rows and columns three cells apart.
-static func _container_piles(data: CityData, area: Rect2i) -> int:
+## Container piles in the style of the old yards of the port: 2x2 lots side by side in rows (runs of
+## three to eight), a few missing, up to two cells between two runs and now and then a free row.
+static func _container_piles(data: CityData, area: Rect2i, rng: RandomNumberGenerator) -> int:
 	var n := 0
-	for y in range(area.position.y, area.end.y - PILE_SIZE + 1, PILE_STRIDE):
-		for x in range(area.position.x, area.end.x - PILE_SIZE + 1, PILE_STRIDE):
-			var lot := Rect2i(x, y, PILE_SIZE, PILE_SIZE)
-			if not _lot_free(data, lot):
-				continue
-			var b := data.add_building(lot, Kind.INDUSTRIAL_YARD, 2, (CityTypes.hash2(x, y, 5) & 0xfffff) * 3, 0.3)
-			data.b_scale[b] = 1.0
-			n += 1
+	var y := area.position.y
+	while y + PILE_SIZE <= area.end.y:
+		var x := area.position.x + rng.randi_range(0, 1)
+		while x + PILE_SIZE <= area.end.x:
+			for k in rng.randi_range(3, 8):
+				if x + PILE_SIZE > area.end.x:
+					break
+				var lot := Rect2i(x, y, PILE_SIZE, PILE_SIZE)
+				if rng.randf() > PILE_MISSING and _lot_free(data, lot):
+					var b := data.add_building(lot, Kind.INDUSTRIAL_YARD, 2, (CityTypes.hash2(x, y, 5) & 0xfffff) * 3, 0.3)
+					data.b_scale[b] = 1.0
+					n += 1
+				x += PILE_SIZE
+			x += rng.randi_range(0, 2)
+		y += PILE_SIZE + (1 if rng.randf() < PILE_AISLE else 0)
 	return n
 
 
