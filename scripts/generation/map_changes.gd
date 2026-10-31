@@ -737,3 +737,83 @@ static func _clear_vegas(data: CityData) -> int:
 			_clear(data, b)
 			n += 1
 	return n
+
+
+# --- Fifth wave: asked on the finished map (cells AFTER the stretch, run after MapStretch) -------------
+
+## Taken away, nothing put in their place: kind and top-left cell of the lot.
+const FIFTH_DELETED := [
+	["INDUSTRIAL", Vector2i(187, 137)],         # B-01791 hall_terminal
+	["MCDONALDS", Vector2i(180, 145)],          # B-00804
+	["FIRE_STATION", Vector2i(229, 177)],       # B-00827
+	["CHURCH", Vector2i(206, 142)],             # B-00552
+	["POST_OFFICE", Vector2i(186, 212)],        # B-00792
+	["FIRE_STATION", Vector2i(155, 212)],       # B-00826
+	["SCHOOL", Vector2i(148, 224)],             # B-00834
+	["CHURCH", Vector2i(194, 216)],             # B-00476
+	["INDUSTRIAL", Vector2i(129, 257)],         # B-01726 hall_warehouse_4
+	["INDUSTRIAL", Vector2i(120, 277)],         # B-01741 shed_duplex
+]
+## The skyscraper B-00348 is drawn as the tower5 of the urban pack.
+const TOWER5_AT := Vector2i(179, 165)
+const TOWER5_MODEL := "urban.glb: tower5"
+## Port: lots drawn as another model (kind INDUSTRIAL, top-left cell of the lot).
+const FIFTH_MODELS := [
+	[Vector2i(132, 250), "port_halls.glb: hall_factory_1"],     # B-01740 (was shed_generic_3)
+	[Vector2i(131, 270), "port_towers.glb: tower_water"],       # B-01730 (was tank_big)
+	[Vector2i(127, 251), "port_halls.glb: hall_building_1"],    # B-01728 (was shed_warehouse_3)
+]
+## The factory B-01724 gets a twin just east of it.
+const TWIN_AT := Vector2i(119, 240)
+const TWIN_LOT := Rect2i(122, 240, 3, 4)
+## The terminal hall B-01725 becomes a factory hall like B-01718 (7x5, looking east), just north of it.
+const TERMINAL_AT := Vector2i(112, 250)
+const TERMINAL_LOT := Rect2i(111, 249, 7, 5)
+## The factory hall B-01721 takes the size of B-01718, a little east and north (clear of the cranes).
+const FACTORY_B_AT := Vector2i(120, 259)
+const FACTORY_B_LOT := Rect2i(121, 257, 7, 5)
+## The warehouse B-01723 becomes three oil tanks side by side.
+const WAREHOUSE_AT := Vector2i(136, 263)
+const WAREHOUSE_TANKS := [Rect2i(136, 264, 1, 3), Rect2i(137, 264, 1, 3), Rect2i(138, 264, 1, 3)]
+## Both cranes (B-01782, B-01783) have the same size, on the road, the first at the crossing of the two
+## port streets (column 118, row 262), the second further down column 118.
+const CRANES_AT := [Vector2i(119, 263), Vector2i(116, 268)]
+const CRANE_LOTS := [Rect2i(117, 259, 4, 7), Rect2i(117, 266, 4, 7)]
+
+
+static func fifth_wave(data: CityData) -> Dictionary:
+	var n := {}
+	# Cranes first: the new lots replace the two old ones.
+	for k in CRANES_AT.size():
+		var c := _find(data, "INDUSTRIAL", CRANES_AT[k])
+		if c >= 0:
+			data.set_building_rect(c, CRANE_LOTS[k])
+	for d in FIFTH_DELETED:
+		var b := _find(data, d[0], d[1])
+		if b >= 0:
+			_clear(data, b)
+	var tower := _find(data, "SKYSCRAPER", TOWER5_AT)
+	if tower >= 0:
+		data.b_model[tower] = TOWER5_MODEL
+	for m in FIFTH_MODELS:
+		var b := _find(data, "INDUSTRIAL", m[0])
+		if b >= 0:
+			data.b_model[b] = m[1]
+	var twin := _find(data, "INDUSTRIAL", TWIN_AT)
+	if twin >= 0:
+		var t := _industrial(data, TWIN_LOT, String(data.b_model.get(twin, "")), data.b_facing[twin])
+		data.b_scale[t] = data.b_scale[twin]
+	var terminal := _find(data, "INDUSTRIAL", TERMINAL_AT)
+	if terminal >= 0:
+		data.set_building_rect(terminal, TERMINAL_LOT)
+		data.b_model[terminal] = FACTORY_MODEL
+		data.b_facing[terminal] = 1
+	var hall := _find(data, "INDUSTRIAL", FACTORY_B_AT)
+	if hall >= 0:
+		data.set_building_rect(hall, FACTORY_B_LOT)
+	var warehouse := _find(data, "INDUSTRIAL", WAREHOUSE_AT)
+	if warehouse >= 0:
+		for lot in WAREHOUSE_TANKS:
+			_industrial(data, lot, "port_tanks.glb: tank_oil", 1)
+		_clear(data, warehouse)
+	return n

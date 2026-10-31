@@ -54,6 +54,8 @@ static func replaced() -> Dictionary:
 	out["ny_buildings.glb: ny_brick_4"] = "carto.glb: house2"
 	# The shop m10 (13.2k triangles) is drawn as the light Kenney shop: the heaviest chunks of the heatmap.
 	out["free_mini.glb: m10"] = "building-h.glb"
+	# The Kenney skyscraper e is drawn as the skyscraper c everywhere.
+	out["building-skyscraper-e.glb"] = "building-skyscraper-c.glb"
 	return out
 
 

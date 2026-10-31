@@ -14,9 +14,6 @@ godot --headless --script res://tests/test_urban_island.gd
 echo "== Map audit (buildings, zones, fog island, road problems)"
 godot --headless --script res://tests/test_map_audit.gd
 
-echo "== Shops placement"
-godot --headless --script res://tests/test_shops.gd
-
 echo "== Top-down zoning map -> /out/map.png"
 godot --headless --script res://tests/debug_map.gd -- /out/map.png
 

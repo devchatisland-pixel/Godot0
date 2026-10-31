@@ -113,10 +113,10 @@ func _start_city() -> void:
 	fog_island.name = "FogIsland"
 	add_child(fog_island)
 	fog_island.build(cfg, data, library)
+	# The fog island is empty: nothing of the military base (FogBase) is built any more.
 	var fog_base := FogBase.new()
 	fog_base.name = "FogBase"
 	add_child(fog_base)
-	fog_base.build(data, library)
 	var west_bridge := WestBridge.new()
 	west_bridge.name = "WestBridge"
 	add_child(west_bridge)
@@ -137,11 +137,6 @@ func _start_city() -> void:
 	add_child(vehicles)
 	vehicles.build(data, library)
 
-	var shops := MapShops.new()
-	shops.name = "Shops"
-	add_child(shops)
-	shops.build(data, library)
-
 	var fences := MapFences.new()
 	fences.name = "Fences"
 	add_child(fences)
@@ -157,7 +152,7 @@ func _start_city() -> void:
 	add_child(picker)
 	picker.setup(camera, data, library)
 	# Vehicles, shops and roadblock pieces are not numbered buildings: clickable all the same.
-	var props := picker.add_props(vehicles) + picker.add_props(shops) + picker.add_props(roadblocks) + picker.add_props(fences) + picker.add_props(jail)
+	var props := picker.add_props(vehicles) + picker.add_props(roadblocks) + picker.add_props(fences) + picker.add_props(jail)
 	# The military base, the carriers, the F-111 and the Golden Gate as well.
 	props += picker.add_props(fog_island) + fog_base.picks.size()
 	for e in fog_base.picks:

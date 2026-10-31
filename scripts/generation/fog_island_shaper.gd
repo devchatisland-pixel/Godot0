@@ -79,20 +79,11 @@ func _paint() -> void:
 	for y in SIZE:
 		for x in SIZE:
 			var i := y * SIZE + x
-			var p := Vector2(x, y)
-			var f := clampf(_noise.get_noise_2d(x * 3.0, y * 3.0) * 0.8 + 0.5, 0.0, 1.0)
-			var c := GRASS.lerp(FOREST, f)
-			var hill := 1.0 - p.distance_to(HILLS + SHIFT) / 26.0
-			if hill > 0.0:
-				c = c.lerp(HILL, clampf(hill * 1.6, 0.0, 0.85))
-			var pad = FogBaseSites.pad_color(p)
-			if pad != null:
-				c = pad
-			colors[i * 4] = c.r8
-			colors[i * 4 + 1] = c.g8
-			colors[i * 4 + 2] = c.b8
-			var rocky := _noise.get_noise_2d(x * 2.0 + 300.0, y * 2.0) > 0.2
-			colors[i * 4 + 3] = 0 if rocky else 255
+			# Nothing stands on the island and it is all grass: no pads, hills, forest or rocky shore.
+			colors[i * 4] = GRASS.r8
+			colors[i * 4 + 1] = GRASS.g8
+			colors[i * 4 + 2] = GRASS.b8
+			colors[i * 4 + 3] = 255
 
 
 ## Centre of the island in world coordinates (x, z).
