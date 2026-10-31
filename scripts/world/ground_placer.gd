@@ -1,14 +1,22 @@
 class_name GroundPlacer
 extends RefCounted
 ## Everything placed per cell in a chunk: road tiles (oriented from their
-## neighbours), street lights along avenues, park details and cacti in the desert.
-## There are no trees, palms or fences on the map.
+## neighbours), street lights along avenues, park details, cacti in the desert, and the trees:
+## forests in nature (CityData.forest), woods in the parks, palms on beaches and islets, and in
+## the city on every free cell (gardens, small parks and strips; ZoneFill sets their forest).
+## The urban island and the fog island have none.
 ## Pure functions, safe to run on worker threads.
 
 const Cat := ModelCatalog.Cat
 const Zone := CityTypes.Zone
 ## Where the bulb hangs under the arm of the Kenney street light (model space).
 const BULB_OFFSET := Vector3(0.0, 0.64, -0.17)
+## Share of the trees kept in the central park (it is a wood already).
+const CENTRAL_PARK_TREES := 0.64
+## City zones where trees grow on the free cells (by CityData.forest).
+## (Not CIVIC: the paved yards and parkings of the public buildings.)
+const CITY_TREE_ZONES: Array[int] = [Zone.DOWNTOWN, Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN,
+		Zone.INDUSTRIAL, Zone.ENTERTAINMENT, Zone.QUARTER, Zone.POOR, Zone.FARM, Zone.SAND, Zone.DEV]
 
 ## Road category for a connection mask.
 static func road_cat(mask: int) -> int:
@@ -28,6 +36,8 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 	var road_rot := _road_rotations(lib)
 	var lights := lib.ids(Cat.STREET_LIGHT)
 	var cactus := lib.named_id("cactus")
+	var trees := lib.ids(Cat.TREE)
+	var palm := lib.named_id("palm")
 	var bridge := _bridge_clearing(data)
 	var checkpoint := Roadblocks.clearing(data)
 	var ts := data.tree_share
@@ -44,8 +54,26 @@ static func place_cells(data: CityData, lib: ModelLibrary, rect: Rect2i, batch: 
 				_place_deco(data, lib, x, y, data.deco[i], batch)
 				continue
 			var z: int = data.zone[i]
-			if z == Zone.DESERT:
-				_scatter(x, y, 0.035 * ts, 0.1, cactus, batch)
+			var beach: bool = data.terrain[i] == CityTypes.Terrain.BEACH and data.rocky[i] == 0
+			match z:
+				Zone.DESERT:
+					_scatter(x, y, 0.035 * ts, 0.1, cactus, batch)
+				Zone.NATURE:
+					if beach:
+						_scatter(x, y, 0.06 * ts, 0.15, palm, batch)
+					elif not trees.is_empty():
+						_place_forest(data, x, y, trees, batch)
+				Zone.ISLET:
+					_scatter(x, y, (0.12 if beach else 0.45) * ts, 0.2, palm, batch)
+				Zone.PARK:
+					if not trees.is_empty():
+						_place_park_tree(data, x, y, trees, batch)
+				Zone.PRISON:
+					if data.terrain[i] == CityTypes.Terrain.LAND and not trees.is_empty():
+						_scatter(x, y, 0.12 * ts, 0.2, trees[(x + y) % trees.size()], batch)
+				_:
+					if CITY_TREE_ZONES.has(z) and data.terrain[i] == CityTypes.Terrain.LAND and not trees.is_empty():
+						_place_forest(data, x, y, trees, batch)
 			if data.edge[i] != 0:
 				_place_edge(lib, x, y, data.edge[i], batch)
 
@@ -146,3 +174,40 @@ static func _scatter(x: int, y: int, chance: float, jitter_scale: float, mesh: i
 			y + 0.2 + float((h >> 18) & 255) / 255.0 * 0.6)
 	var s := 1.0 + (float((h >> 4) & 63) / 63.0 - 0.5) * jitter_scale * 2.0
 	batch.add(mesh, Transform3D(Basis(Vector3.UP, float(h & 63) * 0.1).scaled(Vector3(s, s, s)), p))
+
+
+# --- Trees -------------------------------------------------------------------------------------
+## Up to two trees on a cell, as dense as its forest value.
+static func _place_forest(data: CityData, x: int, y: int, trees: PackedInt32Array, batch: InstanceBatch) -> void:
+	var f := float(data.forest[y * data.size + x]) / 255.0
+	if f <= 0.0:
+		return
+	var h := CityTypes.hash2(x, y, 911)
+	var count := 0
+	if float(h & 1023) / 1024.0 < f * 0.9 * data.tree_share:
+		count = 1 + int(f > 0.6 and (h >> 10) & 1 == 1)
+	for t in count:
+		var hh := CityTypes.hash2(x, y, 31 + t)
+		var p := Vector3(x + 0.15 + float(hh & 255) / 255.0 * 0.7, 0,
+				y + 0.15 + float((hh >> 8) & 255) / 255.0 * 0.7)
+		batch.add(trees[hh % trees.size()], tree_xform(p, hh))
+
+
+## The parks are woods: up to two big trees per cell (fewer in the central park).
+static func _place_park_tree(data: CityData, x: int, y: int, trees: PackedInt32Array, batch: InstanceBatch) -> void:
+	var share := 55.0 * data.tree_share
+	if data.central_park.has_point(Vector2i(x, y)):
+		share *= CENTRAL_PARK_TREES
+	for t in 2:
+		var h := CityTypes.hash2(x, y, 517 + t)
+		if h % 100 >= int(share):
+			continue
+		var p := Vector3(x + 0.15 + float(h & 255) / 255.0 * 0.7, 0, y + 0.15 + float((h >> 8) & 255) / 255.0 * 0.7)
+		var xf := tree_xform(p, h)
+		batch.add(trees[(h >> 4) % trees.size()], Transform3D(xf.basis.scaled(Vector3(1.3, 1.3, 1.3)), p))
+
+
+## A tree at `p`: turned and sized by `seed`.
+static func tree_xform(p: Vector3, seed: int) -> Transform3D:
+	var s := 1.1 + float((seed >> 5) & 15) / 15.0 * 0.6
+	return Transform3D(Basis(Vector3.UP, float(seed & 63) * 0.1).scaled(Vector3(s, s, s)), p)
