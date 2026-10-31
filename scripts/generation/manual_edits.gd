@@ -48,7 +48,8 @@ const EDITS := [
 	{"kind": "SHOP", "near": Vector2i(137, 102), "facing": 1, "replace": "HOUSE",
 		"model": "building-type-n.glb", "sign": "NEON_CONTROLLER"},
 	{"kind": "POLICE", "near": Vector2i(171, 154), "sign": "NEON_PACMAN"},
-	{"kind": "POLICE_HQ", "near": Vector2i(118, 148), "scale": 0.75},
+	# As wide as the main cinema (B-00784: 3.38 m): its model is 1.85 m wide.
+	{"kind": "POLICE_HQ", "near": Vector2i(118, 148), "scale_abs": 1.83},
 	{"kind": "QUARTER_BLDG", "near": Vector2i(165, 208), "replace": "HOSPITAL"},
 	{"kind": "LIGHTHOUSE", "near": Vector2i(93, 202), "clear_quay": 6},
 	{"kind": "OUTPOST", "near": Vector2i(80, 134), "shift": Vector2i(0, -33)},
