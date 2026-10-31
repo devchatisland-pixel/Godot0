@@ -817,3 +817,49 @@ static func fifth_wave(data: CityData) -> Dictionary:
 			_industrial(data, lot, "port_tanks.glb: tank_oil", 1)
 		_clear(data, warehouse)
 	return n
+
+
+# --- Sixth wave: grass under outposts, one outpost less, the basketball court moved --------------------
+
+## Farm outposts that keep standing but on grass (B-01162, B-01163, B-01168, B-01169, B-01166, B-01167).
+const GRASS_UNDER := [
+	Vector2i(273, 243), Vector2i(276, 243), Vector2i(298, 242), Vector2i(301, 242),
+	Vector2i(265, 289), Vector2i(268, 289),
+]
+## The outpost B-01165 is taken away.
+const OUTPOST_DELETED := Vector2i(257, 276)
+## The basketball court B-01706 moves just south of the shop B-00642 (street at row 207 between them),
+## on free ground whose trees are cut; it looks at that street.
+const COURT_AT := Vector2i(202, 237)
+const COURT_LOT := Rect2i(214, 208, 3, 6)
+
+
+static func sixth_wave(data: CityData) -> Dictionary:
+	var n := {"grass": 0}
+	for at in GRASS_UNDER:
+		var b := _find(data, "OUTPOST", at)
+		if b >= 0:
+			_grass(data, data.building_rect(b))
+			n["grass"] += 1
+	var gone := _find(data, "OUTPOST", OUTPOST_DELETED)
+	if gone >= 0:
+		_clear(data, gone)
+	var court := _find(data, "BASKET_COURT", COURT_AT)
+	if court >= 0:
+		data.set_building_rect(court, COURT_LOT)
+		_clear_trees(data, COURT_LOT)
+		data.b_facing[court] = _front(data, COURT_LOT, 0)
+		data.b_sign_facing[court] = data.b_facing[court]
+	return n
+
+
+## Plain grass on every cell of `r`: no tree, no path, no dry edge.
+static func _grass(data: CityData, r: Rect2i) -> void:
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			var i := data.idx(x, y)
+			data.zone[i] = Zone.NATURE
+			data.forest[i] = 0
+			data.deco[i] = 0
+			data.edge[i] = 0
+
