@@ -5,11 +5,16 @@ extends RefCounted
 ##   QUARTER    quarter buildings (the red district)
 ##   APARTMENT  modular fog homes and offices, flats; only the south area, near Las Vegas and
 ##              the shopping streets (the north one, uptown, is left as it is)
-## An empty plot is land of the zone with no road, no ground detail and no building on it:
-## bare ground, or a lot the building budget cleared (BuildingBudget.cleared). A lot cleared by
-## hand (ManualEdits, MapChanges...) stays empty. The free cells are cut into square lots that
-## touch a street; each lot faces its street and takes the next model of the list that fits
-## it (drawn at least FIT_MIN of its own size), so the models take turns.
+## First the lots too big for the house on them are cut: a lot of SPLIT_KINDS running SPLIT_FROM
+## cells or more along its street is cut in two along it; one as deep, with a street behind it
+## too, is cut back to back (the new half faces the street behind). The building keeps the
+## front / first part, a building of the list takes the other (again while a part is that big).
+## Then the empty plots are built on: land of the zone with no road, no ground detail and no
+## building, or with a cleared lot, except the lots cleared by hand (`keep_empty`, filled where
+## ManualEdits, MapChanges, ModelEdits and ConcertSite clear one, and ManualEdits.hand_deleted).
+## The free cells are cut into square lots that touch a street; each lot faces its street and
+## takes the next model of the list that fits it (drawn at least FIT_MIN of its own size), so
+## the models take turns.
 ## Runs last, once the ground details are laid (AmenitiesPlanner).
 
 const Kind := CityTypes.Kind
@@ -52,25 +57,97 @@ const PLANS := {
 	Zone.QUARTER: [QUARTER_MODELS, Kind.QUARTER_BLDG, [2]],
 	Zone.APARTMENT: [APARTMENT_MODELS, Kind.APARTMENT, [3, 2]],
 }
+## Kinds whose lots are cut when they are too long, per zone.
+const SPLIT_KINDS := {
+	Zone.SUBURBAN: [Kind.HOUSE, Kind.SHOP],
+	Zone.QUARTER: [Kind.QUARTER_BLDG],
+	Zone.APARTMENT: [Kind.APARTMENT, Kind.HOUSE, Kind.SHOP],
+}
+## A lot this long along its street (cells) or longer is cut in two.
+const SPLIT_FROM := 4
 ## The apartment area filled is the one south of this row (the north one is uptown).
 const APARTMENT_FROM_Y := 190
 ## A model fits a lot when it is drawn at least this share of its own size (the placer shrinks
 ## it to the lot, 0.94 of its sides).
 const FIT_MIN := 0.8
 
+## Lots cleared by hand: never built on again (CityGenerator empties it before a map is made).
+static var keep_empty := {}
 
-## Returns {zone name: buildings added}.
+
+## Returns {"split": {zone: lots cut}, "filled": {zone: buildings added}}.
 static func apply(data: CityData) -> Dictionary:
+	var keep := keep_empty.duplicate()
+	keep.merge(ManualEdits.hand_deleted)
+	var edited := {}
+	for b in ManualEdits.resolved.values():
+		edited[b] = true
+	var turns := {}
+	var split := {}
+	for z: int in PLANS:
+		turns[z] = 0
+		split[Zone.keys()[z]] = 0
+	# Lots too long: cut along their street.
+	var queue: Array[int] = []
+	for b in data.building_count():
+		queue.append(b)
+	while not queue.is_empty():
+		var b: int = queue.pop_back()
+		var r := data.building_rect(b)
+		var z := data.zone_at(r.position.x, r.position.y)
+		if not SPLIT_KINDS.has(z) or (z == Zone.APARTMENT and r.position.y < APARTMENT_FROM_Y):
+			continue
+		if not (SPLIT_KINDS[z] as Array).has(int(data.b_kind[b])) or data.b_model.has(b) 				or data.b_sign[b] != 0 or data.b_more_signs.has(b) or edited.has(b):
+			continue
+		var facing: int = data.b_facing[b]
+		var along_x := facing % 2 == 0
+		var length := r.size.x if along_x else r.size.y
+		var depth := r.size.y if along_x else r.size.x
+		var back := (facing + 2) % 4
+		var keep_lot: Rect2i
+		var new_lot: Rect2i
+		var new_facing := facing
+		if length >= SPLIT_FROM:
+			# Two lots side by side along the street.
+			var a := length / 2
+			keep_lot = Rect2i(r.position, Vector2i(a, r.size.y) if along_x else Vector2i(r.size.x, a))
+			new_lot = Rect2i(r.position + (Vector2i(a, 0) if along_x else Vector2i(0, a)),
+					Vector2i(length - a, r.size.y) if along_x else Vector2i(r.size.x, length - a))
+		elif depth >= SPLIT_FROM and _road_cells(data, r, back) * 2 >= length:
+			# A lot from one street to the next: two lots back to back, each facing its street.
+			var d := depth / 2
+			var front_first := facing == 0 or facing == 3 # the front half is the one at the top / left
+			var first := Rect2i(r.position, Vector2i(r.size.x, d) if along_x else Vector2i(d, r.size.y))
+			var second := Rect2i(r.position + (Vector2i(0, d) if along_x else Vector2i(d, 0)),
+					Vector2i(r.size.x, depth - d) if along_x else Vector2i(depth - d, r.size.y))
+			keep_lot = first if front_first else second
+			new_lot = second if front_first else first
+			new_facing = back
+		else:
+			continue
+		var plan: Array = PLANS[z]
+		var pick := _next_model(plan[0], new_lot, new_facing, turns[z])
+		if pick < 0:
+			continue
+		turns[z] = pick + 1
+		data.set_building_rect(b, keep_lot)
+		var nb := data.add_building(new_lot, plan[1], new_facing,
+				CityTypes.hash2(new_lot.position.x, new_lot.position.y, 4243), data.b_height[b])
+		data.b_model[nb] = plan[0][pick][0]
+		split[Zone.keys()[z]] += 1
+		# A part still too long is cut again (the new one keeps its model: only the old one is).
+		queue.append(b)
+	# Empty plots.
 	var built := PackedByteArray()
 	built.resize(data.size * data.size)
 	for b in data.building_count():
-		if data.b_kind[b] == Kind.EMPTY and BuildingBudget.cleared.has(b):
+		if data.b_kind[b] == Kind.EMPTY and not keep.has(b):
 			continue
 		var r := data.building_rect(b)
 		for y in range(maxi(r.position.y, 0), mini(r.end.y, data.size)):
 			for x in range(maxi(r.position.x, 0), mini(r.end.x, data.size)):
 				built[data.idx(x, y)] = 1
-	var out := {}
+	var filled := {}
 	for z: int in PLANS:
 		var plan: Array = PLANS[z]
 		var free := PackedByteArray()
@@ -80,11 +157,10 @@ static func apply(data: CityData) -> Dictionary:
 				continue
 			for x in data.size:
 				var i := data.idx(x, y)
-				if data.zone[i] == z and built[i] == 0 and data.road[i] == 0 and data.deco[i] == 0 \
-						and data.terrain[i] == Terrain.LAND:
+				if data.zone[i] == z and built[i] == 0 and data.road[i] == 0 and data.deco[i] == 0 						and data.terrain[i] == Terrain.LAND:
 					free[i] = 1
-		out[Zone.keys()[z]] = _fill_zone(data, free, plan[0], plan[1], plan[2])
-	return out
+		filled[Zone.keys()[z]] = _fill_zone(data, free, plan[0], plan[1], plan[2])
+	return {"split": split, "filled": filled}
 
 
 ## Cuts the free cells into square lots touching a street and builds on them.
@@ -125,21 +201,40 @@ static func _all_free(data: CityData, free: PackedByteArray, lot: Rect2i) -> boo
 	return true
 
 
+## How many cells of street run along side `side` of `lot`.
+static func _road_cells(data: CityData, lot: Rect2i, side: int) -> int:
+	var k := 0
+	for c in _side_cells(lot, side):
+		if data.is_road(c.x, c.y):
+			k += 1
+	return k
+
+
+## The cells just outside side `side` (0 north, 1 east, 2 south, 3 west) of `lot`.
+static func _side_cells(lot: Rect2i, side: int) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	match side:
+		0:
+			for t in lot.size.x:
+				cells.append(Vector2i(lot.position.x + t, lot.position.y - 1))
+		1:
+			for t in lot.size.y:
+				cells.append(Vector2i(lot.end.x, lot.position.y + t))
+		2:
+			for t in lot.size.x:
+				cells.append(Vector2i(lot.position.x + t, lot.end.y))
+		_:
+			for t in lot.size.y:
+				cells.append(Vector2i(lot.position.x - 1, lot.position.y + t))
+	return cells
+
+
 ## The side of `lot` with the most street along it (south first on a tie), or -1 without any.
 static func _front(data: CityData, lot: Rect2i) -> int:
 	var best := -1
 	var most := 0
 	for f in [2, 1, 3, 0]:
-		var k := 0
-		for t in lot.size.x: # square lots: every side is as long
-			var c: Vector2i
-			match f:
-				0: c = Vector2i(lot.position.x + t, lot.position.y - 1)
-				1: c = Vector2i(lot.end.x, lot.position.y + t)
-				2: c = Vector2i(lot.position.x + t, lot.end.y)
-				_: c = Vector2i(lot.position.x - 1, lot.position.y + t)
-			if data.is_road(c.x, c.y) and (data.road[data.idx(c.x, c.y)] & 3) != 0:
-				k += 1
+		var k := _road_cells(data, lot, f)
 		if k > most:
 			most = k
 			best = f

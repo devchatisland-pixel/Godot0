@@ -110,5 +110,6 @@ static func clear_column(data: CityData, x: int, y0: int, y1: int) -> int:
 			if data.b_kind[b] == CityTypes.Kind.EMPTY:
 				continue
 			data.b_kind[b] = CityTypes.Kind.EMPTY
+			ZoneFill.keep_empty[b] = "ModelEdits.clear_column"
 			n += 1
 	return n

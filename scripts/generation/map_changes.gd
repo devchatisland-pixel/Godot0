@@ -104,6 +104,7 @@ static func _find(data: CityData, kind_name: String, cell: Vector2i) -> int:
 
 static func _clear(data: CityData, b: int) -> void:
 	data.b_kind[b] = Kind.EMPTY
+	ZoneFill.keep_empty[b] = "MapChanges"
 	data.b_sign[b] = 0
 	data.b_more_signs.erase(b)
 	data.b_model.erase(b)
@@ -698,6 +699,8 @@ static func _thin_hot(data: CityData) -> int:
 			continue
 		if CityTypes.hash2(r.position.x, r.position.y, 77) % THIN_SHARE == 0:
 			_clear(data, b)
+			# Thinned for speed, not by choice: ZoneFill may build there again (lighter models).
+			ZoneFill.keep_empty.erase(b)
 			n += 1
 	return n
 
@@ -722,6 +725,7 @@ static func _halve_chunk(data: CityData) -> int:
 	var n := 0
 	for i in range(0, lots.size(), 2):
 		_clear(data, lots[i])
+		ZoneFill.keep_empty.erase(lots[i])
 		n += 1
 	return n
 
