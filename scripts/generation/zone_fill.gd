@@ -17,6 +17,11 @@ extends RefCounted
 ## The free cells are cut into square lots that touch a street; each lot faces its street and
 ## takes the next model of the list that fits it (drawn at least FIT_MIN of its own size), so
 ## the models take turns.
+## Last, what is still empty becomes green: every cleared lot left on dry land (not in the
+## desert or on the urban island) becomes a garden, and the gardens, plazas and free cells of
+## the city get their trees (CityData.forest, grown by GroundPlacer); a garden takes the ground of
+## the parks (Zone.PARK: green, wooded); a garden of two cells or
+## more gets a bench, of three or more a flowerbed (CityData.deco).
 ## Runs last, once the ground details are laid (AmenitiesPlanner).
 
 const Kind := CityTypes.Kind
@@ -81,6 +86,18 @@ const APARTMENT_FROM_Y := 190
 ## A model fits a lot when it is drawn at least this share of its own size (the placer shrinks
 ## it to the lot, 0.94 of its sides).
 const FIT_MIN := 0.8
+
+## Tree density (CityData.forest, 0..255) of the gardens, the other free cells of the city and
+## the plazas.
+const GARDEN_TREES := 190
+const FREE_TREES := 140
+const PLAZA_TREES := 60
+## Town zones whose free cells take the ground of the parks.
+## (CIVIC is left bare: the paved yards and parkings of the public buildings, where vehicles stand.)
+const PARK_ZONES: Array[int] = [Zone.DOWNTOWN, Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN,
+		Zone.ENTERTAINMENT, Zone.QUARTER, Zone.POOR]
+## Zones where a cleared lot does not turn into a garden.
+const NO_GARDEN_ZONES: Array[int] = [Zone.NONE, Zone.URBAN, Zone.DESERT]
 
 ## Lots cleared by hand: never built on again (CityGenerator empties it before a map is made).
 static var keep_empty := {}
@@ -176,7 +193,90 @@ static func apply(data: CityData) -> Dictionary:
 				if data.zone[i] == z and built[i] == 0 and data.road[i] == 0 and data.deco[i] == 0 						and data.terrain[i] == Terrain.LAND:
 					free[i] = 1
 		filled[Zone.keys()[z]] = _fill_zone(data, free, plan[0], plan[1], plan[2])
-	return {"rezoned_to_suburban": rezoned, "split": split, "filled": filled}
+	return {"rezoned_to_suburban": rezoned, "split": split, "filled": filled, "green": _green(data)}
+
+
+## Cleared lots into gardens, trees on the gardens, plazas and free cells (see the header).
+static func _green(data: CityData) -> Dictionary:
+	var built := PackedByteArray()
+	built.resize(data.size * data.size)
+	var plaza := PackedByteArray()
+	plaza.resize(data.size * data.size)
+	for b in data.building_count():
+		var k: int = data.b_kind[b]
+		var r := data.building_rect(b)
+		for y in range(maxi(r.position.y, 0), mini(r.end.y, data.size)):
+			for x in range(maxi(r.position.x, 0), mini(r.end.x, data.size)):
+				if k == Kind.PLAZA:
+					plaza[data.idx(x, y)] = 1
+				elif k != Kind.EMPTY and k != Kind.GARDEN:
+					built[data.idx(x, y)] = 1
+	# Every cleared lot on dry land becomes a garden (drawn as nothing: the cells a building of
+	# ZoneFill took are that building's). A whole free garden gets a bench and a flowerbed.
+	var made := 0
+	var furnished := 0
+	for b in data.building_count():
+		var k: int = data.b_kind[b]
+		if k != Kind.EMPTY and k != Kind.GARDEN:
+			continue
+		var r := data.building_rect(b)
+		var c := r.get_center()
+		if not data.in_bounds(c.x, c.y) or data.terrain[data.idx(c.x, c.y)] != Terrain.LAND 				or NO_GARDEN_ZONES.has(data.zone_at(c.x, c.y)):
+			continue
+		if k == Kind.EMPTY:
+			data.b_kind[b] = Kind.GARDEN
+			made += 1
+		if not _dry_and_free(data, built, r):
+			continue
+		var cells: Array[int] = []
+		for y in range(r.position.y, r.end.y):
+			for x in range(r.position.x, r.end.x):
+				if data.deco[data.idx(x, y)] == 0:
+					cells.append(data.idx(x, y))
+		var h := absi(CityTypes.hash2(r.position.x, r.position.y, 2718))
+		if cells.size() >= 2:
+			var bench: int = cells[h % cells.size()]
+			data.deco[bench] = AmenitiesPlanner.BENCH_X if (h >> 3) & 1 == 0 else AmenitiesPlanner.BENCH_Z
+			cells.erase(bench)
+			furnished += 1
+		if cells.size() >= 2:
+			data.deco[cells[(h >> 5) % cells.size()]] = AmenitiesPlanner.FLOWER
+	# Every cell of the city with nothing built on it: trees, and in the town zones the green
+	# ground of the parks (gardens, what is left of cleared lots, the strips between lots).
+	# The yard of the main fire station stays clear (its truck drives out there).
+	var fs := ManualEdits._nearest(data, "FIRE_STATION", ManualEdits.MAIN_FIRE_STATION)
+	if fs >= 0:
+		for c in ManualEdits.front_yard(data, fs, ManualEdits.FIRE_YARD_DEPTH, 1):
+			built[data.idx(c.x, c.y)] = 1
+	var green := 0
+	var wooded := 0
+	for i in data.size * data.size:
+		if built[i] == 1 or data.road[i] != 0 or data.terrain[i] != Terrain.LAND:
+			continue
+		var z: int = data.zone[i]
+		if plaza[i] == 1:
+			data.forest[i] = maxi(data.forest[i], PLAZA_TREES)
+		elif PARK_ZONES.has(z):
+			data.zone[i] = Zone.PARK
+			data.forest[i] = maxi(data.forest[i], GARDEN_TREES)
+			green += 1
+		elif GroundPlacer.CITY_TREE_ZONES.has(z):
+			data.forest[i] = maxi(data.forest[i], FREE_TREES)
+			wooded += 1
+	return {"lots_made_gardens": made, "gardens_furnished": furnished, "cells_made_park": green,
+			"cells_with_trees": wooded}
+
+
+## True when every cell of `r` is dry land and no building stands on it.
+static func _dry_and_free(data: CityData, built: PackedByteArray, r: Rect2i) -> bool:
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			if not data.in_bounds(x, y):
+				return false
+			var i := data.idx(x, y)
+			if built[i] == 1 or data.terrain[i] != Terrain.LAND or data.road[i] != 0:
+				return false
+	return true
 
 
 ## Cuts the free cells into square lots touching a street and builds on them.
