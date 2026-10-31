@@ -35,8 +35,14 @@ const ADD := {
 }
 
 
+## Building numbers this pass cleared (bare ground that ZoneFill may build on again; the lots
+## cleared by hand elsewhere are not in it and stay empty).
+static var cleared := {}
+
+
 ## Returns {"cleared": {kind: n}, "added": {kind: n}, "missing": {kind: n}}.
 static func apply(data: CityData) -> Dictionary:
+	cleared.clear()
 	var names := CityTypes.Kind.keys()
 	var by_kind := {}
 	for b in data.building_count():
@@ -84,6 +90,7 @@ static func _clear(data: CityData, ids: Array, count: int, kept: Dictionary, roa
 		if n >= count or kept.has(b):
 			break
 		data.b_kind[b] = Kind.EMPTY
+		cleared[b] = true
 		n += 1
 	return n
 

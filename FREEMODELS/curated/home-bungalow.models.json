@@ -1,0 +1,9 @@
+{
+	"file": "home-bungalow.glb",
+	"models": [
+		{
+			"cat": "ZONE_APT",
+			"node": "home-bungalow"
+		}
+	]
+}

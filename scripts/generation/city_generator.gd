@@ -83,6 +83,9 @@ func generate() -> CityData:
 	print("[City] map changes 8: ", MapChanges.eighth_wave(data))
 	print("[City] Las Vegas roof signs: ", MapRetouch.vegas_signs(data))
 	AmenitiesPlanner.apply(data)
+	# The empty plots of the suburbs, the red district and the south apartments, built on with
+	# the models chosen for them.
+	print("[City] empty plots filled: ", ZoneFill.apply(data))
 	data.build_chunk_index()
 	_report(1.0, "City ready")
 	var services: Dictionary = core["services"].duplicate()
