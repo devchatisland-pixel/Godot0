@@ -1,0 +1,9 @@
+{
+	"file": "school_night.glb",
+	"models": [
+		{
+			"cat": "SCHOOL_MAIN",
+			"node": "school"
+		}
+	]
+}

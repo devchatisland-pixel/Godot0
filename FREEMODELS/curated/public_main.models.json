@@ -10,10 +10,6 @@
 			"node": "hospital"
 		},
 		{
-			"cat": "SCHOOL_MAIN",
-			"node": "school"
-		},
-		{
 			"cat": "GAS_STATION",
 			"node": "gas_station"
 		}

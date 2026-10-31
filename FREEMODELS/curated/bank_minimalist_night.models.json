@@ -1,0 +1,9 @@
+{
+	"file": "bank_minimalist_night.glb",
+	"models": [
+		{
+			"cat": "BANK_MIN",
+			"node": "bank_minimalist"
+		}
+	]
+}
