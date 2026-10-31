@@ -43,6 +43,7 @@ when the map is averaged with the dark faces around them.
 Usage:  python tools/make_night_variants.py          (everything)
         python tools/make_night_variants.py signs    (the cinema, the hotels, the police, the
                                                       hospital and the city hall only)
+        python tools/make_night_variants.py police   (the police HQ only)
         python tools/make_night_variants.py gas      (the gas station of free_mini only)
         python tools/make_night_variants.py shops    (the night copies of the shops only)
         python tools/make_night_variants.py stadium  (the stadium only)
@@ -634,6 +635,12 @@ def city_hall_letters(tri):
     return islands_in(tri, (-0.3, 0.81, 0.46), (0.32, 0.915, 0.475), 8)
 
 
+def police():
+    # The word POLICE and the shield on the roof glow the same blue (its gold star stays gold).
+    lit_sign('public_main', 'police_hq', 'POLICE_MAIN', police_signs, POLICE_BLUE, 0.12, 0.5, police_base,
+             'the word POLICE and the roof sign')
+
+
 def signs():
     # The cinema had no lit facade: only its letters (and what they light) show at night.
     lit_sign('cinema2', 'cinema', 'CINEMA2', cinema_letters, CINEMA_RED, 0.2, 0.5, 0.0, 'the word CINEMA')
@@ -641,8 +648,7 @@ def signs():
              'the word HOTEL')
     lit_sign('hotels', 'hotel_stars', 'HOTEL_LOW', hotel_stars_stars, STAR_YELLOW, 0.2, 0.5, FACADE / OWN_NIGHT,
              'the stars')
-    lit_sign('public_main', 'police_hq', 'POLICE_MAIN', police_signs, POLICE_BLUE, 0.12, 0.5, police_base,
-             'the word POLICE and the roof sign')
+    police()
     lit_sign('public_main', 'hospital', 'HOSPITAL_MAIN', hospital_lights, HOSPITAL_BLUE, 0.35, 0.8,
              FACADE / OWN_NIGHT, 'the blue cross and the word HOSPITAL')
     lit_sign('public_main', 'city_hall', 'CITY_HALL_MAIN', city_hall_letters, CITY_HALL_CORAL, 0.04, 0.3,
@@ -1158,6 +1164,9 @@ if __name__ == '__main__':
     import sys
     if sys.argv[1:] == ['signs']:
         signs()
+        sys.exit()
+    if sys.argv[1:] == ['police']:
+        police()
         sys.exit()
     if sys.argv[1:] == ['gas']:
         gas_station()
