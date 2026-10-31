@@ -9,6 +9,8 @@ as it is (a backup); only the lists the game reads (.models.json) point to the d
   FREEMODELS/curated/hotel_stars_night.glb   hotel_stars of hotels.glb; its five stars glow yellow
   FREEMODELS/curated/police_hq_night.glb     police_hq of public_main.glb; the word POLICE and the
                                              round sign on the roof glow blue
+  FREEMODELS/curated/bank_minimalist_night.glb  bank_minimalist of bank_min.glb; the letters BANK $ glow white
+  FREEMODELS/curated/school_night.glb        school of public_main.glb; the word SCHOOL glows coral red
   FREEMODELS/curated/hospital_night.glb      hospital of public_main.glb; the blue cross of the front and
                                              the word HOSPITAL on the roof glow strong blue (the lit H of the helipad is added by
                                              the game, BuildingExtras)
@@ -43,6 +45,7 @@ when the map is averaged with the dark faces around them.
 Usage:  python tools/make_night_variants.py          (everything)
         python tools/make_night_variants.py signs    (the cinema, the hotels, the police, the
                                                       hospital and the city hall only)
+        python tools/make_night_variants.py bank_school   (the bank and the school only)
         python tools/make_night_variants.py police   (the police HQ only)
         python tools/make_night_variants.py gas      (the gas station of free_mini only)
         python tools/make_night_variants.py shops    (the night copies of the shops only)
@@ -70,6 +73,8 @@ STAR_YELLOW = (1.0, 0.8, 0.0)
 POLICE_BLUE = (0.08, 0.35, 1.0)
 HOSPITAL_BLUE = (0.04, 0.4, 1.0)
 CITY_HALL_CORAL = (1.0, 0.25, 0.15)
+BANK_WHITE = (1.0, 0.95, 0.85)
+SCHOOL_RED = (1.0, 0.2, 0.12)
 SHOP_RED = (1.0, 0.04, 0.03)
 SHOP_WHITE = (1.0, 0.92, 0.75)
 CANDY_PINK = (1.0, 0.1, 0.5)
@@ -641,6 +646,23 @@ def police():
              'the word POLICE and the roof sign')
 
 
+def bank_letters(tri):
+    # The letters B, A, N, K and the dollar sign on the dark board over the roof (z 1.065 to 1.093).
+    return islands_in(tri, (-0.5, 2.37, 1.06), (0.48, 2.62, 1.1), 5)
+
+
+def school_letters(tri):
+    # The six letters of SCHOOL over the entrance of the front (z 2.162 to 2.172).
+    return islands_in(tri, (-0.27, 0.75, 2.15), (0.27, 0.87, 2.18), 6)
+
+
+def bank_school():
+    lit_sign('bank_min', 'bank_minimalist', 'BANK_MIN', bank_letters, BANK_WHITE, 0.1, 0.5, FACADE / OWN_NIGHT,
+             'the letters BANK $')
+    lit_sign('public_main', 'school', 'SCHOOL_MAIN', school_letters, SCHOOL_RED, 0.1, 0.5, FACADE / OWN_NIGHT,
+             'the word SCHOOL')
+
+
 def signs():
     # The cinema had no lit facade: only its letters (and what they light) show at night.
     lit_sign('cinema2', 'cinema', 'CINEMA2', cinema_letters, CINEMA_RED, 0.2, 0.5, 0.0, 'the word CINEMA')
@@ -653,6 +675,7 @@ def signs():
              FACADE / OWN_NIGHT, 'the blue cross and the word HOSPITAL')
     lit_sign('public_main', 'city_hall', 'CITY_HALL_MAIN', city_hall_letters, CITY_HALL_CORAL, 0.04, 0.3,
              FACADE / OWN_NIGHT, 'the words CITY HALL')
+    bank_school()
 
 
 # --- Shops of the development island: night copies with a lit SHOP sign ---------------
@@ -1164,6 +1187,9 @@ if __name__ == '__main__':
     import sys
     if sys.argv[1:] == ['signs']:
         signs()
+        sys.exit()
+    if sys.argv[1:] == ['bank_school']:
+        bank_school()
         sys.exit()
     if sys.argv[1:] == ['police']:
         police()
