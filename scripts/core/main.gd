@@ -113,7 +113,7 @@ func _start_city() -> void:
 	fog_island.name = "FogIsland"
 	add_child(fog_island)
 	fog_island.build(cfg, data, library)
-	# The fog island is empty: nothing of the military base (FogBase) is built any more.
+	# The fog island is as in its first version (fog, hidden towns): the military base (FogBase) is not built.
 	var fog_base := FogBase.new()
 	fog_base.name = "FogBase"
 	add_child(fog_base)
