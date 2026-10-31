@@ -83,6 +83,15 @@ static func fog_hash(data: CityData) -> String:
 	ctx.start(HashingContext.HASH_SHA256)
 	ctx.update(fog.elevation)
 	ctx.update(fog.colors)
+	var rel := PackedStringArray()
+	for b in fog.buildings:
+		var p: Vector2 = (b[0] as Vector2) - fog.origin
+		rel.append("%.2f %.2f %s %s" % [p.x, p.y, b[1], b[2]])
+	for t in fog.trees:
+		var p: Vector2 = (t[0] as Vector2) - fog.origin
+		rel.append("%.2f %.2f %s %s" % [p.x, p.y, t[1], t[2]])
+	ctx.update("
+".join(rel).to_utf8_buffer())
 	return ctx.finish().hex_encode()
 
 
