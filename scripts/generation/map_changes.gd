@@ -1020,5 +1020,54 @@ static func ninth_wave(data: CityData) -> Dictionary:
 		if b >= 0:
 			_clear(data, b)
 			n += 1
-	return {"deleted": n}
+	return {"deleted": n, "wheel_moved": _wheel_off_street(data)}
+
+
+## The Ferris wheel stood with its west column on the end of the street that serves the quarter
+## buildings beside it (column 181 once the island is stretched): its lot moves east, one cell at
+## a time and at most WHEEL_SHIFT_MAX, until no street is under it, as long as it stays on dry
+## ground (beach or land) with no other building. Returns how many cells it moved.
+const WHEEL_SHIFT_MAX := 3
+
+
+static func _wheel_off_street(data: CityData) -> int:
+	for b in data.building_count():
+		if data.b_kind[b] != Kind.FERRIS_WHEEL:
+			continue
+		var r := data.building_rect(b)
+		var moved := 0
+		while _road_under(data, r) and moved < WHEEL_SHIFT_MAX:
+			var next := Rect2i(r.position + Vector2i(1, 0), r.size)
+			if not _dry_and_alone(data, next, b):
+				break
+			r = next
+			moved += 1
+		if moved == 0 or _road_under(data, r):
+			push_warning("[MapChanges] the Ferris wheel could not move off the street")
+			return 0
+		data.set_building_rect(b, r)
+		return moved
+	return 0
+
+
+static func _road_under(data: CityData, r: Rect2i) -> bool:
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			if data.is_road(x, y):
+				return true
+	return false
+
+
+## Every cell of `r` is beach or land and no building but `own` (cleared lots and gardens left
+## out: they draw nothing) stands on it.
+static func _dry_and_alone(data: CityData, r: Rect2i, own: int) -> bool:
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			if not data.in_bounds(x, y) or data.terrain[data.idx(x, y)] < CityTypes.Terrain.BEACH:
+				return false
+	for b in data.building_count():
+		var k: int = data.b_kind[b]
+		if b != own and k != Kind.EMPTY and k != Kind.GARDEN and data.building_rect(b).intersects(r):
+			return false
+	return true
 

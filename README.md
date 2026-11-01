@@ -670,3 +670,10 @@ godot --headless --script res://tests/debug_map.gd -- map.png     # top-down zon
 godot --headless --script res://tests/bench_chunks.gd             # chunk build cost / draw calls
 godot -- --capture <dir>                                          # screenshots of key places
 ```
+
+**Local CI:** `& .	ools\local_ci.ps1 [-Out <dir>] [-Shots]` runs the checks of `docker/run-tests.sh` (generation,
+urban island, map audit, zoning map, chunk benchmark) with the local Godot and ends with `LOCAL CI OK` or
+`LOCAL CI FAILED`. When the map changes on purpose, renew the audit baseline:
+`godot --headless --script res://tests/test_map_audit.gd -- --write`. The audit counts no cleared lot or garden as a
+building (they draw nothing), lets the port cranes straddle their street, and takes a short road ending at a lot
+for that lot's driveway (the drive-in's), not a stub.
