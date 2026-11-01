@@ -7,6 +7,10 @@ extends RefCounted
 ##              shopping streets (the north one, uptown, is houses: it becomes SUBURBAN first)
 ##   COMMERCIAL Kenney commercial buildings (building-a... of the commercial kit) and two
 ##              suburban houses
+##   ENTERTAINMENT  the Strip's buildings of Chat City's Las Vegas (vegas_strip.glb), on lots of
+##              two cells and the single cells left along the streets, then on the cells inside the
+##              blocks (INNER_ZONES, facing south); the Vegas lots MapChanges cleared (its old clubs
+##              and casinos) are built on again
 ## First the lots too big for the house on them are cut: a lot of SPLIT_KINDS running SPLIT_FROM
 ## cells or more along its street is cut in two along it; one as deep, with a street behind it
 ## too, is cut back to back (the new half faces the street behind). The building keeps the
@@ -65,19 +69,33 @@ const APARTMENT_MODELS := [
 	["fog_homes.glb: home-terrace", 3.0, 0.52], ["accommodations.glb: flat8", 2.29, 2.19],
 	["carto.glb: house2", 1.17, 0.8],
 ]
+## Chat City's Las Vegas: Kenney commercial buildings and the tall dollar building with their neon
+## signs (CASINO, DISCO, POKER, LOUNGE twice as often, DANCE, CLUB, BAR); the ROYAL tower without one.
+const STRIP_MODELS := [
+	["vegas_strip.glb: strip_casino", 2.32, 1.82], ["vegas_strip.glb: strip_lounge", 2.08, 0.94],
+	["vegas_strip.glb: strip_club", 0.97, 0.94], ["vegas_strip.glb: strip_poker", 2.08, 1.34],
+	["vegas_strip.glb: strip_dance", 0.84, 0.9], ["vegas_strip.glb: strip_royal", 1.3, 1.24],
+	["vegas_strip.glb: strip_lounge", 2.08, 0.94], ["vegas_strip.glb: strip_bar", 1.64, 1.01],
+	["vegas_strip.glb: strip_disco", 1.42, 1.28],
+]
 ## Zone -> [models, kind given to the new buildings, lot sizes tried (largest first)].
 const PLANS := {
 	Zone.SUBURBAN: [SUBURBAN_MODELS, Kind.HOUSE, [2]],
 	Zone.QUARTER: [QUARTER_MODELS, Kind.QUARTER_BLDG, [2]],
 	Zone.APARTMENT: [APARTMENT_MODELS, Kind.APARTMENT, [3, 2]],
 	Zone.COMMERCIAL: [COMMERCIAL_MODELS, Kind.SHOP, [2]],
+	Zone.ENTERTAINMENT: [STRIP_MODELS, Kind.NIGHTCLUB, [2, 1]],
 }
+## Zones built on inside the blocks too, once the lots along the streets are taken: Las Vegas is
+## full, no park left between its buildings.
+const INNER_ZONES: Array[int] = [Zone.ENTERTAINMENT]
 ## Kinds whose lots are cut when they are too long, per zone.
 const SPLIT_KINDS := {
 	Zone.SUBURBAN: [Kind.HOUSE, Kind.SHOP, Kind.APARTMENT],
 	Zone.QUARTER: [Kind.QUARTER_BLDG],
 	Zone.APARTMENT: [Kind.APARTMENT, Kind.HOUSE, Kind.SHOP],
 	Zone.COMMERCIAL: [Kind.SHOP, Kind.HOUSE, Kind.APARTMENT],
+	Zone.ENTERTAINMENT: [Kind.OFFICE, Kind.SHOP, Kind.NIGHTCLUB],
 }
 ## A lot this long along its street (cells) or longer is cut in two.
 const SPLIT_FROM := 4
@@ -114,6 +132,11 @@ static func apply(data: CityData) -> Dictionary:
 				rezoned += 1
 	var keep := keep_empty.duplicate()
 	keep.merge(ManualEdits.hand_deleted)
+	# The old clubs and casinos of Las Vegas (MapChanges) leave their lots to the Strip's buildings.
+	for b in keep_empty:
+		var lot := data.building_rect(b)
+		if keep_empty[b] == "MapChanges" and not ManualEdits.hand_deleted.has(b) 				and data.zone_at(lot.position.x, lot.position.y) == Zone.ENTERTAINMENT:
+			keep.erase(b)
 	var edited := {}
 	for b in ManualEdits.resolved.values():
 		edited[b] = true
@@ -192,7 +215,7 @@ static func apply(data: CityData) -> Dictionary:
 				var i := data.idx(x, y)
 				if data.zone[i] == z and built[i] == 0 and data.road[i] == 0 and data.deco[i] == 0 						and data.terrain[i] == Terrain.LAND:
 					free[i] = 1
-		filled[Zone.keys()[z]] = _fill_zone(data, free, plan[0], plan[1], plan[2])
+		filled[Zone.keys()[z]] = _fill_zone(data, free, plan[0], plan[1], plan[2], INNER_ZONES.has(z))
 	return {"rezoned_to_suburban": rezoned, "split": split, "filled": filled, "green": _green(data)}
 
 
@@ -279,34 +302,45 @@ static func _dry_and_free(data: CityData, built: PackedByteArray, r: Rect2i) -> 
 	return true
 
 
-## Cuts the free cells into square lots touching a street and builds on them.
-static func _fill_zone(data: CityData, free: PackedByteArray, models: Array, kind: int, sizes: Array) -> int:
-	var n := 0
-	var turn := 0
-	for s: int in sizes:
-		for y in data.size - s + 1:
-			for x in data.size - s + 1:
-				if free[data.idx(x, y)] == 0:
+## Cuts the free cells into square lots touching a street and builds on them; with `inner`, then
+## the lots left inside the blocks too (facing south).
+static func _fill_zone(data: CityData, free: PackedByteArray, models: Array, kind: int, sizes: Array,
+		inner := false) -> int:
+	var done := [0, 0] # buildings added, next model in turn
+	for pass_inner in ([false, true] if inner else [false]):
+		for s: int in sizes:
+			_fill_lots(data, free, models, kind, s, pass_inner, done)
+	return done[0]
+
+
+## One pass of _fill_zone: the free square lots of side `s` (along a street, or anywhere with
+## `inner`); `done` holds the count of buildings added and the next model in turn.
+static func _fill_lots(data: CityData, free: PackedByteArray, models: Array, kind: int, s: int,
+		inner: bool, done: Array) -> void:
+	for y in data.size - s + 1:
+		for x in data.size - s + 1:
+			if free[data.idx(x, y)] == 0:
+				continue
+			var lot := Rect2i(x, y, s, s)
+			if not _all_free(data, free, lot):
+				continue
+			var facing := _front(data, lot)
+			if facing < 0:
+				if not inner:
 					continue
-				var lot := Rect2i(x, y, s, s)
-				if not _all_free(data, free, lot):
-					continue
-				var facing := _front(data, lot)
-				if facing < 0:
-					continue
-				var pick := _next_model(models, lot, facing, turn)
-				if pick < 0:
-					continue
-				turn = pick + 1
-				var seed := CityTypes.hash2(x, y, 4242)
-				var b := data.add_building(lot, kind, facing, seed, 0.5)
-				data.b_model[b] = models[pick][0]
-				for ly in range(lot.position.y, lot.end.y):
-					for lx in range(lot.position.x, lot.end.x):
-						free[data.idx(lx, ly)] = 0
-						data.forest[data.idx(lx, ly)] = 0
-				n += 1
-	return n
+				facing = 2
+			var pick := _next_model(models, lot, facing, done[1])
+			if pick < 0:
+				continue
+			done[1] = pick + 1
+			var seed := CityTypes.hash2(x, y, 4242)
+			var b := data.add_building(lot, kind, facing, seed, 0.5)
+			data.b_model[b] = models[pick][0]
+			for ly in range(lot.position.y, lot.end.y):
+				for lx in range(lot.position.x, lot.end.x):
+					free[data.idx(lx, ly)] = 0
+					data.forest[data.idx(lx, ly)] = 0
+			done[0] += 1
 
 
 static func _all_free(data: CityData, free: PackedByteArray, lot: Rect2i) -> bool:

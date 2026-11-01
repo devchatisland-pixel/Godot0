@@ -1,0 +1,13 @@
+{
+	"file": "vegas_strip.glb",
+	"models": [
+		{"cat": "VEGAS_STRIP", "node": "strip_casino"},
+		{"cat": "VEGAS_STRIP", "node": "strip_royal"},
+		{"cat": "VEGAS_STRIP", "node": "strip_disco"},
+		{"cat": "VEGAS_STRIP", "node": "strip_poker"},
+		{"cat": "VEGAS_STRIP", "node": "strip_lounge"},
+		{"cat": "VEGAS_STRIP", "node": "strip_dance"},
+		{"cat": "VEGAS_STRIP", "node": "strip_club"},
+		{"cat": "VEGAS_STRIP", "node": "strip_bar"}
+	]
+}

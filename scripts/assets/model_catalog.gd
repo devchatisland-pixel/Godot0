@@ -69,6 +69,9 @@ enum Cat {
 	# Twenty-third wave (ZoneFill): models drawn only on the free plots ZoneFill fills, by name;
 	# no pool picks them (the modular fog homes and offices, three single quarter buildings)
 	ZONE_APT, ZONE_QUARTER,
+	# Twenty-fourth wave: the buildings of Chat City's Las Vegas Strip (Kenney commercial buildings
+	# and the tall dollar building, each wearing a Vegas neon sign), FREEMODELS/curated/vegas_strip.glb
+	VEGAS_STRIP,
 }
 
 const MANIFEST_SUFFIX := ".models.json"

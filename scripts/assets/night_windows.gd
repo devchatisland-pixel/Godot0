@@ -87,6 +87,9 @@ static func apply(lib: ModelLibrary) -> void:
 		for id in lib.ids(cat):
 			_light_glowing(lib.meshes[id], done)
 			lib.add_named("neon_halo_%d" % cat, _halo(lib.meshes[id]))
+	# The Strip's buildings: only their signs glow (no halo, nothing asks for one).
+	for id in lib.ids(ModelCat.VEGAS_STRIP):
+		_light_glowing(lib.meshes[id], done)
 	for cat in LOGO_PACKS:
 		for id in lib.ids(cat):
 			_light_facade(lib.meshes[id], LOGO_NIGHT, done, LOGO_DAY)
