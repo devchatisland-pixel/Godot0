@@ -12,8 +12,6 @@ const Terrain := CityTypes.Terrain
 const STREET_ZONES: Array[int] = [
 	Zone.DOWNTOWN, Zone.COMMERCIAL, Zone.APARTMENT, Zone.SUBURBAN, Zone.QUARTER, Zone.POOR, Zone.URBAN,
 ]
-## Model of the port cranes (port_towers.glb: tower_crane), which stand over their street.
-const CRANE_MODEL := "tower_crane"
 ## Kinds that are not buildings on a lot (ground details, things at sea or in the air).
 const NOT_LOTS: Array[String] = [
 	"EMPTY", "PLAZA", "GARDEN", "BOAT", "PIER", "BALLOON", "BILLBOARD", "BUS_STOP", "UFO", "TANK",
@@ -181,9 +179,8 @@ static func roads_on_water(data: CityData) -> Array[Vector2i]:
 static func buildings_on_roads(data: CityData) -> PackedInt32Array:
 	var out := PackedInt32Array()
 	for b in data.building_count():
-		# Balloons float: what is under them does not matter. The port cranes straddle their
-		# street on purpose (its road runs between their legs).
-		if _draws_nothing(data, b) or data.b_kind[b] == CityTypes.Kind.BALLOON 				or String(data.b_model.get(b, "")).ends_with(CRANE_MODEL):
+		# Balloons float: what is under them does not matter.
+		if data.b_kind[b] == CityTypes.Kind.EMPTY or data.b_kind[b] == CityTypes.Kind.BALLOON:
 			continue
 		var r := data.building_rect(b)
 		var hit := false
@@ -203,7 +200,7 @@ static func overlapping_buildings(data: CityData) -> PackedInt32Array:
 	var out := PackedInt32Array()
 	for b in data.building_count():
 		var k: String = names[data.b_kind[b]]
-		if _draws_nothing(data, b) or k == "BALLOON":
+		if k == "EMPTY" or k == "BALLOON":
 			continue
 		var r := data.building_rect(b)
 		var hit := false
@@ -269,25 +266,11 @@ static func dead_end_length(data: CityData, tip: Vector2i) -> int:
 	return n
 
 
-## Dead ends shorter than `min_length` cells: stubs, a bug. The longer ones are cul-de-sacs. A
-## short road that ends against a lot is that lot's driveway (the drive-in's), not a stub.
+## Dead ends shorter than `min_length` cells: stubs, a bug. The longer ones are cul-de-sacs.
 static func stubs(data: CityData, min_length: int = 3) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
-	var lots := {}
-	for b in data.building_count():
-		if _draws_nothing(data, b):
-			continue
-		var r := data.building_rect(b)
-		for y in range(r.position.y, r.end.y):
-			for x in range(r.position.x, r.end.x):
-				lots[Vector2i(x, y)] = true
 	for tip in dead_ends(data):
-		if dead_end_length(data, tip) >= min_length:
-			continue
-		var driveway := false
-		for o in CityTypes.FACING_OFFSETS:
-			driveway = driveway or lots.has(tip + o)
-		if not driveway:
+		if dead_end_length(data, tip) < min_length:
 			out.append(tip)
 	return out
 
@@ -450,9 +433,3 @@ static func snapshot(data: CityData) -> Dictionary:
 			"highway_ends": ends,
 		},
 	}
-
-
-## A cleared lot (EMPTY) or a garden (what a cleared lot becomes, ZoneFill): nothing is drawn
-## there, the buildings ZoneFill puts on its cells are what stands on them.
-static func _draws_nothing(data: CityData, b: int) -> bool:
-	return data.b_kind[b] == CityTypes.Kind.EMPTY or data.b_kind[b] == CityTypes.Kind.GARDEN

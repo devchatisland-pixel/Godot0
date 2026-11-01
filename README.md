@@ -142,7 +142,7 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
 | just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
-| left of downtown | **Little Las Vegas** | the buildings of Chat City's Las Vegas Strip (`vegas_strip.glb`: Kenney commercial buildings and the tall dollar building, each with its neon sign: CASINO, DISCO dancer, POKER, LOUNGE, DANCE, CLUB legs, BAR bottle, and the ROYAL tower) on every plot along its streets, the Eiffel tower, the cinema and the shopping center |
+| left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the shopping center; the neon signs are all on the roofs, none at street level |
 | west coast | **West desert** | reaches the sea without a beach: the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
 | south-west coast, next to the desert and Vegas | **Industrial zone and port** | 37 different industrial buildings and tanks (one of each model, eighteenth wave), container yards round the crane on the quay (no beach), the oil rig at sea |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
@@ -269,7 +269,7 @@ At night the fog turns dark blue-grey.
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
 | just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
-| left of downtown | **Little Las Vegas** | the buildings of Chat City's Las Vegas Strip (`vegas_strip.glb`: Kenney commercial buildings and the tall dollar building, each with its neon sign: CASINO, DISCO dancer, POKER, LOUNGE, DANCE, CLUB legs, BAR bottle, and the ROYAL tower) on every plot along its streets, the Eiffel tower, the cinema and the shopping center |
+| left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the shopping center; the neon signs are all on the roofs, none at street level |
 | west coast | **West desert** | reaches the sea without a beach: the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
 | south-west coast, next to the desert and Vegas | **Industrial zone and port** | 37 different industrial buildings and tanks (one of each model, eighteenth wave), container yards round the crane on the quay (no beach), the oil rig at sea |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
@@ -355,7 +355,7 @@ At night the fog turns dark blue-grey.
 * **Museum**: the city hall of Utrecht (`museum_hall.glb`, `Kind.MUSEUM`) stands on the biggest free square near the
   shop at (215, 203), its front to the east (`MuseumSite`, added last so no building number moves).
 * **Neon woman**: the neon woman left the tower of Las Vegas for the east wall of the tower at (67, 195), as wide as
-  the wall (it replaced the bar sign); the bull sign of the tower at (67, 203) is smaller (`BuildingExtras.SIGNS`).
+  the wall (it replaced the bar sign); the bull sign of the tower at (71, 204) is smaller (`BuildingExtras.SIGNS`).
 * **Development island**: two more buildings in the row (`tools/build_wave16_models.py`, `SHOPS`): the shop of the
   business pack and the wooden house with a balcony and a tent.
 * **Port**: the three tanks of the old tank row (two old tanks of three silos and the rusty one) moved into the
@@ -380,14 +380,6 @@ At night the fog turns dark blue-grey.
   The nuclear plant has its own fence. The checkpoint at the end of the bridge stays.
 * **Models**: the five models of `fog_city.glb` (office, office tower, night tower, house, and one storey of a block,
   stacked 2 to 6 high) are used all over both towns, mixed with the houses, shops and towers of the main island.
-
-**Las Vegas, full (`zone_fill.gd`, `model_pools.gd`; `FREEMODELS/curated/vegas_strip.glb`):**
-
-* **Chat City's Strip**: the eight buildings of Chat City's Las Vegas map (its `public/models/boulevard/vegas.glb`
-  without the Eiffel tower, decoded to a plain glb with png textures) are the category `VEGAS_STRIP`. Every office and
-  shop of the zone is drawn as one of them; `ZoneFill` builds on every free plot of the zone along a street (lots of
-  two cells, then the single cells left), and on the lots of the old clubs and casinos `MapChanges` cleared. Long
-  Vegas lots are cut in two like the other zones'. Their signs glow dimly by day and brightly at night.
 
 ## Beaches, park and borders
 
@@ -670,12 +662,3 @@ godot --headless --script res://tests/debug_map.gd -- map.png     # top-down zon
 godot --headless --script res://tests/bench_chunks.gd             # chunk build cost / draw calls
 godot -- --capture <dir>                                          # screenshots of key places
 ```
-
-**Local CI:** `& .	ools\local_ci.ps1 [-Out <dir>] [-Shots]` runs the checks of `docker/run-tests.sh` (generation,
-urban island, map audit, zoning map, chunk benchmark, hand-asked map changes, model edits, clickable props, urban
-island tower strips, empty stripe of column 153) with the local Godot and ends with `LOCAL CI OK` or
-`LOCAL CI FAILED`. Any warning of the generation (`WARNING: [...]`: a hand change that no longer finds its building,
-a sign without its tower...) fails it too. When the map changes on purpose, renew the audit baseline:
-`godot --headless --script res://tests/test_map_audit.gd -- --write`. The audit counts no cleared lot or garden as a
-building (they draw nothing), lets the port cranes straddle their street, and takes a short road ending at a lot
-for that lot's driveway (the drive-in's), not a stub.

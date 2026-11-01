@@ -14,15 +14,14 @@ extends RefCounted
 const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 
-## Top-left cell of the lot of the tower, sign (a ModelCatalog.Cat; BuildingExtras.SIGNS). The cells
-## are those of the towers of UrbanSkyline's strips.
+## Top-left cell of the lot of the tower, sign (a ModelCatalog.Cat; BuildingExtras.SIGNS).
 const TOWER_SIGNS := [
-	[Vector2i(67, 144), "SIGN_WINDOWS"],
-	[Vector2i(58, 133), "NEON_JOYSTICK"],
+	[Vector2i(71, 143), "SIGN_WINDOWS"],
+	[Vector2i(63, 133), "NEON_JOYSTICK"],
 	[Vector2i(67, 170), "NEON_FUN"],
 	[Vector2i(67, 175), "NEON_PALM"],
 	[Vector2i(67, 195), "NEON_BAR"],
-	[Vector2i(67, 203), "NEON_BULL"],
+	[Vector2i(71, 204), "NEON_BULL"],
 ]
 ## A second sign on the roof of a tower, above the one on its wall: top-left cell, sign.
 const TOWER_ROOF_SIGNS := [

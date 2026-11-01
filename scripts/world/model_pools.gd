@@ -163,17 +163,13 @@ static func candidates(data: CityData, lib: ModelLibrary, i: int, kind: int) -> 
 	return PackedInt32Array()
 
 
-## Offices and shops of Las Vegas: the Strip's buildings (vegas_strip.glb, the same as Chat City's
-## Las Vegas). Without them: offices are its casinos, its taller clubs and the dollar buildings;
-## shops its clubs and bars (tools/make_vegas_buildings.py); without these, a few Kenney
-## commercial buildings as before.
+## Offices of Las Vegas: its casinos, its taller clubs and the dollar buildings; shops: its
+## clubs and bars (tools/make_vegas_buildings.py). Without them, a few Kenney commercial
+## buildings as before.
 const VEGAS_KIT := ["building-b.glb", "building-d.glb", "building-f.glb", "building-h.glb", "building-k.glb", "building-n.glb"]
 
 
 static func _vegas_kit(lib: ModelLibrary, kind: int) -> PackedInt32Array:
-	# The Strip's buildings of Chat City's Las Vegas take the place of all of them.
-	if lib.has_cat(Cat.VEGAS_STRIP):
-		return lib.ids(Cat.VEGAS_STRIP)
 	var clubs := lib.ids(Cat.VEGAS_CLUB)
 	if not clubs.is_empty():
 		if kind == Kind.SHOP:
