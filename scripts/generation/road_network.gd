@@ -467,7 +467,11 @@ func _close_highway_ends() -> void:
 					break
 				cols.append(cx)
 			if not found:
-				push_warning("[Roads] the highway of row %d has no road to end on at its %s end" % [y, side])
+				# The west highway ends on the metal bridge to the urban island, whose landing
+				# streets UrbanIslandRebuild lays later: nothing to close there.
+				var wb := _d.west_bridge
+				if not (side == "west" and wb.x >= 0 and absi(y - wb.z) <= 1):
+					push_warning("[Roads] the highway of row %d has no road to end on at its %s end" % [y, side])
 				continue
 			for cx in cols:
 				for dy in range(-1, 2):

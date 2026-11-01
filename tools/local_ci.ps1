@@ -1,5 +1,6 @@
 # The CI of docker/run-tests.sh, run with the local Godot (no Docker): each headless test in turn,
-# then a summary. A test fails on a non-zero exit code or a script error in its output.
+# then a summary. A test fails on a non-zero exit code or a script error in its output; the
+# generation test also fails on any warning of the generation ("WARNING: [...]").
 #   & .\tools\local_ci.ps1 [-Out <dir>] [-Shots]
 # -Out: where the zoning map (and the screenshots) go (default: docker-out).
 # -Shots: also take the screenshots of key places (runs the game, needs a GPU).
@@ -18,18 +19,24 @@ $tests = @(
     @('Urban island, BT tower islet, watchtowers', 'res://tests/test_urban_island.gd', @()),
     @('Map audit (buildings, zones, fog island, road problems)', 'res://tests/test_map_audit.gd', @()),
     @('Top-down zoning map', 'res://tests/debug_map.gd', @('--', "$Out\map.png")),
-    @('Chunk benchmark', 'res://tests/bench_chunks.gd', @())
+    @('Chunk benchmark', 'res://tests/bench_chunks.gd', @()),
+    @('Map changes (hand-asked edits)', 'res://tests/test_map_changes.gd', @()),
+    @('Model edits', 'res://tests/test_model_edits.gd', @()),
+    @('Clickable props', 'res://tests/test_pick_props.gd', @()),
+    @('Urban island tower strips', 'res://tests/test_urban_rows.gd', @()),
+    @('Empty stripe of column 153', 'res://tests/test_column_stripe.gd', @())
 )
 $results = @()
 foreach ($t in $tests) {
     Write-Host "`n=== $($t[0]) ===" -ForegroundColor Cyan
     $log = & $GodotExe --headless --path $repo --script $t[1] @($t[2]) 2>&1 | ForEach-Object { "$_" }
     $code = $LASTEXITCODE
-    $log | Where-Object { $_ -match '\[Test\]|\[Audit\]|\[Bench\]|FAIL|SCRIPT ERROR|Parse Error|Assertion' } |
+    $log | Where-Object { $_ -match '\[Test\]|\[Audit\]|\[Bench\]|FAIL|SCRIPT ERROR|Parse Error|Assertion|^WARNING: \[' } |
         Select-Object -Last 40 | ForEach-Object { Write-Host $_ }
-    $errors = @($log | Where-Object { $_ -match 'SCRIPT ERROR|Parse Error|Assertion failed' }).Count
-    $fails = @($log | Where-Object { $_ -match '\[Test\] FAIL:' }).Count
-    $ok = ($code -eq 0 -and $errors -eq 0)
+    $errors = @($log | Where-Object { $_ -match 'SCRIPT ERROR|Parse Error|Assertion failed|^ERROR:' }).Count
+    $fails = @($log | Where-Object { $_ -match '\[Test\] FAIL:|^FAIL ' }).Count
+    if ($t[1] -eq 'res://tests/test_generation.gd') { $fails += @($log | Where-Object { $_ -match '^WARNING: \[' }).Count }
+    $ok = ($code -eq 0 -and $errors -eq 0 -and $fails -eq 0)
     $results += [pscustomobject]@{ Test = $t[0]; Exit = $code; ScriptErrors = $errors; Fails = $fails; Result = $(if ($ok) { 'PASS' } else { 'FAIL' }) }
 }
 
