@@ -142,7 +142,7 @@ they were planned: read the urban island, the fog island, the trees and the fenc
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
 | just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
-| left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the shopping center; the neon signs are all on the roofs, none at street level |
+| left of downtown | **Little Las Vegas** | the buildings of Chat City's Las Vegas Strip (`vegas_strip.glb`: Kenney commercial buildings and the tall dollar building, each with its neon sign: CASINO, DISCO dancer, POKER, LOUNGE, DANCE, CLUB legs, BAR bottle, and the ROYAL tower) on every plot along its streets, the Eiffel tower, the cinema and the shopping center |
 | west coast | **West desert** | reaches the sea without a beach: the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
 | south-west coast, next to the desert and Vegas | **Industrial zone and port** | 37 different industrial buildings and tanks (one of each model, eighteenth wave), container yards round the crane on the quay (no beach), the oil rig at sea |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
@@ -269,7 +269,7 @@ At night the fog turns dark blue-grey.
 | --- | --- | --- |
 | centre-top | **Downtown** | the only skyscraper district: Kenney towers outside, photo towers in the middle, and 7 New York landmarks (Empire State, Chrysler, One WTC, Woolworth, New York Times, MetLife, Flatiron), drawn much taller than the Kenney towers |
 | just behind downtown (north) | **Poor district** | a small district of grey panel towers and slabs, garages and corner shops, and the one big urban ghetto block |
-| left of downtown | **Little Las Vegas** | casino palaces, neon towers, resorts, small bars, wedding chapels and clubs of every size, the cinema and the shopping center; the neon signs are all on the roofs, none at street level |
+| left of downtown | **Little Las Vegas** | the buildings of Chat City's Las Vegas Strip (`vegas_strip.glb`: Kenney commercial buildings and the tall dollar building, each with its neon sign: CASINO, DISCO dancer, POKER, LOUNGE, DANCE, CLUB legs, BAR bottle, and the ROYAL tower) on every plot along its streets, the Eiffel tower, the cinema and the shopping center |
 | west coast | **West desert** | reaches the sea without a beach: the secret base ("area 51": airbase with runway, hangar, tower and jets, bunker, radio station), mesas, ranches and oil pumps |
 | south-west coast, next to the desert and Vegas | **Industrial zone and port** | 37 different industrial buildings and tanks (one of each model, eighteenth wave), container yards round the crane on the quay (no beach), the oil rig at sea |
 | centre | **Central park** | a large wood with a lake, a fountain and two crossing paths, ring roads all around |
@@ -380,6 +380,14 @@ At night the fog turns dark blue-grey.
   The nuclear plant has its own fence. The checkpoint at the end of the bridge stays.
 * **Models**: the five models of `fog_city.glb` (office, office tower, night tower, house, and one storey of a block,
   stacked 2 to 6 high) are used all over both towns, mixed with the houses, shops and towers of the main island.
+
+**Las Vegas, full (`zone_fill.gd`, `model_pools.gd`; `FREEMODELS/curated/vegas_strip.glb`):**
+
+* **Chat City's Strip**: the eight buildings of Chat City's Las Vegas map (its `public/models/boulevard/vegas.glb`
+  without the Eiffel tower, decoded to a plain glb with png textures) are the category `VEGAS_STRIP`. Every office and
+  shop of the zone is drawn as one of them; `ZoneFill` builds on every free plot of the zone along a street (lots of
+  two cells, then the single cells left), and on the lots of the old clubs and casinos `MapChanges` cleared. Long
+  Vegas lots are cut in two like the other zones'. Their signs glow dimly by day and brightly at night.
 
 ## Beaches, park and borders
 

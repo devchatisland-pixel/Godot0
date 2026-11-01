@@ -262,8 +262,9 @@ func _check_models(cfg: CityConfig, data: CityData, by_kind: Dictionary) -> void
 				seen[name] = true
 				print("[Test] %-14s %-34s height %.1f" % [CityTypes.Kind.keys()[k], name, h])
 	print("[Test] tallest Vegas club: %.1f" % tallest_club)
-	if tallest_club > 4.0:
-		_fail("a Vegas club is %.1f tall (limit 4.0)" % tallest_club)
+	# The Strip's casino and ROYAL towers (vegas_strip.glb) stand a little over 4.
+	if tallest_club > 4.7:
+		_fail("a Vegas club is %.1f tall (limit 4.7)" % tallest_club)
 
 
 ## A tower on the line of sight of a plant is no taller than what the camera (30 degrees down)
