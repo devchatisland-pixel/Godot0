@@ -46,6 +46,7 @@ func _init() -> void:
 	# Tap on the first roadblock piece, through the camera.
 	var shop := roadblocks.get_child(0) as MeshInstance3D
 	var c := (shop.transform * shop.mesh.get_aabb()).get_center()
+	await process_frame # the camera reads its global transform: it must be inside the tree
 	cam.setup(cfg, data.size, c, 30.0)
 	await process_frame
 	await process_frame

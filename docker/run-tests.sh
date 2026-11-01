@@ -20,6 +20,11 @@ godot --headless --script res://tests/debug_map.gd -- /out/map.png
 echo "== Chunk benchmark"
 godot --headless --script res://tests/bench_chunks.gd
 
+echo "== Map changes, model edits, clickable props, urban island strips, empty stripe of column 153"
+for t in test_map_changes test_model_edits test_pick_props test_urban_rows test_column_stripe; do
+    godot --headless --script "res://tests/$t.gd"
+done
+
 echo "== Screenshots (software OpenGL, slow but needs no GPU) -> /out/shot_*.png"
 xvfb-run -a -s "-screen 0 1600x900x24" \
     godot --rendering-driver opengl3 --resolution 1600x900 --audio-driver Dummy -- --capture /out

@@ -101,15 +101,16 @@ static func clear_boats(data: CityData) -> int:
 
 
 ## The stripe of 1-wide lots along column `x` from row `y0` to `y1` (downtown, commercial and
-## apartment zones: B-00111 to B-00131) is emptied. Returns how many lots were cleared.
+## apartment zones: B-00111 to B-00131) is emptied, and stays empty: the lots already cleared
+## before (BuildingBudget) are kept empty too, so ZoneFill builds nothing there. Returns how many
+## lots were cleared.
 static func clear_column(data: CityData, x: int, y0: int, y1: int) -> int:
 	var n := 0
 	for b in data.building_count():
 		var r := data.building_rect(b)
 		if r.position.x == x and r.size.x == 1 and r.position.y >= y0 and r.position.y < y1:
-			if data.b_kind[b] == CityTypes.Kind.EMPTY:
-				continue
-			data.b_kind[b] = CityTypes.Kind.EMPTY
 			ZoneFill.keep_empty[b] = "ModelEdits.clear_column"
-			n += 1
+			if data.b_kind[b] != CityTypes.Kind.EMPTY:
+				data.b_kind[b] = CityTypes.Kind.EMPTY
+				n += 1
 	return n

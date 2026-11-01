@@ -34,11 +34,13 @@ func _init(data: CityData) -> void:
 
 
 static func plan(data: CityData, lengths_m: Dictionary = {}) -> Array[Dictionary]:
+	var kept: Array[Dictionary] = []
+	if ModelEdits.NO_VEHICLES:
+		return kept # every vehicle is taken off the map: nothing to plan
 	var s := VehicleSites.new(data)
 	for id in lengths_m:
 		s.lengths[id] = float(lengths_m[id]) * CELLS_PER_METRE
 	s._run()
-	var kept: Array[Dictionary] = []
 	for v in s.out:
 		var id := str(v.get("id", ""))
 		if not ModelEdits.vehicle_removed(id) and not ModelEdits.vehicle_removed_at(id, v.get("at", Vector2.INF)):
