@@ -1,6 +1,6 @@
 extends SceneTree
-## Checks the urban island (empty since MapOverhaul), the BT tower islet, the Vegas buildings,
-## the watchtowers, the balloons and the submarines.
+## Checks the urban island (nothing but the skyline towers of UrbanSkyline), the BT tower islet,
+## the Vegas buildings, the watchtowers, and that no boat, balloon or submarine is left.
 ## Run: godot --headless --script res://tests/test_urban_island.gd
 ## Prints a text map of the urban island (B BT tower, # road, . land) and exits with an error when a rule is broken.
 
@@ -52,8 +52,9 @@ func _in_front(r: Rect2i, p: Vector2i) -> bool:
 
 
 func _check_places(data: CityData, by_kind: Dictionary) -> void:
-	# MapOverhaul: no building stands on the urban island any more; its streets stay, no fence
-	# is drawn, and no vehicle is parked there (the plant road is gone with the plants).
+	# MapOverhaul emptied the urban island; UrbanSkyline then lines its roads with the towers of the
+	# night skyline pack (SKYLINE_BLDG, checked by test_urban_rows.gd): nothing else stands there,
+	# no fence is drawn, and no vehicle is parked there (the plant road is gone with the plants).
 	var plants: Array = by_kind.get(Kind.NUCLEAR_PLANT, [])
 	if not plants.is_empty():
 		_fail("expected no nuclear plant, found %d" % plants.size())
@@ -61,9 +62,11 @@ func _check_places(data: CityData, by_kind: Dictionary) -> void:
 	for b in data.building_count():
 		var r := data.building_rect(b)
 		var k: int = data.b_kind[b]
-		if k == Kind.EMPTY or k == Kind.BOAT or k == Kind.BALLOON 				or not MapLayout.on_urban_island(r.get_center()):
+		if k == Kind.EMPTY or k == Kind.GARDEN or k == Kind.BOAT or k == Kind.BALLOON 				or not MapLayout.on_urban_island(r.get_center()):
 			continue
 		on_island += 1
+		if k == Kind.SKYLINE_BLDG:
+			continue
 		_fail("%s B-%05d at %s on the urban island: nothing may stand there" % [
 				CityTypes.Kind.keys()[k], b, r])
 	var roads := 0
@@ -123,34 +126,16 @@ func _check_watchtowers(data: CityData, by_kind: Dictionary) -> void:
 	print("[Test] watchtowers: ", list.map(func(b): return data.building_rect(b)))
 
 
-## One boat of each kind; the cargo ship by the port, the submarine away from the bridge.
+## No boat at all: every boat is taken off the map (ModelEdits.clear_boats, owner 2026-10-17).
 func _check_boats(data: CityData, by_kind: Dictionary) -> void:
-	var seeds := {}
-	for b in by_kind.get(Kind.BOAT, []):
-		var s: int = data.b_seed[b]
-		# Two cargo ships: keep the one that lies nearer to the industrial port.
-		var port := Vector2(MapLayout.blob("industrial")["at"])
-		if not seeds.has(s) or Vector2(data.building_rect(b).get_center()).distance_to(port) \
-				< Vector2((seeds[s] as Rect2i).get_center()).distance_to(port):
-			seeds[s] = data.building_rect(b)
-		print("[Test] boat %d at %s" % [s, data.building_rect(b)])
-	if seeds.size() != 5:
-		_fail("expected 5 different boats, found %d" % seeds.size())
-		return
-	var port := Vector2(MapLayout.blob("industrial")["at"])
-	if Vector2((seeds[BoatSites.CARGO] as Rect2i).get_center()).distance_to(port) > 35.0:
-		_fail("the cargo ship is not near the industrial port")
-	# One of the submarines lies off the end of the east highway, away from the bridge.
-	var d := INF
-	for b in by_kind.get(Kind.BOAT, []):
-		if data.b_seed[b] == BoatSites.SUB:
-			d = minf(d, Vector2(data.building_rect(b).get_center()).distance_to(Vector2(data.bridge)))
-	print("[Test] the nearest submarine is %.0f cells from the end of the highway" % d)
-	if d < 12.0 or d > 40.0:
-		_fail("the nearest submarine is %.0f cells from the bridge to the fog island" % d)
+	var boats: Array = by_kind.get(Kind.BOAT, [])
+	print("[Test] %d boats" % boats.size())
+	for b in boats:
+		_fail("boat B-%05d at %s: every boat is taken off the map" % [b, data.building_rect(b)])
 
 
-## MapOverhaul: 12 balloons and 12 submarines were added at random places.
+## MapOverhaul added 12 balloons and 12 submarines; both are gone since (no vehicle or balloon,
+## MapChanges fourth wave; no boat, ModelEdits.clear_boats): none may be left.
 func _check_overhaul(data: CityData, by_kind: Dictionary) -> void:
 	var balloons: int = by_kind.get(Kind.BALLOON, []).size()
 	var subs := 0
@@ -163,13 +148,20 @@ func _check_overhaul(data: CityData, by_kind: Dictionary) -> void:
 					if data.terrain[data.idx(x, y)] >= CityTypes.Terrain.BEACH:
 						_fail("submarine B-%05d at %s lies on land" % [b, r])
 	print("[Test] %d balloons, %d submarines" % [balloons, subs])
-	if balloons < MapOverhaul.BALLOONS:
-		_fail("only %d balloons, MapOverhaul adds %d" % [balloons, MapOverhaul.BALLOONS])
-	if subs < MapOverhaul.SUBMARINES:
-		_fail("only %d submarines, MapOverhaul adds %d" % [subs, MapOverhaul.SUBMARINES])
+	if balloons > 0:
+		_fail("%d balloons left, MapChanges takes them all away" % balloons)
+	if subs > 0:
+		_fail("%d submarines left, every boat is taken off the map" % subs)
+
+
+## Hand edits that a later wave changes on purpose (building number -> what it changes):
+## MapChanges turns the hotel B-01060 to the east and takes the neon off the house B-00341.
+const LATER_CHANGES := {1060: "facing", 341: "sign"}
 
 
 ## Every hand edit (ManualEdits) was applied: the kind, facing and scale are the wanted ones.
+## A building cleared afterwards (MapChanges or a hand delete) and the changes of LATER_CHANGES win
+## over the edit.
 func _check_edits(data: CityData) -> void:
 	for n in ManualEdits.EDITS.size():
 		var e: Dictionary = ManualEdits.EDITS[n]
@@ -180,13 +172,16 @@ func _check_edits(data: CityData) -> void:
 		if ManualEdits.hand_deleted.has(id):
 			continue   # deleted by hand afterwards (DELETED_AT): that wins over the edit
 		var want: String = "EMPTY" if e.get("delete", false) else e.get("replace", e["kind"])
-		if CityTypes.Kind.keys()[data.b_kind[id]] != want:
-			_fail("edit B-%05d: expected %s, found %s" % [id, want, CityTypes.Kind.keys()[data.b_kind[id]]])
-		if e.has("facing") and data.b_facing[id] != e["facing"]:
+		var now: String = CityTypes.Kind.keys()[data.b_kind[id]]
+		if (now == "EMPTY" or now == "GARDEN") and ZoneFill.keep_empty.get(id, "") == "MapChanges":
+			continue   # cleared by MapChanges afterwards: that wins over the edit
+		if now != want:
+			_fail("edit B-%05d: expected %s, found %s" % [id, want, now])
+		if e.has("facing") and LATER_CHANGES.get(id, "") != "facing" and data.b_facing[id] != e["facing"]:
 			_fail("edit B-%05d: facing %d, wanted %d" % [id, data.b_facing[id], e["facing"]])
 		if e.has("scale") and not is_equal_approx(data.b_scale[id], e["scale"]):
 			_fail("edit B-%05d: scale %.2f, wanted %.2f" % [id, data.b_scale[id], e["scale"]])
-		if e.has("sign") and data.b_sign[id] != ModelCatalog.Cat[e["sign"]]:
+		if e.has("sign") and LATER_CHANGES.get(id, "") != "sign" and data.b_sign[id] != ModelCatalog.Cat[e["sign"]]:
 			_fail("edit B-%05d: sign not set" % id)
 		if e.has("scale_abs") and not is_equal_approx(data.b_scale[id], -float(e["scale_abs"])):
 			_fail("edit B-%05d: absolute scale not set" % id)
