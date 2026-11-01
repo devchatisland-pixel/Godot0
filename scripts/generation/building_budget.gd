@@ -10,19 +10,21 @@ const Kind := CityTypes.Kind
 const Zone := CityTypes.Zone
 const Terrain := CityTypes.Terrain
 
+## The towers of the urban island (FUTURE_BLDG, URBAN_BLDG) have no budget: UrbanIslandRebuild
+## clears the whole island after this pass and UrbanSkyline puts its own towers there.
 const BUDGET := {
 	"AIRBASE": 1, "APARTMENT": 68, "BALLOON": 4, "BANK": 1, "BILLBOARD": 9,
 	"BOAT": 12, "BT_TOWER": 1, "BUNKER": 1, "BURGER_JOINT": 5, "BURGER_KING": 2,
 	"CASINO": 3, "CEMETERY": 2, "CHURCH": 1, "CINEMA_MAIN": 1, "CITY_HALL": 1, "COOLING_HALL": 1,
 	"CRANE": 2, "DRIVE_IN": 1, "FACTORY_BLDG": 8, "FERRIS_WHEEL": 1, "FIELD": 17,
-	"FIRE_STATION": 4, "FIRE_TRUCK": 2, "FOUNTAIN": 1, "FUTURE_BLDG": 11, "GARDEN": 10,
+	"FIRE_STATION": 4, "FIRE_TRUCK": 2, "FOUNTAIN": 1, "GARDEN": 10,
 	"GAS_STATION": 2, "GRAVE": 1, "HOSPITAL": 3, "HOTEL": 6, "HOUSE": 186, "INDUSTRIAL": 28,
 	"INDUSTRIAL_YARD": 147, "LANDMARK": 7, "LIGHTHOUSE": 6, "MAIN_HOSPITAL": 2, "MAIN_SCHOOL": 1,
 	"MCDONALDS": 1, "MESA": 2, "MOUNTAIN": 3, "NIGHTCLUB": 12, "NUCLEAR_PLANT": 2, "OFFICE": 53,
 	"OIL_PUMP": 5, "OUTPOST": 10, "PHARMACY": 3, "PIER": 5, "PLAZA": 5, "POLICE": 4,
 	"POLICE_HQ": 1, "POND": 1, "POOR_BLDG": 39, "POST_OFFICE": 3, "PRISON": 1,
 	"QUARTER_BLDG": 173, "SAT_DISH": 6, "SCHOOL": 3, "SHOP": 239, "SKYSCRAPER": 43, "STADIUM": 1,
-	"TANK": 2, "TELECOM_TOWER": 1, "UFO": 1, "UN_HQ": 1, "URBAN_BLDG": 69, "WATCHTOWER": 2,
+	"TANK": 2, "TELECOM_TOWER": 1, "UFO": 1, "UN_HQ": 1, "WATCHTOWER": 2,
 }
 
 ## Kinds that may be added when there are too few: the lot size and the zones they stand in.

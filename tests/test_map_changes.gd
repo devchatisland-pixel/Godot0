@@ -112,6 +112,13 @@ func _init() -> void:
 	# Third wave.
 	for d in MapChanges.FOURTH_DELETED:
 		_check(_at(data, Kind[d[0]], d[1]) < 0, "deleted: %s at %s" % [d[0], d[1]])
+	# The fifth wave names its cells on the stretched map.
+	for d in MapChanges.FIFTH_DELETED:
+		var absent := true
+		for b in data.building_count():
+			if data.b_kind[b] == Kind[d[0]] and data.building_rect(b).position == d[1]:
+				absent = false
+		_check(absent, "deleted (fifth wave): %s at %s" % [d[0], d[1]])
 	var hall := _at(data, Kind.CITY_HALL, MapChanges.CITY_HALL_LOT.position)
 	_check(hall >= 0 and data.is_road(MapChanges.CITY_HALL_LOT.end.x, MapChanges.CITY_HALL_LOT.position.y), "city hall touches the avenue")
 	var house := _at(data, Kind.HOUSE, MapChanges.NO_NEON_HOUSE)
