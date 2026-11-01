@@ -69,9 +69,6 @@ enum Cat {
 	# Twenty-third wave (ZoneFill): models drawn only on the free plots ZoneFill fills, by name;
 	# no pool picks them (the modular fog homes and offices, three single quarter buildings)
 	ZONE_APT, ZONE_QUARTER,
-	# Twenty-fourth wave: the buildings of Chat City's Las Vegas Strip (Kenney commercial buildings
-	# and the tall dollar building, each wearing a Vegas neon sign), FREEMODELS/curated/vegas_strip.glb
-	VEGAS_STRIP,
 }
 
 const MANIFEST_SUFFIX := ".models.json"
@@ -149,8 +146,6 @@ static func classify(path: String) -> Dictionary:
 			or name.begins_with("shipping-container") or name == "water-tower" \
 			or name.begins_with("tank"):
 		res["cat"] = Cat.INDUSTRIAL_PROP
-	elif name.begins_with("tree"):
-		res["cat"] = Cat.TREE
 	elif name == "bridge-pillar-wide":
 		res["cat"] = Cat.BRIDGE_PILLAR
 	elif name == "light-square-double" or name == "light-curved-double":

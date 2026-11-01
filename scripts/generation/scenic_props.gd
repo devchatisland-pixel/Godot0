@@ -35,9 +35,6 @@ const CHAIR_LEN := 0.45
 ## the lighthouses, and from any building, road or other prop (cells).
 const LONELY_SETS := 6
 const LONELY_APART := 34.0
-## When the map has too few beaches that far apart (since the island was stretched), the last
-## sets may stand this close to the others (the first ones keep their places).
-const LONELY_APART_MIN := 20.0
 const LONELY_FROM_LIGHTHOUSE := 26.0
 const LONELY_CLEAR := 12
 
@@ -158,18 +155,17 @@ func _lonely_beaches() -> void:
 	cands.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		return CityTypes.hash2(a.x, a.y, 83) < CityTypes.hash2(b.x, b.y, 83))
 	var sets: Array[Vector2i] = []
-	for gap: float in [LONELY_APART, LONELY_APART_MIN]:
-		for c in cands:
-			if sets.size() >= LONELY_SETS:
+	for c in cands:
+		if sets.size() >= LONELY_SETS:
+			break
+		var apart := true
+		for o in sets:
+			if Vector2(o).distance_to(Vector2(c)) < LONELY_APART:
+				apart = false
 				break
-			var apart := true
-			for o in sets:
-				if Vector2(o).distance_to(Vector2(c)) < gap:
-					apart = false
-					break
-			if apart:
-				sets.append(c)
-	for c in sets:
+		if not apart:
+			continue
+		sets.append(c)
 		var p := Vector3(c.x + 0.5, 0, c.y + 0.5)
 		var sea := _to_sea(c)
 		var side := Vector3(-sea.z, 0, sea.x)

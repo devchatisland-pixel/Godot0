@@ -98,12 +98,7 @@ static func _find(data: CityData, kind_name: String, cell: Vector2i) -> int:
 	for b in data.building_count():
 		if data.b_kind[b] == kind and data.building_rect(b).position == cell:
 			return b
-	var near := -1
-	for b in data.building_count():
-		if data.b_kind[b] == kind and (near < 0 or Vector2(data.building_rect(b).position).distance_to(Vector2(cell)) 				< Vector2(data.building_rect(near).position).distance_to(Vector2(cell))):
-			near = b
-	push_warning("[MapChanges] no %s at %s (nearest: %s)" % [kind_name, cell,
-			"B-%05d %s" % [near, data.building_rect(near)] if near >= 0 else "none"])
+	push_warning("[MapChanges] no %s at %s" % [kind_name, cell])
 	return -1
 
 
@@ -402,14 +397,13 @@ const FACTORY_AT := Vector2i(120, 253)
 
 ## Red district: the drive-in goes north of the quarter building B-00927 (free forest ground) with
 ## a street down to the street at row 277; the wood ground beside B-00969 is cleared and the
-## Ferris wheel stands on it (one column east of the street of column 181, which serves the quarter
-## buildings beside it); the hotel B-01060 looks east; three quarter buildings share a model.
+## Ferris wheel stands on it; the hotel B-01060 looks east; three quarter buildings share a model.
 const DRIVE_IN_AT := Vector2i(190, 305)
 const DRIVE_IN_LOT := Rect2i(178, 271, 5, 4)
 const DRIVE_IN_ROAD_X := 180
 const DRIVE_IN_ROAD_TO_Y := 277
 const WHEEL_AT := Vector2i(203, 309)
-const WHEEL_LOT := Rect2i(182, 310, 6, 6)
+const WHEEL_LOT := Rect2i(181, 310, 6, 6)
 const WOOD_CLEARED := Rect2i(168, 310, 23, 7)
 const HOTEL_EAST := Vector2i(175, 288)
 const QUARTER_MODEL := "quarter.glb: quarter_40_b"
@@ -641,11 +635,13 @@ const FOURTH_DELETED := [
 	["MCDONALDS", Vector2i(135, 191)],          # B-00805
 	["OFFICE", Vector2i(137, 178)],             # B-00024
 	["OFFICE", Vector2i(147, 181)],             # B-00073
+	["OFFICE", Vector2i(118, 208)],             # B-01420
 	["SKYSCRAPER", Vector2i(123, 174)],         # B-00008 (and its neon)
+	["CHURCH", Vector2i(194, 216)],             # B-00476
+	["POST_OFFICE", Vector2i(193, 306)],        # B-00959
+	["POST_OFFICE", Vector2i(186, 212)],        # B-00792
+	["SCHOOL", Vector2i(148, 224)],             # B-00834
 ]
-# The office B-01420, the church B-00476, the post offices B-00959 and B-00792 and the school
-# B-00834 of the same request were named by their cells on the stretched map: the fifth wave
-# (after MapStretch) takes them away.
 ## Drawn as the shop B-00474 (building-h): the apartment B-00047 and the offices B-00519 and B-00528.
 const SHOP_MODEL := "building-h.glb"
 const SHOP_LIKE := [["APARTMENT", Vector2i(138, 228)], ["OFFICE", Vector2i(199, 196)], ["OFFICE", Vector2i(198, 215)]]
@@ -761,8 +757,6 @@ const FIFTH_DELETED := [
 	["CHURCH", Vector2i(194, 216)],             # B-00476
 	["INDUSTRIAL", Vector2i(129, 257)],         # B-01726 hall_warehouse_4
 	["INDUSTRIAL", Vector2i(120, 277)],         # B-01741 shed_duplex
-	["OFFICE", Vector2i(118, 208)],             # B-01420 (fourth wave's request)
-	["POST_OFFICE", Vector2i(193, 306)],        # B-00959 (fourth wave's request)
 ]
 ## The skyscraper B-00348 is drawn as the tower5 of the urban pack.
 const TOWER5_AT := Vector2i(179, 165)
@@ -1027,3 +1021,4 @@ static func ninth_wave(data: CityData) -> Dictionary:
 			_clear(data, b)
 			n += 1
 	return {"deleted": n}
+
