@@ -40,5 +40,8 @@ if ($Shots) {
 }
 
 Write-Host "`n=== Summary ===" -ForegroundColor Cyan
-$results | Format-Table -AutoSize | Out-String | Write-Host
+foreach ($r in $results) {
+    Write-Host ('{0}  {1}  (exit {2}, {3} script error(s), {4} failed check(s))' -f $r.Result, $r.Test, $r.Exit, $r.ScriptErrors, $r.Fails) `
+        -ForegroundColor $(if ($r.Result -eq 'PASS') { 'Green' } else { 'Red' })
+}
 if ($results.Result -contains 'FAIL') { Write-Host 'LOCAL CI FAILED' -ForegroundColor Red } else { Write-Host 'LOCAL CI OK' -ForegroundColor Green }
